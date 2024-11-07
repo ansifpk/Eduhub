@@ -1,0 +1,48 @@
+.navbar{
+    width: 100%;
+    padding: 20px 6%;
+    display: flex;
+    justify-content: space-between;
+    position: fixed;
+    font-size: 22px;
+    color: white;
+    background:#49BBBD;
+    z-index:1;
+}
+.navbar-right{
+    display: flex;
+    align-items: center;
+    gap: 50px;
+}
+/* .check .active{ */
+    /* border-radius: 25px; */
+    /* width: 100%; */
+    /* background: red; */
+    /* padding: 50xp; */
+
+/* } */
+.avatar{
+    height: 40px;
+    border-radius: 25%;
+}
+.navbar-right ul{
+    display: flex;
+    list-style: none;
+    gap: 50px;
+    padding-top: 10px;
+    padding-right: 50px;
+}
+.navbar-right ul li{
+    cursor: pointer;
+    
+}
+.navbar-right ul li a{
+    text-decoration: none;
+    color: white;
+    
+}
+.navbar-left {
+    display: flex;
+    align-items: center;
+    padding-left: 50px;
+}
