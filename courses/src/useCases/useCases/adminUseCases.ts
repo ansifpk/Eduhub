@@ -3,9 +3,10 @@ import { IAdminRepository } from "../interfaces/repository/IAdminRepository";
 import { IAdminUseCase } from "../interfaces/useCases/IadminUseCase";
 
 export class AdminUseCase implements IAdminUseCase{
-    constructor(private adminRepository:IAdminRepository){}
-    fetchCourses(): Promise<ICourse[]> {
-        throw new Error("Method not implemented.");
+    constructor(private adminRepository:IAdminRepository,){}
+    async fetchCourses(): Promise<ICourse[]> {
+       const courses = await this.adminRepository.find()
+       return courses
     }
     createCourse(courseData: ICourse): Promise<ICourse | void> {
         throw new Error("Method not implemented.");

@@ -1,0 +1,30 @@
+export interface ICourse{
+    _id?:string,
+    title:string,
+    instructorId?:string,
+    user:{
+        name:string,
+        id:string,
+        email:string
+    },
+    subCategory:string,
+    description:string,
+    thumbnail:string,
+    category:string,
+    level:string,
+    isListed:boolean,
+    price:number,
+    test?:[];
+    subscription:boolean,
+    videos:string[],
+    users?:[
+        {id:string,
+         name:string,
+         email:string
+        }
+    ],
+    image:string,
+    imageUrl?:string,
+    videoUrl?:string[],
+    createdAt:string,
+}

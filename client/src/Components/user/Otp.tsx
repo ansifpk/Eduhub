@@ -49,13 +49,15 @@ const Otp = () => {
      try {
       console.log("otp in otp page",otp,id);
      if(id){
-       const response = await otpVerify(otp,id) 
+       const response = await otpVerify(otp,id) ;
+       console.log(response);
+       
        if(response.succusse){
-        dispatch(setUser(response.user))
+        dispatch(setUser(response.user.user))
         toast.success("Register Successfull")
         return navigate("/")
        }else{
-        toast.error(response.response.data.message);
+      //   toast.error(response.response.data.message);
        }
      }
      } catch (error) {

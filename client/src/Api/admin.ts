@@ -1,6 +1,7 @@
 import { loginType } from "@/@types/loginType";
 import Api from "@/service/axios";
 import ApiCategory from "@/service/category";
+import ApiCourse from "@/service/course";
 import adminRoutes from "@/service/endPoints/adminEndPoints";
 
 interface ICategory{
@@ -29,7 +30,7 @@ export const googleLogin = async (googleLoginData:object) =>{
 }
 export const category = async () =>{
     try {
-        const response = await ApiCategory.post(adminRoutes.category);       
+        const response = await ApiCategory.get(adminRoutes.category);       
         return response.data
     } catch (error) {
         return error 
@@ -61,7 +62,7 @@ export const listCategory = async (categoryId:string) =>{
 }
 export const students = async () =>{
     try {
-        const response = await Api.post(adminRoutes.students);       
+        const response = await Api.get(adminRoutes.students);       
         return response.data
     } catch (error) {
         return error 
@@ -78,7 +79,7 @@ export const blockStudents = async (studnetId:string) =>{
 }
 export const instructors = async () =>{
     try {
-        const response = await Api.post(adminRoutes.instructors);       
+        const response = await Api.get(adminRoutes.instructors);       
         return response.data
     } catch (error) {
         return error 
@@ -92,9 +93,18 @@ export const blockInstructors = async (instructorId:string) =>{
         return error 
     }
 }
+
 export const editProfile = async (instructorData:object) =>{
     try {
         const response = await Api.patch(adminRoutes.editProfile,instructorData);       
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+export const getCourses = async () =>{
+    try {
+        const response = await ApiCourse.get(adminRoutes.getCourses);       
         return response.data
     } catch (error) {
         return error 

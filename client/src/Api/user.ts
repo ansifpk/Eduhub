@@ -2,6 +2,8 @@ import Api from "../service/axios"
 import userRoutes from "../service/endPoints/userEndPoints"
 import { loginType } from "../@types/loginType"
 import { registerType } from "../@types/registerType"
+import ApiCourse from "@/service/course"
+import ApiOrder from "@/service/order"
 
 export const signup = async (registerData: registerType) => {
     try {
@@ -37,6 +39,7 @@ export const googleLogin = async (loginData:object) =>{
         return error 
     }
 }
+
 export const editUser = async (userData:object) =>{
     try {
         const response = await Api.patch(userRoutes.editUser,userData);
@@ -77,9 +80,43 @@ export const newPassword = async (email:string,password:string) =>{
         return error 
     }
 }
+export const getCourses = async () =>{
+    try {
+        const response = await ApiCourse.get(userRoutes.getCourses);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+export const puchasedCourses = async (userId:string) =>{
+    try {
+        const response = await ApiOrder.get(`${userRoutes.puchasedCourses}/${userId}`);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+export const courseDetailes = async (courseId:string) =>{
+    try {
+        const response = await ApiCourse.get(`${userRoutes.courseDeatiles}/${courseId}`);       
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+export const createOrder = async (orderData:any) =>{
+    try {
+        console.log("byr");
+        
+        const response = await ApiOrder.post(userRoutes.createOrder,{orderData})
+        return response.data
+    } catch (error) {
+
+        return error 
+    }
+}
 export const logout = async () =>{
     try {
- 
         const response = await Api.post(userRoutes.logout);
         return response.data
     } catch (error) {

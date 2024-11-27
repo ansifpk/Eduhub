@@ -4,7 +4,7 @@ import { IToken } from "../serviceInterface/IJwt";
 
 export interface IuserUseCase{
     userSignUp(user:Iuser,next:NextFunction):Promise <string|void>
-    insertUser(token:string,otp:string,next: NextFunction):Promise <Iuser| void>
+    insertUser(token:string,otp:string,next: NextFunction):Promise <{user:Iuser,tokens:IToken}| void>
     login(email:string,password:string,next:NextFunction):Promise <{user:Iuser,token:IToken}|void>
     googleLogin(email:string,name:string,password:string,next:NextFunction):Promise <{user:Iuser,token:IToken}|void>
     sentOtp(email:string,next:NextFunction):Promise <boolean|void>

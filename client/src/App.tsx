@@ -6,7 +6,7 @@ import AdminRouter from "./routes/AdminRouter"
 
 const App = () => {
   return (
-    <div>
+    <div >
       <Routes>
         <Route path="/*" element={<UserRoter/>} />
         <Route path="/instructor/*" element={<InstructorRoter/>} />

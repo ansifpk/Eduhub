@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom'
 interface ForgetPassEmailProps {
     successCheckEmail: React.Dispatch<React.SetStateAction<boolean | null>>;
     setEmailProp: React.Dispatch<React.SetStateAction<any>>;
-  }
+}
 
 const ForgetPassEmail:React.FC<ForgetPassEmailProps> = ({successCheckEmail,setEmailProp}) => {
 

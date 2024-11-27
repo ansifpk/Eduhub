@@ -10,6 +10,7 @@ const adminRoutes = {
     instructors:'/admin/instructors',
     blockInstructors:'/admin/blockinstructors',
     editProfile:"/admin/editProfile",
+    getCourses:"/admin/getCourses",
     logout:'/admin/logout'
    }
    

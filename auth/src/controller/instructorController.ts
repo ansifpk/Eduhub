@@ -21,4 +21,13 @@ export class InstructorController{
             return res.send({success:true,user:createdUser})
         }
     }
+    async getStudnets(req:Request,res:Response,next:NextFunction){
+        // console.log(req.body);
+        console.log("hi ivade  ");
+        
+        const createdUser = await this.instructorUseCase.fetchStudents()
+        if(createdUser){
+            return res.send({success:true,user:createdUser})
+        }
+    }
 }

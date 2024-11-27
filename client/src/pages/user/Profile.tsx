@@ -47,7 +47,6 @@ const Profile:React.FC = () => {
             </Button>
             </div>
           </div>
-    
       </Card>
     </main>
     <Footer />

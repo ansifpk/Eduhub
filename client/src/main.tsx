@@ -12,7 +12,7 @@ import { PersistGate } from 'redux-persist/integration/react'
 import {GoogleOAuthProvider} from '@react-oauth/google';
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+  // <StrictMode>
     <BrowserRouter>
      <GoogleOAuthProvider clientId="40855809641-qlka8kc3qhg0kdu19ag1k0uoomnf5r55.apps.googleusercontent.com">
     <Toaster position="top-center" reverseOrder={false} />
@@ -23,5 +23,5 @@ createRoot(document.getElementById('root')!).render(
             </Provider>
     </GoogleOAuthProvider>
     </BrowserRouter>
-  </StrictMode>,
+  // </StrictMode>,
 )

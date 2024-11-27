@@ -41,7 +41,7 @@ const AdminHome = () => {
 
            
             <div className="grid grid-cols-2 gap-8">
-            {/* Courses Section */}
+           
             <Card>
               <CardHeader>
                 <h2 className="text-lg font-semibold">YOUR TOP 3 COURSES</h2>

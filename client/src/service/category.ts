@@ -4,7 +4,8 @@ const ApiCategory = axios.create({
     baseURL:'http://localhost:3001',
     headers:{
         "Content-Type": 'application/json'
-   }
+   },
+   withCredentials:true
 })
 
 ApiCategory.interceptors.request.use(

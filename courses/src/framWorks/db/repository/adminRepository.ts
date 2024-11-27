@@ -5,8 +5,8 @@ import { Course } from "../mongodb/models/courseModel";
 export class AdminRepository implements IAdminRepository{
     constructor(private courseModel:typeof Course){}
     async find(): Promise<ICourse[]> {
-        await this.courseModel.find();
-        throw new Error("Method not implemented.");
+       const courses =  await this.courseModel.find();
+       return courses
     }
     create(courseData: ICourse): Promise<ICourse | void> {
         throw new Error("Method not implemented.");

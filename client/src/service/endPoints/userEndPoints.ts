@@ -8,7 +8,11 @@ const userRoutes = {
  verifyEmail:"/user/forgetPassword",
  verifyPassOtp:"/user/verifyOtp",
  newPassword:"/user/newPassword",
- logout:'/user/logout'
+ getCourses:"/user/courses",
+ puchasedCourses:"/user/puchasedCourses",
+ courseDeatiles:"/user/courseDetailes",
+ createOrder:"/user/createOrder",
+ logout:'/user/logout',
 }
 
 export default userRoutes

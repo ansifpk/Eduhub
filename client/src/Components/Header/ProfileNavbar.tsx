@@ -21,22 +21,23 @@ const ProfileNavbar = () => {
     <div>
        <div className='profile-navbar'>
               <ul>
-                <li ><NavLink  className={({ isActive }) =>
+                <li ><NavLink end  className={({ isActive }) =>
                 isActive 
                   ? "text-black px-4 py-1 rounded-full bg-gray-100  no-underline" 
                   : "no-underline text-white"
               } to={'/profile'}>Profile</NavLink></li>
-                <li ><NavLink  className={({ isActive }) =>
+                <li ><NavLink  end className={({ isActive }) =>
                 isActive 
+                 
                   ? "text-black px-4 py-1 rounded-full bg-gray-100  no-underline" 
                   : "no-underline text-white"
               } to={'/profile/courses'}>Courses</NavLink></li>
-                <li><NavLink  className={({ isActive }) =>
+                <li><NavLink end  className={({ isActive }) =>
                 isActive 
                   ? "text-black px-4 py-1 rounded-full bg-gray-100  no-underline" 
                   : "no-underline text-white"
               } to={'/profile/message'}>Messages</NavLink></li>
-                <li><NavLink  className={({ isActive }) =>
+                <li><NavLink end  className={({ isActive }) =>
                 isActive 
                   ? "text-black px-4 py-1 rounded-full bg-gray-100  no-underline" 
                   : "no-underline text-white"

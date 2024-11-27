@@ -36,7 +36,7 @@ const authSLice = createSlice({
             state.isInstructor = action.payload.isInstructor;
         },
         setInstructor:(state,action)=>{
-            console.log(action.payload,"ji");
+            // console.log(action.payload,"ji");
             
             state.id = action.payload._id;
             state.email = action.payload.email;
@@ -44,6 +44,7 @@ const authSLice = createSlice({
             state.isVerified = action.payload.isVerified;
             state.isBlock = action.payload.isBlock;
             state.isInstructor = action.payload.isInstructor;
+            console.log(state.isInstructor,"ji");
         },
         setAdmin:(state,action)=>{
             state.id = action.payload._id;

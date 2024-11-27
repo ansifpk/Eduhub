@@ -12,8 +12,9 @@ export class AdminController{
     async editCourse(req:Request,res:Response,next:NextFunction){
       
     }
-    async listCourse(req:Request,res:Response,next:NextFunction){
-      
+    async getCourses(req:Request,res:Response,next:NextFunction){
+        const courses = await this.adminUseCase.fetchCourses();
+        return res.send(courses)
     }
     
 }

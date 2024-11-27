@@ -107,6 +107,12 @@ const userScheema = new Schema({
        default : new Date().toLocaleString(),
        require:true
     }
+},{
+   toJSON:{
+      transform(doc,ret){
+         delete ret.__v;
+       }
+   }
 })
 
 const userModel = model<Iuser>('User',userScheema);

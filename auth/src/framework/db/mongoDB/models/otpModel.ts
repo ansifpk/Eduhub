@@ -7,7 +7,13 @@ const OtpSchema: Schema<Iotp> = new mongoose.Schema({
         type: Date,
         default: new Date(),
     }
-})
+},{
+    toJSON:{
+       transform(doc,ret){
+          delete ret.__v;
+        }
+    }
+ })
 OtpSchema.index({ createdAt: 1 }, { expireAfterSeconds: 120  });
 const otpModel: Model<Iotp> = mongoose.model('otp', OtpSchema);
 export default otpModel;

@@ -6,14 +6,14 @@ export class JWTtocken implements IJwt{
     async frogetPassword(id: string): Promise<string> {
         const payload  = {id}
         const forgetToken = await jwt.sign(payload,"itsjwtForgetkey",{
-            expiresIn:'1m'
+            expiresIn:'1d'
         })
         return forgetToken;
     }
     
     async createVerificationJwt(payload: any): Promise<string> {
         const verifyToken = await jwt.sign(payload,"itsjwtverificationkey",{
-            expiresIn:'1h'
+            expiresIn:'1d'
         })
         return verifyToken;
     }
@@ -21,9 +21,7 @@ export class JWTtocken implements IJwt{
         console.log("hello");
         
         const payload = {id}
-        const accessToken = await jwt.sign(payload ,'itsjwtaccesskey',{
-            expiresIn:'5h'
-         })
+        const accessToken = await jwt.sign(payload ,'itsjwtaccesskey')
          const refreshToken = await jwt.sign(payload,'itsjwtrefreshkey',{
             expiresIn:'3d',
           })
@@ -31,10 +29,9 @@ export class JWTtocken implements IJwt{
     }
     async verifyJwt(token: string): Promise<any> {
         try{
-            console.log('verify token in framwork jwt',token)
+
         
             const data = await jwt.verify(token,'itsjwtverificationkey')
-            console.log('verify token in framwork jwt',data)
             
             return data
            }catch(error:any){

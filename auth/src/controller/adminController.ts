@@ -15,8 +15,8 @@ export class AdminController{
        try {
         const adminAndToken = await this.adminUsecase.adminLogin(req.body.email,req.body.password,next);
         if(adminAndToken){
-            res.send(adminAndToken)
-            res.cookie("accessToken",adminAndToken.token.accessToken,accessTokenOptions).json(adminAndToken);
+          req.session={accessToken:adminAndToken.token.accessToken}
+          res.send(adminAndToken)
         }
        } catch (error) {
          catchError(error,next)

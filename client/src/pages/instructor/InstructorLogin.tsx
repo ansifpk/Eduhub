@@ -8,21 +8,28 @@ import { useDispatch } from "react-redux";
 import { CardDescription, CardHeader } from "@/Components/ui/card";
 import { Input } from "@/Components/ui/input";
 import InstructorAuthHead from "../../Components/instructor/instructorAuthHead";
+import { useSelector } from "react-redux";
 
 const InstructorLogin = () => {
     const [email,setEmail] = useState("")
     const [password,setPassword] = useState("")
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    
     const handleSubmit = async (e:React.FormEvent<HTMLFormElement>) =>{
       e.preventDefault();
         const response = await userLogin({email,password})
+        console.log(response,"res");
+        
         if(response.user){
              if(response.user.isInstructor){
-              dispatch(setUser(response.user))
-              dispatch(setInstructor())
-              navigate("/instructor")
-              toast.success("Instructor Login Successfully")
+         
+              
+              dispatch(setInstructor(response.user))
+              // navigate("/instructor")
+              
+              
+              // toast.success("Instructor Login Successfully")
              }else{
               toast.error("Your Not Instructor")
              }

@@ -25,7 +25,8 @@ export class InstructorRepository implements IInstructorRepository{
        
     }
     async find(): Promise<Iuser[] | void> {
-        await this.userModels.find({isAdmin:false});
+       const studnets =  await this.userModels.find({isAdmin:false});
+       return studnets
     }
     async findById(id: string): Promise<Iuser | void> {
         const user = await this.userModels.findById({_id:id});

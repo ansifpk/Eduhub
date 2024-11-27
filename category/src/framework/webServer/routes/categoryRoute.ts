@@ -3,7 +3,7 @@ import { categoryController } from "./injections/injection";
 
 
 export function CategoryRoute(router:Router){
-    router.post('/category',async(req,res,next)=>{
+    router.get('/category',async(req,res,next)=>{
         categoryController.fechAllCategory(req,res,next)
     })
     router.post('/addCategory',async(req,res,next)=>{

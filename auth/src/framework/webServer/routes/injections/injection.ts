@@ -16,11 +16,16 @@ import { InstructorController } from "../../../../controller/instructorControlle
 import cloudinary from "../../../services/cloudinary";
 
 
+
 const bcryptService = new Encrypt()
 const otpRepository = new OtpRepository()
 const otpGenerator = new OtpGenerator()
 const sentEmail = new SentEmail()
 const jwtTocken = new JWTtocken()
+
+
+
+//user
 const userRepository = new UserRepository(userModel)
 const userusecase = new UserUseCase(userRepository,bcryptService,otpRepository,otpGenerator,sentEmail,jwtTocken)
 const userController = new UserController(userusecase);

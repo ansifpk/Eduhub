@@ -1,15 +1,33 @@
 
 export interface ICourse{
     _id?:string,
-    instructorId?:string,
     title:string,
+    instructorId?:string,
+    subCategory:string,
     description:string,
     thumbnail:string,
     category:string,
-    topic:string,
+    level:string,
+    isListed:boolean,
+    price:number,
     test?:[];
-    subsription:boolean,
-    videos:[],
-    image:string,
-    createAt:string,
+    subscription:boolean,
+    image:{
+        _id:string,
+        image_url:string
+    },
+    students?:string[],
+    createdAt:string,
+    sessions:{
+        sessionTitle:string,
+        lectures:[{
+            _id:string,
+            content:{
+                _id:string,
+                video_url:string,
+            },
+            duration:string,
+            title:string,
+        }]
+    }[],
 }

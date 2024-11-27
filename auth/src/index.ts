@@ -1,13 +1,14 @@
 import express from 'express';
 import {json,urlencoded} from 'body-parser'
-import { connectDB } from './framework/webServer/config/db';
+import { connectDB } from './framework/webServer/config/mongoDB/db';
 import { UserRoute } from './framework/webServer/routes/userRoute';
-import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { errMiddleware } from './useCase/middlewares/errorMiddleware';
 import { AdminRoute } from './framework/webServer/routes/adminRoute';
 import { InstructorRouter } from './framework/webServer/routes/instructorRouter';
-connectDB()
+import kafkaWrapper from './framework/webServer/config/kafka/kafkaWrapper';
+import cookieParser from   'cookie-parser'
+connectDB();
 const app = express()
 
 // Separate routers for user and admin
@@ -20,7 +21,9 @@ UserRoute(userRouter);
 AdminRoute(adminRouter);
 InstructorRouter(instructorRouter);
 
-app.use(cors())
+app.use(cors({origin:'http://localhost:5173',credentials:true}))
+
+
 app.use(cookieParser())
 app.use(json())
 app.use(urlencoded({ extended: true }))
@@ -32,4 +35,12 @@ app.use('/instructor',instructorRouter);
 
 app.use(errMiddleware);
 
-app.listen(3000, () => console.log("the server is running in http://localhost:3000 for auth"))
+const start = async () => {
+    try {
+        await kafkaWrapper.connect();
+        app.listen(3000, () => console.log("the server is running in http://localhost:3000 for auth"))
+    } catch (error) {
+        console.error(error);
+    }
+}
+start()

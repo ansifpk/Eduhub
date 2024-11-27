@@ -1,87 +1,58 @@
-import { Card, CardContent, CardDescription, CardHeader } from '@/Components/ui/card';
-import './InstructorHome.css';
-import InstructorAside from '../../Components/instructor/InstructorAside'
-import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/Components/ui/button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Components/ui/table';
-import { useState } from 'react';
+import {  Studentstable } from "@/Components/Studentstable";
+import InstructorAside from "@/Components/instructor/InstructorAside";
+import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
+import { Separator } from "@/Components/ui/separator";
 
-  interface IUser{
-    _id:string;
-    name:string;
-    email:string;
-    isAdmin:boolean;
-    isInstructor:boolean;
-    isBlock:boolean;
-  }
-
-const InstructorListStudents = () => {
-    const [student,setStudents] = useState([]);
-    const name = useSelector((state:IUser)=>state.name);
-   
-    const navigate = useNavigate()
-    const handleBlockStudents = (userId:string) => {
-           console.log("userid",userId)
-    }
+export default function InstructorHome() {
   return (
-    <div className="container-fluid bg-blue-200">
-    <div className="row">
-        <InstructorAside/>
-        <div className="col-md-10">
-            <div className="welcome mt-4 mb-4">
-                <h1>Welcome back, {name}</h1>
-                <img src="https://github.com/shadcn.png" alt="Profile Picture" onClick={()=>navigate("/instructor/profile")} className="profile-pic" />
-            </div>
-
-           
-            <div className=" grid grid-cols-1 gap-8">
-            <h1 className="text-lg font-bold">Your Studnets</h1>
-            {/* <Card className='relaticve d-flex justify-content-center gap-20  bg-cover bg-center overflow-hidden'  style={{ backgroundImage: "url('https://github.com/shadcn.png')"}}> */}
-             {student.length>0?(
- <Card>
- <Table>
- <TableHeader>
-   <TableRow>
-     <TableHead className="w-[100px] ">Image</TableHead>
-     <TableHead>Name</TableHead>
-     <TableHead>Email</TableHead>
-     <TableHead className="text-right">Actions</TableHead>
-   </TableRow>
- </TableHeader>
- <TableBody>
-   {student.length>0? (
-     student.map((value:IUser,index)=>(
-       <TableRow key={index}>
-         <TableCell className="font-medium"> <img src="https://via.placeholder.com/50" alt="Profile Picture" className="profile-pic" /></TableCell>
-         <TableCell>{value.name}</TableCell>
-         <TableCell>{value.email}</TableCell>
-         <TableCell className="text-right"><button onClick={()=>handleBlockStudents(value._id!)} className={value.isBlock?'btn btn-danger':'btn btn-success'}>{value.isBlock ? "UnBlock":"BLock"}</button></TableCell>
-       </TableRow>
-     ))
-   ):(
-  <></>
-   )}
- </TableBody>
-</Table>
-</Card> 
-             ):(
-              <div className='d-flex justify-center'>
-                <Card className='w-1/2 d-flex justify-center '>
-                  <CardContent className='d-flex m-5 items-center'>
-                    <CardDescription>
-                       You dont Have any Students
-                    </CardDescription>
-                  </CardContent>
-              </Card>
-              </div>
-             )}
-           
+    <div className="bg-black">
+      <div className="md:hidden">
+        <img
+          src="/examples/forms-light.png"
+          width={1280}
+          height={791}
+          alt="Forms"
+          className="block dark:hidden"
+        />
+        <img
+          src="/examples/forms-dark.png"
+          width={1280}
+          height={791}
+          alt="Forms"
+          className="hidden dark:block"
+        />
+      </div>
+      <div className="hidden space-y-6 p-10 pb-16 md:block">
+        <div className="flex items-center justify-between space-y-2">
+          <div className="space-y-0.5">
+            <h2 className="text-white text-2xl font-bold tracking-tight">
+              Edu Hub
+            </h2>
+            <p className="text-muted-foreground">
+              Manage your instructor account students and courses.
+            </p>
+          </div>
+          <div>
+            <Avatar className="h-9 w-9">
+              <AvatarImage src="/avatars/03.png" alt="@shadcn" />
+              <AvatarFallback>SC</AvatarFallback>
+            </Avatar>
           </div>
         </div>
+
+        <Separator className="my-6" />
+        <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">
+         
+            <InstructorAside />
+   
+          <div className="flex-1 lg:max-w-full ">
+            <div className="space-y-6">
+              <Studentstable />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-</div>
-  )
+  );
 }
 
-export default InstructorListStudents

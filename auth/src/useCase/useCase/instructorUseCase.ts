@@ -67,5 +67,9 @@ export class InstructorUseCase implements IInstructorInterface{
     instructorLogin(email: string, password: string, next: NextFunction): Promise<{ user: Iuser; token: IToken; } | void> {
         throw new Error("Method not implemented.");
     }
+    async fetchStudents(): Promise<Iuser[]| void> {
+        const users = await this.instructorRepository.find();
+        return users;
+    }
 
 }
