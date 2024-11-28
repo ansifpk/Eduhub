@@ -8,6 +8,7 @@ const adminRoutes = {
     students:'/admin/students',
     blockStudents:'/admin/blockStudents',
     instructors:'/admin/instructors',
+    instructorAprovel:'/admin/instructorAprovel',
     blockInstructors:'/admin/blockinstructors',
     editProfile:"/admin/editProfile",
     getCourses:"/admin/getCourses",

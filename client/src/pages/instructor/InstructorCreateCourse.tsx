@@ -128,7 +128,7 @@ const InstructorCreateCourses = () => {
               <div className="flex items-center justify-center">
               <Card className="w-full max-w-md bg-black">
                 <CardHeader>
-                  <CardTitle className="text-white">Add a title</CardTitle>
+                  <CardTitle className="text-white">Add a title and category</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <form onSubmit={handleSubmit}>

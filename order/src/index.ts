@@ -5,18 +5,19 @@ import cookieParser from "cookie-parser";
 import { UserRouter } from "./framwork/webServer/router/userRouter";
 import { InstructorRouter } from "./framwork/webServer/router/instructorRouter";
 import kafkaWrapper from "./framwork/webServer/config/kafka/kafkaWrapper";
-import { UserCreatedConsumer } from "./framwork/webServer/config/kafka/consumer/user-created-consumer";
 import { CourseCreatedConsumer } from "./framwork/webServer/config/kafka/consumer/course-created-consumer";
+import { UserProfileCreatedConsumer } from "./framwork/webServer/config/kafka/consumer/user-profile-created-consumer";
 
 
 async function start(){
     try {
        connectDB();
-      const consumerUser = await kafkaWrapper.createConsumer("order-user-created-group")
+       await kafkaWrapper.connect()
+      const consumerUser = await kafkaWrapper.createConsumer("order-user-profile-created-group")
       const consumerCourse = await kafkaWrapper.createConsumer("order-course-created-group")
        consumerUser.connect();
        consumerCourse.connect();
-       const listener = new UserCreatedConsumer(consumerUser)
+       const listener = new UserProfileCreatedConsumer(consumerUser)
        const listenerCourse = new CourseCreatedConsumer(consumerCourse)
        await listener.listen()
        await listenerCourse.listen()

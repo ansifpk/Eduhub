@@ -8,6 +8,7 @@ import { AdminRoute } from './framework/webServer/routes/adminRoute';
 import { InstructorRouter } from './framework/webServer/routes/instructorRouter';
 import kafkaWrapper from './framework/webServer/config/kafka/kafkaWrapper';
 import cookieParser from   'cookie-parser'
+import { InstructorAprovalConsumer } from './framework/webServer/config/kafka/consumer/instructor-approvel-consumer';
 connectDB();
 const app = express()
 
@@ -38,6 +39,10 @@ app.use(errMiddleware);
 const start = async () => {
     try {
         await kafkaWrapper.connect();
+        const consumer = await kafkaWrapper.createConsumer("order-instructor-aproval-group")
+        consumer.connect()
+        const listener = new InstructorAprovalConsumer(consumer)
+        await listener.listen();
         app.listen(3000, () => console.log("the server is running in http://localhost:3000 for auth"))
     } catch (error) {
         console.error(error);

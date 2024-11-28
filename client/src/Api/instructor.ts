@@ -5,6 +5,7 @@ import ApiCategory from "@/service/category";
 import ApiCourse from "@/service/course";
 import instructorRoutes from "@/service/endPoints/instructorEndPoints";
 import ApiOrder from "@/service/order";
+import ApiUser from "@/service/user";
 import { useForm } from "react-hook-form";
 
 // interface Section {
@@ -43,18 +44,20 @@ import { useForm } from "react-hook-form";
 //     type: string;
 //   }
   
-//   interface CourseData {
-//     title: string;
-//     sections: Section[];
-//     image: File | undefined;
-//     instructorId: string;
-//     category: string;
-//     description: string;
-//     thumbnail: string;
-//     subCategory: string;
-//     level: string;
-//     price: number;
-//   }
+interface Iuser {
+    email:string,
+    name:string,
+    qualification:string,
+    experience:string,
+    cv:{
+        id:string,
+        cv_url:string|File
+    },
+    certificate:{
+        id:string,
+        certificate_url:string|File
+    }   
+ }
 export const editProfile = async (instructorData:object) =>{
     try {
        
@@ -64,16 +67,41 @@ export const editProfile = async (instructorData:object) =>{
         return error 
     }
 }
-export const register = async (instructorData:object) =>{
+export const register = async (instructorData:Iuser) =>{
     try {
-        const response = await Api.post(instructorRoutes.register,instructorData);       
-        return response.data
+
+        console.log(instructorData.cv);
+        console.log(instructorData.certificate);
+        
+         const formData = new FormData()
+         formData.append("name",instructorData.name)
+         formData.append("email",instructorData.email)
+         formData.append("qualification",instructorData.qualification)
+         formData.append("experience",instructorData.experience)
+
+        const img1 = instructorData.certificate.certificate_url as File
+        const img2 = instructorData.cv.cv_url as File
+        formData.append("certificate",img1.name)
+        formData.append("cv",img2.name)
+
+         formData.append("certificateImage",instructorData.certificate.certificate_url)
+         formData.append("cvImage",instructorData.cv.cv_url)
+
+
+         const response = await ApiUser.post(instructorRoutes.register,formData,{
+            headers:{
+                'Content-Type':"multipart/form-data"
+            }
+         })
+       return response.data;
     } catch (error) {
         return error 
     }
 }
 export const currentUser = async (userId:string) =>{
     try {
+     
+
         const response = await Api.get(`${instructorRoutes.currentUser}/${userId}`);       
         return response.data
     } catch (error) {

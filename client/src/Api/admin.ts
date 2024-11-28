@@ -3,6 +3,7 @@ import Api from "@/service/axios";
 import ApiCategory from "@/service/category";
 import ApiCourse from "@/service/course";
 import adminRoutes from "@/service/endPoints/adminEndPoints";
+import ApiUser from "@/service/user";
 
 interface ICategory{
     _id?:string;
@@ -79,7 +80,7 @@ export const blockStudents = async (studnetId:string) =>{
 }
 export const instructors = async () =>{
     try {
-        const response = await Api.get(adminRoutes.instructors);       
+        const response = await ApiUser.get(adminRoutes.instructors);       
         return response.data
     } catch (error) {
         return error 
@@ -105,6 +106,14 @@ export const editProfile = async (instructorData:object) =>{
 export const getCourses = async () =>{
     try {
         const response = await ApiCourse.get(adminRoutes.getCourses);       
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+export const instructorAprovel = async (email:string,status:string) =>{
+    try {
+        const response = await ApiUser.patch(adminRoutes.instructorAprovel,{email,status});       
         return response.data
     } catch (error) {
         return error 

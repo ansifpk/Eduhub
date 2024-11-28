@@ -11,6 +11,8 @@ import AdminListInstructors from "@/pages/admin/AdminListInstructors";
 import AdminListCourses from "@/pages/admin/AdminListCourses";
 import AdminProfile from "@/pages/admin/AdminProfile";
 import AdminEditProfile from "@/pages/admin/AdminEditProfile";
+import AdminInstructorRequests from "@/pages/admin/AdminInstructorRequests";
+
 
 interface User{
   id:string;
@@ -36,6 +38,7 @@ const AdminRouter = () => {
          <Route path='/editCategory/:id' element={isAdmin?<EditCategory/>:<AdminLogin/>} />
          <Route path='/students' element={isAdmin?<AdminListStudents/>:<AdminLogin/>} />
          <Route path='/instructors' element={isAdmin?<AdminListInstructors/>:<AdminLogin/>} />
+         <Route path="/instructorRequests" element={isAdmin?<AdminInstructorRequests/>:<AdminLogin/>} />
          <Route path='/courses' element={isAdmin?<AdminListCourses/>:<AdminLogin/>} />
          <Route path='*' element={<ErrorPage/>} />
        </Routes>

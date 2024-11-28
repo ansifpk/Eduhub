@@ -23,6 +23,6 @@ export interface IInstructorrepository{
     get():Promise<ICourse[]|void>
     findById(courseId:string):Promise<ICourse|void>
     create(courseData:ICourse):Promise<ICourse|void>
-    list(course:ICourse):Promise<ICourse|void>
+    list(courseId:string,isListed:boolean):Promise<ICourse|void>
     edit(courseData:ICourse):Promise<ICourse|void>
 }

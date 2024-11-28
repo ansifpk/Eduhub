@@ -1,6 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
-
-// import toast from "react-hot-toast"
+import React, { useEffect,  useState } from "react";
 import {
   Form,
   FormControl,
@@ -24,11 +22,17 @@ import {
   SelectValue,
 } from "../ui/select";
 import toast from "react-hot-toast";
-import { error } from "console";
 import { createCourse } from "@/Api/instructor";
 import { Value } from "@radix-ui/react-select";
 import { useSelector } from "react-redux";
-import { Loader2 } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  Loader2,
+  Plus,
+  
+  Trash2,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Separator } from "../ui/separator";
 import InstructorAside from "./InstructorAside";
@@ -92,15 +96,15 @@ const formSchema = z.object({
     message: "At least choose one level.",
   }),
   courseprice: z.number(),
-  courseVideo: z.array(z.instanceof(File)).min(2, {
-    message: "At least one video is required.",
-  }),
+  // courseVideo: z.array(z.instanceof(File)).min(1, {
+  //   message: "At least one video is required.",
+  // }),
   courseImage: z.instanceof(File, {
     message: "A thumbnile image is required.",
   }),
 });
 
-const CourseCreatePage: React.FC<Title> = ({ Title, Category, categories }) => {
+const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
   const [select, setSelect] = useState("Carriculum");
   const [category, setCategory] = useState(Category);
   const [subCategory, setSubCategory] = useState("");
@@ -110,13 +114,16 @@ const CourseCreatePage: React.FC<Title> = ({ Title, Category, categories }) => {
   const [topics, setTopics] = useState([]);
   const [price, setPrice] = useState(0);
   const [video, setVideo] = useState<File[]>([]);
-  const [image, setImage] = useState<File | undefined>();
+  const [image, setImage] = useState({
+    _id:"" as string,
+    image_url:"" as string | File
+  });
   const [previeImage, setPreview] = useState("");
   const [isLoading, setLoading] = useState(false);
-
   const [title, setTitle] = useState(Title);
   const instructorId = useSelector((state: IUser) => state.id);
   const navigate = useNavigate();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -127,8 +134,8 @@ const CourseCreatePage: React.FC<Title> = ({ Title, Category, categories }) => {
       description: description,
       thumbnail: thumbnail,
       courseprice: price,
-      courseVideo: video,
-      courseImage: image,
+      // courseVideo: video,
+      // courseImage: image,
     },
   });
 
@@ -145,16 +152,19 @@ const CourseCreatePage: React.FC<Title> = ({ Title, Category, categories }) => {
     };
     topic();
     if (Object.keys(form.formState.errors).length > 0) {
-      // console.log(form.formState.errors);
+      console.log(form.formState.errors);
+      
       toast.error("Please provide all the details");
     }
   }, [category, categories, form.formState.errors]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    setLoading(true);
+    // console.log(sections,"hi");
+
+    // setLoading(true);
     const response = await createCourse({
       title,
-      video,
+      sections,
       image,
       category,
       subCategory,
@@ -165,6 +175,8 @@ const CourseCreatePage: React.FC<Title> = ({ Title, Category, categories }) => {
       instructorId,
     });
     if (response.success) {
+      console.log(response.course);
+      
       toast.success("Course Created SuccessFully..");
       setLoading(false);
       return navigate("/instructor/courses");
@@ -193,40 +205,140 @@ const CourseCreatePage: React.FC<Title> = ({ Title, Category, categories }) => {
     };
   };
 
-  const [videoPreview, setVideoPreview] = useState('');
-  const videoInputRef = useRef(null);
-  const [videosArray,setVideosArray] = useState([]);
-  const [preview, setvidPreview] = useState<string[]>([]);
-  const handleVideoChange = (event:React.ChangeEvent<HTMLInputElement>) => {
-    const target = event.target as HTMLInputElement;
-    if(target.files&& target.files.length > 0){
-      const file = target.files[0];
-      if (file && file.type.startsWith("video/")) {
-        const fileURL = URL.createObjectURL(file);
-        setVideoPreview(fileURL);
-      }
-    }
+  const [sections, setSections] = useState([
+    {
+      id: 1,
+      sessionTitle: "",
+      isExpanded: true,
+      lectures: [
+        {
+          id: 1,
+          title: "",
+          content: {
+            _id:"",
+            video_url: "" as string | File,
+          },
+          duration: "",
+          type: "video",
+        },
+      ],
+    },
+  ]);
+
+  const addSection = () => {
+    setSections([
+      ...sections,
+      {
+        id: sections.length + 1,
+        sessionTitle: "",
+        isExpanded: true,
+        lectures: [],
+      },
+    ]);
   };
 
-  const handleClearVideo = () => {
-    setVideoPreview('');
-    if ( videoInputRef && videoInputRef.current) {
-      // videoInputRef.current.value = "";
-    }
+  const addLecture = (sectionId: number) => {
+    setSections(
+      sections.map((section) => {
+        if (section.id === sectionId) {
+          return {
+            ...section,
+            lectures: [
+              ...section.lectures,
+              {
+                id: section.lectures.length + 1,
+                title: "",
+                content: {
+                  _id:"",
+                  video_url:"" as string |File
+                },
+                duration: "",
+                type: "video",
+              },
+            ],
+          };
+        }
+        return section;
+      })
+    );
   };
 
-   const handleVideo = (e:React.ChangeEvent<HTMLInputElement>) => {
-       const target = e.target as HTMLInputElement;
-       if(target.files&&target.files.length>0){
-         console.log(target.files[0],"ji");
-         const fileURL = URL.createObjectURL(target.files[0]);
-         setvidPreview((prev)=>[...prev,fileURL])
-       }
-       
-   }
-  
-   
+  const updateSectionTitle = (sectionId: number, newTitle: string) => {
+    setSections(
+      sections.map((section) =>
+        section.id === sectionId ? { ...section, sessionTitle: newTitle } : section
+      )
+    );
+  };
 
+  const updateLecture = (
+    sectionId: number,
+    lectureId: number,
+    field: string,
+    value: string|File
+  ) => {
+    // console.log(field,value);
+    
+    setSections(
+      sections.map((section) => {
+        if (section.id === sectionId) {
+           if(field == "content"){
+              
+              return {
+                ...section,
+                lectures: section.lectures.map((lecture) =>
+                  lecture.id === lectureId
+                    ? { ...lecture, [field]:{_id:"1",video_url:value} }
+                    : lecture
+                ),
+              };
+           }else{
+            return {
+              ...section,
+              lectures: section.lectures.map((lecture) =>
+                lecture.id === lectureId
+                  ? { ...lecture, [field]:value }
+                  : lecture
+              ),
+            };
+           }
+        }
+        return section;
+      })
+    );
+  };
+
+  const toggleSectionExpand = (sectionId: number) => {
+    setSections(
+      sections.map((section) =>
+        section.id === sectionId
+          ? { ...section, isExpanded: !section.isExpanded }
+          : section
+      )
+    );
+  };
+
+  const deleteSection = (sectionId: number) => {
+    setSections(sections.filter((section) => section.id !== sectionId));
+  };
+
+  const deleteLecture = (sectionId: number, lectureId: number) => {
+    setSections(
+      sections.map((section) => {
+        if (section.id === sectionId) {
+          return {
+            ...section,
+            lectures: section.lectures.filter(
+              (lecture) => lecture.id !== lectureId
+            ),
+          };
+        }
+        return section;
+      })
+    );
+  };
+ 
+ 
   return (
     <div className="bg-black ">
       <div className="md:hidden">
@@ -257,6 +369,7 @@ const CourseCreatePage: React.FC<Title> = ({ Title, Category, categories }) => {
         <Separator className="my-6" />
         <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">
           <InstructorAside />
+
           <div className="flex-1 lg:max-w-full ">
             <div className="space-y-6">
               <div className="col-md-12">
@@ -358,7 +471,10 @@ const CourseCreatePage: React.FC<Title> = ({ Title, Category, categories }) => {
                                                 previewFile(e);
                                                 if (e.target.files[0]) {
                                                   const val = e.target.files[0];
-                                                  setImage(val);
+                                                  setImage({
+                                                    _id:`1`,
+                                                    image_url:val
+                                                  });
                                                   form.setValue(
                                                     "courseImage",
                                                     val
@@ -385,82 +501,167 @@ const CourseCreatePage: React.FC<Title> = ({ Title, Category, categories }) => {
                                   )}
                                 />
                               </div>
-                              <div className="grid w-full max-w-sm items-center gap-1.5">
-                                {/* <div >
-                                <Label>video</Label>
-                                  {videoPreview && (
-                                    <div className="mt-4">
-                                      <video
-                                        src={videoPreview}
-                                        controls
-                                        className="w-full rounded"
-                                      >
-                                        Your browser does not support the video
-                                        tag.
-                                      </video>
-                                      <button
-                                        onClick={handleClearVideo}
-                                        className="mt-2 px-4 py-2 bg-red-500 text-white rounded"
-                                      >
-                                        Clear Video
-                                      </button>
-                                      <input
-                                    type="file"
-                                    accept="video/*"
-                                    onChange={handleVideoChange}
-                                    ref={videoInputRef}
-                                    className="mt-4 block w-full"
-                                  />
+                              <div className="grid w-full items-center gap-1.5">
+                                <Label className="text-white my-2">
+                                  videos Section
+                                </Label>
+                                <div className="mb-6">
+                                  {sections.map((section,index) => (
+                                    <div
+                                      key={section.id}
+                                      className="border rounded-lg mb-4 p-4"
+                                    >
+                                      <div className="flex items-center justify-between mb-2">
+                                        <div className="flex-1">
+                                             <Label htmlFor="Section" className="text-white">
+                                               Section {index+1}
+                                              </Label>
+                                          <input
+                                            type="text"
+                                            value={section.sessionTitle}
+                                            onChange={(e) =>
+                                              updateSectionTitle(
+                                                section.id,
+                                                e.target.value
+                                              )
+                                            }
+                                            placeholder="Section Title"
+                                            className="w-full p-2 bg-black text-white border rounded"
+                                          />
+                                        </div>
+                                        <div className="flex gap-2 ml-2 ">
+                                          <button
+                                            type="button"
+                                            onClick={() =>
+                                              toggleSectionExpand(section.id)
+                                            }
+                                            className="p-2 mt-4 bg-white hover:bg-gray-100 rounded"
+                                          >
+                                            {section.isExpanded ? (
+                                              <ChevronUp size={20} />
+                                            ) : (
+                                              <ChevronDown size={20} />
+                                            )}
+                                          </button>
+                                          <button
+                                            onClick={() =>
+                                              deleteSection(section.id)
+                                            }
+                                            className="p-2 mt-4 text-red-600 hover:bg-red-50 rounded"
+                                          >
+                                            <Trash2 size={20} />
+                                          </button>
+                                        </div>
+                                      </div>
+
+                                      {section.isExpanded && (
+                                        <div className=" ">
+                                          {section.lectures.map((lecture,ind) => (
+                                            <div key={lecture.id} className="flex-col " >
+
+                                              <div
+                                              key={lecture.id}
+                                              className="flex items-center gap-2 my-2"
+                                            >
+                                               <div>
+                                               <Label className="text-white">lecture {ind+1}</Label>
+                                              <input
+                                                type="text"
+                                                value={lecture.title}
+                                                onChange={(e) =>
+                                                  updateLecture(
+                                                    section.id,
+                                                    lecture.id,
+                                                    "title",
+                                                    e.target.value
+                                                  )
+                                                }
+                                                placeholder="Lecture Title"
+                                                className="flex-1 p-2 border rounded bg-black text-white"
+                                              />
+                                               </div>
+                                               <Label  className="text-white mt-4">
+                                               Duration
+                                              </Label>
+                                              <input
+                                                type="text"
+                                                value={lecture.duration}
+                                                onChange={(e) =>
+                                                  updateLecture(
+                                                    section.id,
+                                                    lecture.id,
+                                                    "duration",
+                                                    e.target.value
+                                                  )
+                                                }
+                                                placeholder="Duration"
+                                                className="w-24 p-2 mt-4 border rounded bg-black text-white"
+                                              />
+                                              <button
+                                                onClick={() =>
+                                                  deleteLecture(
+                                                    section.id,
+                                                    lecture.id
+                                                  )
+                                                }
+                                                className="p-2 mt-4 text-red-600 hover:bg-red-50 rounded"
+                                              >
+                                                <Trash2 size={20} />
+                                              </button>
+                                              
+                                            </div>
+                                              <div>
+                                              <Label htmlFor="Duration" className="text-white">
+                                              Content
+                                              </Label>
+                                              <input
+                                                type="file"
+                                                // value={lecture.content.name}
+                                                onChange={(e) =>{
+                                                    const target = e.target;
+                                                    if(target.files&&target.files.length>0){
+                                                      updateLecture(
+                                                        section.id,
+                                                        lecture.id,
+                                                        "content",
+                                                        target.files[0]
+                                                      )
+                                                    }
+                                                    
+                
+                                                }}
+                                                accept="video/*"
+                                                placeholder="Content"
+                                                required
+                                                className="w-full p-2 border rounded bg-black text-white"
+                                              />
+                                              </div>
+                                              <Separator className="my-4" />
+                                            </div>
+                                          ))}
+                                          
+                                          <button
+                                            type="button"
+                                            onClick={() =>
+                                              addLecture(section.id)
+                                            }
+                                            className="mt-2 bg-white text-black flex items-center gap-2 text-blue-600 hover:bg-blue-50 p-2 rounded"
+                                          >
+                                            <Plus size={20} /> Add Lecture
+                                          </button>
+                                        </div>
+                                      )}
                                     </div>
-                                    
-                                  )}
-                                 
-                                </div> */}
-                                {preview.length>0?(
-                                <>
-                                  {preview.map((val)=>(
-                                    <div className="mt-4">
-                                    <video
-                                      src={val}
-                                      controls
-                                      className="w-full rounded"
-                                    >
-                                      Your browser does not support the video
-                                      tag.
-                                    </video>
-                                    <button
-                                      onClick={handleClearVideo}
-                                      className="mt-2 px-4 py-2 bg-red-500 text-white rounded"
-                                    >
-                                      Clear Video
-                                    </button>
-                                    <input
-                                  type="file"
-                                  accept="video/*"
-                                  onChange={handleVideoChange}
-                                  ref={videoInputRef}
-                                  className="mt-4 block w-full"
-                                />
-                                  </div>
-                                  
                                   ))}
-                                </>
-                                )
-                                :
-                                (
-                                <>
-                                
-                                </>
-                                )
-                                
-                                }
-                                <input
-                                    type="file"
-                                    accept="video/*"
-                                    onChange={handleVideo}
-                                    ref={videoInputRef}
-                                    className="mt-4 block w-full"
-                                  />
+                                </div>
+
+                                <button
+                                  onClick={addSection}
+                                  type="button"
+                                  className="w-full flex items-center justify-center gap-2 bg-white text-black p-2 rounded hover:bg-blue-700"
+                                >
+                                  <Plus size={20} /> Add New Section
+                                </button>
                               </div>
                             </CardContent>
                           </Card>
@@ -836,4 +1037,4 @@ const CourseCreatePage: React.FC<Title> = ({ Title, Category, categories }) => {
   );
 };
 
-export default CourseCreatePage;
+export default Ex;

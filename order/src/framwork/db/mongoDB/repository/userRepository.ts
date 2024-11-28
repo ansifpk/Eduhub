@@ -11,17 +11,32 @@ export class UserRepository implements IUserRepository{
         private courseModels:typeof courseModel
     ){}
 
-  async findAllCurses(userId: string): Promise<ICourse[] | void> {
-    // console.log(userId,"repo");
-    const userCourses = await courseModel.find({ 
-      users: userId,
-      isListed: true // Optional: additional filter
-    })
-    .populate('users')
+  async findById(courseId: string): Promise<ICourse | void> {
+     try {
+      const course = await this.courseModels.findById({_id:courseId});
+      if (course) {
+        return course as unknown as ICourse;
+      }
+     } catch (error) {
+      console.error(error)
+     }
+    throw new Error("Method not implemented.");
+  }
 
-    if(userCourses){
-      // return userCourses
+  async findAllCurses(userId: string): Promise<ICourse[] | void> {
+    const course = await this.courseModels.find({});
+    if(course){
+      // return course ;
     }
+    // return course
+    // const userCourses = await courseModel.find({ 
+    //   isListed: true 
+    // })
+    // .populate('users') 
+
+    // if(userCourses){
+    //   return userCourses
+    // }
 
   }
 
@@ -33,7 +48,7 @@ export class UserRepository implements IUserRepository{
       if(course){
         let check = await this.courseModels.findByIdAndUpdate(
             { _id: data._id }, 
-            { $push: { users: data.user.id } },
+            { $push: { students: data.user.id } },
             { new: true } // This returns the updated document
           )
         

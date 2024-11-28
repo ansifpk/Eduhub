@@ -132,11 +132,22 @@ export class InstructorUseCase implements IInstructorUseCase {
     }
 
   }
-  editCourse(courseData: object, next: NextFunction): Promise<ICourse | void> {
-    throw new Error("Method not implemented.");
+  async editCourse(courseData: object, next: NextFunction): Promise<ICourse | void> {
+    
   }
-  listCourse(courseId: string, next: NextFunction): Promise<ICourse | void> {
-    throw new Error("Method not implemented.");
+  async listCourse(courseId: string, next: NextFunction): Promise<ICourse | void> {
+    
+    const course = await this.instructorRepository.findById(courseId);
+   
+    if(!course){
+     return next(new ErrorHandler(400,"Course Not fount"))
+    }
+    
+    const listedCourse = await this.instructorRepository.list(courseId,course.isListed)
+    if(listedCourse){
+       return listedCourse
+    }
+   
   }
 
 

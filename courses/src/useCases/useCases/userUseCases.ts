@@ -72,7 +72,9 @@ export class UserUseCase implements IUserUseCase{
        }
     }
     async orderCourse(courseData: Course, next: NextFunction): Promise<ICourse | void> {
-        throw new Error("Method not implemented.");
+       await this.userRepository.findById(courseData._id)
+       
+       
     }
   
   

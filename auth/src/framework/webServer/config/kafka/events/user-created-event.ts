@@ -8,6 +8,6 @@ export interface UserCreateEvent {
         name: string;
         email: string;
         isInstructor:boolean;
-        isBlock:boolean
+        password:string;
     };
 }

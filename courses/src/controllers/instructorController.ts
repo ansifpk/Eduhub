@@ -10,10 +10,11 @@ export class InstructorController{
         // this.instructorUseCases=instructorUseCases
     }
     async createCourse(req:Request,res:Response,next:NextFunction){
-      
+        console.log("hi");
+        
         const course = await this.instructorUseCases.createCourse({bodyData:req.body,fileData:req.files})
         if(course){    
-            console.log(course.sessions);
+            console.log("finish");
             await new CourseCreatedPublisher(kafkaWrapper.producer as Producer).produce({
                 _id: course._id!,
                 title: course.title,

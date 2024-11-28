@@ -32,10 +32,10 @@ export class UserController{
          line_items:[
              {
                price_data:{
-                   currency:'usd',
+                   currency:'inr',
                    product_data:{
                        name:req.body.title,
-                       images:[req.body.imageUrl]
+                       images:[req.body.image.image_url]
                    },
                    unit_amount:Math.round(req.body.price*100)
                },
@@ -47,7 +47,7 @@ export class UserController{
          cancel_url:"http://localhost:5173/user/faile"
        })
        if(session){
-         console.log('ivade');
+        //  console.log('ivade');
          
          res.json({id:session.id})
        }

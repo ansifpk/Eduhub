@@ -47,22 +47,18 @@ export function Coursestable() {
     };
     res();
   }, []);
-console.log(courses,"ji");
+
 
   const listingCourses = courses.filter((val: ICourse) =>{
       let arr =  val.title.toLocaleLowerCase().includes(search.toLocaleLowerCase())
-      switch(filter){
-        case "New":
-        
-      }
       return arr
   });
 
   const handleCourses = async (courseId: string) => {
     const res = await listCourses(courseId);
     if (res.success) {
-      const respons = await getCourses(instructorId);
-      setCourses(respons);
+      const respons = await getCourses(instructorId);      
+      setCourses(respons.courses);
       if (res.course.isListed) {
         toast.success("Successfully Listed Course");
       } else {

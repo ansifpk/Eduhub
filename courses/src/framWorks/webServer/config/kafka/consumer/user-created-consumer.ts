@@ -1,20 +1,22 @@
 
 import { Consumer } from "kafkajs";
 import { KafkaConsumer } from "../base-listener";
-import { UserCreateEvent } from "../events/user-created-event";
 import { Topics } from "../topics/topics";
 import { UserModel } from "../../../../db/mongodb/models/userModel";
+import { UserProfileCreateEvent } from "../events/user-profile-created-event";
 
 
-export class UserCreatedConsumer extends KafkaConsumer<UserCreateEvent>{
-    topic: Topics.userCreated = Topics.userCreated;
-    groupId: string = "course-user-created-group";
+export class UserProfileCreateConsumer extends KafkaConsumer<UserProfileCreateEvent>{
+ 
+    topic: Topics.profileUpdated = Topics.profileUpdated;
+    groupId: string = "course-user-profile-created-group";
     constructor(consumer:Consumer){
         super(consumer)
     }
-    async onMessage(data: { _id: string; name: string; email: string; isInstructor: boolean; }): Promise<void> {
+
+    async onMessage(data: { _id: string; name: string; email: string; isInstructor: boolean; isBlock: boolean; createdAt: Date; avatar: { id: string; avatar_url: string; }; }): Promise<void> {
         try {
-            console.log('Consumer received message:', data);
+            // console.log('Consumer received message:', data);
             // Adding userDta to db in course Service
             await UserModel.create(data)
         } catch (error) {

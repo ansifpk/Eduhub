@@ -4,7 +4,12 @@ export interface ICourse{
     title:string,
     instructorId:{
         _id:string,
-        name:string
+        name:string,
+        email:string,
+        avatar:{
+            id:string,
+            avatart_url:string
+        }
     },
     subCategory:string,
     description:string,

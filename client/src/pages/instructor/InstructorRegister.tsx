@@ -13,15 +13,23 @@ import { setInstructor } from '@/redux/authSlice';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { User } from '@/@types/userType';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/Components/ui/alert-dialog';
 const InstructorRegister = () => {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [password, setPassword] = useState("");
   const [qualification, setQualification] = useState('');
-  const [user, setUser] = useState();
-  const [expirience, setExpirience] = useState('');
-  const [certificat, setCertificate] = useState('');
-  const [cv, setCv] = useState('');
+  const [experience, setExpirience] = useState("");
+
+  const [certificate, setCertificate] = useState({
+    id:"" as string,
+    certificate_url:"" as string | File
+  });
+  
+  const [cv, setCv] = useState({
+    id:"" as string,
+    cv_url:"" as string | File
+  });
   const [optionError, setoptionError] = useState(false);
   const [next, setNext] = useState(false);
   const [page,setPage] = useState(1);
@@ -32,7 +40,7 @@ const InstructorRegister = () => {
   const userName = useSelector((state:User)=>state.name)
   const userEmail = useSelector((state:User)=>state.email)
 
-  console.log(email.length,next);
+  // console.log(email.length,next);
 
   useEffect( () =>{
     if(userId){
@@ -47,26 +55,26 @@ const InstructorRegister = () => {
 
   const handleSubmit  = async (e:React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()    
-       if(certificat.length == 0){
-        toast.error("Please select an option")
-        setoptionError(true)
-       }
-       console.log(name,email,
-        "qual",qualification,
-        "expirience",expirience,
-        "certi ex",certificat,
-        "cv",cv
-       );
-       const response = await register({name,email,qualification,expirience,certificat,cv})
+      //  if(certificat.length == 0){
+      //   toast.error("Please select an option")
+      //   setoptionError(true)
+      //  }
+      //  console.log(name,email,
+      //   "qual",qualification,
+      //   "expirience",expirience,
+      //   "certi ex",certificat,
+      //   "cv",cv
+      //  );
+       const response = await register({name,email,qualification,experience,certificate,cv})
+
        if(response.success){
-         console.log(response.user.user);
-         dispatch(setInstructor(response.user.user))
-         toast.success("Register Successfull")
-         return navigate("/instructor")
+        toast.success(`successfully applyed
+           we sent an email after review your informations.`)
+         return navigate("/instructor/login")
        }else{
-        toast.error(response.response.data.message)
+        return toast.error(response.response.data.message)
        }
-      //  navigate("/instructor/")
+      
   }
   return (
     <div>
@@ -82,7 +90,7 @@ const InstructorRegister = () => {
          <div className='col-5 p-2 rounded-5 border-1 border-[#49BBBD] '>
         <InstructorAuthHead />
         <div>
-        <form  onSubmit={handleSubmit}>
+        <form  onSubmit={handleSubmit} encType="multipart/form-data" >
              <div className="space-y-4">
                {page==1?(
                 <>
@@ -116,21 +124,6 @@ const InstructorRegister = () => {
                         
                       />
                     </div>
-                    {/* <div className="space-y-2 flex flex-col items-center">
-                      <label className="w-1/2 text-sm font-medium text-gray-700">
-                        Password
-                      </label>
-                      <Input
-                        id="password"
-                        type="password"
-                        placeholder="Enter your password"
-                        value={password}
-                        required
-                        onChange={(e) => setPassword(e.target.value.trim())}
-                        className="w-1/2 rounded-full p-2 border-1 border-blue-900"
-                        
-                      />
-                    </div> */}
                 </>
                ):(
                 <>
@@ -154,9 +147,9 @@ const InstructorRegister = () => {
                       <label className="w-1/2 text-sm font-medium text-gray-700">
                         What kind of teaching have you done before?
                       </label>
-                       <Select  onValueChange={(value) => setExpirience(value)}>
+                       <Select defaultValue={experience} required onValueChange={(value) => setExpirience(value)}>
                           <SelectTrigger  className="w-1/2 rounded-full border-1 border-blue-900">
-                            <SelectValue placeholder="Select..." />
+                            <SelectValue  placeholder="Select..." />
                           </SelectTrigger>
                           <SelectContent >
                             <SelectGroup>
@@ -174,11 +167,20 @@ const InstructorRegister = () => {
                       </label>
                       <Input
                         id="password"
+                        name="certificateImage"
                         type="file"
                         placeholder="choose file"
-                        value={certificat}
+                        // value={certificat?.name.toString()}
                         required
-                        onChange={(e) => setCertificate(e.target.value)}
+                        onChange={(e) =>{
+                          let target = e.target;
+                          if(target && target.files){
+                             setCertificate({
+                              id:'1',
+                              certificate_url:target.files[0]
+                             })
+                          }
+                        }}
                         className="w-1/2 rounded-full p-2 border-1 border-blue-900"
                         
                       />
@@ -191,9 +193,20 @@ const InstructorRegister = () => {
                         id="password"
                         type="file"
                         placeholder="choose file"
-                        value={cv}
+                        
+                        name="cvImage"
                         required
-                        onChange={(e) => setCv(e.target.value)}
+                        onChange={(e) =>{
+                          let target = e.target;
+                          if(target && target.files){
+
+                            setCv({
+                              id:`1`,
+                              cv_url:target.files[0]
+                            });
+
+                          }
+                        }}
                         className="w-1/2 rounded-full p-2 border-1 border-blue-900"
                         
                       />

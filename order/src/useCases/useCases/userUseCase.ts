@@ -3,6 +3,7 @@ import { IOrder } from "../../entities/order";
 import { ICourse } from "../../entities/types/course";
 import { IUserUseCase } from "../interfaces/useCases/IUserUseCase";
 import { IUserRepository } from "../interfaces/repository/IUserRepositoru";
+import ErrorHandler from "../middlewares/errorHandler";
 
 
 
@@ -18,12 +19,17 @@ export class UserUseCase implements IUserUseCase{
     }
 
    async createOrder(data: ICourse, next: NextFunction): Promise<IOrder | void> {
-    // console.log("contrio");
-        const course = await this.userRepository.create(data)
-        if(course){
-            return course;
+    
+       const course = await this.userRepository.findById(data._id!)
+       if(!course){
+        return next(new ErrorHandler(400,"Course not fount"))
+       }
+       
+        const order = await this.userRepository.create(data)
+        if(order){
+            return order;
         }
-        // throw new Error("Method not implemented.");
+        
     }
     
 }

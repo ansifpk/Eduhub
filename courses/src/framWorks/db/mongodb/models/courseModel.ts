@@ -170,10 +170,12 @@ const courseScheema = new mongoose.Schema({
         required:true,
         default: new Date().toLocaleString(),
     },
-    students:{
-        type:Array,
-        ref:'User'
-    },
+    students:[
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+        }
+    ],
     sessions:[
      {
         sessionTitle:{

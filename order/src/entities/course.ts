@@ -1,4 +1,3 @@
-
 export interface ICourse{
     _id?:string,
     title:string,
@@ -21,7 +20,7 @@ export interface ICourse{
     sessions:{
         sessionTitle:string,
         lectures:[{
-            id:string,
+            _id:string,
             content:{
                 _id:string,
                 video_url:string,

@@ -17,6 +17,7 @@ import {
 } from "@/Components/ui/accordion";
 import { allCourses } from "@/Api/instructor";
 import { students } from "@/Api/admin";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/Components/ui/alert-dialog";
 
 interface Course {
   name: string;
@@ -30,7 +31,6 @@ interface Review {
 }
 
 const CourseDetailesPage = () => {
-
   const reviews: Review[] = [
     {
       name: "Lina",
@@ -53,25 +53,22 @@ const CourseDetailesPage = () => {
     const call = async () => {
       const res = await allCourses();
       if (res.success) {
-        res.courses.map((value:ICourse)=>{
-           if(value._id == courseId){
+        res.courses.map((value: ICourse) => {
+          console.log(value, "ki");
+
+          if (value._id == courseId) {
             setCourse(value);
-           }
-           if(value.instructorId._id==course?.instructorId._id){
-            setVideos((prev)=>{
-              return prev+1
-            })
-           }
-          setStudents((_prev)=>{
-           return _prev+value.students?.length!
-          })
-        })
+          }
+
+          setStudents((_prev) => {
+            return _prev + value.students?.length!;
+          });
+        });
       }
     };
     call();
   }, [courseId]);
-console.log(totellStudents,totellCourses);
-433249547444
+
   const handleOrder = async () => {
     try {
       const stripe = await loadStripe(
@@ -87,6 +84,8 @@ console.log(totellStudents,totellCourses);
           body: JSON.stringify(course),
         }
       );
+      console.log("sent");
+
       const session = await response.json();
 
       if (session) {
@@ -130,16 +129,18 @@ console.log(totellStudents,totellCourses);
               className="w-full border border-black"
             >
               {course?.sessions.map((val, index) => (
-                <AccordionItem key={index} value="item-1" className="mx-5">
+                <AccordionItem key={index} value={"index"} className="mx-5">
                   <AccordionTrigger className="text-base font-bold hover:no-underline">
-                    {index + 1} - {val.sessionTitle}
+                    Section {index + 1} - {val.sessionTitle}
                   </AccordionTrigger>
                   {val.lectures.map((lecture, ind) => (
                     <AccordionContent
                       key={ind}
                       className="flex text-sm pt-3 border-t border-black items-center justify-between"
                     >
-                      <div>{lecture.title} </div>
+                      <div>
+                        Lecture {ind + 1} - {lecture.title}{" "}
+                      </div>
                       <div>{lecture.duration}</div>
                     </AccordionContent>
                   ))}
@@ -158,26 +159,28 @@ console.log(totellStudents,totellCourses);
                 <div className="mx-3 pb-5">
                   <Card>
                     <CardHeader>
-                      <h2 className="text-lg font-semibold">{course?.instructorId.name}</h2>
+                      <h2 className="text-lg font-semibold">
+                        {course?.instructorId.name}
+                      </h2>
                     </CardHeader>
                     <CardContent>
-                     
-                        <div
-                          className="flex items-center gap-3 mb-4 last:mb-0"
-                        >
-                          <img
-                            src={course?.instructorId.name}
-                            alt={"review.name"}
-                            className="w-8 h-8 rounded-full"
-                          />
-                          <div>
-                            <div className="">no of courses {totellCourses}</div>
-                            <div className="text-sm text-gray-500">
-                              no of students {totellStudents}
-                            </div>
+                      <div className="flex items-center gap-3 mb-4 last:mb-0">
+                        <img
+                          src={
+                            course?.instructorId.avatar.avatart_url
+                              ? course?.instructorId.avatar.avatart_url
+                              : "https://github.com/shadcn.png"
+                          }
+                          alt={"review.name"}
+                          className="w-8 h-8 rounded-full"
+                        />
+                        <div>
+                          <div>no of courses {totellCourses}</div>
+                          <div className="text-sm text-gray-500">
+                            no of students {totellStudents}
                           </div>
                         </div>
-                
+                      </div>
                     </CardContent>
                   </Card>
                 </div>
@@ -188,27 +191,43 @@ console.log(totellStudents,totellCourses);
         <div className="col-5">
           <Card>
             <CardHeader>
-              <h2 className="text-lg font-semibold">Reviews</h2>
+              <h2 className="text-lg font-semibold">Purchase the course</h2>
             </CardHeader>
             <CardContent>
-              {reviews.map((review, index) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-3 mb-4 last:mb-0"
-                >
-                  <img
-                    src={review.avatar}
-                    alt={review.name}
-                    className="w-8 h-8 rounded-full"
-                  />
-                  <div>
+              <div className="flex flex-col items-center gap-3 mb-4 last:mb-0">
+                <img
+                  src={course?.image.image_url}
+                  alt={"review.name"}
+                  className="w-full h-[300px]"
+                />
+                <div>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button >purchase</Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you absolutely sure?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Are you sure to purchase this course?
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogAction >Cancel</AlertDialogAction>
+                        <AlertDialogAction onClick={handleOrder} >Continue</AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
+                {/* <div>
                     <div className="font-medium">{review.name}</div>
                     <div className="text-sm text-gray-500">
                       {review.comment}
                     </div>
-                  </div>
-                </div>
-              ))}
+                  </div> */}
+              </div>
             </CardContent>
           </Card>
         </div>

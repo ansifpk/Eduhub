@@ -8,21 +8,39 @@ import { Table, TableBody,
   TableHead,
   TableHeader,
   TableRow, } from '@/Components/ui/table';
+import { Button } from '@/Components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 
 interface IUser{
   _id?:string;
   name:string;
   email:string;
+  status:string;
   isBlock:boolean;
+  avatar:{
+    id:string,
+    avatar_url:string
+  }
 }
 
 const AdminListInstructors = () => {
+
     const [instructor,setInstructors] = useState([])
+    const [requests,setRequests] = useState(0)
+    const navigate = useNavigate()
+
     useEffect(()=>{
       const fetchAllinstructors = async () => {
-          const response = await instructors();
+          const response = await instructors();          
           setInstructors(response); 
+          response.map((value:IUser)=>{
+            if(value.status == "pending"){
+               setRequests((prev)=>{
+                 return prev+1
+               })
+            }
+          })
       }
       fetchAllinstructors()
     },[]);
@@ -58,7 +76,7 @@ const AdminListInstructors = () => {
             <div className="grid grid-cols-1">
             <div className='d-flex justify-content-between'>
                    <h1 className="text-lg font-bold">Instructors</h1>
-                   {/* <Button className='mb-3' onClick={()=>navigate("/admin/addCategory")} >Add Categories</Button> */}
+                   <Button type='button' onClick={()=>navigate("/admin/instructorRequests")} className='mb-3'>Instructor Requests {requests}</Button>
                 </div>
              <Card>
                   <Table>
@@ -74,7 +92,7 @@ const AdminListInstructors = () => {
                     {instructor.length>0? (
                       instructor.map((value:IUser,index)=>(
                         <TableRow key={index}>
-                          <TableCell className="font-medium"> <img src="https://via.placeholder.com/50" alt="Profile Picture" className="profile-pic" /></TableCell>
+                          <TableCell className="font-medium"> <img src={value.avatar.avatar_url?value.avatar.avatar_url:"https://github.com/shadcn.png"} alt="Profile Picture" className="profile-pic" /></TableCell>
                           <TableCell>{value.name}</TableCell>
                           <TableCell>{value.email}</TableCell>
                           <TableCell className="text-right"><button onClick={()=>handleBlockInstructroctor(value._id!)} className={value.isBlock?'btn btn-danger':'btn btn-success'}>{value.isBlock ? "UnBlock":"BLock"}</button></TableCell>

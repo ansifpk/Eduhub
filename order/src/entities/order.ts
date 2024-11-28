@@ -15,7 +15,12 @@ interface ICourse{
 
 export interface IOrder{
   _id:string,
-  user:object,
+  user:{
+    id:string,
+    name:string,
+    email:string,
+    createdAt:Date
+  },
   product:ICourse,
   orderDate:string
 }

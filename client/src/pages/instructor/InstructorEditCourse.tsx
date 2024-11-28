@@ -43,6 +43,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { url } from "inspector";
 import { Separator } from "@/Components/ui/separator";
 import InstructorAside from "@/Components/instructor/InstructorAside";
+import { ICourse } from "@/@types/courseType";
 
 interface Course {
   _id: string;
@@ -84,7 +85,7 @@ const InstructorEditcourse: React.FC = () => {
   const [categories, setCategories] = useState([]);
   const [category, setCategory] = useState("");
   const [subCategory, setSubCategory] = useState("");
-  const [course, setCourse] = useState<Course>();
+  const [course, setCourse] = useState<ICourse>();
   const [level, setLevel] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDiscription] = useState("");
@@ -104,62 +105,92 @@ const InstructorEditcourse: React.FC = () => {
     description: false,
   });
 
+
+  const [sections, setSections] = useState<any>();
+console.log(sections,'hhgg');
+
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       courseprice: price,
-      // courseVideo:video,
-      // courseImage:image,
     },
   });
 
   const _id = useSelector((state: IUser) => state.id);
+
   const { courseId } = useParams();
 
   useEffect(() => {
     const topic = async () => {
-      const res = await getCourses(_id);
-      const categories = await getCategoryies();
-      setCategories(categories);
+       const res = await getCourses(_id);
+       const catrg = await getCategoryies();
+      setCategories(catrg);
+console.log(res,"courses");
 
-      const data: Course = res.find((value: Course) => value._id == courseId);
-      if (data) {
-        setLevel(data.level);
-        setPreviewImg(data.imageUrl!);
-        setCourse(data);
-        setTitle(data.title);
-        setCategory(data.category);
-        setSubCategory(data.subCategory);
-        setThumbnail(data.thumbnail);
-        setDiscription(data.description);
-        setPrice(data.price);
-        setVideoUrls(data.videoUrl);
-        const top = categories.find(
-          (val: ICategory) => val.title === data.category
-        );
-        if (top) {
-          setTopics(top.topics);
+      const top = categories.find(
+              (val: ICategory) => val.title === course?.category
+            );
+            if (top) {
+              setTopics(top.topics);
+            }
+      
+      if(res.success){
+
+        const arr = res.courses.find((value:ICourse)=>value._id == courseId)
+        if(arr){
+          setCourse(arr);
+          setSections(course?.sessions!)
         }
-
-        const videoFiles = await Promise.all(
-          data.videos!.map(async (video: string, index: number) => {
-            const response = await fetch(video, { mode: "no-cors" });
-            const blob = await response.blob();
-            return new File([blob], video, { type: "video/mp4" });
-          })
-        );
-        const response = await fetch(data.image, { mode: "no-cors" });
-        const blob = await response.blob();
-        const img = new File([blob], data.image, { type: "image/png" });
-        //  console.log("idg",img);
-        setImage(img);
-        setVideo(videoFiles);
-        //  setAddVideo(data.videos);
+        
+        setLevel(course?.level!)
+        setThumbnail(course?.thumbnail!)
+        setDiscription(course?.description!)
+        setPrice(course?.price!)
+        // setTopics()
       }
+      
+    //   const categories = await getCategoryies();
+    //   setCategories(categories);
+
+    //   const data: Course = res.find((value: Course) => value._id == courseId);
+    //   if (data) {
+    //     setLevel(data.level);
+    //     setPreviewImg(data.imageUrl!);
+    //     setCourse(data);
+    //     setTitle(data.title);
+    //     setCategory(data.category);
+    //     setSubCategory(data.subCategory);
+    //     setThumbnail(data.thumbnail);
+    //     setDiscription(data.description);
+    //     setPrice(data.price);
+    //     setVideoUrls(data.videoUrl);
+    //     const top = categories.find(
+    //       (val: ICategory) => val.title === data.category
+    //     );
+    //     if (top) {
+    //       setTopics(top.topics);
+    //     }
+
+    //     const videoFiles = await Promise.all(
+    //       data.videos!.map(async (video: string, index: number) => {
+    //         const response = await fetch(video, { mode: "no-cors" });
+    //         const blob = await response.blob();
+    //         return new File([blob], video, { type: "video/mp4" });
+    //       })
+    //     );
+    //     const response = await fetch(data.image, { mode: "no-cors" });
+    //     const blob = await response.blob();
+    //     const img = new File([blob], data.image, { type: "image/png" });
+    //     //  console.log("idg",img);
+    //     setImage(img);
+    //     setVideo(videoFiles);
+    //     //  setAddVideo(data.videos);
+    //   }
     };
     topic();
   }, []);
-
+ console.log(course,"ji");
   const setFileToBase = (file: File) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -356,7 +387,7 @@ const InstructorEditcourse: React.FC = () => {
                                 <Label className="m-3">
                                   Add Image for your course
                                 </Label>
-                                <img src={previewImg} alt="" />
+                                <img src={course?.image.image_url} alt="" />
                                 <Input
                                   type="file"
                                   name="courseImage"
@@ -377,100 +408,7 @@ const InstructorEditcourse: React.FC = () => {
                                 <Label className="m-3">
                                   Add videos for your course
                                 </Label>
-                                {video.length > 0 ? (
-                                  <>
-                                    {videoUrls.map((videos, index) => (
-                                      <div key={index}>
-                                        {/* <Label>Choose video</Label> */}
-                                        <div className="flex">
-                                          {/* <iframe 
-                                                          src={videos}
-                                                            allowFullScreen>
-                                                       </iframe> */}
-                                          <video controls>
-                                            <source
-                                              src={videos}
-                                              type="video/mp4"
-                                            />
-                                            <source
-                                              src={videos}
-                                              type="video/webm"
-                                            />
-                                            <source
-                                              src={videos}
-                                              type="video/ogg"
-                                            />
-                                          </video>
-                                          <Button 
-                                           className="bg-white text-black"
-                                            type="button"
-                                            onClick={() => removeVideo(index)}
-                                          >
-                                            remove
-                                          </Button>
-                                        </div>
-                                        <Input
-                                          type="file"
-                                          accept="video/*"
-                                          name="courseVideo"
-                                          placeholder="course Video"
-                                          onChange={(e) => {
-                                            if (e.target.files) {
-                                              let array = [...video];
-                                              array[index] = e.target.files[0];
-                                              setVideo(array);
-                                            }
-                                          }}
-                                        />
-                                      </div>
-                                    ))}
-                                  </>
-                                ) : (
-                                  <>
-                                    <Input
-                                      type="file"
-                                      accept="video/*"
-                                      name="courseVideo"
-                                      placeholder="course Video"
-                                      onChange={(e) => {
-                                        if (e.target.files) {
-                                          let array = [];
-                                          array.push(e.target.files[0]);
-                                          setVideo(array);
-                                        }
-                                      }}
-                                    />
-                                  </>
-                                )}
-                                {addVideo.length > 0 ? (
-                                  <>
-                                    {addVideo.map((val, index) => (
-                                      <Input
-                                        key={index}
-                                        type="file"
-                                        accept="video/*"
-                                        name="courseVideo"
-                                        placeholder="course Video"
-                                      />
-                                    ))}
-                                  </>
-                                ) : (
-                                  <></>
-                                )}
-                                <Label className="m-3">Add More Videos</Label>
-                                <Input
-                                  type="file"
-                                  accept="video/*"
-                                  name="courseVideo"
-                                  placeholder="course Video"
-                                  onChange={(e) => {
-                                    if (e.target.files) {
-                                      let arr = [...addVideo];
-                                      arr.push(e.target.files[0]);
-                                      setAddVideo(arr);
-                                    }
-                                  }}
-                                />
+                               {/* <Input value={}/> */}
                               </div>
                             </CardContent>
                           </Card>
@@ -491,7 +429,7 @@ const InstructorEditcourse: React.FC = () => {
                                 Enter Title for your course
                               </Label>
                               <Input
-                                value={title}
+                                value={course?.title}
                                 minLength={3}
                                 maxLength={60}
                                 placeholder="Enter Title"
@@ -556,7 +494,7 @@ const InstructorEditcourse: React.FC = () => {
                                     Choose SubCategory
                                   </Label>
                                   <Select
-                                    value={subCategory}
+                                    value={course?.subCategory}
                                     onValueChange={(value) => {
                                       setSubCategory(value);
                                     }}

@@ -26,7 +26,7 @@ export class InstructorRepository implements IInstructorrepository{
 
     async get(): Promise<ICourse[] | void> {
       try {
-        const course = await this.courseModel.find().sort({createdAt:-1})
+        const course = await this.courseModel.find().sort({createdAt:-1}).populate("instructorId")
         if(course){
             return course;
         }
@@ -37,7 +37,7 @@ export class InstructorRepository implements IInstructorrepository{
 
     async find(instructorId: string): Promise<ICourse[] | void> {
        try {
-        const course = await this.courseModel.find({instructorId:instructorId}).sort({createdAt:-1})
+        const course = await this.courseModel.find({instructorId:instructorId}).sort({createdAt:-1}).populate("instructorId")
        if(course){
            return course;
        }
@@ -46,7 +46,14 @@ export class InstructorRepository implements IInstructorrepository{
        }
     }
     async findById(courseId: string): Promise<ICourse | void> {
-        throw new Error("Method not implemented.");
+        try {
+            const course = await this.courseModel.findById({_id:courseId})
+            if(course){
+                return course;
+            }
+        } catch (error) {
+            console.error(error)
+        }
     }
     async create(courseData: ICourse): Promise<ICourse | void> {
         try {
@@ -58,9 +65,12 @@ export class InstructorRepository implements IInstructorrepository{
             console.error(error)
         }
     }
-    async list(course: ICourse): Promise<ICourse | void> {
+    async list(courseId:string,isListed:boolean): Promise<ICourse | void> {
         try {
-            
+            const course =  await this.courseModel.findByIdAndUpdate({_id:courseId},{$set:{isListed:!isListed}},{new:true})
+            if(course){
+                return course;
+            }
         } catch (error) {
             console.error(error)
         }

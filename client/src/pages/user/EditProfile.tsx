@@ -14,6 +14,7 @@ import { editUser } from '@/Api/user';
 import toast from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
 import { setUser } from '@/redux/authSlice';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/Components/ui/alert-dialog';
 
 const EditProfile:React.FC = () => {
   const user = useSelector((state:User)=>state)
@@ -25,8 +26,8 @@ const EditProfile:React.FC = () => {
 
   // },[user])
 
-  const handleUpdate = async (e:FormEvent<HTMLFormElement>) =>{
-    e.preventDefault()
+  const handleUpdate = async () =>{
+   
     if(/^[A-Za-z0-9.%+-]+@gmail\.com$/.test(email)){
 
       try {
@@ -72,8 +73,27 @@ const EditProfile:React.FC = () => {
                 <Input className=" rounded-full" type="text" value={name} onChange={(e)=>setName(e.target.value.trim())} required />
               </div>
               <div className="d-flex justify-center gap-10" >
-               
-                <Button className='rounded-full bg-[#49BBBD]' type="submit" >Edit</Button>
+              <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button className='rounded-full bg-[#49BBBD]' >Edit</Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you absolutely sure?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot undone later
+                          Are you sure to update your profile?
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogAction className='rounded-full bg-[#49BBBD]' type='button'  >Cancel</AlertDialogAction>
+                        <AlertDialogAction className='rounded-full bg-[#49BBBD]' onClick={handleUpdate} type='button'>Continue</AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+
               </div>
             </div>
           </form>

@@ -63,7 +63,7 @@ export class UserController {
         req.body.otp,
         next
       );
-      console.log(user,"user in control");
+   
       
       if (user) {
        await new UserCreatedPublisher(kafkaWrapper.producer as Producer).produce({
@@ -71,7 +71,7 @@ export class UserController {
          name: user.user.name as string,
          email: user.user.email as string,
          isInstructor: user.user.isInstructor! as boolean,
-         isBlock: user.user.isBlock! as boolean
+         password: user.user.password
        })
   
       res.cookie('verificationToken','',{
@@ -105,7 +105,7 @@ export class UserController {
         req.body.password,
         next
       );
-      // console.log("ji",userAndTokens);
+
       
       if (userAndTokens) {
         
@@ -145,7 +145,7 @@ export class UserController {
     }
   }
   async verifyOtp(req: Request, res: Response, next: NextFunction) {
-    console.log("ivade");
+    
     
     const data = await this.userUseCase.verifyOtp(
       req.body.email,
@@ -169,7 +169,7 @@ export class UserController {
   }
 
   async editUser(req: Request, res: Response, next: NextFunction) {
-    console.log(req.session,'the cookies data')
+   
     const { userId, name, email } = req.body;
     const user = await this.userUseCase.editUser(userId, name, email, next);
     if (user) {

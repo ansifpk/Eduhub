@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import { Iuser } from "../../../../entities/user";
 
-
 const userScheema = new mongoose.Schema({
     _id:{
         type:mongoose.Schema.Types.ObjectId,
@@ -22,6 +21,16 @@ const userScheema = new mongoose.Schema({
     isBlock:{
         type:Boolean,
         required:true
+    },
+    avatar:{
+        id:{
+            type:String,
+            require:true
+        },
+        avatar_url:{
+            type:String,
+            require:true
+        }
     }
 });
 const UserModel = mongoose.model<Iuser>('User',userScheema)

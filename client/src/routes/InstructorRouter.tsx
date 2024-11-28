@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, replace, Route, Routes, useNavigate } from "react-router-dom";
 import InstructorLogin from "../pages/instructor/InstructorLogin.tsx";
 import InstructorHome from "../pages/instructor/InstructorHome.tsx";
 import ErrorPage from '../pages/ErrorPage';
@@ -12,6 +12,7 @@ import InstructorCreteCourse from "@/pages/instructor/InstructorCreateCourse.tsx
 import InstructorEditcourse from "@/pages/instructor/InstructorEditCourse.tsx";
 import CourseCreatePage from "@/Components/instructor/courseCreatePage.tsx";
 import ExamplePage from "@/Components/ExamplePage.tsx";
+import Login from "@/pages/user/Login.tsx";
 
 interface User{
   id:string,
@@ -25,11 +26,16 @@ interface User{
 
 const InstructorRoter = () => {
   const isInstructor = useSelector((state:User)=>state.isInstructor)
+  const id = useSelector((state:User)=>state.id)
+  // const navigate = useNavigate()
+  console.log(id?"ind":"illa");
+  console.log(isInstructor?"isInstructor ann":"isInstructor alla");
+  
   return (
     <>
        <Routes>
-         <Route path='/register' element={<InstructorRegister/>} />
-         <Route path='/login' element={isInstructor?<InstructorHome/>:<InstructorLogin/>} />
+         <Route path='/register' element={id ? <InstructorRegister/> : <Navigate to="/login" /> }  />
+         <Route path='/login' element={isInstructor?<InstructorHome/>:<InstructorLogin />} />
          <Route path='/' element={isInstructor?<InstructorHome/>:<InstructorLogin/>} />
          <Route path='/profile' element={isInstructor?<InstructorProfile/>:<InstructorLogin/>} />
          <Route path='/editProfile' element={isInstructor?<InstructorEditProfile/>:<InstructorLogin/>} />

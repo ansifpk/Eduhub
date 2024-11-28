@@ -9,21 +9,26 @@ import { InstructorRouter } from './framWorks/webServer/routes/instructorRouter'
 import { UserRouter } from './framWorks/webServer/routes/userRouter';
 import { errMiddleware } from './useCases/middlewares/errorMiddleware';
 import kafkaWrapper from './framWorks/webServer/config/kafka/kafkaWrapper';
-import { UserCreatedConsumer } from './framWorks/webServer/config/kafka/consumer/user-created-consumer';
+// import { UserCreatedConsumer } from './framWorks/webServer/config/kafka/consumer/user-created-consumer';
 import cookieSession from 'cookie-session';
 import dotenv from 'dotenv';
+import { UserProfileCreateConsumer } from './framWorks/webServer/config/kafka/consumer/user-created-consumer';
+import { OrderCreatedCreateConsumer } from './framWorks/webServer/config/kafka/consumer/order-created-consumer';
 dotenv.config();
 
 async function start(){
     try {
-       connectDB();
+        connectDB();
         await kafkaWrapper.connect();       
-        const consumer = await kafkaWrapper.createConsumer('course-user-created-group')
+        const consumer = await kafkaWrapper.createConsumer('course-user-profile-created-group')
+        const consumer2 = await kafkaWrapper.createConsumer('"course-order-created-group"')
         consumer.connect();
+        consumer2.connect();
         console.log("consumer connect suuccessfully");
-       
-       const listener = new UserCreatedConsumer(consumer)
+       const listener = new UserProfileCreateConsumer(consumer)
+       const listener2 = new OrderCreatedCreateConsumer(consumer2)
        await listener.listen()
+       await listener2.listen()
    
     } catch (error) {
         console.error(error)

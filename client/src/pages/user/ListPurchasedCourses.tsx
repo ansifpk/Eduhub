@@ -1,4 +1,4 @@
-import { Course } from "@/@types/mainCourse";
+import { ICourse } from "@/@types/courseType";
 import { User } from "@/@types/userType";
 import { puchasedCourses } from "@/Api/user";
 import Footer from "@/Components/Footer/Footer";
@@ -39,15 +39,15 @@ const ListPurchasedCourses :React.FC = () => {
     <main className="w-full mx-auto"> 
     {courses.length > 1 ? (
         <div className="grid grid-cols-4 gap-20 m-16 ">
-          {courses.map((val:Course)=>(
-           <ResizablePanelGroup key={val._id}
-           onClick={()=>navigate(`/user/courseDetailes/${val._id}`)}
+          {courses.map((val:ICourse,index)=>(
+           <ResizablePanelGroup key={index}
+          //  onClick={()=>navigate(`/user/courseDetailes/${val._id}`)}
            direction="horizontal"
            className="max-w-md rounded-lg border md:min-w-[300px]"
          >
            <ResizablePanel defaultSize={100}>
              <div className="flex h-[200px] ">
-               <img src={val.imageUrl} alt=""/>
+               <img src={val.image.image_url} alt=""/>
              </div>
              <div className="h-[70px] items-center px-6 pt-2 pb-3 border-black border-t">
                <h5 className="font-semibold">

@@ -13,17 +13,17 @@ export class InstructorController{
             return res.send({success:true,user:updatedUser})
         }
     }
-    async register(req:Request,res:Response,next:NextFunction){
-        // console.log(req.body);
+    // async register(req:Request,res:Response,next:NextFunction){
         
-        const createdUser = await this.instructorUseCase.instructorRegister(req.body.email,req.body.name,req.body.qualification,req.body.expirience,req.body.certificat,req.body.cv,next)
-        if(createdUser){
-            return res.send({success:true,user:createdUser})
-        }
-    }
+    //     console.log(req.body);
+        
+    //     // const createdUser = await this.instructorUseCase.instructorRegister(req.body.email,req.body.name,req.body.qualification,req.body.expirience,req.body.certificat,req.body.cv,next)
+    //     // if(createdUser){
+    //     //     return res.send({success:true,user:createdUser})
+    //     // }
+    // }
     async getStudnets(req:Request,res:Response,next:NextFunction){
-        // console.log(req.body);
-        console.log("hi ivade  ");
+        
         
         const createdUser = await this.instructorUseCase.fetchStudents()
         if(createdUser){
