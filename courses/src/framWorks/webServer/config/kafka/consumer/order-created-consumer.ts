@@ -17,14 +17,11 @@ export class OrderCreatedCreateConsumer extends KafkaConsumer<OrderCreateEvent>{
 
     async onMessage(data: { _id: string; userId: string; }): Promise<void> {
         try {
-            console.log("dat from order service",data);
-            
-            let check = await Course.findByIdAndUpdate(
+             const dt = await Course.findOneAndUpdate(
                 { _id: data._id }, 
-                { $push: { students: data.userId } },
-                { new: true } // This returns the updated document
-              );
-              
+                { $push:{students:data.userId} },
+                { new: true } 
+              ) 
         } catch (error) {
             
         }

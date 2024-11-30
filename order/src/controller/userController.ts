@@ -18,12 +18,12 @@ export class UserController{
         const order =  await this.userUseCase.createOrder(req.body.orderData,next) 
         if(order){
             
-            const {_id} = order
-             console.log(order.user.id);
+            
+            
              
             await new OrderCreatedPublisher(kafkaWrapper.producer as Producer).produce({
-                _id: _id,
-                userId: order.user.id
+                _id:  order.product._id,
+                userId: order.user.id 
             }) 
             return res.send({success:true,order:order})
         }

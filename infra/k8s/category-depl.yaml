@@ -15,9 +15,6 @@ spec:
       containers:
         - name: category
           image: eduhub/category
-          env:
-           - name: MONGO_URI
-             value: 'mongodb://localhost:27017/category'
 ---
 apiVersion: v1
 kind: Service
@@ -29,5 +26,5 @@ spec:
   ports:
     - name: category
       protocol: TCP
-      port: 3000
+      port: 3001
       targetPort: 3000

@@ -15,9 +15,6 @@ spec:
       containers:
         - name: auth
           image: eduhub/auth
-          env:
-           - name: MONGO_URI
-             value: 'mongodb://localhost:27017/auth'
 ---
 apiVersion: v1
 kind: Service

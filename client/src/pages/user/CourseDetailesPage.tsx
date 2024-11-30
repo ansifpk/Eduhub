@@ -54,7 +54,7 @@ const CourseDetailesPage = () => {
       const res = await allCourses();
       if (res.success) {
         res.courses.map((value: ICourse) => {
-          console.log(value, "ki");
+        
 
           if (value._id == courseId) {
             setCourse(value);
@@ -68,7 +68,7 @@ const CourseDetailesPage = () => {
     };
     call();
   }, [courseId]);
-
+  // console.log(course, "ki");
   const handleOrder = async () => {
     try {
       const stripe = await loadStripe(
@@ -84,7 +84,7 @@ const CourseDetailesPage = () => {
           body: JSON.stringify(course),
         }
       );
-      console.log("sent");
+      // console.log("sent");
 
       const session = await response.json();
 
@@ -215,8 +215,8 @@ const CourseDetailesPage = () => {
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogAction >Cancel</AlertDialogAction>
-                        <AlertDialogAction onClick={handleOrder} >Continue</AlertDialogAction>
+                        <AlertDialogAction type="button" >Cancel</AlertDialogAction>
+                        <AlertDialogAction onClick={handleOrder} type="button" >Continue</AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>

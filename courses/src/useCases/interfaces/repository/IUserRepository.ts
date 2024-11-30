@@ -20,5 +20,6 @@ interface Course{
 }
 export interface IUserRepository{
     find():Promise<ICourse[]|void>
+    findWithCondition(userId:string):Promise<ICourse[]|void>
     findById(courseId:string):Promise<ICourse|void>
 }

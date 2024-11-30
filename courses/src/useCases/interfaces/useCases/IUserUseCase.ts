@@ -24,5 +24,6 @@ interface Course{
 export  interface  IUserUseCase {
     fetchCourses():Promise<ICourse[]|void>
     courseDetailes(courseId:string):Promise<ICourse|void>
-    orderCourse(courseData:Course,next:NextFunction):Promise<ICourse|void>
+    purchasedCourses(userId:string,next:NextFunction):Promise<ICourse[]|void>
+
  }

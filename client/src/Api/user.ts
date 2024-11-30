@@ -90,7 +90,7 @@ export const getCourses = async () =>{
 }
 export const puchasedCourses = async (userId:string) =>{
     try {
-        const response = await ApiOrder.get(`${userRoutes.puchasedCourses}/${userId}`);
+        const response = await ApiCourse.get(`${userRoutes.puchasedCourses}/${userId}`);
         return response.data
     } catch (error) {
         return error 

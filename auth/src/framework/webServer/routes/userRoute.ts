@@ -35,6 +35,9 @@ export function UserRoute(router: Router) {
   router.post("/newPassword", async (req, res, next) => {
     userController.changePassword(req, res, next);
   });
+  router.get("/check", async (req, res, next) => {
+    res.send("hiiii")
+  });
 
   router.post("/logout", async (req, res, next) => {
 

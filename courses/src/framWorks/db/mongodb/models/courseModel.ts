@@ -211,5 +211,6 @@ const courseScheema = new mongoose.Schema({
       }
     }
 });
+
 const Course = mongoose.model<ICourse>('Course',courseScheema)
 export {Course} ;

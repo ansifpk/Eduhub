@@ -16,19 +16,21 @@ const ListPurchasedCourses :React.FC = () => {
    
   const userId = useSelector((state:User)=>state.id)
   const [courses, setCourses] = useState([]);
+ 
+  
   useEffect(() => {
     const courses = async () => {
       const res = await puchasedCourses(userId);
-      console.log(res,"re");
       
       if (res.success) {
-        // const arr = res.success.filter((val:Course)=>val.instructorId._id == userId)
-        // setCourses(res.courses);
+        setCourses(res.course);
       }
     };
     courses();
   }, []);
   const navigate = useNavigate()
+  console.log(courses);
+  
   const handleProfile = async () =>{
     navigate("/editUser")
   }
@@ -37,7 +39,7 @@ const ListPurchasedCourses :React.FC = () => {
     <Header />
     <ProfileNavbar/>
     <main className="w-full mx-auto"> 
-    {courses.length > 1 ? (
+    {courses.length > 0 ? (
         <div className="grid grid-cols-4 gap-20 m-16 ">
           {courses.map((val:ICourse,index)=>(
            <ResizablePanelGroup key={index}

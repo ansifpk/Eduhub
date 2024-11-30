@@ -1,5 +1,6 @@
 import { IOrder } from "../../../../entities/order";
-import { ICourse } from "../../../../entities/types/course";
+// import { ICourse } from "../../../../entities/types/course";
+import { ICourse } from "../../../../entities/course";
 import { IUserRepository } from "../../../../useCases/interfaces/repository/IUserRepositoru";
 import { courseModel } from "../models/courseMode";
 import { OrderModel } from "../models/orderModel";
@@ -40,10 +41,11 @@ export class UserRepository implements IUserRepository{
 
   }
 
-    async create(data: ICourse): Promise<IOrder | void> {
+    async create(data: IOrder): Promise<IOrder | void> {
+      // console.log("ji");
       
       const course = await this.orderMedels.create({user:data.user,product:data})
-    //   console.log(data._id,"data");
+      // console.log(course,"data");
       
       if(course){
         let check = await this.courseModels.findByIdAndUpdate(

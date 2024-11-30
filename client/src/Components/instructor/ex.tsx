@@ -86,8 +86,8 @@ const formSchema = z.object({
     .min(4, {
       message: "category must be at least 5 characters.",
     })
-    .max(120, {
-      message: "title must be lesthan 120 characters.",
+    .max(500, {
+      message: "Description must be lesthan 120 characters.",
     }),
   subcategory: z.string().min(1, {
     message: "At least choose one sub Category.",
@@ -159,9 +159,7 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
   }, [category, categories, form.formState.errors]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    // console.log(sections,"hi");
-
-    // setLoading(true);
+    
     const response = await createCourse({
       title,
       sections,

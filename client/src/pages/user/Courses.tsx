@@ -13,6 +13,7 @@ import { Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/Components/ui/resizable";
 import { ICourse } from "@/@types/courseType";
+import FilterHeader from "@/Components/user/FilterHeader";
 interface Course {
   _id: string;
   title: string;
@@ -51,6 +52,7 @@ const Courses = () => {
   return (
     <div>
       <Header />
+      <FilterHeader />
       {courses.length > 0 ? (
         <div className="grid grid-cols-4 gap-20 m-16 ">
           {courses.map((val:ICourse)=>(

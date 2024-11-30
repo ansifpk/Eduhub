@@ -50,6 +50,16 @@ export class UserUseCase implements IUserUseCase{
     private s3bucketrepository:IS3bucket,
     private stripe:IStripe
    ){}
+    async purchasedCourses(userId: string, next: NextFunction): Promise<ICourse[] | void> {
+       try {
+        const courses = await this.userRepository.findWithCondition(userId)
+        if(courses){
+            return courses;
+        }
+       } catch (error) {
+        console.error(error)
+       }
+    }
 
     async fetchCourses(): Promise<ICourse[] | void> {
         try {
@@ -71,11 +81,7 @@ export class UserUseCase implements IUserUseCase{
          console.error(error)
        }
     }
-    async orderCourse(courseData: Course, next: NextFunction): Promise<ICourse | void> {
-       await this.userRepository.findById(courseData._id)
-       
-       
-    }
+  
   
   
   

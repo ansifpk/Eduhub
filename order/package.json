@@ -15,8 +15,10 @@
     "@types/express": "^5.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "kafkajs": "^2.2.4",
+    "mongodb": "^6.11.0",
     "mongoose": "^8.7.3",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.6.3"

@@ -25,6 +25,15 @@ export class UserController{
         res.send({success:true,course:course})
       }
    }
+
+   async purchasedCourses(req:Request,res:Response,next:NextFunction){
+      const  {userId} = req.params;
+      const course = await this.userUseCase.purchasedCourses(userId,next)
+      if(course){
+        res.send({success:true,course:course})
+      }
+   }
+
    async placeOrder(req:Request,res:Response,next:NextFunction){
       
       const session =  await stripe.checkout.sessions.create({

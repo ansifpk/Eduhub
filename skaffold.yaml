@@ -1,23 +1,11 @@
 apiVersion: skaffold/v2beta1
 kind: Config
-deploy:
-  kubectl:
-    manifests:
-      - ./infra/k8s/*
 build:
   local:
     push: false
   artifacts:
     - image: eduhub/auth
       context: auth
-      docker:
-        dockerfile: Dockerfile
-      sync:
-        manual:
-          - src: "src/**/*.ts"
-            dest: .
-    - image: eduhub/client
-      context: client
       docker:
         dockerfile: Dockerfile
       sync:
@@ -32,4 +20,7 @@ build:
         manual:
           - src: "src/**/*.ts"
             dest: .
-    
+deploy:
+  kubectl:
+    manifests:
+      - ./infra/k8s/*

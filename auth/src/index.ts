@@ -30,9 +30,9 @@ app.use(json())
 app.use(urlencoded({ extended: true }))
 
 // Apply the separate routers to different paths
-app.use('/user',userRouter);
-app.use('/admin',adminRouter);
-app.use('/instructor',instructorRouter);
+app.use('/auth/user',userRouter);
+app.use('/auth/admin',adminRouter);
+app.use('/auth/instructor',instructorRouter);
 
 app.use(errMiddleware);
 
@@ -43,7 +43,7 @@ const start = async () => {
         consumer.connect()
         const listener = new InstructorAprovalConsumer(consumer)
         await listener.listen();
-        app.listen(3000, () => console.log("the server is running in http://localhost:3000 for auth"))
+        app.listen(3000, () => console.log("the server is running in http://localhost:3000/auth for auth"))
     } catch (error) {
         console.error(error);
     }
