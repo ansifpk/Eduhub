@@ -1,9 +1,9 @@
 import { loginType } from "@/@types/loginType";
-import Api from "@/service/axios";
-import ApiCategory from "@/service/category";
-import ApiCourse from "@/service/course";
+
+import { axInstence } from "@/service/client";
+
 import adminRoutes from "@/service/endPoints/adminEndPoints";
-import ApiUser from "@/service/user";
+
 
 interface ICategory{
     _id?:string;
@@ -15,23 +15,16 @@ interface ICategory{
 
 export const adminLogin = async (loginData:loginType) =>{
     try {
-        const response = await Api.post(adminRoutes.login,loginData);       
+        const response = await axInstence.post(adminRoutes.login,loginData);       
         return response.data
     } catch (error) {
         return error 
     }
 }
-export const googleLogin = async (googleLoginData:object) =>{
-    try {
-        const response = await Api.post(adminRoutes.googleLogin,googleLoginData);       
-        return response.data
-    } catch (error) {
-        return error 
-    }
-}
+
 export const category = async () =>{
     try {
-        const response = await ApiCategory.get(adminRoutes.category);       
+        const response = await axInstence.get(adminRoutes.category);       
         return response.data
     } catch (error) {
         return error 
@@ -39,7 +32,7 @@ export const category = async () =>{
 }
 export const addCategory = async (data:ICategory) =>{
     try {
-        const response = await ApiCategory.post(adminRoutes.addCategory,data);       
+        const response = await axInstence.post(adminRoutes.addCategory,data);       
         return response.data
     } catch (error) {
         return error 
@@ -47,7 +40,7 @@ export const addCategory = async (data:ICategory) =>{
 }
 export const editCategory = async (data:ICategory) =>{
     try {
-        const response = await ApiCategory.patch(adminRoutes.editCategory,data);       
+        const response = await axInstence.patch(adminRoutes.editCategory,data);       
         return response.data
     } catch (error) {
         return error 
@@ -55,7 +48,7 @@ export const editCategory = async (data:ICategory) =>{
 }
 export const listCategory = async (categoryId:string) =>{
     try {
-        const response = await ApiCategory.patch(`${adminRoutes.listCategory}/${categoryId}`);       
+        const response = await axInstence.patch(`${adminRoutes.listCategory}/${categoryId}`);       
         return response.data
     } catch (error) {
         return error 
@@ -63,16 +56,16 @@ export const listCategory = async (categoryId:string) =>{
 }
 export const students = async () =>{
     try {
-        const response = await Api.get(adminRoutes.students);       
+        const response = await axInstence.get(adminRoutes.students);       
         return response.data
     } catch (error) {
         return error 
     }
 }
-export const blockStudents = async (studnetId:string) =>{
+export const blockUser = async (userId:string) =>{
     try {
-        console.log(adminRoutes.blockStudents,studnetId)
-        const response = await Api.patch(`${adminRoutes.blockStudents}/${studnetId}`);       
+       
+        const response = await axInstence.patch(`${adminRoutes.blockUser}/${userId}`);       
         return response.data
     } catch (error) {
         return error 
@@ -80,24 +73,17 @@ export const blockStudents = async (studnetId:string) =>{
 }
 export const instructors = async () =>{
     try {
-        const response = await ApiUser.get(adminRoutes.instructors);       
-        return response.data
-    } catch (error) {
-        return error 
-    }
-}
-export const blockInstructors = async (instructorId:string) =>{
-    try {
-        const response = await Api.patch(`${adminRoutes.blockInstructors}/${instructorId}`);       
+        const response = await axInstence.get(adminRoutes.instructors);       
         return response.data
     } catch (error) {
         return error 
     }
 }
 
+
 export const editProfile = async (instructorData:object) =>{
     try {
-        const response = await Api.patch(adminRoutes.editProfile,instructorData);       
+        const response = await axInstence.patch(adminRoutes.editProfile,instructorData);       
         return response.data
     } catch (error) {
         return error 
@@ -105,7 +91,7 @@ export const editProfile = async (instructorData:object) =>{
 }
 export const getCourses = async () =>{
     try {
-        const response = await ApiCourse.get(adminRoutes.getCourses);       
+        const response = await axInstence.get(adminRoutes.getCourses);       
         return response.data
     } catch (error) {
         return error 
@@ -113,7 +99,7 @@ export const getCourses = async () =>{
 }
 export const instructorAprovel = async (email:string,status:string) =>{
     try {
-        const response = await ApiUser.patch(adminRoutes.instructorAprovel,{email,status});       
+        const response = await axInstence.patch(adminRoutes.instructorAprovel,{email,status});       
         return response.data
     } catch (error) {
         return error 

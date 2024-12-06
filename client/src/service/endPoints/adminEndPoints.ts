@@ -1,17 +1,16 @@
 const adminRoutes = {
-    login:'/admin/login',
-    googleLogin:'/admin/googleLogin',
-    category:'/admin/category',
-    addCategory:'/admin/addCategory',
-    editCategory:'/admin/editCategory',
-    listCategory:'/admin/listCategory',
-    students:'/admin/students',
-    blockStudents:'/admin/blockStudents',
-    instructors:'/admin/instructors',
-    instructorAprovel:'/admin/instructorAprovel',
-    blockInstructors:'/admin/blockinstructors',
+    login:'/auth/admin/login',
+    category:'/category/admin/category',
+    addCategory:'/category/admin/addCategory',
+    editCategory:'/category/admin/editCategory',
+    listCategory:'/category/admin/listCategory',
+    students:'/profile/admin/students',
+    blockUser:'/auth/admin/blockUser',
+    instructors:'/profile/admin/instructors',
+    instructorAprovel:'/profile/admin/instructorAprovel',
+    blockInstructor:'/auth/admin/blockinstructor',
     editProfile:"/admin/editProfile",
-    getCourses:"/admin/getCourses",
+    getCourses:"/course/admin/getCourses",
     logout:'/admin/logout'
    }
    

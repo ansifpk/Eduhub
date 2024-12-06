@@ -1,7 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import "./InstructorHome.css";
 import InstructorAside from "../../Components/instructor/InstructorAside";
-import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/Components/ui/button";
 import React, { useEffect, useState } from "react";
@@ -16,20 +15,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/Components/ui/select";
-import CourseCreatePage from "@/Components/instructor/courseCreatePage";
+
 import { getCategoryies } from "@/Api/instructor";
 import { Separator } from "@/Components/ui/separator";
-import { FormDescription } from "@/Components/ui/form";
+
 import Ex from "@/Components/instructor/ex";
 
-interface IUser {
-  _id: string;
-  name: string;
-  email: string;
-  isAdmin: boolean;
-  isInstructor: boolean;
-  isBlock: boolean;
-}
+
 interface ICategory {
   _id: string;
   title: string;
@@ -52,9 +44,15 @@ const InstructorCreateCourses = () => {
   useEffect(() => {
     const fetchCategory = async () => {
       const res = await getCategoryies();
-      setCategories(res);
+      console.log(res);
+      if(res){
+        setCategories(res);
+      }
+      
     };
+    
     fetchCategory();
+
   }, []);
   
   const validateCategory = (category: string) => {

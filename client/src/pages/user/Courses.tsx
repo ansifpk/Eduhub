@@ -9,39 +9,18 @@ import Footer from "../../Components/Footer/Footer";
 import Header from "../../Components/Header/Header";
 import { useEffect, useState } from "react";
 import { getCourses } from "@/Api/user";
-import { Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/Components/ui/resizable";
+import {  ResizablePanel, ResizablePanelGroup } from "@/Components/ui/resizable";
 import { ICourse } from "@/@types/courseType";
 import FilterHeader from "@/Components/user/FilterHeader";
-interface Course {
-  _id: string;
-  title: string;
-  instructorId: {
-    name:string
-  };
-  subCategory: string;
-  description: string;
-  thumbnail: string;
-  category: string;
-  level: string;
-  isListed: boolean;
-  price: number;
-  test?: [];
-  subscription: boolean;
-  videos: string[];
-  image: string;
-  imageUrl: string;
-  videoUrl: string[];
-  createdAt: string;
-}
+
 const Courses = () => {
   const [courses, setCourses] = useState([]);
   useEffect(() => {
     const courses = async () => {
       const res = await getCourses();
       if (res.success) {
-        console.log(res.courses);
+        console.log(res.courses,"cour");
         setCourses(res.courses);
       }
     };

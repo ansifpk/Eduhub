@@ -7,6 +7,7 @@ import { removeUser } from '../../redux/authSlice';
 import { useDispatch } from 'react-redux';
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '../ui/alert-dialog';
 import { Button } from '../ui/button';
+import toast from 'react-hot-toast';
 
 const ProfileNavbar = () => {
     const dispatch = useDispatch();
@@ -18,7 +19,8 @@ const ProfileNavbar = () => {
           localStorage.setItem("accessToken","")
           localStorage.setItem("refreshToken","")
           dispatch(removeUser())
-          return navigate("/login")
+          toast.success("logout")
+          return navigate("/users/login")
          }
     }
   return (

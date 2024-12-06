@@ -4,7 +4,7 @@ import Stripe from "stripe";
 import dotenv from 'dotenv';
 dotenv.config();
 
-const stripe = new Stripe(process.env.STRIPE_SECRET!,{apiVersion:'2024-10-28.acacia'})
+const stripe = new Stripe(process.env.STRIPE_SECRET!,{apiVersion:'2024-11-20.acacia'})
 
 export class UserController{
    constructor(

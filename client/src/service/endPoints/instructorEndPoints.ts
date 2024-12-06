@@ -1,17 +1,19 @@
 const instructorRoutes = { 
+    // course
+    getCourses:"/course/instructor/getCourses", 
+
     editProfile:"/instructor/editProfile", 
     currentUser:"/instructor/currentUser", 
     googleLogin:"/instructor/googleLogin", 
-    register:"/instructor/register", 
-    getCategoryies:"/instructor/category", 
-    createCourse:"/instructor/createCourse", 
-    getCourses:"/instructor/getCourses", 
-    allCourses:"/instructor/allCourses", 
+    register:"/profile/instructor/register", 
+    getCategoryies:"/category/instructor/category", 
+    createCourse:"/course/instructor/createCourse", 
+    allCourses:"/course/instructor/allCourses", 
     getStudents:"/instructor/getStudents", 
-    editCourse:"/instructor/editCourse", 
-    listCourses:"/instructor/listCourses", 
+    editCourse:"/course/instructor/editCourse", 
+    listCourses:"/course/instructor/listCourses", 
     orders:"/instructor/orders", 
-    coursesDetailes:"/instructor/coursesDetailes", 
+    coursesDetailes:"/course/instructor/coursesDetailes", 
 }  
 
 export default instructorRoutes

@@ -16,7 +16,7 @@ export class InstructorUseCase implements IInstructorInterface{
         private jwt:IJwt,
     ){}
     async instructorRegister(email: string, name: string,qualification: string, expirience: string, certificate: string, cv: string, next: NextFunction): Promise<{ user: Iuser; token: IToken; } | void> {
-         console.log(email,name,qualification,expirience,certificate,cv);
+        //  console.log(email,name,qualification,expirience,certificate,cv);
          
         const userNew = await this.instructorRepository.findByEmail(email) as Iuser;
        if(userNew){
@@ -27,7 +27,7 @@ export class InstructorUseCase implements IInstructorInterface{
                     if(user.isBlock){
                         return next(new ErrorHandler(400,"You are blocked by Admin"))
                     }
-                    // console.log(user)
+                   
                     return {user,token}
                 }
             }else{

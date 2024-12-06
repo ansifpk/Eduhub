@@ -35,7 +35,7 @@ class KafkaWrapper {
     }
     
     async createConsumer(groupId: string) {
-        this._consumer = this._kafka.consumer({ groupId });
+        this._consumer = this._kafka.consumer({ groupId,retry: { retries: 5 } });
         await this._consumer.connect();
         console.log('consumer connected');
         return this.consumer

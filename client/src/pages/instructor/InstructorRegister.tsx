@@ -55,22 +55,14 @@ const InstructorRegister = () => {
 
   const handleSubmit  = async (e:React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()    
-      //  if(certificat.length == 0){
-      //   toast.error("Please select an option")
-      //   setoptionError(true)
-      //  }
-      //  console.log(name,email,
-      //   "qual",qualification,
-      //   "expirience",expirience,
-      //   "certi ex",certificat,
-      //   "cv",cv
-      //  );
+    
        const response = await register({name,email,qualification,experience,certificate,cv})
-
+        console.log(response,"///");
+        
        if(response.success){
         toast.success(`successfully applyed
            we sent an email after review your informations.`)
-         return navigate("/instructor/login")
+         return navigate("/instructors/login")
        }else{
         return toast.error(response.response.data.message)
        }

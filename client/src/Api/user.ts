@@ -4,10 +4,11 @@ import { loginType } from "../@types/loginType"
 import { registerType } from "../@types/registerType"
 import ApiCourse from "@/service/course"
 import ApiOrder from "@/service/order"
+import { axInstence } from "@/service/client"
 
 export const signup = async (registerData: registerType) => {
     try {
-        const response = await Api.post(userRoutes.signUp,registerData)
+        const response = await axInstence.post(userRoutes.signUp,registerData);
         return response.data
     } catch (err) {
         return err
@@ -16,7 +17,7 @@ export const signup = async (registerData: registerType) => {
 }
 export const otpVerify = async (otp:string,email:string) => {
     try {
-        const response = await Api.post(userRoutes.verifyOtp,{otp,email})
+        const response = await axInstence.post(userRoutes.verifyOtp,{otp,email})
         return response.data
     } catch (err) {
         return err
@@ -25,7 +26,7 @@ export const otpVerify = async (otp:string,email:string) => {
 }
 export const userLogin = async (loginData:loginType) =>{
     try {
-        const response = await Api.post(userRoutes.login,loginData);       
+        const response = await axInstence.post(userRoutes.login,loginData);       
         return response.data
     } catch (error) {
         return error 
@@ -82,7 +83,7 @@ export const newPassword = async (email:string,password:string) =>{
 }
 export const getCourses = async () =>{
     try {
-        const response = await ApiCourse.get(userRoutes.getCourses);
+        const response = await axInstence.get(userRoutes.getCourses);
         return response.data
     } catch (error) {
         return error 
@@ -117,7 +118,7 @@ export const createOrder = async (orderData:any) =>{
 }
 export const logout = async () =>{
     try {
-        const response = await Api.post(userRoutes.logout);
+        const response = await axInstence.post(userRoutes.logout);
         return response.data
     } catch (error) {
         return error 

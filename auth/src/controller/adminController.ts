@@ -4,6 +4,9 @@ import { IToken } from "../useCase/interface/serviceInterface/IJwt";
 import { IadminUsecase } from "../useCase/interface/useCsesInterface/IadminUseCase";
 import { accessTokenOptions } from "../framework/webServer/middlewares/tockens";
 import { catchError } from "../useCase/middlewares/catchError";
+import { UserBlcokedPublisher } from "../framework/webServer/config/kafka/producer/user-block-publisher";
+import kafkaWrapper from "../framework/webServer/config/kafka/kafkaWrapper";
+import { Producer } from "kafkajs";
 
 
 export class AdminController{
@@ -31,17 +34,7 @@ export class AdminController{
          catchError(error,next)
        }
     }
-    async blockStudent( req:Request,res:Response ,next: NextFunction) {
-       try {
-
-        const {userId} = req.params;
-        const student = await this.adminUsecase.blockStudent(userId,next);
-        res.send({success:true,data:student})
-
-       } catch (error) {
-         catchError(error,next)
-       }
-    }
+  
     async showInstructors( req:Request,res:Response ,next: NextFunction) {
        try {
         const instructors = await this.adminUsecase.fetchInstructors();
@@ -50,12 +43,21 @@ export class AdminController{
          catchError(error,next)
        }
     }
-    async blockInstructor( req:Request,res:Response ,next: NextFunction) {
+    async blockUser( req:Request,res:Response ,next: NextFunction) {
        try {
 
-        const {instructorId} = req.params;
-        const student = await this.adminUsecase.blockInstructor(instructorId,next);
-        res.send({success:true,data:student})
+        const {userId} = req.params;
+        const user = await this.adminUsecase.blockUser(userId,next);
+        
+        
+        if(user){
+          await new UserBlcokedPublisher(kafkaWrapper.producer as Producer).produce({
+            email: user.email,
+            isBlock: user.isBlock!
+          })
+          res.send({success:true,data:user})
+        }
+       
 
        } catch (error) {
          catchError(error,next)

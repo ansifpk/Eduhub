@@ -1,18 +1,22 @@
 const userRoutes = {
- signUp:'/user/register',
- login:'/user/login',
- googleLogin:'/user/googleLogin',
- verifyOtp:'/user/createUser',
+    
+ // auth servic end points
+ signUp:'/auth/user/register',
+ login:'/auth/user/login',
+ googleLogin:'/auth/user/googleLogin',
+ verifyOtp:'/auth/user/createUser',
+ resentOtp:"/auth/user/resentOtp",
+ verifyEmail:"/auth/user/forgetPassword",
+ verifyPassOtp:"/auth/user/verifyOtp",
+ newPassword:"/auth/user/newPassword",
+ logout:'/auth/user/logout',
+
+ // user servic end points
  editUser:'/user/editUser',
- resentOtp:"/user/resentOtp",
- verifyEmail:"/user/forgetPassword",
- verifyPassOtp:"/user/verifyOtp",
- newPassword:"/user/newPassword",
- getCourses:"/user/courses",
+ getCourses:"/course/user/courses",
  puchasedCourses:"/user/puchasedCourses",
  courseDeatiles:"/user/courseDetailes",
  createOrder:"/user/createOrder",
- logout:'/user/logout',
 }
 
 export default userRoutes

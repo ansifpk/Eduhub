@@ -23,7 +23,7 @@ export class AdminRepository implements IAdminRepository{
        }
     }
     async block(student: Iuser): Promise<Iuser | void> {
-        const newStudnet =  await this.userModels.findByIdAndUpdate({_id:student._id},{$set:{isBlock:!student.isBlock}})
+        const newStudnet =  await this.userModels.findByIdAndUpdate({_id:student._id},{$set:{isBlock:!student.isBlock}},{new :true})
         if(newStudnet){
             return newStudnet
         }

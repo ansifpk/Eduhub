@@ -26,7 +26,8 @@ export class UserController {
           sameSite: "none",
           expires: new Date(Date.now() + 300 * 60 * 1000),
         });
-
+        console.log("otp coming");
+        
         res.status(200).json({
           succes: true,
           message: "verification otp has been send to the Email",

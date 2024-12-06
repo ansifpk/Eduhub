@@ -11,7 +11,7 @@ import { InstructorAprovedEvent } from "../events/instructor-approved-event";
 
 export class InstructorAprovalConsumer extends KafkaConsumer<InstructorAprovedEvent>{
     topic: Topics.instructorAproval = Topics.instructorAproval;
-    groupId: string = "order-instructor-aproval-group";
+    groupId: string = "auth-instructor-aproval-group";
    
     constructor(consumer:Consumer){
         super(consumer)

@@ -5,10 +5,11 @@ import { signup } from "@/Api/user";
 import { toast } from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { ArrowRight, EyeOff, Loader2 } from "lucide-react";
-import { Input } from "@/Components/ui/input";
-import UserAuthHeader from "@/Components/user/UserAuthHeader";
-import { CardDescription, CardHeader } from "@/Components/ui/card";
-import { Button } from "@/Components/ui/button";
+import { Input } from "../Components/ui/input";
+import UserAuthHeader from "../Components/user/UserAuthHeader";
+import { CardDescription, CardHeader } from "../Components/ui/card";
+// import { Button } from "@/Components/ui/button";
+import {Button} from '../Components/ui/button'
 
 const Register:React.FC = () => {
   interface User{
@@ -66,7 +67,7 @@ const Register:React.FC = () => {
                   localStorage.setItem("verifyToken",response.verifyToken);
                    toast.success("otp sent to your mail")
                    setLoading(false)
-                   return navigate(`/otp/${email}`)
+                   return navigate(`/users/otp/${email}`)
                }else{
                 setLoading(false)
                  toast.error(response.response.data.message)

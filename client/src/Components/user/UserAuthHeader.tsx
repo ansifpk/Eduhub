@@ -15,7 +15,7 @@ const UserAuthHeader = () => {
                     ? "text-white px-5 py-1 rounded-full bg-[#49BBBD] no-underline"
                     : "no-underline text-white"
                 }
-                to="/register"
+                to="/users/register"
               >
                 Register
               </NavLink>
@@ -27,7 +27,7 @@ const UserAuthHeader = () => {
                     ? "text-white px-5 py-1 rounded-full bg-[#49BBBD] no-underline"
                     : "no-underline text-white"
                 }
-                to="/login"
+                to="/users/login"
               >
                 Login
               </NavLink>

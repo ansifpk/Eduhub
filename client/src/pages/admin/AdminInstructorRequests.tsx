@@ -1,7 +1,7 @@
 import AdminAside from "@/Components/admin/AdminAside";
 import { Card } from "@/Components/ui/card";
 import { useEffect, useState } from "react";
-import { instructors, blockInstructors, instructorAprovel } from "@/Api/admin";
+import { instructors, instructorAprovel } from "@/Api/admin";
 import toast from "react-hot-toast";
 import {
   Table,
@@ -13,27 +13,12 @@ import {
 } from "@/Components/ui/table";
 import { Button } from "@/Components/ui/button";
 import { useNavigate } from "react-router-dom";
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+
+
 import { Input } from "@/Components/ui/input";
 import { Label } from "@radix-ui/react-label";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogDescription,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "../../Components/ui/dialog";
+import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/Components/ui/sheet";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/Components/ui/dialog";
 
 interface IUser {
   _id?: string;
@@ -151,9 +136,6 @@ const AdminInstructorRequests = () => {
                               <SheetContent side={"top"}>
                                 <SheetHeader>
                                   <SheetTitle>User Request to become an Instructor</SheetTitle>
-                                  <SheetDescription>
-                                    
-                                  </SheetDescription>
                                 </SheetHeader>
                                 <div className="grid gap-4 py-4">
                                   <div className="grid grid-cols-4 items-center gap-4">
@@ -216,6 +198,7 @@ const AdminInstructorRequests = () => {
                                           View Certificate
                                         </Button>
                                       </DialogTrigger>
+                                      <DialogTitle>
                                       <DialogContent className="sm:max-w-[600px]">
                                         <div className="grid gap-4 py-4">
                                           <img
@@ -226,6 +209,8 @@ const AdminInstructorRequests = () => {
                                           />
                                         </div>
                                       </DialogContent>
+                                      </DialogTitle>
+                                      
                                     </Dialog>
                                   </div>
                                   <div className="grid grid-cols-4 items-center gap-4">
@@ -242,6 +227,7 @@ const AdminInstructorRequests = () => {
                                           View CV
                                         </Button>
                                       </DialogTrigger>
+                                      <DialogTitle>
                                       <DialogContent className="sm:max-w-[600px]">
                                         <div className="grid gap-4 py-4">
                                           <img
@@ -252,6 +238,7 @@ const AdminInstructorRequests = () => {
                                           />
                                         </div>
                                       </DialogContent>
+                                      </DialogTitle>
                                     </Dialog>
                                   </div>
                                 </div>
@@ -259,7 +246,7 @@ const AdminInstructorRequests = () => {
                                   <SheetClose asChild >
                                     <div className="flex gap-4">
                                     <Button className="bg-danger" onClick={()=>handleApproval(value.email,"Rejected")} type="button">Reject</Button>
-                                    <Button className="bg-success" onClick={()=>handleApproval(value.email,"Apporved")} type="button">Apporve</Button>
+                                    <Button className="bg-success" onClick={()=>handleApproval(value.email,"Approved")} type="button">Approv</Button>
                                     </div>
                                   </SheetClose>
                                 </SheetFooter>

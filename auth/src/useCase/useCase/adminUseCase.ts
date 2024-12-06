@@ -57,16 +57,7 @@ export class AdminUsecase implements IadminUsecase{
         const users = await this.adminRepository.find();
         return users;
     }
-    async blockStudent(studentId:string,next:NextFunction): Promise<Iuser| void> {
-        const user = await this.adminRepository.findById(studentId);
-        if(user){
-          const done = await this.adminRepository.block(user)
-          return done;
-        }else{
-          return next(new ErrorHandler(400,"User Not Fount"))
-        }
-        
-    }
+   
     async fetchInstructors(): Promise<Iuser[] | void> {
        const users = await this.adminRepository.find();
        if(users){
@@ -74,15 +65,15 @@ export class AdminUsecase implements IadminUsecase{
          return instructors;
        }
     }
-    async blockInstructor(instructorId: string, next: NextFunction): Promise<Iuser | void> {
+    async blockUser(userId: string, next: NextFunction): Promise<Iuser | void> {
 
      
-       const check = await this.adminRepository.findById(instructorId)
+       const check = await this.adminRepository.findById(userId)
        if(check){
          const data = await this.adminRepository.block(check)
          return data;
        }else{
-        return next(new ErrorHandler(400,"Instructor Not Found"))
+        return next(new ErrorHandler(400,"User Not Found"))
        }
     }
 }

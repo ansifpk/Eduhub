@@ -1,13 +1,11 @@
 
 import { ApiSection, CourseData } from "@/@types/mainCourse";
 import Api from "@/service/axios";
-import ApiCategory from "@/service/category";
-import ApiCourse from "@/service/course";
+import { axInstence } from "@/service/client";
 import instructorRoutes from "@/service/endPoints/instructorEndPoints";
-import ApiOrder from "@/service/order";
-import ApiUser from "@/service/user";
-import { useForm } from "react-hook-form";
-
+import imageCompression from 'browser-image-compression'
+ 
+// import { File } from "buffer";
 // interface Section {
 //     id: number;
 //     sessionTitle: string;
@@ -70,9 +68,7 @@ export const editProfile = async (instructorData:object) =>{
 export const register = async (instructorData:Iuser) =>{
     try {
 
-        console.log(instructorData.cv);
-        console.log(instructorData.certificate);
-        
+       
          const formData = new FormData()
          formData.append("name",instructorData.name)
          formData.append("email",instructorData.email)
@@ -83,12 +79,24 @@ export const register = async (instructorData:Iuser) =>{
         const img2 = instructorData.cv.cv_url as File
         formData.append("certificate",img1.name)
         formData.append("cv",img2.name)
+        if (instructorData.certificate.certificate_url instanceof File) {
+            const newCertificate = await imageCompression(instructorData.certificate.certificate_url, { maxSizeMB: 1, maxWidthOrHeight: 800, useWebWorker: true })
+            // console.log(newCertificate);
+            formData.append("certificateImage",newCertificate)
+            
+          }
+          
+          if (instructorData.cv.cv_url instanceof File) {
+            const newCv = await imageCompression(instructorData.cv.cv_url, { maxSizeMB: 1, maxWidthOrHeight: 800, useWebWorker: true })
+          
+            formData.append("cvImage",newCv)
+          }
+        //  formData.append("certificateImage",instructorData.certificate.certificate_url)
+        //  formData.append("cvImage",instructorData.cv.cv_url)
 
-         formData.append("certificateImage",instructorData.certificate.certificate_url)
-         formData.append("cvImage",instructorData.cv.cv_url)
-
-
-         const response = await ApiUser.post(instructorRoutes.register,formData,{
+          console.log("nc");
+          
+         const response = await axInstence.patch(instructorRoutes.register,formData,{
             headers:{
                 'Content-Type':"multipart/form-data"
             }
@@ -110,7 +118,7 @@ export const currentUser = async (userId:string) =>{
 }
 export const getCategoryies = async () =>{
     try {
-        const response = await ApiCategory.get(`${instructorRoutes.getCategoryies}`);       
+        const response = await axInstence.get(`${instructorRoutes.getCategoryies}`);       
         return response.data
     } catch (error) {
         return error 
@@ -169,8 +177,9 @@ export const createCourse = async (courseData:CourseData) =>{
         })
    
         
-        const response = await ApiCourse.post(instructorRoutes.createCourse,formData,{
+        const response = await axInstence.post(instructorRoutes.createCourse,formData,{
             headers:{
+                
                 'Content-Type':"multipart/form-data"
             }
         });       
@@ -182,7 +191,7 @@ export const createCourse = async (courseData:CourseData) =>{
 
 export const getCourses = async(instructorId:string)=>{
     try {
-        const response = await ApiCourse.get(`${instructorRoutes.getCourses}/${instructorId}`);
+        const response = await axInstence.get(`${instructorRoutes.getCourses}/${instructorId}`);
         return response.data;
     } catch (error) {
         return error;
@@ -190,7 +199,7 @@ export const getCourses = async(instructorId:string)=>{
 }
 export const allCourses = async()=>{
     try {
-        const response = await ApiCourse.get(`${instructorRoutes.allCourses}`);
+        const response = await axInstence.get(`${instructorRoutes.allCourses}`);
         return response.data;
     } catch (error) {
         return error;
@@ -198,7 +207,7 @@ export const allCourses = async()=>{
 }
 export const listCourses = async(courseId:string)=>{
     try {
-        const response = await ApiCourse.patch(`${instructorRoutes.listCourses}/${courseId}`);
+        const response = await axInstence.patch(`${instructorRoutes.listCourses}/${courseId}`);
         return response.data;
     } catch (error) {
         return error;
@@ -214,7 +223,7 @@ export const getStudents = async () =>{
 }
 export const orders = async () =>{
     try {
-        const response = await ApiOrder.get(instructorRoutes.orders);       
+        const response = await axInstence.get(instructorRoutes.orders);       
         return response.data
     } catch (error) {
         return error 
@@ -241,7 +250,7 @@ export const editCourse = async(courseData:{_id:string,title:string,thumbnail:st
         formData.append("level",courseData.level)
         formData.append("price",courseData.price.toString())
         
-        const response = await ApiCourse.patch(`${instructorRoutes.editCourse}`,formData,{
+        const response = await axInstence.patch(`${instructorRoutes.editCourse}`,formData,{
             headers: {
                 'Content-Type': 'multipart/form-data',
               }

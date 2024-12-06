@@ -23,7 +23,7 @@ interface Course{
 export class Stripe implements IStripe{
     private stripe:Strip
     constructor(){
-        this.stripe= new Strip(process.env.STRIPE_SECRET!,{apiVersion:'2024-10-28.acacia'})
+        this.stripe= new Strip(process.env.STRIPE_SECRET!,{apiVersion:"2024-11-20.acacia"})
     }
     async createStripe(courseData:Course){
  

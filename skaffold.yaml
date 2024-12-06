@@ -12,6 +12,14 @@ build:
         manual:
           - src: "src/**/*.ts"
             dest: .
+    - image: eduhub/course
+      context: courses
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
     - image: eduhub/category
       context: category
       docker:
@@ -20,6 +28,31 @@ build:
         manual:
           - src: "src/**/*.ts"
             dest: .
+    - image: eduhub/purchase
+      context: purchase
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
+    - image: eduhub/profile
+      context: profile
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
+    - image: eduhub/client
+      context: client
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.tsx"
+            dest: .
+
 deploy:
   kubectl:
     manifests:

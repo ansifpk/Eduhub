@@ -8,9 +8,9 @@ export function InstructorRouter(router:Router){
         instructorController.editProfile(req,res,next)
     })
     router.post('/register',async(req,res,next)=>{
-        console.log(req.body);
+        // console.log(req.body);
         
-        // instructorController.register(req,res,next)
+        instructorController.register(req,res,next)
     });
     router.get("/getStudents",async(req,res,next)=>{
         instructorController.getStudnets(req,res,next)

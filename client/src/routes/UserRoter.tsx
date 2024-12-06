@@ -35,20 +35,20 @@ const UserRoter = () => {
     <>
        <Routes>
          <Route path='/' element={<Home/>} />
-         <Route path='/login' element={<Login/>} />
-         <Route path='/register' element={<Register/>} /> 
-         <Route path='/otp/:id' element={<Otp/>} /> 
-         <Route path="/user/courses" element={<Courses/>} /> 
-         <Route path="/user/courseDetailes/:courseId" element={id?<CourseDetailesPage/>:<Login/>} /> 
+         <Route path='/users/login' element={<Login/>} />
+         <Route path='/users/register' element={<Register/>} /> 
+         <Route path='/users/otp/:id' element={<Otp/>} /> 
+         <Route path="/users/courses" element={<Courses/>} /> 
+         <Route path="/users/courseDetailes/:courseId" element={id?<CourseDetailesPage/>:<Login/>} /> 
          <Route path="/wishlist" element={id?<Wishlist/>:<Login/>} /> 
          <Route path="/cart" element={id?<Cart/>:<Login/>} /> 
          <Route path="/wallet" element={id?<Wallet/>:<Login/>} /> 
          <Route path="/profile" element={id?<Profile/>:<Login/>} /> 
          <Route path="/editUser" element={id?<EditProfile/>:<Login/>} /> 
          <Route path="/profile/courses" element={id?<ListPurchasedCourses/>:<Login/>} /> 
-         <Route path="/forgetPassword" element={<ForgotPassword/>} /> 
-         <Route path="/user/success" element={<Success/>} /> 
-         <Route path="/user/faile" element={<Faile/>} /> 
+         <Route path="/users/forgetPassword" element={<ForgotPassword/>} /> 
+         <Route path="/users/success" element={<Success/>} /> 
+         <Route path="/users/faile" element={<Faile/>} /> 
          {/* <Route path="/example" element={<ExamplePage/>} />  */}
          <Route path="*" element={<ErrorPage/>}/>
        </Routes>

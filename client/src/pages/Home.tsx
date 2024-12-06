@@ -33,7 +33,7 @@ const Home: React.FC = () => {
             />
             <div className="card-img-overlay d-flex flex-column justify-content-center align-items-center text-center">
               <h3 className="card-title">FOR INSTRUCTORS</h3>
-              <button type="button" onClick={()=>navigate('/instructor/login')} className="btn btn-outline-light rounded-pill mt-3">Start a class today</button>
+              <button type="button" onClick={()=>navigate('/instructors/login')} className="btn btn-outline-light rounded-pill mt-3">Start a class today</button>
             </div>
        </div>
            <div className="card">

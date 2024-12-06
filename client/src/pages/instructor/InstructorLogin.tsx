@@ -26,10 +26,10 @@ const InstructorLogin = () => {
          
               
               dispatch(setInstructor(response.user))
-              // navigate("/instructor")
+              navigate("/instructor")
               
               
-              // toast.success("Instructor Login Successfully")
+              toast.success("Instructor Login Successfully")
              }else{
               toast.error("Your Not Instructor")
              }
@@ -89,7 +89,7 @@ const InstructorLogin = () => {
           </div>
         </div>
         <div className="text-center">
-           <p onClick={()=>navigate("/login")} className="text-sm text-gray-600 hover:text-gray-900 underline cursor-pointer">
+           <p onClick={()=>navigate("/users/login")} className="text-sm text-gray-600 hover:text-gray-900 underline cursor-pointer">
               Back to Login
            </p>
         </div>

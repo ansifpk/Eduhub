@@ -23,7 +23,6 @@ import {
 } from "../ui/select";
 import toast from "react-hot-toast";
 import { createCourse } from "@/Api/instructor";
-import { Value } from "@radix-ui/react-select";
 import { useSelector } from "react-redux";
 import {
   ChevronDown,
@@ -158,7 +157,7 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
     }
   }, [category, categories, form.formState.errors]);
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async () => {
     
     const response = await createCourse({
       title,
@@ -176,8 +175,8 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
       console.log(response.course);
       
       toast.success("Course Created SuccessFully..");
-      setLoading(false);
-      return navigate("/instructor/courses");
+    //   setLoading(false);
+    //   return navigate("/instructor/courses");
     } else {
       toast.error(response.response.data.message);
     }
@@ -451,7 +450,7 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
                                 <FormField
                                   control={form.control}
                                   name="courseImage"
-                                  render={({ field }) => (
+                                  render={() => (
                                     <FormItem>
                                       <FormLabel className="text-white">
                                         course Image
@@ -506,7 +505,7 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
                                 <div className="mb-6">
                                   {sections.map((section,index) => (
                                     <div
-                                      key={section.id}
+                                      key={index}
                                       className="border rounded-lg mb-4 p-4"
                                     >
                                       <div className="flex items-center justify-between mb-2">
@@ -555,10 +554,10 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
                                       {section.isExpanded && (
                                         <div className=" ">
                                           {section.lectures.map((lecture,ind) => (
-                                            <div key={lecture.id} className="flex-col " >
+                                            <div key={ind} className="flex-col " >
 
                                               <div
-                                              key={lecture.id}
+                                           
                                               className="flex items-center gap-2 my-2"
                                             >
                                                <div>
@@ -679,7 +678,7 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
                               <FormField
                                 control={form.control}
                                 name="coursetitle"
-                                render={({ field }) => (
+                                render={() => (
                                   <FormItem>
                                     <FormLabel className="text-white">
                                       Title
@@ -717,7 +716,7 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
                                 <FormField
                                   control={form.control}
                                   name="category"
-                                  render={({ field }) => (
+                                  render={() => (
                                     <FormItem>
                                       <FormLabel className="text-white">
                                         Category
@@ -739,9 +738,9 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
                                               {categories.length > 0 ? (
                                                 <>
                                                   {categories.map(
-                                                    (value: ICategory) => (
+                                                    (value: ICategory,index:number) => (
                                                       <SelectItem
-                                                        key={value._id}
+                                                        key={index}
                                                         value={`${value.title}`}
                                                       >
                                                         {value.title}
@@ -774,7 +773,7 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
                                 <FormField
                                   control={form.control}
                                   name="subcategory"
-                                  render={({ field }) => (
+                                  render={() => (
                                     <FormItem>
                                       <FormLabel className="text-white">
                                         Sub Category
@@ -830,7 +829,7 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
                                 <FormField
                                   control={form.control}
                                   name="levels"
-                                  render={({ field }) => (
+                                  render={() => (
                                     <FormItem>
                                       <FormLabel className="text-white">
                                         Level
@@ -883,7 +882,7 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
                               <FormField
                                 control={form.control}
                                 name="thumbnail"
-                                render={({ field }) => (
+                                render={() => (
                                   <FormItem>
                                     <FormLabel className="text-white">
                                       Thumbnail
@@ -920,7 +919,7 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
                               <FormField
                                 control={form.control}
                                 name="description"
-                                render={({ field }) => (
+                                render={() => (
                                   <FormItem>
                                     <FormLabel className="text-white">
                                       Description
@@ -971,7 +970,7 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
                               <FormField
                                 control={form.control}
                                 name="courseprice"
-                                render={({ field }) => (
+                                render={() => (
                                   <FormItem>
                                     <FormLabel className="text-white">
                                       Price

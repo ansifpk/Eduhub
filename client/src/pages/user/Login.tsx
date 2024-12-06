@@ -72,6 +72,8 @@ const Login:React.FC = () => {
     const handleSubmit = async (e:React.FormEvent<HTMLFormElement>) =>{
        e.preventDefault();
       const response = await userLogin({email,password})
+      console.log(response);
+      
       if(response.user){
         localStorage.setItem("accessToken",response.token.accessToken)
         localStorage.setItem("refreshToken",response.token.refreshToken)
@@ -130,7 +132,7 @@ const Login:React.FC = () => {
               Login
             </button>
           </div>
-          <div className="underline  cursor-pointer" onClick={()=>navigate("/forgetPassword")} >Forget Password?</div>
+          <div className="underline  cursor-pointer" onClick={()=>navigate("/users/forgetPassword")} >Forget Password?</div>
         </div>
         <div className="relative">
         <div className="absolute inset-0 flex items-center">

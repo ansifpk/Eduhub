@@ -10,6 +10,7 @@ import {Toaster} from 'react-hot-toast';
 import 'react-toastify/dist/ReactToastify.css';
 import { PersistGate } from 'redux-persist/integration/react'
 import {GoogleOAuthProvider} from '@react-oauth/google';
+import App2 from './App2.tsx';
 
 createRoot(document.getElementById('root')!).render(
   // <StrictMode>

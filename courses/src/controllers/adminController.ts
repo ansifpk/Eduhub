@@ -13,6 +13,7 @@ export class AdminController{
       
     }
     async getCourses(req:Request,res:Response,next:NextFunction){
+        
         const courses = await this.adminUseCase.fetchCourses();
         return res.send(courses)
     }

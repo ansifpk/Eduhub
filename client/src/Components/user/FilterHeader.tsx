@@ -21,6 +21,7 @@ const FilterHeader = () => {
      }
      cate();
   },[]);
+console.log(categories);
 
   return (
     <div  style={{

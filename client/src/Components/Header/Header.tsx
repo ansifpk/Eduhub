@@ -34,17 +34,17 @@ const Header = () => {
                 isActive 
                   ? "text-black px-4 py-1 rounded-full bg-gray-100  no-underline" 
                   : "no-underline text-white"
-              } to={"/user/courses"}>Courses</NavLink></li>
+              } to={"/users/courses"}>Courses</NavLink></li>
                 <li><NavLink  className={({ isActive }) =>
                 isActive 
                   ? "text-black px-4 py-1 rounded-full bg-gray-100  no-underline" 
                   : "no-underline text-white"
-              } to={'/cart'}>Cart</NavLink></li>
+              } to={'/users/cart'}>Cart</NavLink></li>
                 <li ><NavLink  className={({ isActive }) =>
                 isActive 
                   ? "text-black px-4 py-1 rounded-full bg-gray-100  no-underline" 
                   : "no-underline text-white"
-              } to={'/wishlist'}>Wishlist</NavLink></li>
+              } to={'/users/wishlist'}>Wishlist</NavLink></li>
                {id?(
                  <li><Link to={'/profile'}>
                  <Avatar>
@@ -54,8 +54,8 @@ const Header = () => {
                </li>
                ):(
                 <>
-                <li ><NavLink to={'/login'}>Login</NavLink></li>
-                <li ><NavLink to={'/register'}>SignUp</NavLink></li>
+                <li ><NavLink to={'/users/login'}>Login</NavLink></li>
+                <li ><NavLink to={'/users/register'}>SignUp</NavLink></li>
                 </>
                )}
               </ul>

@@ -12,37 +12,24 @@ import { Table, TableBody,
 import { Button } from '@/Components/ui/button';
 import { Badge } from '@/Components/ui/badge'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/Components/ui/dropdown-menu';
+import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/Components/ui/alert-dialog';
+import { ICourse } from '@/@types/courseType';
 
-interface ICourse{
-    _id:string,
-    instructorId?:string,
-    title:string,
-    subCategory:string,
-    description:string,
-    thumbnail:string,
-    category:string,
-    level:string,
-    price:number,
-    test?:[];
-    subscription:boolean,
-    videos:string[],
-    image:string,
-    imageUrl?:string,
-    isListed?:boolean,
-    createdAt:string,
-}
 const AdminListCourses = () => {
     const [courses,setStudents] = useState([])
     useEffect(()=>{
       const fetchAllStudents = async () => {
           const response = await getCourses();
-          console.log(response);
+          console.log(response,"///////////////////////////////");
           
-          setStudents(response); 
+          // setStudents(response); 
       }
       fetchAllStudents()
     },[]);
-    
+    const handleListeCourse = (id:string) => {
+      console.log("hi",id);
+      
+    }
   return (
     <div className="container-fluid ">
     <div className="row">
@@ -57,65 +44,68 @@ const AdminListCourses = () => {
                    <h1 className="text-lg font-bold">Courses</h1>
                    {/* <Button className='mb-3' onClick={()=>navigate("/admin/addCategory")} >Add Categories</Button> */}
                 </div>
-                {courses.length>0?(
- <Card>
- <Table>
- <TableHeader>
-   <TableRow>
-     {/* <TableHead className="w-[100px]">Image</TableHead> */}
-     <TableHead>Title</TableHead>
-     <TableHead>Thumbnail</TableHead>
-     <TableHead>status</TableHead>
-     {/* <TableHead>Actions</TableHead> */}
-   </TableRow>
- </TableHeader>
- <TableBody>
-   {courses.length>0? (
-     courses.map((value:ICourse,index)=>(
-       <TableRow key={index}>
-         {/* <TableCell className="font-medium"> <img src={value.imageUrl} alt="Profile Picture" className="profile-pic" /></TableCell> */}
-         <TableCell>{value.title}</TableCell>
-         <TableCell>{value.thumbnail}</TableCell>
-         <TableCell>{value.isListed?<><Badge className="bg-green-500">Listed</Badge></>:<><Badge className="bg-danger">UnListed</Badge></>}</TableCell>
-         <TableCell>
-         <DropdownMenu>
-      {/* <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          
-          className="flex h-8 w-15 p-0  border-solid-red"
-        >
-         Actions
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="center" className="w-[160px]">
-        <DropdownMenuItem onClick={()=>navigate(`/instructor/editCourse/${value._id}`)} >Edit</DropdownMenuItem>
-        <DropdownMenuItem onClick={()=>handleListCourse(value._id)}>{value.isListed?"UnList":"List"}</DropdownMenuItem>
-        <DropdownMenuItem>Favorite</DropdownMenuItem>
-      </DropdownMenuContent> */}
-    </DropdownMenu>
-         </TableCell>
-       </TableRow>
-     ))
-   ):(
-  <></>
-   )}
- </TableBody>
-</Table>
-</Card> 
-             ):(
-              <div className='d-flex justify-center'>
-                <Card className='w-1/2 d-flex justify-center '>
-                  <CardContent className='d-flex m-5 items-center'>
-                    <CardDescription>
-                       no courses uploaded yet<br/><br/>
-                       {/* <Button onClick={()=>navigate("/instructor/createCourse")}>Upload a Course</Button> */}
-                    </CardDescription>
-                  </CardContent>
-              </Card>
-              </div>
-             )}
-           
+                <Card>
+                  <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[100px] ">Image</TableHead>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {courses.length>0? (
+                      courses.map((value:ICourse,index)=>(
+                        <TableRow key={index}>
+                          <TableCell className="font-medium"> <img src={"https://github.com/shadcn.png"} alt="Profile Picture" className="profile-pic" /></TableCell>
+                          <TableCell>{value.title}</TableCell>
+                          <TableCell>{value.description}</TableCell>
+                          <TableCell className="text-right">
+                             
+                          <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <button
+                                  type='button'
+                                  className={
+                                    value.isListed
+                                      ? "btn btn-danger"
+                                      : "btn btn-success"
+                                  }
+                                >
+                                  {value.isListed ? "UnBlock" : "BLock"}
+                                </button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>
+                                    Are you absolutely sure?
+                                  </AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    This will deney access of this user to enter Eduhub  
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel className="bg-black text-white" type="button" >Cancel</AlertDialogCancel>
+                                  <AlertDialogCancel className="bg-black text-white" type="button"  onClick={() =>
+                                    handleListeCourse(value._id!)
+                                  } >Continue</AlertDialogCancel>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+
+                            {/* <button onClick={()=>handleBlockStudents(value._id!)} className={value.isBlock?'btn btn-danger':'btn btn-success'}>{value.isBlock ? "UnBlock":"BLock"}</button> */}
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ):(
+                    <TableRow>
+                      <TableCell align='center' colSpan={20} className="font-medium">No Courses Available</TableCell>
+                    </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+             </Card>
           </div>
         </div>
     </div>
