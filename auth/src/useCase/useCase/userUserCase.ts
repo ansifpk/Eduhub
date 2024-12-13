@@ -17,12 +17,9 @@ export class UserUseCase implements IuserUseCase {
     private otpRepository: IOtpRepository,
     private otpGenerate: IOtpGenerator,
     private sentEmail: ISentEmail,
-    private jwtToken: IJwt,
-   
-    
-  ) {
-  }
-  
+    private jwtToken: IJwt
+  ) {}
+
   async googleLogin(
     email: string,
     name: string,
@@ -34,7 +31,6 @@ export class UserUseCase implements IuserUseCase {
       password = await this.encrypt.createHash(password);
       const user = await this.userRepository.create({ email, name, password });
       if (user) {
-    
         if (user.isBlock) {
           return next(new ErrorHandler(400, "You re Blocked By Admin"));
         } else {
@@ -148,25 +144,27 @@ export class UserUseCase implements IuserUseCase {
     token: string,
     otp: string,
     next: NextFunction
-  ): Promise<{user:Iuser,tokens:IToken} | void> {
+  ): Promise<{ user: Iuser; tokens: IToken } | void> {
     try {
       const decoded = (await this.jwtToken.verifyJwt(token)) as Iuser;
       const result = await this.otpRepository.findOtp(decoded.email);
       if (!result) {
         return next(new ErrorHandler(400, "OTP Expired"));
       }
-    
+
       if (Number(result.otp) !== Number(otp)) {
         return next(new ErrorHandler(400, "invalid otp"));
       }
 
-      const user = await this.userRepository.create(decoded) as Iuser;
-      const tokens = await this.jwtToken.createAccessAndRefreashToken(user._id!) as IToken;
+      const user = (await this.userRepository.create(decoded)) as Iuser;
+      const tokens = (await this.jwtToken.createAccessAndRefreashToken(
+        user._id!
+      )) as IToken;
 
-      if(tokens){
-       await this.otpRepository.deleteOtp(decoded.email);
-       return {user,tokens}
-     }
+      if (tokens) {
+        await this.otpRepository.deleteOtp(decoded.email);
+        return { user, tokens };
+      }
     } catch (err: any) {
       console.log("error createUser in userusecse", err.message);
     }
@@ -178,12 +176,14 @@ export class UserUseCase implements IuserUseCase {
   ): Promise<{ user: Iuser; token: IToken } | void> {
     try {
       const user = await this.userRepository.findByEmail(email);
+
       if (!user) {
         return next(new ErrorHandler(400, "Email Not Registerd"));
       }
       if (user.isBlock == true) {
         return next(new ErrorHandler(400, "You are Blocked"));
       }
+
       const checkPassword = await this.encrypt.comparePassword(
         password,
         user.password
@@ -196,9 +196,10 @@ export class UserUseCase implements IuserUseCase {
       const token: any = await this.jwtToken.createAccessAndRefreashToken(
         user._id as string
       );
+
       return { token, user };
     } catch (err) {
-      catchError(err, next);
+      console.error(err);
     }
   }
   async verifyEmail(email: string, next: NextFunction): Promise<any | void> {
@@ -227,10 +228,11 @@ export class UserUseCase implements IuserUseCase {
     next: NextFunction
   ): Promise<any | void> {
     try {
+      console.log("verify ot");
+      
       const user = await this.otpRepository.findOtp(email);
       if (user) {
         if (user.otp == otp) {
-          
           return user;
         } else {
           return next(new ErrorHandler(400, "Invalid OTP"));

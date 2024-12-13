@@ -23,7 +23,6 @@ import {
 } from "../ui/select";
 import toast from "react-hot-toast";
 import { createCourse } from "@/Api/instructor";
-import { Value } from "@radix-ui/react-select";
 import { useSelector } from "react-redux";
 import {
   ChevronDown,

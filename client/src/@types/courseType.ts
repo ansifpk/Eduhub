@@ -24,13 +24,24 @@ export interface ICourse{
         _id:string,
         image_url:string
     },
-    students?:string[],
+    students?:{
+       _id:string,
+       name:string,
+       avatar:{
+        avatar_url:string
+       }
+       email:string,
+       createdAt:Date
+    }[],
     createdAt:string,
-    sessions:{
-        sessionTitle:string,
+    sections:{
+        sectionTitle:string,
         lectures:[{
             id:string,
-            content:string,
+            content:{
+                _id:string,
+                video_url:string
+            },
             duration:string,
             title:string,
         }]

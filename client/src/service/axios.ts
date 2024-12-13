@@ -1,12 +1,11 @@
 import axios from 'axios'
-const Api = axios.create({
-    baseURL:'http://localhost:3000',
+const ApiGatway = axios.create({
+    baseURL:' http://localhost:3005',
     headers:{
         "Content-Type": 'application/json',
-    
     },
-    withCredentials:true,
+    withCredentials:true
 })
 
 
-export default Api;
+export default ApiGatway;

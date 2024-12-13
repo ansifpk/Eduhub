@@ -7,14 +7,19 @@ import { errMiddleware } from './useCase/middlewares/errorMiddleware';
 import { AdminRoute } from './framework/webServer/routes/adminRoute';
 import { InstructorRouter } from './framework/webServer/routes/instructorRouter';
 import kafkaWrapper from './framework/webServer/config/kafka/kafkaWrapper';
-import cookieParser from 'cookie-parser';
+// import cookieParser from 'cookie-parser';
 import { InstructorAprovalConsumer } from './framework/webServer/config/kafka/consumer/instructor-approvel-consumer';
+import cookieSession from 'cookie-session';
 
 const app = express()
 
-app.use(cors({credentials:true,origin:["http://client-srv:5173",'http://eduhub.dev']}));
-  
-app.use(cookieParser())
+// app.use(cors({credentials:true,origin:["http://client-srv:5173",'http://eduhub.dev']}));
+app.use(cors({credentials:true,origin:["http://localhost:5173",'http://eduhub.dev']}));
+
+app.use(cookieSession({
+    signed:false,
+    secure:false,
+}))
 app.use(json())
 app.use(urlencoded({ extended: true }))
 

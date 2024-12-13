@@ -19,7 +19,7 @@ export class OrderCreatedCreateConsumer extends KafkaConsumer<OrderCreateEvent>{
         try {
              const dt = await Course.findOneAndUpdate(
                 { _id: data._id }, 
-                { $push:{students:data.userId} },
+                { $addToSet:{students:data.userId} },
                 { new: true } 
               ) 
         } catch (error) {

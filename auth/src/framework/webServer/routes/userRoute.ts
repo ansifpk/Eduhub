@@ -11,12 +11,13 @@ export function UserRoute(router: Router) {
     userController.createUser(req, res, next);
   });
   router.post("/login",async (req, res, next) => {
+    
     userController.userLogin(req, res, next);
   });
   router.post("/googleLogin", async (req, res, next) => {
     userController.googleLogin(req, res, next);
   });
-  router.patch("/editUser", isAuth, async (req, res, next) => {
+  router.patch("/editUser",isAuth, async (req, res, next) => {    
     userController.editUser(req, res, next);
   });
   router.post("/resentOtp", async (req, res, next) => {
@@ -28,7 +29,6 @@ export function UserRoute(router: Router) {
     userController.forgetPassword(req, res, next);
   });
   router.post("/verifyOtp", async (req, res, next) => {
-   
     
     userController.verifyOtp(req, res, next);
   });

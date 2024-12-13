@@ -12,6 +12,10 @@ const orderScheema = new mongoose.Schema({
     type:Object,
     require:true
   },
+  purchaseMethord:{
+    type:Object,
+    require:true
+  },
   orderDate:{
     type:String,
     require:true,

@@ -8,42 +8,78 @@ interface User{
   iat:number
 }
 
-export const isAuth = async (req:Request,res:Response,next:NextFunction)=>{
-    const check = jwt.verify(req.session?.accessToken,'itsjwtaccesskey') as User;
+export const isAuth = async (req:Request,res:Response,next:NextFunction)=>{ 
+  
+  if(!req.session){
+    return next(new ErrorHandler(400,"Tocken Expired"))
+   } 
+
+    const check = jwt.verify(req.session?.jwt,'itsjwtaccesskey') as User;
     if(check){
-      const user = await userModel.findOne({email:check.id});
-      if(user?.isBlock){
-        return next(new ErrorHandler(400,"Access Denied By Admin"))
+      const user = await userModel.findOne({_id:check.id});
+      if(user){
+         if(user.isBlock){
+          next(new ErrorHandler(400,"You are blocked by Admin"))
+         }
+         next();
       }else{
-        return next()
+        next(new ErrorHandler(400,"Tocken Expired"))
       }
     }else{
-      throw new Error("Use not login")
+      next(new ErrorHandler(400,"Tocken Expired"))
     } 
 }
 
 export const isAdmin = async (req:Request,res:Response,next:NextFunction)=>{
 
-try {
-  if(!req.session){
+  try {
+    if(!req.session){
+      return next(new ErrorHandler(400,"Tocken Expired"))
+     } 
+    const check = jwt.verify(req.session.jwt,'itsjwtaccesskey') as User;
+    if(!check){
+      return next(new ErrorHandler(400,"Tocken Expired"))
+    }
+    const user = await userModel.findOne({_id:check.id});
+      if(!user){
+        return next(new ErrorHandler(400,"Tocken Expired"))
+      }
+      if(user.isAdmin){
+         next()
+      }else{
+        return next(new ErrorHandler(400,"You are not admin"))
+      }
+  } catch (error) {
     throw new Error("Admin not login")
   }
-  const check = jwt.verify(req.session.accessToken,'itsjwtaccesskey') as User;
-  if(!check){
+    
+    
+  }
+export const isInstructor = async (req:Request,res:Response,next:NextFunction)=>{
+
+  try {
+    if(!req.session){
+      return next(new ErrorHandler(400,"Tocken Expired"))
+     } 
+    const check = jwt.verify(req.session.jwt,'itsjwtaccesskey') as User;
+    if(!check){
+      return next(new ErrorHandler(400,"Tocken Expired"))
+    }
+    const user = await userModel.findOne({_id:check.id});
+      if(!user){
+        return next(new ErrorHandler(400,"Tocken Expired"))
+      }
+      if(user.isBlock){
+        return next(new ErrorHandler(400,"You are blocked by admin")) 
+      }
+      if(user.isInstructor){
+         next()
+      }else{
+        return next(new ErrorHandler(400,"You are not Instructor"))
+      }
+  } catch (error) {
     throw new Error("Admin not login")
   }
-  const user = await userModel.findOne({email:check.id});
-    if(!user){
-      throw new Error("user not registered")
-    }
-    if(user.isAdmin){
-       next()
-    }else{
-      return next(new ErrorHandler(400,"You are not admin"))
-    }
-} catch (error) {
-  throw new Error("Admin not login")
-}
-  
-  
-}
+    
+    
+  }

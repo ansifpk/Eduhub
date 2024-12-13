@@ -1,14 +1,10 @@
-import { User } from "@/@types/userType";
-import { getCourses } from "@/Api/instructor";
+
 import { Coursestable } from "@/Components/CourseTable"
 import InstructorAside from "@/Components/instructor/InstructorAside"
 import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
-import { Button } from "@/Components/ui/button";
-import { Input } from "@/Components/ui/input";
+
 import { Separator } from "@/Components/ui/separator"
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+
 
 
 export default function InstructorListCourses() {

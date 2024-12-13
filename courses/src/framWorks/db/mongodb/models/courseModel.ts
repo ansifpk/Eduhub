@@ -60,7 +60,7 @@ const courseScheema = new mongoose.Schema({
     isListed:{
         type:Boolean,
         required:true,
-        default:true
+        default:false
     },
     createdAt:{
         type:String,
@@ -73,33 +73,11 @@ const courseScheema = new mongoose.Schema({
             ref: 'User',
         }
     ],
-    sessions:[
-     {
-        sessionTitle:{
-            type:String,
-            require:true
-        },
-        lectures:[{
-            content:{
-               _id:{
-                type:String,
-                required:true
-               },
-               video_url:{
-                type:String,
-                require:true
-               }
-            },
-            duration:{
-                type:String,
-                require:true
-            },
-            title:{
-                type:String,
-                require:true
-            }
-        }]
-     }    
+    sections:[
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Section',
+        }
     ],
 },{
     toJSON: {

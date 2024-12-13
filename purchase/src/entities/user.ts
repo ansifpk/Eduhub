@@ -1,10 +1,10 @@
 export interface Iuser {
-    _id:string,
+    id:string,
     email:string,
     name:string,
     isInstructor:boolean,
-    isBlock?:boolean,
-    createdAt?:Date,
+    isBlock:boolean,
+    isAdmin:boolean,
     avatar:{
         id:string,
         avatar_url:string

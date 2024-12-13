@@ -43,7 +43,6 @@ export class AdminUseCase implements IAdminUseCase{
         if(status == "Rejected"){
             updatedUser = await this.adminRepository.approveIntructor(email,status,false)
       
-             
             return updatedUser;
         }else{
     

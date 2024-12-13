@@ -5,6 +5,7 @@ import { ICourse } from "../../entities/course";
 import { IUserUseCase } from "../interfaces/useCases/IUserUseCase";
 import { IUserRepository } from "../interfaces/repository/IUserRepositoru";
 import ErrorHandler from "../middlewares/errorHandler";
+import { Iuser } from "../../entities/user";
 
 
 
@@ -15,20 +16,33 @@ export class UserUseCase implements IUserUseCase{
 
     async fetchOrders(userId:string,next: NextFunction): Promise<ICourse[] | void> {
         
-         const courses = await  this.userRepository.findAllCurses(userId)
+       try {
+          const courses = await  this.userRepository.findAllCurses(userId)
+          if(courses){
+            return courses
+          }
+       } catch (error) {
+        console.error(error)
+       }
+         
         // throw new Error("Method not implemented.");
     }
 
-   async createOrder(data: IOrder, next: NextFunction): Promise<IOrder | void> {
+   async createOrder(data: {courseId:string,user:Iuser,order:IOrder}, next: NextFunction): Promise<ICourse | void> {
+       const {courseId,user,order} = data;
     
-       const course = await this.userRepository.findById(data._id!)
+       console.log("usecase statrt");
+       const course = await this.userRepository.findUser(user.id)
        if(!course){
-        return next(new ErrorHandler(400,"Course not fount"))
+        return next(new ErrorHandler(400,"user not fount"))
        }
-       
-        const order = await this.userRepository.create(data)
-        if(order){
-            return order;
+    //      console.log("order");
+         
+        const courseData = await this.userRepository.create(user.id,courseId,order)
+        
+        if(courseData){
+            console.log("usease end");
+            return courseData;
         }
         
     }

@@ -21,17 +21,6 @@ export interface CourseCreateEvent {
             _id:string,
             image_url:string
         };
-        sessions: Array<{
-            sessionTitle: string,
-            lectures: Array<{
-                _id: string,
-                content: {
-                    _id: string,
-                    video_url: string,
-                },
-                duration: string,
-                title: string,
-            }>
-        }>
+        sections:string[]
     }
 }

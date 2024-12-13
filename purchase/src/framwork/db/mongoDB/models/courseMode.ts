@@ -70,40 +70,21 @@ const courseScheema = new mongoose.Schema({
             ref: 'User',
         }
     ],
-    sessions:[
-     {
-        sessionTitle:{
-            type:String,
-            require:true
-        },
-        lectures:[{
-            content:{
-               _id:{
-                type:String,
-                required:true
-               },
-               video_url:{
-                type:String,
-                require:true
-               }
-            },
-            duration:{
-                type:String,
-                require:true
-            },
-            title:{
-                type:String,
-                require:true
-            }
-        }]
-     }    
-    ],
-},{
-    toJSON: {
-      transform(doc,ret){
-        delete ret.__v;
-      }
-    }
+    sections:[
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Section',
+        }
+    ]
 });
 const courseModel = mongoose.model<ICourse>('Course',courseScheema)
 export {courseModel} ;
+
+
+
+
+
+ 
+  
+  
+ 

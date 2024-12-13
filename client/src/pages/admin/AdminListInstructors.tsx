@@ -24,6 +24,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/Components/ui/alert-dialog";
+import { log } from "node:console";
 
 interface IUser {
   _id?: string;
@@ -48,7 +49,10 @@ const AdminListInstructors = () => {
     const fetchAllinstructors = async () => {
       const response = await instructors();
       if (response) {
-        setInstructors(response);
+       
+        
+        const arr = response.filter((value:IUser)=>value.status == "Approved" )
+        setInstructors(arr)
 
         response.map((value: IUser) => {
           if (value.status == "pending") {
@@ -56,6 +60,7 @@ const AdminListInstructors = () => {
               return prev + 1;
             });
           }
+          
         });
       }
     };
@@ -121,7 +126,6 @@ const AdminListInstructors = () => {
                 <TableBody>
                   {instructor.length > 0 ? (
                     instructor
-                      .filter((val: IUser) => val.status !== "pending")
                       .map((value: IUser, index) => (
                         <TableRow key={index}>
                           <TableCell className="font-medium">

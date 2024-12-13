@@ -1,4 +1,5 @@
 import { ICourse } from "../../../entities/course";
+import { Query } from "../../../framWorks/webServer/types/type";
 interface Course{
     _id?:string,
     title:string,
@@ -19,7 +20,7 @@ interface Course{
     createdAt:string,
 }
 export interface IUserRepository{
-    find():Promise<ICourse[]|void>
+    find(query:Query):Promise<ICourse[]|void>
     findWithCondition(userId:string):Promise<ICourse[]|void>
     findById(courseId:string):Promise<ICourse|void>
 }

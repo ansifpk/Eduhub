@@ -1,5 +1,6 @@
 import { NextFunction } from "express";
 import { ICourse } from "../../../entities/course";
+import { Query } from "../../../framWorks/webServer/types/type";
 
 interface Course{
     _id:string,
@@ -22,7 +23,7 @@ interface Course{
  }
 
 export  interface  IUserUseCase {
-    fetchCourses():Promise<ICourse[]|void>
+    fetchCourses(category:string,topic:string,level:string,search:string):Promise<ICourse[]|void>
     courseDetailes(courseId:string):Promise<ICourse|void>
     purchasedCourses(userId:string,next:NextFunction):Promise<ICourse[]|void>
 

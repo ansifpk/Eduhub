@@ -7,6 +7,7 @@ export interface UserCreateEvent {
         _id: string;
         name: string;
         email: string;
-        isInstructor:boolean
+        isInstructor:boolean,
+        createdAt:Date,
     };
 }

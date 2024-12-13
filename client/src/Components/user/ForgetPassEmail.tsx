@@ -7,6 +7,7 @@ import { CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import { forgetPassword } from '@/Api/user'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
 
 interface ForgetPassEmailProps {
     successCheckEmail: React.Dispatch<React.SetStateAction<boolean | null>>;
@@ -28,9 +29,10 @@ const ForgetPassEmail:React.FC<ForgetPassEmailProps> = ({successCheckEmail,setEm
 
         try {
 
-          const response = await forgetPassword(email)
+          const data = await forgetPassword(email)
+          // const {data} = await axios.post("http://localhost:3000/auth/user/forgetPassword",email)
       
-          if(response.sucess){
+          if(data.sucess){
             toast.success("otp sent to your email")
             setSuccess(true);
             successCheckEmail(true);
@@ -38,7 +40,7 @@ const ForgetPassEmail:React.FC<ForgetPassEmailProps> = ({successCheckEmail,setEm
             setEmail('');
             setIsLoading(false);
           }else{
-            toast.error(response.response.data.message)
+            toast.error(data.response.data.message)
             setIsLoading(false);
           }
         } catch (err) {

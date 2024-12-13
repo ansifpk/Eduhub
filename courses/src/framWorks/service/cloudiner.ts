@@ -24,7 +24,7 @@ class CloudinaryV2 implements ICloudinary{
      try {
         const data =  await this.cloudinaryClient.uploader.upload(`data:${file.mimetype};base64,${file.buffer.toString('base64')}`,{
              folder:"courses",
-            resource_type: "auto"
+             resource_type: file.mimetype.startsWith("video/")?"video":"auto"
         })
          if(data){
              return {public_id:data.public_id,secure_url:data.secure_url}

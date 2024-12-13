@@ -16,12 +16,13 @@ export class InstructorAprovalConsumer extends KafkaConsumer<InstructorAprovedEv
     constructor(consumer:Consumer){
         super(consumer)
     }
-    async onMessage(data: { _id: string; name: string; email: string; isInstructor: boolean; }): Promise<void> {
+    async onMessage(data: { _id: string;isInstructor: boolean; }): Promise<void> {
         try {
             console.log('Consumer received message user from user service :', data);
-            const {email,isInstructor} = data
+ 
             // Adding userDta to db in course Service
-             await userModel.findOneAndUpdate({email:email},{$set:{isInstructor:isInstructor}},{new:true});
+          const dat =    await userModel.findOneAndUpdate({_id:data._id},{$set:{isInstructor:data.isInstructor}},{new:true});
+            console.log(dat);
             
         } catch (error) {
             console.error('Error processing message:', error);

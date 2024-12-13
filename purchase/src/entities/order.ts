@@ -23,5 +23,6 @@ export interface IOrder{
     createdAt:Date
   },
   product:ICourse,
+  purchaseMethord:string,
   orderDate:string
 }

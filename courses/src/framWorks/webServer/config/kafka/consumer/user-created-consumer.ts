@@ -7,6 +7,7 @@ import { UserProfileCreateEvent } from "../events/user-profile-created-event";
 
 
 export class UserProfileCreateConsumer extends KafkaConsumer<UserProfileCreateEvent>{
+   
  
     topic: Topics.profileUpdated = Topics.profileUpdated;
     groupId: string = "course-user-profile-created-group";
@@ -14,13 +15,21 @@ export class UserProfileCreateConsumer extends KafkaConsumer<UserProfileCreateEv
         super(consumer)
     }
 
-    async onMessage(data: { _id: string; name: string; email: string; isInstructor: boolean; isBlock: boolean; createdAt: Date; avatar: { id: string; avatar_url: string; }; }): Promise<void> {
-        try {
-            
-            await UserModel.create(data)
-        } catch (error) {
-            console.error('Error processing message:', error);
-            throw error;
-        }
+    async onMessage(data: { _id: string; name: string; email: string; isInstructor: boolean; isBlock: boolean; isAdmin: boolean; createdAt: Date; avatar: { id: string; avatar_url: string; }; }): Promise<void> {
+       try {
+          await UserModel.create(data)
+       } catch (error) {
+        console.error(error)
+       }
     }
+
+    // async onMessage(data: { _id: string; name: string; email: string; isInstructor: boolean; isBlock: boolean; createdAt: Date; avatar: { id: string; avatar_url: string; }; }): Promise<void> {
+    //     try {
+            
+    //         await UserModel.create(data)
+    //     } catch (error) {
+    //         console.error('Error processing message:', error);
+    //         throw error;
+    //     }
+    // }
 }

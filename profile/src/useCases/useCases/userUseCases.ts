@@ -16,8 +16,12 @@ export class UserUseCases implements IUserUseCase{
         throw new Error("Method not implemented.");
     }
 
-    userProfile(userId: string, next: NextFunction): Promise<Iuser | void> {
-        throw new Error("Method not implemented.");
+   async userProfile(userId: string, next: NextFunction): Promise<Iuser | void> {
+        try {
+            // const user = await this.instructor
+        } catch (error) {
+            console.error(error)
+        }
     }
 
   

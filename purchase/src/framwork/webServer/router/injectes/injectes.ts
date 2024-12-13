@@ -6,9 +6,10 @@ import { InstructorController } from "../../../../controller/instructorControlle
 import { InstructorUseCase } from "../../../../useCases/useCases/instructorUseCase";
 import { InstructorRepository } from "../../../db/mongoDB/repository/instructorRepository";
 import { courseModel } from "../../../db/mongoDB/models/courseMode";
+import { UserModel } from "../../../db/mongoDB/models/userMode";
 
 //user
-const userRepository = new UserRepository(OrderModel,courseModel)
+const userRepository = new UserRepository(OrderModel,courseModel,UserModel)
 const userUseCase = new UserUseCase(userRepository)
 const userController = new UserController(userUseCase)
 

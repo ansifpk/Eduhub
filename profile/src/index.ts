@@ -11,6 +11,7 @@ import { AdminRouter } from './framwork/webServer/routes/adminRouter';
 import fileUpload from 'express-fileupload';
 import bodyParser from 'body-parser';
 import { UserBlockedConsumer } from './framwork/webServer/config/kafka/consumer/user-block-consumer';
+import cookieSession from 'cookie-session';
 const app = express()
 
 // Separate routers for user and admin
@@ -23,11 +24,16 @@ UserRouter(userRouter);
 AdminRouter(adminRouter);
 InstructorRouter(instructorRouter);
 
-app.use(cors({credentials:true,origin:["http://client-srv:5173",'http://eduhub.dev'],allowedHeaders:["*"]}));
+app.use(cors({credentials:true,origin:["http://localhost:5173",'http://eduhub.dev']}));
 
 
 // app.use(fileUpload({ limits: { fileSize: 50 * 1024 * 1024 } }));
-app.use(cookieParser())
+// app.use(cookieParser())
+app.use(cookieSession({
+    signed:false,
+    secure:false,
+}))
+
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 

@@ -1,6 +1,8 @@
 import { ICourse } from "../../../entities/course";
+import { ISection } from "../../../entities/section";
 import { IInstructorrepository } from "../../../useCases/interfaces/repository/IInstructorRepository";
 import { Course } from "../mongodb/models/courseModel";
+import { SectionModel } from "../mongodb/models/sectionModel";
 
 interface Course{
     _id?:string,
@@ -22,11 +24,49 @@ interface Course{
     createdAt:string,
 }
 export class InstructorRepository implements IInstructorrepository{
-    constructor(private courseModel:typeof Course){}
-
+    constructor(
+        private courseModel:typeof Course,
+        private sectionModel:typeof SectionModel
+    ){}
+    async addSecton(courseId: string, sectionId: string): Promise<ICourse | void> {
+       try {
+       
+             
+          const course = await this.courseModel.findOneAndUpdate({_id:courseId},{$push:{sections:sectionId}},{new:true})
+          if(course){
+    
+              return course
+          }
+          
+       } catch (error) {
+        console.error(error)
+       }
+    }
+    async editSecton(sectionData:ISection): Promise<ISection | void> {
+       try {
+           console.log(sectionData.sectionTitle);
+           const section = await this.sectionModel.findOneAndUpdate({_id:sectionData._id},{$set:{sectionTitle:sectionData.sectionTitle,lectures:sectionData.lectures}})
+           if(section){
+            return section
+           }
+        } catch (error) {
+        console.error(error)
+       }
+    }
+    async upload(sectionData: ISection): Promise<ISection | void> {
+        try {
+            const course = await this.sectionModel.create(sectionData);
+            if(course){
+                return course;
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+  
     async get(): Promise<ICourse[] | void> {
       try {
-        const course = await this.courseModel.find().sort({createdAt:-1}).populate("instructorId")
+        const course = await this.courseModel.find().sort({createdAt:-1}).populate("sections")
         if(course){
             return course;
         }
@@ -37,7 +77,7 @@ export class InstructorRepository implements IInstructorrepository{
 
     async find(instructorId: string): Promise<ICourse[] | void> {
        try {
-        const course = await this.courseModel.find({instructorId:instructorId}).sort({createdAt:-1}).populate("instructorId")
+        const course = await this.courseModel.find({instructorId:instructorId}).sort({createdAt:-1}).populate("sections").populate("instructorId").populate("students")
        if(course){
            return course;
        }
@@ -47,7 +87,7 @@ export class InstructorRepository implements IInstructorrepository{
     }
     async findById(courseId: string): Promise<ICourse | void> {
         try {
-            const course = await this.courseModel.findById({_id:courseId})
+            const course = await this.courseModel.findById({_id:courseId}).populate("instructorId").populate("students")
             if(course){
                 return course;
             }
@@ -65,6 +105,7 @@ export class InstructorRepository implements IInstructorrepository{
             console.error(error)
         }
     }
+   
     async list(courseId:string,isListed:boolean): Promise<ICourse | void> {
         try {
             const course =  await this.courseModel.findByIdAndUpdate({_id:courseId},{$set:{isListed:!isListed}},{new:true})
@@ -74,15 +115,20 @@ export class InstructorRepository implements IInstructorrepository{
         } catch (error) {
             console.error(error)
         }
-        throw new Error("Method not implemented.");
+
     }
     async edit(courseData: ICourse): Promise<ICourse | void> {
         try {
-            
+            const {title,category,subCategory,level,thumbnail,description,price,image} = courseData;
+
+            const course = await this.courseModel.findByIdAndUpdate({_id:courseData._id},{$set:{title,category,subCategory,level,thumbnail,description,price,image}},{new:true})
+            if(course){
+                return course
+            }
         } catch (error) {
             console.error(error)
         }
-        throw new Error("Method not implemented.");
+      
     }
 
 //     async findById(courseId: string): Promise<ICourse | void> {

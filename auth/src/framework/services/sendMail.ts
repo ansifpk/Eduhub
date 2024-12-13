@@ -13,13 +13,13 @@ export class SentEmail implements ISentEmail{
         });
         const sentVerificationEmail = async (name:string,toEmail:string,otp:string)=>{
                 //  mail options
-         const mailOptions = {
-            from: 'pkansif39@gmail.com',
-            to: 'pkansif39@gmail.com',
-            subject: "Verify Your email",
-            html: `Your OTP is: ${otp}`
-        };
-          try {
+                try {
+            const mailOptions = {
+               from: 'pkansif39@gmail.com',
+               to: 'pkansif39@gmail.com',
+               subject: "Verify Your email",
+               html: `Your OTP is: ${otp}`
+           };
             const info = await transporter.sendMail(mailOptions);
             // console.log('Email sent:'+info.response)
           } catch (error) {
@@ -33,10 +33,4 @@ export class SentEmail implements ISentEmail{
 } 
 
 
-
-//         // hash ottp
-//         // const saltRounds = 10;
-       
-//         // const hashedOTP = await bcrypt.hash(otp, saltRounds);
-        
 

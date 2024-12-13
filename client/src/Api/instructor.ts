@@ -1,6 +1,4 @@
-
-import { ApiSection, CourseData } from "@/@types/mainCourse";
-import Api from "@/service/axios";
+import ApiGatway from "@/service/axios";
 import { axInstence } from "@/service/client";
 import instructorRoutes from "@/service/endPoints/instructorEndPoints";
 import imageCompression from 'browser-image-compression'
@@ -59,7 +57,7 @@ interface Iuser {
 export const editProfile = async (instructorData:object) =>{
     try {
        
-        const response = await Api.patch(instructorRoutes.editProfile,instructorData);       
+        const response = await ApiGatway.patch(instructorRoutes.editProfile,instructorData);       
         return response.data
     } catch (error) {
         return error 
@@ -81,7 +79,6 @@ export const register = async (instructorData:Iuser) =>{
         formData.append("cv",img2.name)
         if (instructorData.certificate.certificate_url instanceof File) {
             const newCertificate = await imageCompression(instructorData.certificate.certificate_url, { maxSizeMB: 1, maxWidthOrHeight: 800, useWebWorker: true })
-            // console.log(newCertificate);
             formData.append("certificateImage",newCertificate)
             
           }
@@ -96,10 +93,11 @@ export const register = async (instructorData:Iuser) =>{
 
           console.log("nc");
           
-         const response = await axInstence.patch(instructorRoutes.register,formData,{
+         const response = await ApiGatway.patch(instructorRoutes.register,formData,{
             headers:{
                 'Content-Type':"multipart/form-data"
-            }
+            },
+            withCredentials:true
          })
        return response.data;
     } catch (error) {
@@ -110,7 +108,7 @@ export const currentUser = async (userId:string) =>{
     try {
      
 
-        const response = await Api.get(`${instructorRoutes.currentUser}/${userId}`);       
+        const response = await ApiGatway.get(`${instructorRoutes.currentUser}/${userId}`);       
         return response.data
     } catch (error) {
         return error 
@@ -118,68 +116,17 @@ export const currentUser = async (userId:string) =>{
 }
 export const getCategoryies = async () =>{
     try {
-        const response = await axInstence.get(`${instructorRoutes.getCategoryies}`);       
+        const response = await ApiGatway.get(`${instructorRoutes.getCategoryies}`);       
         return response.data
     } catch (error) {
         return error 
     }
 }
-export const createCourse = async (courseData:CourseData) =>{
+export const createCourse = async (data:object) =>{
     try {
-      
-        const formData = new FormData();
-    
-        
-        formData.append('title', courseData.title);
-        formData.append('category', courseData.category);
-        formData.append('subCategory', courseData.subCategory);
-        formData.append('level', courseData.level);
-        formData.append('thumbnail', courseData.thumbnail);
-        formData.append('description', courseData.description);
-        formData.append('price', courseData.price.toString());
-        formData.append('instructorId', courseData.instructorId);
-        formData.append('courseImage', courseData.image.image_url);
-
-        const img = courseData.image.image_url as File
-       
-       const obj =  {
-        _id:courseData.image._id,
-        image_url:img
-        }
-
-        formData.append('image',JSON.stringify(obj));
-
-
-
-        const sectionsWithFiles: ApiSection[] = courseData.sections.map((session)=>{
-            const lectures = session.lectures.map((lecture)=>({
-                ...lecture,
-                content:lecture.content?(lecture.content.video_url instanceof File 
-                    ?{_id:lecture.content._id,video_url: lecture.content.video_url.name} 
-                    : {_id:lecture.content._id,video_url: lecture.content.video_url}) : null
-            }))
-            return {...session , lectures}
-        });
-        
-        formData.append('sessions',JSON.stringify(sectionsWithFiles));
-        
-        courseData.sections.map((session,index)=>{
-            session.lectures.map((lecture,ind)=>{
-                if(lecture.content){
-                    let data = lecture.content.video_url as File
-                    formData.append(
-                        'courseVideo', 
-                        data,
-                        `section${index}_lecture${ind}_${data.name}`
-                      );
-                }
-            })
-        })
-   
-        
-        const response = await axInstence.post(instructorRoutes.createCourse,formData,{
+        const response = await ApiGatway.post(instructorRoutes.createCourse,data,{
             headers:{
-                
+
                 'Content-Type':"multipart/form-data"
             }
         });       
@@ -191,7 +138,15 @@ export const createCourse = async (courseData:CourseData) =>{
 
 export const getCourses = async(instructorId:string)=>{
     try {
-        const response = await axInstence.get(`${instructorRoutes.getCourses}/${instructorId}`);
+        const response = await ApiGatway.get(`${instructorRoutes.getCourses}/${instructorId}`);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+}
+export const uploadVideo = async(data:object)=>{
+    try {
+        const response = await ApiGatway.post(instructorRoutes.uploadVideo,data);
         return response.data;
     } catch (error) {
         return error;
@@ -199,7 +154,7 @@ export const getCourses = async(instructorId:string)=>{
 }
 export const allCourses = async()=>{
     try {
-        const response = await axInstence.get(`${instructorRoutes.allCourses}`);
+        const response = await ApiGatway.get(`${instructorRoutes.allCourses}`);
         return response.data;
     } catch (error) {
         return error;
@@ -207,7 +162,7 @@ export const allCourses = async()=>{
 }
 export const listCourses = async(courseId:string)=>{
     try {
-        const response = await axInstence.patch(`${instructorRoutes.listCourses}/${courseId}`);
+        const response = await ApiGatway.patch(`${instructorRoutes.listCourses}/${courseId}`);
         return response.data;
     } catch (error) {
         return error;
@@ -215,7 +170,7 @@ export const listCourses = async(courseId:string)=>{
 }
 export const getStudents = async () =>{
     try {
-        const response = await Api.get(instructorRoutes.getStudents);       
+        const response = await ApiGatway.get(instructorRoutes.getStudents);       
         return response.data
     } catch (error) {
         return error 
@@ -223,34 +178,16 @@ export const getStudents = async () =>{
 }
 export const orders = async () =>{
     try {
-        const response = await axInstence.get(instructorRoutes.orders);       
+        const response = await ApiGatway.get(instructorRoutes.orders);       
         return response.data
     } catch (error) {
         return error 
     }
 }
-export const editCourse = async(courseData:{_id:string,title:string,thumbnail:string,description:string,category:string,subCategory:string,level:string,price:number,image:File|string,video:File[]})=>{
+export const editCourse = async(courseData:object)=>{
     try {
-        // console.log("sd",courseData);
-        const formData = new FormData();
-        if (courseData.video) {
-            courseData.video.forEach((videoFile, index) => {
-              formData.append('courseVideo', videoFile);  
-            });
-          }
-        if(courseData.image){
-            formData.append('courseImage', courseData.image);
-        }
-        formData.append("_id",courseData._id)
-        formData.append("title",courseData.title)
-        formData.append("thumbnail",courseData.thumbnail)
-        formData.append("description",courseData.description)
-        formData.append("category",courseData.category)
-        formData.append("subCategory",courseData.subCategory)
-        formData.append("level",courseData.level)
-        formData.append("price",courseData.price.toString())
         
-        const response = await axInstence.patch(`${instructorRoutes.editCourse}`,formData,{
+        const response = await ApiGatway.patch(`${instructorRoutes.editCourse}`,courseData,{
             headers: {
                 'Content-Type': 'multipart/form-data',
               }

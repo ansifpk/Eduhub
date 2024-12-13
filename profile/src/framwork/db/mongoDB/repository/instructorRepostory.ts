@@ -5,6 +5,16 @@ import { userModel } from "../models/userModel";
 
 export class InstructorRepository implements IInstructorRepository{
     constructor(private userModels:typeof userModel){}
+    async findById(userId: string): Promise<Iuser | void> {
+       try {
+         const user = await this.userModels.findById({_id:userId})
+         if(user){
+            return user
+         }
+       } catch (error) {
+        
+       }
+    }
   
     async findByEmail(userEmail: string): Promise<Iuser | void> {
         try {

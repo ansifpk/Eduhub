@@ -5,6 +5,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/redux/authSlice";
 import toast from "react-hot-toast";
+import { ArrowRight, Loader2 } from "lucide-react";
+import { Button } from "../ui/button";
 
 const Otp = () => {
   const [second,setSecond] = useState(59)
@@ -13,6 +15,7 @@ const Otp = () => {
   const dispatch = useDispatch();
   const {id} = useParams()
   const [otp,setOtp]= useState("");
+  const [loading,setLoading]= useState(false);
 
   useEffect(()=>{
     const intervel = setInterval(() => {
@@ -47,16 +50,19 @@ const Otp = () => {
 
   const handleSUbmit = async() => {
      try {
-      console.log("otp in otp page",otp,id);
+
      if(id){
+      setLoading(true)
        const response = await otpVerify(otp,id) ;
      
        
        if(response.succusse){
+        setLoading(false)
         dispatch(setUser(response.user.user))
         toast.success("Register Successfull")
         return navigate("/")
        }else{
+        setLoading(false)
         toast.error(response.response.data.message);
        }
      }
@@ -88,7 +94,19 @@ const Otp = () => {
              style={{color:second>0||minutes>0?"#DFE3E8":"#FF5630"}}
               type="submit" onClick={resentOTP} className='submit-btn' >Resend Otp</button>
            </div> } 
-           <button type="submit" onClick={handleSUbmit} className='submit-btn' >Verify</button>
+           <Button type="submit" disabled={loading} onClick={handleSUbmit} className="bg-black text-white px-4 py-2   rounded-full hover:bg-[#4ca99f] transition-colors">
+              {loading?(
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Verifying OTP
+                 </>
+                ):(
+                  <>
+                    Verify<ArrowRight className="ml-2 h-4 w-4" />
+                  </>
+                )}
+            </Button>
+           
        </div>
     </div>
   )

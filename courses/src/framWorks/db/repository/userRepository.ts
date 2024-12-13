@@ -1,26 +1,9 @@
+import mongoose from "mongoose";
 import { ICourse } from "../../../entities/course";
 import { IUserRepository } from "../../../useCases/interfaces/repository/IUserRepository";
+import { Query } from "../../webServer/types/type";
 import { Course } from "../mongodb/models/courseModel";
 
-// interface Course{
-//     _id?:string,
-//     title:string,
-//     instructorId?:string,
-//     subCategory:string,
-//     description:string,
-//     thumbnail:string,
-//     category:string,
-//     level:string,
-//     isListed:boolean,
-//     price:number,
-//     test?:[];
-//     subscription:boolean,
-//     videos:string[],
-//     image:string,
-//     imageUrl?:string,
-//     videoUrl?:string[],
-//     createdAt:string,
-// }
 
 
 export class UserRepository implements IUserRepository{
@@ -29,8 +12,8 @@ export class UserRepository implements IUserRepository{
 
     async findWithCondition(userId: string): Promise<ICourse[] | void> {
         try {
-            
-            const courses = await this.courseModel.find({students:userId});
+           
+            const courses = await this.courseModel.find({ students: userId} ).populate("instructorId").populate("students")
             if(courses){
                 return courses
             }
@@ -41,9 +24,36 @@ export class UserRepository implements IUserRepository{
        
     }
 
-    async find(): Promise<ICourse[] | void> {
+    async find(query:Query): Promise<ICourse[] | void> {
        try {
-        const courses = await this.courseModel.find({isListed:true}).sort({createdAt:-1}).populate("instructorId")
+        const {page,search,category,level,topic} = query
+        console.log("category",typeof category, category);
+        console.log("level",typeof level, level);
+        console.log("topic",typeof topic, topic);
+        console.log("search",typeof search, search);
+        console.log("page",typeof search, page);
+        let queryData:any = {isListed:true}
+        if(category){
+            queryData.category = { $regex: category, $options: "i" };
+        }
+        if(topic){
+            queryData.topic = { $regex: topic, $options: "i" };
+        }
+        if(level){
+            queryData.level = { $regex: level, $options: "i" };
+        }
+        if(search){
+            queryData.title = {$regex:search,$options: "i"}
+        }
+        let limit = 8
+        console.log("quw",queryData);
+        
+        // const courses = await this.courseModel.find({isListed:true}).sort({createdAt:-1}).populate("instructorId")
+        const courses = await this.courseModel.find(
+            queryData
+        ).sort({createdAt:-1}).populate("students").populate("instructorId")
+        console.log(courses);
+        
        if(courses){
         return courses;
        }
@@ -53,7 +63,7 @@ export class UserRepository implements IUserRepository{
     }
     async findById(courseId: string): Promise<ICourse | void> {
        try {
-        const course = await this.courseModel.findById({_id:courseId}).populate("instructorId")
+        const course = await this.courseModel.findById({_id:courseId}).populate("instructorId").populate("students").populate("sections")
         if(course){
             return course
         }

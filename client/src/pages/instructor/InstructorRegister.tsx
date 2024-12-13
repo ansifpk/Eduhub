@@ -14,6 +14,7 @@ import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { User } from '@/@types/userType';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/Components/ui/alert-dialog';
+import { ArrowRight, Loader2 } from 'lucide-react';
 const InstructorRegister = () => {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
@@ -32,6 +33,7 @@ const InstructorRegister = () => {
   });
   const [optionError, setoptionError] = useState(false);
   const [next, setNext] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [page,setPage] = useState(1);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -55,15 +57,17 @@ const InstructorRegister = () => {
 
   const handleSubmit  = async (e:React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()    
-    
+       setLoading(true)
        const response = await register({name,email,qualification,experience,certificate,cv})
-        console.log(response,"///");
+     
         
        if(response.success){
+        setLoading(false)
         toast.success(`successfully applyed
            we sent an email after review your informations.`)
-         return navigate("/instructors/login")
+         return navigate("/instructor/login")
        }else{
+        setLoading(false)
         return toast.error(response.response.data.message)
        }
       
@@ -161,6 +165,7 @@ const InstructorRegister = () => {
                         id="password"
                         name="certificateImage"
                         type="file"
+                        accept='image/*'
                         placeholder="choose file"
                         // value={certificat?.name.toString()}
                         required
@@ -185,7 +190,7 @@ const InstructorRegister = () => {
                         id="password"
                         type="file"
                         placeholder="choose file"
-                        
+                        accept='image/*'
                         name="cvImage"
                         required
                         onChange={(e) =>{
@@ -230,15 +235,25 @@ const InstructorRegister = () => {
                         type="submit"
                         className="bg-[#5BBFB5] text-white px-4 py-2  rounded-full hover:bg-[#4ca99f] transition-colors"
                       >
-                        Register
+                        {loading?(
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Sending Datas
+                 </>
+                ):(
+                  <>
+                    Register
+                  </>
+                )}
                     </button>
+                
                     </div>
                   )}
                  
                </div>
               </div>
                <div className="text-center">
-               <p onClick={()=>navigate("/login")} className="text-sm text-gray-600 hover:text-gray-900 underline cursor-pointer">
+               <p onClick={()=>navigate("/users/login")} className="text-sm text-gray-600 hover:text-gray-900 underline cursor-pointer">
                     Back to Login
                 </p>
                </div>

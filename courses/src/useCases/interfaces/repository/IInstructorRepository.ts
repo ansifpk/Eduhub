@@ -1,4 +1,5 @@
 import { ICourse } from "../../../entities/course";
+import { ISection } from "../../../entities/section";
 interface Course{
     _id?:string,
     title:string,
@@ -23,6 +24,9 @@ export interface IInstructorrepository{
     get():Promise<ICourse[]|void>
     findById(courseId:string):Promise<ICourse|void>
     create(courseData:ICourse):Promise<ICourse|void>
+    upload(courseData:ISection):Promise<ISection|void>
+    addSecton(courseId:string,sectionId:string):Promise<ICourse|void>
+    editSecton(sectionData:ISection):Promise<ISection|void>
     list(courseId:string,isListed:boolean):Promise<ICourse|void>
     edit(courseData:ICourse):Promise<ICourse|void>
 }

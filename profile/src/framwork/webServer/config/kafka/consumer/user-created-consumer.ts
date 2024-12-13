@@ -29,6 +29,7 @@ export class UserCreatedConsumer extends KafkaConsumer<UserCreateEvent>{
                     email: user.email,
                     isInstructor: user.isInstructor,
                     isBlock: user.isBlock,
+                    isAdmin: user.isAdmin,
                     createdAt: user.createdAt,
                     avatar: {
                         id: user.avatar.id,

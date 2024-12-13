@@ -22,6 +22,10 @@ const userScheema = new mongoose.Schema({
         type:Boolean,
         required:true
     },
+    isAdmin:{
+        type:Boolean,
+        required:true
+    },
     avatar:{
         id:{
             type:String,

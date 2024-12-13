@@ -31,6 +31,17 @@ import {
   SelectValue,
 } from "./ui/select";
 import { ICourse } from "@/@types/courseType";
+import axios from "axios";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "./ui/sheet";
+import { Label } from "./ui/label";
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog";
 
 export function Coursestable() {
   const [courses, setCourses] = useState([]);
@@ -40,24 +51,39 @@ export function Coursestable() {
 
   useEffect(() => {
     const res = async () => {
-      const respons = await getCourses(instructorId);
-      if(respons.success){
-        setCourses(respons.courses);
+      const data = await getCourses(instructorId);
+      // const { data } = await axios.get(
+      //   `http://localhost:3002/course/instructor/getCourses/${instructorId}`
+      // );
+      console.log(data);
+
+      if (data.success) {
+        setCourses(data.courses);
       }
     };
     res();
   }, []);
 
+  console.log(courses, "courses");
 
-  const listingCourses = courses.filter((val: ICourse) =>{
-      let arr =  val.title.toLocaleLowerCase().includes(search.toLocaleLowerCase())
-      return arr
+  const listingCourses = courses.filter((val: ICourse) => {
+    let arr = val.title
+      .toLocaleLowerCase()
+      .includes(search.toLocaleLowerCase());
+    return arr;
   });
 
-  const handleCourses = async (courseId: string) => {
-    const res = await listCourses(courseId);
+  const handleCourses = async (course: ICourse) => {
+    if (course.sections.length == 0) {
+      return toast.error(
+        "You cannot list this course becouse the video uploading is still processing..."
+      );
+    }
+    console.log("list akkam");
+
+    const res = await listCourses(course._id);
     if (res.success) {
-      const respons = await getCourses(instructorId);      
+      const respons = await getCourses(instructorId);
       setCourses(respons.courses);
       if (res.course.isListed) {
         toast.success("Successfully Listed Course");
@@ -104,7 +130,7 @@ export function Coursestable() {
       </div>
       <Separator />
       <div className="space-y-4">
-        <Select onValueChange={(value)=>setFilter(value)}>
+        <Select onValueChange={(value) => setFilter(value)}>
           <SelectTrigger id="framework" className="h-8 w-[50px] lg:w-[150px]">
             <SelectValue placeholder="Filter" />
           </SelectTrigger>
@@ -125,6 +151,7 @@ export function Coursestable() {
                 <TableHead>Thumbnail</TableHead>
                 <TableHead>Created At</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead align="center">Students</TableHead>
                 <TableHead>Action</TableHead>
               </TableRow>
             </TableHeader>
@@ -147,22 +174,99 @@ export function Coursestable() {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button className="bg-black" variant="outline">
-                            <MoreHorizontal />
-                          </Button>
-                        </DropdownMenuTrigger>
-
-                        <DropdownMenuContent className="w-56 ">
-                          <DropdownMenuItem
-                            onClick={() => handleCourses(val._id)}
+                      <Sheet key={"left"}>
+                        <SheetTrigger>
+                          <Button
+                            className="bg-black border border-white"
+                            type="button"
                           >
-                            {val.isListed ? "UnList" : "List"}
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={()=>navigate(`/instructor/editCourse/${val._id}`)}>Edit</DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                            students
+                          </Button>
+                        </SheetTrigger>
+                        <SheetContent className="w-[900px] h-[900px] ">
+                          <SheetHeader>
+                            <SheetTitle>Studnets list</SheetTitle>
+                            <SheetDescription>
+                              This action cannot be undone. This will
+                              permanently delete your account and remove your
+                              data from our servers.
+                            </SheetDescription>
+                          </SheetHeader>
+                          <Table className="rounded-md border">
+                            <TableHeader>
+                              <TableRow>
+                                <TableHead>name</TableHead>
+                                <TableHead>email</TableHead>
+                                <TableHead>Created At</TableHead>
+                              </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                              {val.students?.length! > 0 ? (
+                                 val.students?.map((student,index)=>(
+                                  <TableRow key={index}>
+                                  <TableCell>{student}</TableCell>
+                                  <TableCell>{student}</TableCell>
+                                  <TableCell>
+                                    "{val.createdAt.slice(0, 10)}"
+                                  </TableCell>
+                                </TableRow>
+                                 ))
+                              ) : (
+                                <TableRow >
+                                  <TableCell align="center" colSpan={20}>No students purchased this course</TableCell>
+                                </TableRow>
+                              )}
+                            </TableBody>
+                          </Table>
+                        </SheetContent>
+                      </Sheet>
+                    </TableCell>
+                    <TableCell>
+                      <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button className={val.isListed ? "bg-success text-white" : "bg-danger text-white"}  type="button">
+                                {val.isListed ? "UnList" : "List"}
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  Are you absolutely sure?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Do you wnat to{" "}
+                                  {val.isListed ? "Un List" : "List"} this
+                                  Course ?
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogAction
+                                  className="bg-black text-white"
+                                  type="button"
+                                >
+                                  Cancel
+                                </AlertDialogAction>
+                                <AlertDialogAction
+                                  type="button"
+                                  className="bg-black text-white"
+                                  onClick={() => handleCourses(val)}
+                                >
+                                  Continue
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+
+                          <Button
+                          type="button"
+                             onClick={() =>
+                              navigate(`/instructor/editCourse/${val._id}`)
+                            }
+                            className=" border-white bg-black text-white"
+                            
+                          >
+                            Edit
+                          </Button>
                     </TableCell>
                   </TableRow>
                 ))

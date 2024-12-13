@@ -12,14 +12,17 @@ import { UserController } from "../../../../controllers/userController";
 import { UserUseCase } from "../../../../useCases/useCases/userUseCases";
 import { Stripe } from "../../../service/stripe";
 import CloudinaryV2 from "../../../service/cloudiner";
+import { SectionModel } from "../../../db/mongodb/models/sectionModel";
+import { SentEmail } from "../../../service/sentMail";
 
 const bcrypt = new Encrypt()
 const stripe = new Stripe()
+const sendMail = new SentEmail()
 // instructor
 const s3bucketrepository = new S3bucket()
 const cloudinery = new CloudinaryV2()
-const instructorRepository = new InstructorRepository(Course)
-const instructorUseCase = new InstructorUseCase(instructorRepository,bcrypt,s3bucketrepository,cloudinery);
+const instructorRepository = new InstructorRepository(Course,SectionModel)
+const instructorUseCase = new InstructorUseCase(instructorRepository,bcrypt,s3bucketrepository,cloudinery,sendMail);
 const instructorController = new InstructorController(instructorUseCase)
 
 //admin

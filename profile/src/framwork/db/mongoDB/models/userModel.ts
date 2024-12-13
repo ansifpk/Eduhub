@@ -45,7 +45,6 @@ const userScheema = new Schema({
     },
     createdAt:{
        type: String,
-       default : new Date().toLocaleString(),
        require:true
     },
     experience:{

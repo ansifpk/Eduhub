@@ -6,16 +6,18 @@ import {logout} from '../../Api/user'
 import { removeUser } from '../../redux/authSlice';
 import { useDispatch } from 'react-redux';
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '../ui/alert-dialog';
-import { Button } from '../ui/button';
+
 import toast from 'react-hot-toast';
+
 
 const ProfileNavbar = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const handleLogout = async() => {
-        const response = await logout();
-        console.log(response,"response in logout")
-         if(response.succuss){
+        const data = await logout();
+        // const {data} = await axios.post("http://localhost:3000/auth/user/logout")
+        console.log(data,"response in logout")
+         if(data.succuss){
           localStorage.setItem("accessToken","")
           localStorage.setItem("refreshToken","")
           dispatch(removeUser())

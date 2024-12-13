@@ -18,6 +18,7 @@ import Success from "@/pages/user/Success.tsx"
 import Faile from "@/pages/user/Faile.tsx"
 import ExamplePage from "@/Components/ExamplePage.tsx"
 import ListPurchasedCourses from "@/pages/user/ListPurchasedCourses.tsx"
+import PlayCourse from "@/pages/user/PlayCourse.tsx"
 
 interface User{
   id:string,
@@ -47,8 +48,9 @@ const UserRoter = () => {
          <Route path="/editUser" element={id?<EditProfile/>:<Login/>} /> 
          <Route path="/profile/courses" element={id?<ListPurchasedCourses/>:<Login/>} /> 
          <Route path="/users/forgetPassword" element={<ForgotPassword/>} /> 
-         <Route path="/users/success" element={<Success/>} /> 
-         <Route path="/users/faile" element={<Faile/>} /> 
+         <Route path="/user/playCourse/:courseId" element={<PlayCourse/>} /> 
+         <Route path="/user/success" element={<Success/>} /> 
+         <Route path="/user/faile" element={<Faile/>} /> 
          {/* <Route path="/example" element={<ExamplePage/>} />  */}
          <Route path="*" element={<ErrorPage/>}/>
        </Routes>

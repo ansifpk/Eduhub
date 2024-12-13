@@ -34,14 +34,11 @@ export class AdminController{
         try {
            const {email,status} = req.body
             const students = await this.adminUseCase.instructorAprovel(email,status,next)
-            console.log(students,"ji");
             
             if(students){
+              console.log(students.isInstructor,"ji",students);
             await new instructorAprovalPublisher(kafkaWrapper.producer as Producer).produce({
               _id: students._id,
-              name: students.name,
-              email: students.email,
-              status: students.status,
               isInstructor: students.isInstructor
             })
             return res.send(students)

@@ -15,7 +15,7 @@ export class UserProfileCreatedConsumer extends KafkaConsumer<UserProfileCreateE
     constructor(consumer:Consumer){
         super(consumer)
     }
-    async onMessage(data: { _id: string; name: string; email: string; isInstructor: boolean; isBlock: boolean; createdAt: Date; avatar: { id: string; avatar_url: string; }; }): Promise<void> {
+    async onMessage(data: { _id: string; name: string; email: string; isInstructor: boolean;isAdmin:boolean; isBlock: boolean; createdAt: Date; avatar: { id: string; avatar_url: string; }; }): Promise<void> {
         try {
             console.log('Consumer received message user :', data);
             // Adding userDta to db in order Service

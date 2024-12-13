@@ -13,52 +13,65 @@ import { useNavigate } from "react-router-dom";
 import {  ResizablePanel, ResizablePanelGroup } from "@/Components/ui/resizable";
 import { ICourse } from "@/@types/courseType";
 import FilterHeader from "@/Components/user/FilterHeader";
+import ApiCourse from "@/service/course";
+import axios from "axios";
+import { ICategory } from "@/@types/categoryTpe";
+import { getCategoryies } from "@/Api/instructor";
+import { Button } from "@/Components/ui/button";
+import { Avatar, AvatarImage } from "@/Components/ui/avatar";
 
 const Courses = () => {
-  const [courses, setCourses] = useState([]);
+  const [courses, setCourses] = useState<ICourse[]>([]);
+  const [categories, setCategories] = useState<ICategory[]>([]);
   useEffect(() => {
-    const courses = async () => {
-      const res = await getCourses();
-      if (res.success) {
-        console.log(res.courses,"cour");
-        setCourses(res.courses);
+    
+    const category = async () => {
+     
+     const data = await getCategoryies()
+     
+      if(data){
+       setCategories(data);
       }
     };
-    courses();
+    category();
   }, []);
   
   const navigate = useNavigate();
+
+  const handleCoursesfromChild = (courses:ICourse[]) => {
+   
+    setCourses(courses)
+  }
   return (
     <div>
       <Header />
-      <FilterHeader />
+      <FilterHeader onsendcourse={handleCoursesfromChild} categories={categories} />
       {courses.length > 0 ? (
-        <div className="grid grid-cols-4 gap-20 m-16 ">
-          {courses.map((val:ICourse)=>(
-           <ResizablePanelGroup key={val._id}
-           onClick={()=>navigate(`/user/courseDetailes/${val._id}`)}
-           direction="horizontal"
-           className="max-w-md rounded-lg border md:min-w-[300px]"
-         >
-           <ResizablePanel defaultSize={100}>
-             <div className="flex h-[200px] ">
-               <img src={val.image.image_url} alt=""/>
-             </div>
-             <div className="h-[70px] items-center px-6 pt-2 pb-6 border-black border-t">
-               <h5 className="font-semibold">
-                Title : {val.title}
-              </h5>
-               <div className="flex h-full items-center justify-between">
-                 <div className="font-semibold">Created : {val?.instructorId?.name}</div>
-                 <div className="font-semibold">Price : {val.price}</div>
-               </div>
-              
-             </div>
-           </ResizablePanel>
-         </ResizablePanelGroup>
-          ))}
-         
-        </div>
+        <div className="relative flex justify-content-center ">
+          <div className="flex flex-wrap mx-5 mt-4 gap-3 m-auto  ">
+            {courses.map((course) => (
+              <div className=" w-[250px]  border shadow-lg" key={"course._id"}  >
+                  <div className="overflow-hidden rounded-md m-1">
+                    <img
+                      src={course.image.image_url}
+                      alt={course.title}
+                      width={250}
+                      height={300}
+                      className={
+                        "h-auto w-auto object-cover transition-all hover:scale-105 border rounded-2  shadow-sm "
+                      }
+                    />
+                  </div>
+              <div className=" text-sm m-2">
+                <h6 className="font-medium leading-none">{course.title}</h6>
+                <p className="font-medium text-xs text-muted-foreground" >{course.instructorId.name}</p>
+                <p className="font-medium text-xs text-muted-foreground">Price: {course.price}</p>
+                <Button onClick={()=>navigate(`/users/courseDetailes/${course._id}`)} className="bg-[#49BBBD] text-sm  w-full text-white hover:bg-[#49BBBD]">view Details</Button>
+              </div>
+            </div>
+           ))}
+          </div>
+      </div>
       ) : (
         <>
           <div className=" h-full flex justify-center items-center">

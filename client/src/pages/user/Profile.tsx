@@ -22,7 +22,7 @@ const Profile:React.FC = () => {
     <ProfileNavbar/>
     <main className="w-1/2 mx-auto px-6 py-8"> 
       <Card className=" mt-8 p-8 d-flex items-center justify-center ">
-     
+         
           <div  className="w-full space-y-4">
               <div className="w-48 h-48 rounded-full overflow-hidden bg-gray-200">
                 <img src="https://github.com/shadcn.png" alt="" />

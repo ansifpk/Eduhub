@@ -14,6 +14,7 @@ import { Button } from "@/Components/ui/button"
 import { Icons } from "@/Components/icons"
 import axios from "axios"
 import { useGoogleLogin } from "@react-oauth/google"
+import Api from "@/service/axios"
 const Login:React.FC = () => {
   interface User{
     id:string,
@@ -46,7 +47,7 @@ const Login:React.FC = () => {
           }
         );
         const response = await googleLogin({email:res.data.email,name:res.data.name,password:res.data.sub})
-        console.log(response);
+       
         if(response.success){
           localStorage.setItem("accessToken",response.user.token.accessToken)
           localStorage.setItem("refreshToken",response.user.token.refreshToken)
@@ -71,16 +72,18 @@ const Login:React.FC = () => {
 
     const handleSubmit = async (e:React.FormEvent<HTMLFormElement>) =>{
        e.preventDefault();
-      const response = await userLogin({email,password})
-      console.log(response);
+      const data = await userLogin({email,password})
+      // const {data} = await axios.post("http://localhost:3000/auth/user/login",{email,password})
+
       
-      if(response.user){
-        localStorage.setItem("accessToken",response.token.accessToken)
-        localStorage.setItem("refreshToken",response.token.refreshToken)
-         dispatch(setUser(response.user))
+      
+      if(data.user){
+        localStorage.setItem("accessToken",data.token.accessToken)
+        localStorage.setItem("refreshToken",data.token.refreshToken)
+         dispatch(setUser(data.user))
         return navigate("/")
       }else{
-        return toast.error(response.response.data.message)
+        return toast.error(data.response.data.message)
       }
     }
   return (

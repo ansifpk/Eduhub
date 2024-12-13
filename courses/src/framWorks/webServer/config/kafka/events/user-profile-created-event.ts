@@ -9,6 +9,7 @@ export interface UserProfileCreateEvent {
         email: string;
         isInstructor:boolean,
         isBlock:boolean,
+        isAdmin:boolean,
         createdAt:Date,
         avatar:{
             id:string,

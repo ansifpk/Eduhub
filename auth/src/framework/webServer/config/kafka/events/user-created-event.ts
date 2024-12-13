@@ -9,5 +9,6 @@ export interface UserCreateEvent {
         email: string;
         isInstructor:boolean;
         password:string;
+        createdAt:Date;
     };
 }

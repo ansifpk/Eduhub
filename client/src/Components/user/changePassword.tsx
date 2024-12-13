@@ -39,13 +39,14 @@ const NewPassword:React.FC<changePassword> = ({email}) => {
     setError(null);
 
     try {
-      const response = await newPassword(email.toString(),password)
-      if(response.sucess){
+      // const {data} = await axios.post("http:localhost:3000/auth/user/newPassword",{email.toString(),password})
+      const data = await newPassword(email.toString(),password)
+      if(data.sucess){
         toast.success("Forget Password Success")
         setIsLoading(false);
         setSuccess(true)
       }else{
-        toast.error(response.response.data.message);
+        toast.error(data.response.data.message);
       }
      
     } catch (err) {

@@ -16,14 +16,38 @@ import {
 import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
 import { Input } from "./ui/input";
-import { useState } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
-
+import { useEffect, useState } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import { getCourses } from "@/Api/instructor";
+import { useSelector } from "react-redux";
+import { ICourse } from "@/@types/courseType";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+interface IUser {
+  id: string;
+}
 export function Studentstable() {
   const [search, setSearch] = useState("");
+  const [courses, setCourses] = useState([]);
+  const userId = useSelector((state: IUser) => state.id);
+  useEffect(() => {
+    const stude = async () => {
+      const respons = await getCourses(userId);
+      if (respons.success) {
+        setCourses(respons.courses);
+        console.log(respons.courses);
+      }
+    };
+    stude();
+  }, []);
   return (
     <>
-     <div className="flex items-center justify-between space-y-2">
+      <div className="flex items-center justify-between space-y-2">
         <div>
           <div className="text-white">
             <h2 className="text-2xl font-bold tracking-tight">Welcome back!</h2>
@@ -42,19 +66,26 @@ export function Studentstable() {
                 className="md:w-[100px] lg:w-[300px] bg-black text-white"
               />
             </div>
-            <Select >
-          <SelectTrigger id="framework" className="h-10 w-[50px] lg:w-[150px] text-black">
-            <SelectValue placeholder="Filter" />
-          </SelectTrigger>
-          <SelectContent position="popper">
-            <SelectItem value="New">New</SelectItem>
-            <SelectItem value="Old">Old</SelectItem>
-            <SelectItem value="Name - A-Z">Name - A-Z</SelectItem>
-            <SelectItem value="Name Z-A">Name Z-A</SelectItem>
-            <SelectItem value="Price Low - Highy">Price Low - Highy</SelectItem>
-            <SelectItem value="Name Highy - Low">Name Highy - Low</SelectItem>
-          </SelectContent>
-        </Select>
+            <Select>
+              <SelectTrigger
+                id="framework"
+                className="h-10 w-[50px] lg:w-[150px] text-black"
+              >
+                <SelectValue placeholder="Filter" />
+              </SelectTrigger>
+              <SelectContent position="popper">
+                <SelectItem value="New">New</SelectItem>
+                <SelectItem value="Old">Old</SelectItem>
+                <SelectItem value="Name - A-Z">Name - A-Z</SelectItem>
+                <SelectItem value="Name Z-A">Name Z-A</SelectItem>
+                <SelectItem value="Price Low - Highy">
+                  Price Low - Highy
+                </SelectItem>
+                <SelectItem value="Name Highy - Low">
+                  Name Highy - Low
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </div>
@@ -64,33 +95,27 @@ export function Studentstable() {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead>image</TableHead>
                 <TableHead>email</TableHead>
                 <TableHead>name</TableHead>
-                <TableHead>Joined At</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody className="text-white">
-              <TableRow>
-                <TableCell>ansifpk@gmail.com</TableCell>
-                <TableCell>ansifpk</TableCell>
-                <TableCell>12/33/2/354</TableCell>
-                <TableCell>block</TableCell>
-                <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button className="bg-black" variant="outline">
-                        <MoreHorizontal />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-56 ">
-                      <DropdownMenuItem>List</DropdownMenuItem>
-                      <DropdownMenuItem>Detailes</DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
+              {courses.map((value: ICourse) =>
+                value.students?.map((val, inde) => (
+                  <TableRow key={inde}>
+                     <TableCell>
+                      <Avatar className="h-9 w-9">
+                        <AvatarImage src={val.avatar.avatar_url?val.avatar.avatar_url:"/avatars/03.png"} alt="@shadcn" />
+                        <AvatarFallback>SC</AvatarFallback>
+                      </Avatar>
+                    </TableCell>
+                    <TableCell>{val.name}</TableCell>
+                    <TableCell>{val.email}</TableCell>
+                   
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </div>

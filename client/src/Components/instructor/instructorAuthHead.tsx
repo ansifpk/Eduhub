@@ -12,13 +12,13 @@ const InstructorAuthHead = () => {
                 isActive 
                   ? "text-white px-5 py-1 rounded-full bg-[#49BBBD] no-underline" 
                   : "no-underline text-white"
-              } to={"/instructors/register"}> Register</NavLink>
+              } to={"/instructor/register"}> Register</NavLink>
              </span>
             <span><NavLink  className={({ isActive }) =>
                 isActive 
                   ? "text-white px-5 py-1 rounded-full bg-[#49BBBD] no-underline" 
                   : "no-underline text-white"
-              } to={"/instructors/login"}> Login</NavLink>
+              } to={"/instructor/login"}> Login</NavLink>
             </span>
           </span><br/>
                  Please fill the Given Informations.

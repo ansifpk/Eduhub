@@ -1,4 +1,5 @@
 import React, { useEffect,  useState } from "react";
+import imageCompression from 'browser-image-compression'
 import {
   Form,
   FormControl,
@@ -22,7 +23,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import toast from "react-hot-toast";
-import { createCourse } from "@/Api/instructor";
+import { createCourse, uploadVideo } from "@/Api/instructor";
 import { useSelector } from "react-redux";
 import {
   ChevronDown,
@@ -38,6 +39,8 @@ import InstructorAside from "./InstructorAside";
 import { Card, CardContent, CardDescription, CardHeader } from "../ui/card";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Label } from "../ui/label";
+import axios from "axios";
+// import { uploadVideos } from "@/utils/cloudinery";
 
 interface Title {
   Title: string;
@@ -151,35 +154,83 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
     };
     topic();
     if (Object.keys(form.formState.errors).length > 0) {
-      console.log(form.formState.errors);
+    
       
       toast.error("Please provide all the details");
     }
   }, [category, categories, form.formState.errors]);
 
+
   const onSubmit = async () => {
-    
-    const response = await createCourse({
-      title,
-      sections,
-      image,
-      category,
-      subCategory,
-      level,
-      price,
-      description,
-      thumbnail,
-      instructorId,
-    });
-    if (response.success) {
-      console.log(response.course);
-      
-      toast.success("Course Created SuccessFully..");
-    //   setLoading(false);
-    //   return navigate("/instructor/courses");
-    } else {
-      toast.error(response.response.data.message);
+    const formData = new FormData()
+    setLoading(true)
+    formData.append("title",title)
+    formData.append("courseImage",image.image_url)
+    formData.append("thumbnail",thumbnail)
+    formData.append("description",description)
+    formData.append("category",category)
+    formData.append("subCategory",subCategory)
+    formData.append("instructorId",instructorId)
+    formData.append("level",level)
+    formData.append("price",JSON.stringify(price))
+    formData.append("sectionsVideos",JSON.stringify(sections))
+    for(let i=0;i<sections.length;i++){
+      for(let j=0;j<sections[i].lectures.length;j++){
+        let data = sections[i].lectures[j].content.video_url as File
+        formData.append('courseVideo',data, `section${i}_lecture${j}_${data.name}`)
+      }
     }
+      
+  
+    // const data = await createCourse(formData);
+    const {data} = await axios.post("http://localhost:3002/course/instructor/createCourse",formData,{
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      }
+    })
+    if(data.success){
+      console.log(data.course)
+      setLoading(false)
+      toast.success("Successfully created Course")
+      // const formData2 = new FormData()
+      navigate('/instructor/courses')
+      // for(let i=0;i<sections.length;i++){
+      //   for(let j=0;j<sections[i].lectures.length;j++){
+      //     console.log("start");
+      //    formData2.append('file',sections[i].lectures[j].content.video_url as File)
+      //    formData2.append('upload_preset',"eduhub")
+        
+      //    const response = await axios.post(
+      //     `https://api.cloudinary.com/v1_1/dbkyg0ds3/video/upload`,
+      //     formData2
+      //   );
+      //   if(response){
+      //     sections[i].lectures[j].content._id = response.data.public_id
+      //     sections[i].lectures[j].content.video_url = response.data.secure_url
+      //     formData2.append('file',"")
+      //     formData2.append('upload_preset',"")
+        
+      //   }
+        
+      //   }
+      // }
+   
+     
+     
+      
+    //   formData2.append("sections",JSON.stringify(sections))
+    //   formData2.append("sectionsId",response.course.sessions)
+    
+     
+    // console.log("fnished",sections);
+    //   await uploadVideo({courseId:response.course._id,sections})
+    //   return;
+    }else{
+      setLoading(false)
+      return toast.error(data.response.data.message)
+    }
+    
+    
   };
 
   const previewFile = async (
@@ -205,14 +256,14 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
   const [sections, setSections] = useState([
     {
       id: 1,
-      sessionTitle: "",
+      sectionTitle: "",
       isExpanded: true,
       lectures: [
         {
           id: 1,
           title: "",
           content: {
-            _id:"",
+            _id:"" as string,
             video_url: "" as string | File,
           },
           duration: "",
@@ -227,7 +278,7 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
       ...sections,
       {
         id: sections.length + 1,
-        sessionTitle: "",
+        sectionTitle: "",
         isExpanded: true,
         lectures: [],
       },
@@ -263,7 +314,7 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
   const updateSectionTitle = (sectionId: number, newTitle: string) => {
     setSections(
       sections.map((section) =>
-        section.id === sectionId ? { ...section, sessionTitle: newTitle } : section
+        section.id === sectionId ? { ...section, sectionTitle: newTitle } : section
       )
     );
   };
@@ -274,7 +325,7 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
     field: string,
     value: string|File
   ) => {
-    // console.log(field,value);
+   
     
     setSections(
       sections.map((section) => {
@@ -505,7 +556,7 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
                                 <div className="mb-6">
                                   {sections.map((section,index) => (
                                     <div
-                                      key={index}
+                                    key={`${section} - ${index}`}
                                       className="border rounded-lg mb-4 p-4"
                                     >
                                       <div className="flex items-center justify-between mb-2">
@@ -515,7 +566,7 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
                                               </Label>
                                           <input
                                             type="text"
-                                            value={section.sessionTitle}
+                                            value={section.sectionTitle}
                                             onChange={(e) =>
                                               updateSectionTitle(
                                                 section.id,
@@ -554,7 +605,7 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
                                       {section.isExpanded && (
                                         <div className=" ">
                                           {section.lectures.map((lecture,ind) => (
-                                            <div key={ind} className="flex-col " >
+                                            <div key={`${lecture} - ${ind}`} className="flex-col " >
 
                                               <div
                                            
@@ -738,9 +789,9 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
                                               {categories.length > 0 ? (
                                                 <>
                                                   {categories.map(
-                                                    (value: ICategory,index:number) => (
+                                                    (value: ICategory,indx:number) => (
                                                       <SelectItem
-                                                        key={index}
+                                                        key={`${value} - ${indx}`}
                                                         value={`${value.title}`}
                                                       >
                                                         {value.title}
@@ -794,9 +845,9 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
                                               {topics.length > 0 ? (
                                                 <>
                                                   {topics.map(
-                                                    (value, index) => (
+                                                    (value, inx) => (
                                                       <SelectItem
-                                                        key={index}
+                                                      key={`${value} - ${inx}`}
                                                         value={value}
                                                       >
                                                         {value}
@@ -1007,6 +1058,7 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
                             </CardContent>
                           </Card>
                         )}
+                        
                         <Button
                           type="submit"
                           className="bg-white text-black"

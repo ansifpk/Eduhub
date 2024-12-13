@@ -12,11 +12,13 @@ export interface Course{
     price:number,
     test?:[];
     subscription:boolean,
-    image:string,
-    imageUrl?:string,
+    image:{
+        _id:string,
+        image_url:string
+    },
     students?:string[],
     createdAt:string,
-    sessions:[{
+    sections:[{
         sessionTitle:string,
         lectures:[{
             lectureTitle:string,
@@ -38,3 +40,24 @@ export interface CLoudineryResult {
     public_id: string;
     secure_url: string;
   }
+export interface Query {
+    page: number | undefined;
+    search: string;
+    category: string;
+    level: string;
+    topic: string;
+  }
+
+export interface Section{
+        _id?:string,
+        sectionsTitle:string,
+        lectures:[{
+            _id:string,
+            content:{
+                _id:string,
+                video_url:string,
+            },
+            duration:string,
+            title:string,
+        }]
+}

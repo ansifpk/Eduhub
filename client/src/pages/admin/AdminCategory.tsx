@@ -1,5 +1,5 @@
 import AdminAside from "@/Components/admin/AdminAside";
-import { Card, CardContent, CardHeader } from "@/Components/ui/card";
+import { Card,  CardHeader } from "@/Components/ui/card";
 import { useEffect, useState } from "react";
 import { Button } from "@/Components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -21,17 +21,11 @@ import {
   AlertDialogContent,
   AlertDialogTitle,
   AlertDialogDescription,
-  AlertDialogCancel,
+  
   AlertDialogAction,
 } from "@/Components/ui/alert-dialog";
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/Components/ui/dropdown-menu";
-import { MoreHorizontal } from "lucide-react";
+
 import { Badge } from "@/Components/ui/badge";
 
 interface ICategory {

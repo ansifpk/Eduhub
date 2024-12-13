@@ -8,6 +8,7 @@ import { catchError } from "../useCase/middlewares/catchError";
 import { UserCreatedPublisher } from "../framework/webServer/config/kafka/producer/user-created-publisher";
 import kafkaWrapper from "../framework/webServer/config/kafka/kafkaWrapper";
 import { Producer } from "kafkajs";
+import ErrorHandler from "../useCase/middlewares/errorHandler";
 
 export class UserController {
   private userUseCase: IuserUseCase;
@@ -20,13 +21,9 @@ export class UserController {
       
        
       if (token) {
-        res.cookie("verificationToken",token, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV !== "development",
-          sameSite: "none",
-          expires: new Date(Date.now() + 300 * 60 * 1000),
-        });
-        console.log("otp coming");
+        req.session = {
+          verificationToken:token
+      }
         
         res.status(200).json({
           succes: true,
@@ -54,10 +51,17 @@ export class UserController {
   }
   async createUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const token = req.cookies.verificationToken
+      if(!req.session){
+        return next(new ErrorHandler(400,"Invalid token"))
+      }
+      if(!req.session.verificationToken){
+        return next(new ErrorHandler(400,"Invalid token"))
+      }
+      const token = req.session.verificationToken
+      
 
       if (typeof token !== "string") {
-        throw new Error("Invalid token");
+        return next(new ErrorHandler(400,"Invalid token"))
       }
       const user = await this.userUseCase.insertUser(
         token as string,
@@ -72,26 +76,19 @@ export class UserController {
          name: user.user.name as string,
          email: user.user.email as string,
          isInstructor: user.user.isInstructor! as boolean,
-         password: user.user.password
+         password: user.user.password,
+         createdAt: user.user.createdAt!,
        })
   
       res.cookie('verificationToken','',{
         httpOnly:true,
         expires:new Date(0)
        });
-      res.cookie('accessToken',user.tokens.accessToken,{
-        httpOnly: true,
-        secure: process.env.NODE_ENV !== "development",
-        sameSite: "none",
-        expires: new Date(Date.now() + 300 * 60 * 1000),
-       });
+       req.session = {};
        
-      res.cookie('refreashToken',user.tokens.refreashToken,{
-        httpOnly: true,
-        secure: process.env.NODE_ENV !== "development",
-        sameSite: "none",
-        expires: new Date(Date.now() + 300 * 60 * 1000),
-       });
+       req.session = {jwt:user.tokens.accessToken,
+        jwtRefreshToken:user.tokens.refreashToken
+    }
       
       res.send({ succusse: true, user: user });
       }
@@ -110,7 +107,11 @@ export class UserController {
       
       if (userAndTokens) {
         
-        req.session={accessToken:userAndTokens.token.accessToken}
+      
+
+        req.session = {jwt:userAndTokens.token.accessToken,
+          jwtRefreshToken:userAndTokens.token.refreashToken
+      }
         res.send(userAndTokens);
 
       }
@@ -127,55 +128,69 @@ export class UserController {
         next
       );
       if (userAndToken) {
-        res
-          .cookie(
-            "accessToken",
-            userAndToken.token.accessToken,
-            accessTokenOptions
-          )
-          .json({ success: true, user: userAndToken });
+       
+          req.session = {jwt:userAndToken.token.accessToken,
+              jwtRefreshToken:userAndToken.token.refreashToken
+          }
+          res.send({ success: true, user: userAndToken });
       }
     } catch (err) {
       catchError(err, next);
     }
   }
   async forgetPassword(req: Request, res: Response, next: NextFunction) {
-    const data = await this.userUseCase.verifyEmail(req.body.email, next);
-    if (data) {
-      return res.send({ sucess: true });
-    }
+   try {
+     const data = await this.userUseCase.verifyEmail(req.body.email, next);
+     if (data) {
+       return res.send({ sucess: true });
+     }
+   } catch (error) {
+    catchError(error, next);
+   }
   }
   async verifyOtp(req: Request, res: Response, next: NextFunction) {
     
     
-    const data = await this.userUseCase.verifyOtp(
-      req.body.email,
-      req.body.otp,
-      next
-    );
-    if (data) {
-     
-      return res.send({ sucess: true });
+    try {
+      const data = await this.userUseCase.verifyOtp(
+        req.body.email,
+        req.body.otp,
+        next
+      );
+      if (data) {
+       
+        return res.send({ sucess: true });
+      }
+    } catch (error) {
+      catchError(error, next);
     }
   }
   async changePassword(req: Request, res: Response, next: NextFunction) {
-    const data = await this.userUseCase.changePassword(
-      req.body.email,
-      req.body.password,
-      next
-    );
-    if (data) {
-      return res.send({ sucess: true });
+    try {
+      const data = await this.userUseCase.changePassword(
+        req.body.email,
+        req.body.password,
+        next
+      );
+      if (data) {
+        return res.send({ sucess: true });
+      }
+    } catch (error) {
+      catchError(error, next);
     }
   }
 
   async editUser(req: Request, res: Response, next: NextFunction) {
    
+   try {
     const { userId, name, email } = req.body;
     const user = await this.userUseCase.editUser(userId, name, email, next);
     if (user) {
       return res.send({ success: true, user: user });
     }
+   } catch (error) {
+    catchError(error, next);
+   }
   }
   async logout(req: Request, res: Response, next: NextFunction) {
     try {

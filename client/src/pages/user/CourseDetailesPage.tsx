@@ -1,4 +1,4 @@
-import { courseDetailes } from "@/Api/user";
+import { courseDetailes, stripePurchase } from "@/Api/user";
 import Footer from "@/Components/Footer/Footer";
 import Header from "@/Components/Header/Header";
 import { Button } from "@/Components/ui/button";
@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { loadStripe } from "@stripe/stripe-js";
 import { ICourse } from "@/@types/courseType";
 import {
@@ -17,84 +17,64 @@ import {
 } from "@/Components/ui/accordion";
 import { allCourses } from "@/Api/instructor";
 import { students } from "@/Api/admin";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/Components/ui/alert-dialog";
-
-interface Course {
-  name: string;
-  registered: number;
-}
-
-interface Review {
-  name: string;
-  comment: string;
-  avatar: string;
-}
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/Components/ui/alert-dialog";
+import { RadioGroup, RadioGroupItem } from "@/Components/ui/radio-group";
+import { Label } from "@/Components/ui/label";
+import axios from "axios";
+import { useSelector } from "react-redux";
+import { User } from "@/@types/userType";
 
 const CourseDetailesPage = () => {
-  const reviews: Review[] = [
-    {
-      name: "Lina",
-      comment: "Very good class, cover every parts",
-      avatar: "/api/placeholder/32/32",
-    },
-    {
-      name: "John",
-      comment: "Nice presentation",
-      avatar: "/api/placeholder/32/32",
-    },
-    { name: "Rocky", comment: "Good work", avatar: "/api/placeholder/32/32" },
-  ];
   const [course, setCourse] = useState<ICourse>();
   const [totellStudents, setStudents] = useState(0);
-  const [totellCourses, setVideos] = useState(0);
-
+  const [option, setOption] = useState(true);
+  const [totellCourses, setTotellCourses] = useState(0);
+  const [totalVideos, setTotellVideos] = useState(0);
+  const [paymentMethord, setPaymentMethord] = useState("Wallet");
   const { courseId } = useParams();
+  const userId = useSelector((state:User)=>state.id)
+  const navigate = useNavigate()
+
   useEffect(() => {
     const call = async () => {
-      const res = await allCourses();
-      if (res.success) {
-        res.courses.map((value: ICourse) => {
-        
-
-          if (value._id == courseId) {
-            setCourse(value);
-          }
-
-          setStudents((_prev) => {
-            return _prev + value.students?.length!;
-          });
-        });
+      const data = await courseDetailes(courseId!);
+      if (data.success) {
+        setCourse(data.course)
       }
     };
     call();
-  }, [courseId]);
-  // console.log(course, "ki");
+  }, []);
+
   const handleOrder = async () => {
     try {
-      const stripe = await loadStripe(
+      if(paymentMethord == "Wallet"){
+        console.log("wallet");
+      }else{
+        const stripe = await loadStripe(
         "pk_test_51Q4gnKRv81OVLd0JhH7b5mQdxu167NGLbtFW9DlMYb4HSblpNEHgvUNRpBbss0eb3g6moVOOvbof2Tp9sNMXKSXL00nMMkFuq7"
       );
-      const response = await fetch(
-        "http://localhost:3002/user/create-checkout-session",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(course),
-        }
-      );
-      // console.log("sent");
-
-      const session = await response.json();
-
-      if (session) {
+      const data = await stripePurchase(course!)
+      if (data) {
         localStorage.setItem("bodyDatas", JSON.stringify(course));
-
+        console.log("hi im here");
+        
         await stripe?.redirectToCheckout({
-          sessionId: session.id,
+          sessionId: data.id,
         });
       }
+        
+      }
+      
     } catch (error) {
       console.error(error);
     }
@@ -103,20 +83,25 @@ const CourseDetailesPage = () => {
     <div className="bg-blue-200">
       <Header />
       <div className="h-[390px] bg-black row w-full ">
-        <div className="col-6 text-white flex flex-col justify-center px-5">
+        <div className="col-8 text-white flex flex-col justify-center px-5">
           <h1>Title : {course?.title}</h1>
           <br />
           <h6>About : {course?.description}</h6>
           <br />
+          <h6>Category : {course?.category}</h6>
+          <p>Level : {course?.level}</p>
           <p>created By : {course?.instructorId.name}</p>
           <p>created At : {course?.createdAt.slice(0, 10)}</p>
-          <p className="font-sm">
-            number of videos : {course?.sessions[0].lectures.length}{" "}
-          </p>
+          <p className="font-sm">number of videos : {totalVideos} </p>
+          <p className="font-sm">number of students : {totellStudents} </p>
           <h6>Price : RS: {course?.price} /-</h6>
         </div>
-        <div className="col-6">
-          <img src={course?.image.image_url} alt="" />
+        <div className="col-4">
+          <img
+            className="h-[390px] w-full"
+            src={course?.image.image_url}
+            alt=""
+          />
         </div>
       </div>
       <div className="row mt-4 flex justify-center">
@@ -128,10 +113,10 @@ const CourseDetailesPage = () => {
               collapsible
               className="w-full border border-black"
             >
-              {course?.sessions.map((val, index) => (
-                <AccordionItem key={index} value={"index"} className="mx-5">
-                  <AccordionTrigger className="text-base font-bold hover:no-underline">
-                    Section {index + 1} - {val.sessionTitle}
+              {course?.sections.map((val, index) => (
+                <AccordionItem key={index} value={`${index}`} className="mx-5">
+                  <AccordionTrigger  className="text-base font-bold hover:no-underline">
+                    Section {index + 1} - {val.sectionTitle}
                   </AccordionTrigger>
                   {val.lectures.map((lecture, ind) => (
                     <AccordionContent
@@ -194,32 +179,55 @@ const CourseDetailesPage = () => {
               <h2 className="text-lg font-semibold">Purchase the course</h2>
             </CardHeader>
             <CardContent>
-              <div className="flex flex-col items-center gap-3 mb-4 last:mb-0">
+              <div className="flex flex-col  gap-3 mb-4 last:mb-0">
                 <img
                   src={course?.image.image_url}
                   alt={"review.name"}
                   className="w-full h-[300px]"
                 />
+                <RadioGroup onValueChange={(value)=>{
+                  setPaymentMethord(value)
+                  setOption(false)
+                }} defaultValue={paymentMethord}>
+                  <h6>Choose a payment option</h6>
+                  {/* <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="Wallet" id="option-one" />
+                    <Label htmlFor="Wallet">Wallet</Label>
+                  </div> */}
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="Stripe" id="option-two" />
+                    <Label htmlFor="Stripe">Stripe</Label>
+                  </div>
+                </RadioGroup>
                 <div>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button >purchase</Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>
-                          Are you absolutely sure?
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Are you sure to purchase this course?
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogAction type="button" >Cancel</AlertDialogAction>
-                        <AlertDialogAction onClick={handleOrder} type="button" >Continue</AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
+                  {
+                      course?.students?.some((value)=>value._id == userId)?<Button  type="button" onClick={()=>navigate(`/user/playCourse/${course._id}`)} className="w-full">View</Button>
+                      :
+                      <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button disabled={option} type="button" className="w-full">purchase</Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Are you absolutely sure?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure to purchase this course?
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogAction type="button">
+                            Cancel
+                          </AlertDialogAction>
+                          <AlertDialogAction onClick={handleOrder} type="button">
+                            Continue
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  }
+                 
                 </div>
                 {/* <div>
                     <div className="font-medium">{review.name}</div>

@@ -1,4 +1,5 @@
 import { loginType } from "@/@types/loginType";
+import ApiGatway from "@/service/axios";
 
 import { axInstence } from "@/service/client";
 
@@ -15,7 +16,7 @@ interface ICategory{
 
 export const adminLogin = async (loginData:loginType) =>{
     try {
-        const response = await axInstence.post(adminRoutes.login,loginData);       
+        const response = await ApiGatway.post(adminRoutes.login,loginData);       
         return response.data
     } catch (error) {
         return error 
@@ -24,7 +25,7 @@ export const adminLogin = async (loginData:loginType) =>{
 
 export const category = async () =>{
     try {
-        const response = await axInstence.get(adminRoutes.category);       
+        const response = await ApiGatway.get(adminRoutes.category);       
         return response.data
     } catch (error) {
         return error 
@@ -32,7 +33,7 @@ export const category = async () =>{
 }
 export const addCategory = async (data:ICategory) =>{
     try {
-        const response = await axInstence.post(adminRoutes.addCategory,data);       
+        const response = await ApiGatway.post(adminRoutes.addCategory,data);       
         return response.data
     } catch (error) {
         return error 
@@ -40,7 +41,7 @@ export const addCategory = async (data:ICategory) =>{
 }
 export const editCategory = async (data:ICategory) =>{
     try {
-        const response = await axInstence.patch(adminRoutes.editCategory,data);       
+        const response = await ApiGatway.patch(adminRoutes.editCategory,data);       
         return response.data
     } catch (error) {
         return error 
@@ -48,7 +49,7 @@ export const editCategory = async (data:ICategory) =>{
 }
 export const listCategory = async (categoryId:string) =>{
     try {
-        const response = await axInstence.patch(`${adminRoutes.listCategory}/${categoryId}`);       
+        const response = await ApiGatway.patch(`${adminRoutes.listCategory}/${categoryId}`);       
         return response.data
     } catch (error) {
         return error 
@@ -56,7 +57,7 @@ export const listCategory = async (categoryId:string) =>{
 }
 export const students = async () =>{
     try {
-        const response = await axInstence.get(adminRoutes.students);       
+        const response = await ApiGatway.get(adminRoutes.students);       
         return response.data
     } catch (error) {
         return error 
@@ -65,7 +66,7 @@ export const students = async () =>{
 export const blockUser = async (userId:string) =>{
     try {
        
-        const response = await axInstence.patch(`${adminRoutes.blockUser}/${userId}`);       
+        const response = await ApiGatway.patch(`${adminRoutes.blockUser}/${userId}`);       
         return response.data
     } catch (error) {
         return error 
@@ -73,7 +74,7 @@ export const blockUser = async (userId:string) =>{
 }
 export const instructors = async () =>{
     try {
-        const response = await axInstence.get(adminRoutes.instructors);       
+        const response = await ApiGatway.get(adminRoutes.instructors);       
         return response.data
     } catch (error) {
         return error 
@@ -83,7 +84,7 @@ export const instructors = async () =>{
 
 export const editProfile = async (instructorData:object) =>{
     try {
-        const response = await axInstence.patch(adminRoutes.editProfile,instructorData);       
+        const response = await ApiGatway.patch(adminRoutes.editProfile,instructorData);       
         return response.data
     } catch (error) {
         return error 
@@ -91,7 +92,7 @@ export const editProfile = async (instructorData:object) =>{
 }
 export const getCourses = async () =>{
     try {
-        const response = await axInstence.get(adminRoutes.getCourses);       
+        const response = await ApiGatway.get(adminRoutes.getCourses);       
         return response.data
     } catch (error) {
         return error 
@@ -99,7 +100,7 @@ export const getCourses = async () =>{
 }
 export const instructorAprovel = async (email:string,status:string) =>{
     try {
-        const response = await axInstence.patch(adminRoutes.instructorAprovel,{email,status});       
+        const response = await ApiGatway.patch(adminRoutes.instructorAprovel,{email,status});       
         return response.data
     } catch (error) {
         return error 

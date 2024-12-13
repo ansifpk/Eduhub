@@ -258,7 +258,7 @@ const AdminInstructorRequests = () => {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell className="font-medium">
+                      <TableCell align="center" colSpan={20} className="font-medium">
                         No Instructroctors Requests Found
                       </TableCell>
                     </TableRow>

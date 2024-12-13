@@ -44,14 +44,15 @@ const ForgetPassOtp:React.FC<ForgetPassOtpProps> = ({sucessCheckOTP,email}) => {
         e.preventDefault();
         try {
           
-           const response = await verifyPassOtp(email.toString(),otp)
-           if(response.sucess){
+          //  const {data} = await axios.post("http:localhost:3000/auth/user/verifyOtp",{email.toString(),otp})
+           const data = await verifyPassOtp(email.toString(),otp)
+           if(data.sucess){
             setSuccess(true);
             sucessCheckOTP(true)
             setOtp('');
             setIsLoading(false);
            }else{
-            toast.error(response.response.data.message);
+            toast.error(data.response.data.message);
            }
           
         } catch (err) {

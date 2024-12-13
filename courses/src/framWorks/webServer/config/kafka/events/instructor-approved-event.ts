@@ -1,12 +1,9 @@
-
 import { Topics } from "../topics/topics";
 
-export interface UserCreateEvent {
-    topic: Topics.userCreated;
+export interface InstructorAprovedEvent {
+    topic: Topics.instructorAproval;
     data: {
         _id: string;
-        name: string;
-        email: string;
         isInstructor:boolean
     };
 }

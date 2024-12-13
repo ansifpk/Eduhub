@@ -3,18 +3,20 @@ import { IInstructorUseCase } from "../useCases/interfaces/useCases/IInstructorU
 import { CourseCreatedPublisher } from "../framWorks/webServer/config/kafka/producer/course-created-publisher";
 import { Producer } from "kafkajs";
 import kafkaWrapper from "../framWorks/webServer/config/kafka/kafkaWrapper";
+import { CourseUpdatedPublisher } from "../framWorks/webServer/config/kafka/producer/course-updated-event";
+import { CourseListedPublisher } from "../framWorks/webServer/config/kafka/producer/course-Listed-producer";
 
 export class InstructorController{
-    // instructorUseCases:IInstructorUseCase
+   
     constructor(private instructorUseCases:IInstructorUseCase){
-        // this.instructorUseCases=instructorUseCases
+        
     }
     async createCourse(req:Request,res:Response,next:NextFunction){
-        console.log("hi");
+   
         
-        const course = await this.instructorUseCases.createCourse({bodyData:req.body,fileData:req.files})
+        const course = await this.instructorUseCases.createCourse({bodyData:req.body,fileData:req.files},next)
         if(course){    
-            console.log("finish");
+           
             await new CourseCreatedPublisher(kafkaWrapper.producer as Producer).produce({
                 _id: course._id!,
                 title: course.title,
@@ -27,20 +29,40 @@ export class InstructorController{
                 subCategory: course.subCategory,
                 level: course.level,
                 image: course.image,
-                sessions: course.sessions,
+                sections: course.sections,
                 createdAt: course.createdAt,
                 subscription: course.subscription
             })
             
             res.send({success:true,course:course}) ;
+            
+           
+            await this.instructorUseCases.uploadVideo({courseId:course._id,bodyData:req.body.sectionsVideos,fileData:req.files},next)
+          
         }
     }
+ 
     async editCourse(req:Request,res:Response,next:NextFunction){
         const files = req.files  as { [fieldname: string]: Express.Multer.File[] } | undefined;
         const course = await this.instructorUseCases.editCourse({bodyData:req.body,fileData:req.files as { [fieldname: string]: Express.Multer.File[] } | undefined},next)
         if(course){         
-            console.log("im ciontroller");
-            return res.send({success:true,course:course}) ;
+       
+          
+            res.send({success:true,course:course}) ;
+            await new CourseUpdatedPublisher(kafkaWrapper.producer as Producer).produce({
+                _id: course._id!,
+                title: course.title,
+                category: course.category,
+                subCategory: course.subCategory,
+                level: course.level,
+                thumbnail: course.thumbnail,
+                description: course.description,
+                price: course.price,
+                image: course.image,
+                sections: course.sections
+            })
+            await this.instructorUseCases.editSection({courseId:req.body._id,bodyData:req.body.sections,fileData:files},next)
+            
         }
     }
     async getCourses(req:Request,res:Response,next:NextFunction){
@@ -61,6 +83,10 @@ export class InstructorController{
        const {courseId} = req.params;
       const course =  await this.instructorUseCases.listCourse(courseId,next)
       if(course){
+        await new CourseListedPublisher(kafkaWrapper.producer as Producer).produce({
+            _id: course._id!,
+            isListed: course.isListed
+        })
         return res.send({success:true,course:course});
       }
     }

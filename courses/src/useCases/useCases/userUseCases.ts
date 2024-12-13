@@ -5,6 +5,7 @@ import { IS3bucket } from "../interfaces/service/Is3bucket";
 import { IStripe } from "../interfaces/service/stripe";
 import { IUserUseCase } from "../interfaces/useCases/IUserUseCase";
 import { ICloudinary } from "../interfaces/service/Icloudinery";
+import { Query } from "../../framWorks/webServer/types/type";
 interface Course{
     _id:string,
     title:string,
@@ -61,10 +62,43 @@ export class UserUseCase implements IUserUseCase{
        }
     }
 
-    async fetchCourses(): Promise<ICourse[] | void> {
+    async fetchCourses(category:string,topic:string,level:string,search:string): Promise<ICourse[] | void> {
         try {
-            const courses = await this.userRepository.find()
+            // const reqQuery  = query as Query
+
+            // let page 
+            // if(reqQuery.page){
+            //     page = reqQuery.page
+            // }
+
+            // let search = ""
+            // if(reqQuery.search){
+            //     search = reqQuery.search
+            // }
+            // let category = ""
+            // if(reqQuery.category){
+            //     category = reqQuery.category
+            // }
+            // let level = ""
+            // if(reqQuery.level){
+            //     level = reqQuery.level
+            // }
+            // let topic = ""
+            // if(reqQuery.topic){
+            //     topic = reqQuery.topic
+            // }
+           
+let page 
+            const courses = await this.userRepository.find({
+                page:page,
+                search,
+                category,
+                level,
+                topic,
+            })
             if(courses){
+              
+                
                 return courses;
             }
         } catch (error) {

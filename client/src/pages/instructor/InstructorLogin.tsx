@@ -9,6 +9,7 @@ import { CardDescription, CardHeader } from "@/Components/ui/card";
 import { Input } from "@/Components/ui/input";
 import InstructorAuthHead from "../../Components/instructor/instructorAuthHead";
 import { useSelector } from "react-redux";
+import axios from "axios";
 
 const InstructorLogin = () => {
     const [email,setEmail] = useState("")
@@ -18,14 +19,15 @@ const InstructorLogin = () => {
     
     const handleSubmit = async (e:React.FormEvent<HTMLFormElement>) =>{
       e.preventDefault();
-        const response = await userLogin({email,password})
-        console.log(response,"res");
+        const data = await userLogin({email,password})
+       
+        console.log(data,"res");
         
-        if(response.user){
-             if(response.user.isInstructor){
+        if(data.user){
+             if(data.user.isInstructor){
          
               
-              dispatch(setInstructor(response.user))
+              dispatch(setInstructor(data.user))
               navigate("/instructor")
               
               
@@ -34,7 +36,7 @@ const InstructorLogin = () => {
               toast.error("Your Not Instructor")
              }
         }else{
-          toast.error(response.response.data.message)
+          toast.error(data.response.data.message)
         }
 
     }

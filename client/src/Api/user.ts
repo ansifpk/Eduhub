@@ -1,14 +1,13 @@
-import Api from "../service/axios"
+
 import userRoutes from "../service/endPoints/userEndPoints"
 import { loginType } from "../@types/loginType"
 import { registerType } from "../@types/registerType"
-import ApiCourse from "@/service/course"
-import ApiOrder from "@/service/order"
 import { axInstence } from "@/service/client"
+import ApiGatway from "@/service/axios"
 
 export const signup = async (registerData: registerType) => {
     try {
-        const response = await axInstence.post(userRoutes.signUp,registerData);
+        const response = await ApiGatway.post(userRoutes.signUp,registerData);
         return response.data
     } catch (err) {
         return err
@@ -17,7 +16,7 @@ export const signup = async (registerData: registerType) => {
 }
 export const otpVerify = async (otp:string,email:string) => {
     try {
-        const response = await axInstence.post(userRoutes.verifyOtp,{otp,email})
+        const response = await ApiGatway.post(userRoutes.verifyOtp,{otp,email})
         return response.data
     } catch (err) {
         return err
@@ -26,7 +25,7 @@ export const otpVerify = async (otp:string,email:string) => {
 }
 export const userLogin = async (loginData:loginType) =>{
     try {
-        const response = await axInstence.post(userRoutes.login,loginData);       
+        const response = await ApiGatway.post(userRoutes.login,loginData);       
         return response.data
     } catch (error) {
         return error 
@@ -34,7 +33,7 @@ export const userLogin = async (loginData:loginType) =>{
 }
 export const googleLogin = async (loginData:object) =>{
     try {
-        const response = await Api.post(userRoutes.googleLogin,loginData);       
+        const response = await ApiGatway.post(userRoutes.googleLogin,loginData);       
         return response.data
     } catch (error) {
         return error 
@@ -43,7 +42,7 @@ export const googleLogin = async (loginData:object) =>{
 
 export const editUser = async (userData:object) =>{
     try {
-        const response = await Api.patch(userRoutes.editUser,userData);
+        const response = await ApiGatway.patch(userRoutes.editUser,userData);
         return response.data
     } catch (error) {
         return error 
@@ -51,7 +50,7 @@ export const editUser = async (userData:object) =>{
 }
 export const resentOtp = async (email:string) =>{
     try {
-        const response = await Api.post(userRoutes.resentOtp,{email});
+        const response = await ApiGatway.post(userRoutes.resentOtp,{email});
         return response.data
     } catch (error) {
         return error 
@@ -59,7 +58,7 @@ export const resentOtp = async (email:string) =>{
 }
 export const forgetPassword = async (email:string) =>{
     try {
-        const response = await Api.post(userRoutes.verifyEmail,{email});
+        const response = await ApiGatway.post(userRoutes.verifyEmail,{email});
         return response.data
     } catch (error) {
         return error 
@@ -67,7 +66,7 @@ export const forgetPassword = async (email:string) =>{
 }
 export const verifyPassOtp = async (email:string,otp:string) =>{
     try {
-        const response = await Api.post(userRoutes.verifyPassOtp,{email,otp});
+        const response = await ApiGatway.post(userRoutes.verifyPassOtp,{email,otp});
         return response.data
     } catch (error) {
         return error 
@@ -75,15 +74,24 @@ export const verifyPassOtp = async (email:string,otp:string) =>{
 }
 export const newPassword = async (email:string,password:string) =>{
     try {
-        const response = await Api.post(userRoutes.newPassword,{email,password});
+        const response = await ApiGatway.post(userRoutes.newPassword,{email,password});
         return response.data
     } catch (error) {
         return error 
     }
 }
-export const getCourses = async () =>{
+export const getCourses = async (category:string ="",topic:string = "",level:string="",search:string = "") =>{
     try {
-        const response = await axInstence.get(userRoutes.getCourses);
+  
+        const response = await ApiGatway.get(`${userRoutes.getCourses}?category=${category}&&topic=${topic}&&level=${level}&&search=${search}`);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+export const stripePurchase = async (course:object) =>{
+    try {
+        const response = await ApiGatway.post(userRoutes.stripePurchase,{course});
         return response.data
     } catch (error) {
         return error 
@@ -91,7 +99,7 @@ export const getCourses = async () =>{
 }
 export const puchasedCourses = async (userId:string) =>{
     try {
-        const response = await ApiCourse.get(`${userRoutes.puchasedCourses}/${userId}`);
+        const response = await ApiGatway.get(`${userRoutes.puchasedCourses}/${userId}`);
         return response.data
     } catch (error) {
         return error 
@@ -99,7 +107,7 @@ export const puchasedCourses = async (userId:string) =>{
 }
 export const courseDetailes = async (courseId:string) =>{
     try {
-        const response = await ApiCourse.get(`${userRoutes.courseDeatiles}/${courseId}`);       
+        const response = await ApiGatway.get(`${userRoutes.courseDeatiles}/${courseId}`);       
         return response.data
     } catch (error) {
         return error 
@@ -109,7 +117,7 @@ export const createOrder = async (orderData:any) =>{
     try {
         console.log("byr");
         
-        const response = await ApiOrder.post(userRoutes.createOrder,{orderData})
+        const response = await ApiGatway.post(userRoutes.createOrder,{orderData})
         return response.data
     } catch (error) {
 
@@ -118,7 +126,7 @@ export const createOrder = async (orderData:any) =>{
 }
 export const logout = async () =>{
     try {
-        const response = await axInstence.post(userRoutes.logout);
+        const response = await ApiGatway.post(userRoutes.logout);
         return response.data
     } catch (error) {
         return error 

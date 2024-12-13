@@ -15,6 +15,7 @@ import dotenv from 'dotenv';
 import { UserProfileCreateConsumer } from './framWorks/webServer/config/kafka/consumer/user-created-consumer';
 import { OrderCreatedCreateConsumer } from './framWorks/webServer/config/kafka/consumer/order-created-consumer';
 import { UserBlockedConsumer } from './framWorks/webServer/config/kafka/consumer/user-block-consumer';
+import { InstructorAprovedConsumer } from './framWorks/webServer/config/kafka/consumer/instructor-approved-consumer';
 dotenv.config();
 
 async function start(){
@@ -24,15 +25,19 @@ async function start(){
         const consumer = await kafkaWrapper.createConsumer('course-user-profile-created-group')
         const consumer2 = await kafkaWrapper.createConsumer("course-order-created-group")
          const consumer3  = await kafkaWrapper.createConsumer("course-user-blocked-group")
+         const instructorApproved  = await kafkaWrapper.createConsumer("course-instructor-approved-group")
         consumer.connect();
         consumer2.connect();
+        instructorApproved.connect();
         consumer3.connect();
         console.log("consumer connect suuccessfully");
        const listener = new UserProfileCreateConsumer(consumer)
        const listener2 = new OrderCreatedCreateConsumer(consumer2)
+       const instructorApprovedListener = new InstructorAprovedConsumer(instructorApproved)
         await new UserBlockedConsumer(consumer3).listen()
        await listener.listen()
        await listener2.listen()
+       await instructorApprovedListener.listen()
        await connectDB();
        app.listen(3002, () => console.log("the server is running in http://localhost:3002 for course"))
     } catch (error) {
@@ -44,10 +49,11 @@ async function start(){
 
 const app = express();
 
-app.use(cors({credentials:true,origin:["http://client-srv:5173",'http://eduhub.dev']}));
-app.use(json())
-app.use(urlencoded({extended:true}))
-app.use(cookieParser())
+// app.use(cors());
+app.use(cors({credentials:true,origin:["http://localhost:5173",'http://eduhub.dev']}));
+app.use(express.json({ limit: "50mb"})); // Adjust size as needed
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
+// app.use(cookieParser())
 app.use(cookieSession({
     signed:false,
     secure:false,

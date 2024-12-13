@@ -1,3 +1,5 @@
+import { ISection } from "./section";
+
 export interface ICourse{
     _id?:string,
     title:string,
@@ -17,16 +19,6 @@ export interface ICourse{
     },
     students?:string[],
     createdAt:string,
-    sessions:{
-        sessionTitle:string,
-        lectures:[{
-            _id:string,
-            content:{
-                _id:string,
-                video_url:string,
-            },
-            duration:string,
-            title:string,
-        }]
-    }[],
+    sections:string,
 }
+

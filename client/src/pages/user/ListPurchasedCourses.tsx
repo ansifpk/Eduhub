@@ -6,6 +6,7 @@ import Header from "@/Components/Header/Header";
 import ProfileNavbar from "@/Components/Header/ProfileNavbar";
 import { Card, CardContent, CardDescription } from "@/Components/ui/card";
 import { ResizablePanel, ResizablePanelGroup } from "@/Components/ui/resizable";
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -20,10 +21,12 @@ const ListPurchasedCourses :React.FC = () => {
   
   useEffect(() => {
     const courses = async () => {
-      const res = await puchasedCourses(userId);
-      
-      if (res.success) {
-        setCourses(res.course);
+      const data = await puchasedCourses(userId);
+      // const {data} = await axios.get(`http://localhost:3002/course/user/puchasedCourses/${userId}`)
+      if (data.success) {
+        console.log(data.course);
+        
+        setCourses(data.course);
       }
     };
     courses();
@@ -43,7 +46,7 @@ const ListPurchasedCourses :React.FC = () => {
         <div className="grid grid-cols-4 gap-20 m-16 ">
           {courses.map((val:ICourse,index)=>(
            <ResizablePanelGroup key={index}
-          //  onClick={()=>navigate(`/user/courseDetailes/${val._id}`)}
+           onClick={()=>navigate(`/user/playCourse/${val._id}`)}
            direction="horizontal"
            className="max-w-md rounded-lg border md:min-w-[300px]"
          >
@@ -56,8 +59,9 @@ const ListPurchasedCourses :React.FC = () => {
                 Title : {val.title}
               </h5>
                <div className="flex h-full items-center justify-between">
-                 <div className="font-semibold">Created : {"val.instructorId.name"}</div>
-                 <div className="font-semibold">Price : {val.price}</div>
+                <p  className="font-semibold" >Created : {val.instructorId.name}</p>
+                <p  className="font-semibold" >Price : {val.price}</p>
+                 
                </div>
               
              </div>
@@ -68,7 +72,7 @@ const ListPurchasedCourses :React.FC = () => {
         </div>
       ) : (
         <>
-          <div className=" h-full flex justify-center items-center">
+          <div className=" h-full flex justify-center items-center mt-5">
             <Card className="w-1/2 h-[200px] d-flex justify-center items-center">
               <CardContent className="d-flex items-center">
                 <CardDescription>No courses purchased</CardDescription>
