@@ -24,8 +24,6 @@ export function InstructorRouter(router:Router){
     }) 
     router.get("/getCourses/:instructorId",isInstructor,async(req:Request,res:Response,next:NextFunction)=>{
         try { 
-        
-          
            instructorController.getCourses(req,res,next)
         } catch (error) {
         console.error(error)          

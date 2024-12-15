@@ -64,30 +64,8 @@ export class UserUseCase implements IUserUseCase{
 
     async fetchCourses(category:string,topic:string,level:string,search:string): Promise<ICourse[] | void> {
         try {
-            // const reqQuery  = query as Query
-
-            // let page 
-            // if(reqQuery.page){
-            //     page = reqQuery.page
-            // }
-
-            // let search = ""
-            // if(reqQuery.search){
-            //     search = reqQuery.search
-            // }
-            // let category = ""
-            // if(reqQuery.category){
-            //     category = reqQuery.category
-            // }
-            // let level = ""
-            // if(reqQuery.level){
-            //     level = reqQuery.level
-            // }
-            // let topic = ""
-            // if(reqQuery.topic){
-            //     topic = reqQuery.topic
-            // }
            
+    
 let page 
             const courses = await this.userRepository.find({
                 page:page,

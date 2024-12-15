@@ -2,7 +2,6 @@ import {  Route, Routes } from "react-router-dom"
 import ExRouter from "./routes/ExRoutes"
 
 
-
 const App2 = () => {
   return (
     <div >

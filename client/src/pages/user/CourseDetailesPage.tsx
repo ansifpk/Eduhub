@@ -16,6 +16,11 @@ import {
   AccordionTrigger,
 } from "@/Components/ui/accordion";
 import { allCourses } from "@/Api/instructor";
+import std from '../../assets/home-page/studnet.jpg'
+import schoole from '../../assets/home-page/lovely-teenage-girl-with-curly-hair-posing-yellow-tshirt-min 1.png'
+import tec from '../../assets/home-page/teacher-home.jpg'
+import sss from '../../assets/home-page/9906021.jpg'
+import dd from '../../assets/home-page/3099563.jpg'
 import { students } from "@/Api/admin";
 import {
   AlertDialog,
@@ -33,6 +38,8 @@ import { Label } from "@/Components/ui/label";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { User } from "@/@types/userType";
+
+
 
 const CourseDetailesPage = () => {
   const [course, setCourse] = useState<ICourse>();
@@ -82,12 +89,11 @@ const CourseDetailesPage = () => {
   return (
     <div className="bg-blue-200">
       <Header />
-      <div className="h-[390px] bg-black row w-full ">
-        <div className="col-8 text-white flex flex-col justify-center px-5">
-          <h1>Title : {course?.title}</h1>
-          <br />
-          <h6>About : {course?.description}</h6>
-          <br />
+      <div className="">
+        <img src={tec} style={{width:"100%",height:"200px", objectFit: "contain"}} alt="image" />
+        {/* <div className="col-12 h-auto w-full text-white flex flex-col " style={{backgroundImage:`url(${schoole})`,backgroundSize:"cover",backgroundRepeat:"no-repeat",width:"100%",}} >
+          <h3>title : {course?.title}nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn</h3>
+          <h3>About : {course?.thumbnail}</h3><br />
           <h6>Category : {course?.category}</h6>
           <p>Level : {course?.level}</p>
           <p>created By : {course?.instructorId.name}</p>
@@ -95,19 +101,26 @@ const CourseDetailesPage = () => {
           <p className="font-sm">number of videos : {totalVideos} </p>
           <p className="font-sm">number of students : {totellStudents} </p>
           <h6>Price : RS: {course?.price} /-</h6>
-        </div>
-        <div className="col-4">
+          
+        </div> */}
+        {/* <div className="col-4  overflow-hidden ">
           <img
-            className="h-[390px] w-full"
-            src={course?.image.image_url}
-            alt=""
+            width={150}
+            height={150}
+            className="h-[250px]  object-cover  shadow-sm "
+            // src={course?.image.image_url}
+            src={schoole}
+            alt="cour image"
           />
-        </div>
+        </div> */}
       </div>
+    
+    
+       
       <div className="row mt-4 flex justify-center">
         <div className="col-5">
           <div className="bg-white">
-            <h2 className="ml-5">corse content</h2>
+            <h2 className="ml-5">corse content</h2> 
             <Accordion
               type="single"
               collapsible
@@ -183,17 +196,15 @@ const CourseDetailesPage = () => {
                 <img
                   src={course?.image.image_url}
                   alt={"review.name"}
-                  className="w-full h-[300px]"
+               
+                  className="w-auto h-auto"
                 />
                 <RadioGroup onValueChange={(value)=>{
                   setPaymentMethord(value)
                   setOption(false)
                 }} defaultValue={paymentMethord}>
                   <h6>Choose a payment option</h6>
-                  {/* <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="Wallet" id="option-one" />
-                    <Label htmlFor="Wallet">Wallet</Label>
-                  </div> */}
+                
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="Stripe" id="option-two" />
                     <Label htmlFor="Stripe">Stripe</Label>
@@ -229,12 +240,7 @@ const CourseDetailesPage = () => {
                   }
                  
                 </div>
-                {/* <div>
-                    <div className="font-medium">{review.name}</div>
-                    <div className="text-sm text-gray-500">
-                      {review.comment}
-                    </div>
-                  </div> */}
+               
               </div>
             </CardContent>
           </Card>

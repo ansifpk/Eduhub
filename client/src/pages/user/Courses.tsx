@@ -20,6 +20,11 @@ import { getCategoryies } from "@/Api/instructor";
 import { Button } from "@/Components/ui/button";
 import { Avatar, AvatarImage } from "@/Components/ui/avatar";
 
+import std from '../../assets/home-page/studnet.jpg'
+import schoole from '../../assets/home-page/lovely-teenage-girl-with-curly-hair-posing-yellow-tshirt-min 1.png'
+import tec from '../../assets/home-page/teacher-home.jpg'
+import sss from '../../assets/home-page/9906021.jpg'
+import dd from '../../assets/home-page/3099563.jpg'
 const Courses = () => {
   const [courses, setCourses] = useState<ICourse[]>([]);
   const [categories, setCategories] = useState<ICategory[]>([]);
@@ -33,7 +38,7 @@ const Courses = () => {
        setCategories(data);
       }
     };
-    category();
+    // category();
   }, []);
   
   const navigate = useNavigate();
@@ -50,15 +55,15 @@ const Courses = () => {
         <div className="relative flex justify-content-center ">
           <div className="flex flex-wrap mx-5 mt-4 gap-3 m-auto  ">
             {courses.map((course) => (
-              <div className=" w-[250px]  border shadow-lg" key={"course._id"}  >
-                  <div className="overflow-hidden rounded-md m-1">
+              <div className={"w-[250px]  border shadow-lg"} key={course._id}  >
+                  <div className=" overflow-hidden border rounded-md m-1 ">
                     <img
                       src={course.image.image_url}
                       alt={course.title}
-                      width={250}
-                      height={300}
+                      width={150}
+                      height={150}
                       className={
-                        "h-auto w-auto object-cover transition-all hover:scale-105 border rounded-2  shadow-sm "
+                        "h-auto w-auto object-fill transition-all hover:scale-105 aspect-square"  
                       }
                     />
                   </div>

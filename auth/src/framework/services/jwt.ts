@@ -32,7 +32,6 @@ export class JWTtocken implements IJwt{
 
         
             const data = await jwt.verify(token,'itsjwtverificationkey')
-            
             return data
            }catch(error:any){
                console.log(error.message) 

@@ -4,4 +4,6 @@ export enum Topics{
     profileUpdated = "profile-updated",
     instructorAproval = "instructor-aproval",
     courseCreated = "course-created",
+    courseUpdated = "course-updated",
+    courseListed = "course-listed",
 }

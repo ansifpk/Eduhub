@@ -36,7 +36,7 @@ try {
   if(!req.session){
     return next(new ErrorHandler(400,"Tocken Expired"))
    } 
-  const check = jwt.verify(req.session.jwt,'itsjwtaccesskey') as User;
+  const check = jwt.verify(req.session.jwt,'itsjwtverificationkey') as User;
   if(!check){
     return next(new ErrorHandler(400,"Tocken Expired"))
   }
@@ -60,7 +60,9 @@ try {
 export const isInstructor = async (req:Request,res:Response,next:NextFunction)=>{
 
   try {
-    console.log(req.session);
+    console.log("1");
+    console.log("//",req.session);
+    console.log("2");
     
     if(!req.session){
       return next(new ErrorHandler(400,"Tocken Expired"))

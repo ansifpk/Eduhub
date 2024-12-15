@@ -42,7 +42,7 @@ const UserRoter = () => {
          <Route path="/users/courses" element={<Courses/>} /> 
          <Route path="/users/courseDetailes/:courseId" element={id?<CourseDetailesPage/>:<Login/>} /> 
          <Route path="/wishlist" element={id?<Wishlist/>:<Login/>} /> 
-         <Route path="/cart" element={id?<Cart/>:<Login/>} /> 
+         <Route path="/users/cart" element={id?<Cart/>:<Login/>} /> 
          <Route path="/wallet" element={id?<Wallet/>:<Login/>} /> 
          <Route path="/profile" element={id?<Profile/>:<Login/>} /> 
          <Route path="/editUser" element={id?<EditProfile/>:<Login/>} /> 

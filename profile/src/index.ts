@@ -12,6 +12,9 @@ import fileUpload from 'express-fileupload';
 import bodyParser from 'body-parser';
 import { UserBlockedConsumer } from './framwork/webServer/config/kafka/consumer/user-block-consumer';
 import cookieSession from 'cookie-session';
+import { CourseCreatedConsumer } from './framwork/webServer/config/kafka/consumer/course-created-consumer';
+import { CourseListedConsumer } from './framwork/webServer/config/kafka/consumer/course-listed-consumer';
+import { CourseUpdatedConsumer } from './framwork/webServer/config/kafka/consumer/course-updated-consumer';
 const app = express()
 
 // Separate routers for user and admin
@@ -50,13 +53,22 @@ const start = async () => {
         await kafkaWrapper.connect();
         const userCreatedConsumer = await kafkaWrapper.createConsumer('profile-user-created-group')
         const userBlockedConsumer = await kafkaWrapper.createConsumer('profile-user-blocked-group')
+    const consumerCourse = await kafkaWrapper.createConsumer("profile-course-created-group")
+    const consumerCourseUpdated = await kafkaWrapper.createConsumer("profile-course-updated-group")
+    const consumerCourseListed = await kafkaWrapper.createConsumer("profile-course-listed-group")
+    consumerCourse.connect()
+    consumerCourseUpdated.connect()
+    consumerCourseListed.connect()
         userCreatedConsumer.connect();
         userBlockedConsumer.connect();
         console.log("consumer connect suuccessfully");
        const listener = new UserCreatedConsumer(userCreatedConsumer)
        await listener.listen();
        const listener2 =  new UserBlockedConsumer(userBlockedConsumer)
-       await listener2.listen()
+       await listener2.listen();
+         await new CourseCreatedConsumer(consumerCourse).listen();
+         await new CourseListedConsumer(consumerCourseUpdated).listen();
+         await new CourseUpdatedConsumer(consumerCourseListed).listen();
        await connectDB();
         app.listen(3004, () => console.log("the server is running in http://localhost:3004 for profile!!!!!!!!"))
     } catch (error) {

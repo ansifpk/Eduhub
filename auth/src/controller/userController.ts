@@ -104,11 +104,9 @@ export class UserController {
         next
       );
 
+      console.log(userAndTokens,".....");
       
       if (userAndTokens) {
-        
-      
-
         req.session = {jwt:userAndTokens.token.accessToken,
           jwtRefreshToken:userAndTokens.token.refreashToken
       }
@@ -150,7 +148,6 @@ export class UserController {
   }
   async verifyOtp(req: Request, res: Response, next: NextFunction) {
     
-    
     try {
       const data = await this.userUseCase.verifyOtp(
         req.body.email,
@@ -164,8 +161,10 @@ export class UserController {
     } catch (error) {
       catchError(error, next);
     }
+    
   }
   async changePassword(req: Request, res: Response, next: NextFunction) {
+
     try {
       const data = await this.userUseCase.changePassword(
         req.body.email,
@@ -178,6 +177,7 @@ export class UserController {
     } catch (error) {
       catchError(error, next);
     }
+
   }
 
   async editUser(req: Request, res: Response, next: NextFunction) {
@@ -191,7 +191,9 @@ export class UserController {
    } catch (error) {
     catchError(error, next);
    }
+
   }
+
   async logout(req: Request, res: Response, next: NextFunction) {
     try {
       req.session = null;
@@ -201,4 +203,5 @@ export class UserController {
       catchError(error, next);
     }
   }
+
 }
