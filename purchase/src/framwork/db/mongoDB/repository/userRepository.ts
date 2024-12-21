@@ -64,12 +64,14 @@ export class UserRepository implements IUserRepository{
     
     
     if(course){
-      console.log("repo updte statrt");
+      console.log("repo updte statrt",'courseId',courseId,'courseId',courseId);
       let check = await this.courseModels.findByIdAndUpdate(
           { _id: courseId }, 
           { $push: { students: userId } },
           { new: true } 
         )
+        console.log(check,"ccheck");
+        
       if(check){
         console.log("repo updte end");
         console.log("repo  end");

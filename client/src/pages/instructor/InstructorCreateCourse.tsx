@@ -20,7 +20,7 @@ import { getCategoryies } from "@/Api/instructor";
 import { Separator } from "@/Components/ui/separator";
 
 import Ex from "@/Components/instructor/ex";
-import axios from "axios";
+
 
 
 interface ICategory {
@@ -45,8 +45,6 @@ const InstructorCreateCourses = () => {
   useEffect(() => {
     const fetchCategory = async () => {
       const data = await getCategoryies();
-      // const {data} = await axios.get(`http://localhost:3001/category/instructor/category`);
-      // console.log(data);
       if(data){
         setCategories(data);
       }

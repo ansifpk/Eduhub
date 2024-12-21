@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { IAdminUseCase } from "../useCases/interfaces/useCasesInterfaces/IadminUseCase";
-import { instructorAprovalPublisher } from "../framwork/webServer/config/kafka/producers/instructor-aprovel-publisher";
+import { InstructorAprovalPublisher } from "../framwork/webServer/config/kafka/producers/instructor-aprovel-publisher";
 import kafkaWrapper from "../framwork/webServer/config/kafka/kafkaWrapper";
 import { Producer } from "kafkajs";
 
@@ -36,8 +36,8 @@ export class AdminController{
             const students = await this.adminUseCase.instructorAprovel(email,status,next)
             
             if(students){
-              console.log(students.isInstructor,"ji",students);
-            await new instructorAprovalPublisher(kafkaWrapper.producer as Producer).produce({
+         
+            await new InstructorAprovalPublisher(kafkaWrapper.producer as Producer).produce({
               _id: students._id,
               isInstructor: students.isInstructor
             })

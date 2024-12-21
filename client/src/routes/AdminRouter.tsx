@@ -12,6 +12,9 @@ import AdminListCourses from "@/pages/admin/AdminListCourses";
 import AdminProfile from "@/pages/admin/AdminProfile";
 import AdminEditProfile from "@/pages/admin/AdminEditProfile";
 import AdminInstructorRequests from "@/pages/admin/AdminInstructorRequests";
+import AdminListCoupon from "@/pages/admin/AdminListCoupons";
+import EditCoupon from "@/pages/admin/EditCoupon";
+import AdminAddCoupon from "@/pages/admin/AddCoupon";
 
 
 interface User{
@@ -34,6 +37,9 @@ const AdminRouter = () => {
          <Route path='/profile' element={isAdmin?<AdminProfile/>:<AdminLogin/>} />
          <Route path='/editProfile' element={isAdmin?<AdminEditProfile/>:<AdminLogin/>} />
          <Route path='/category' element={isAdmin?<AdminCategory/>:<AdminLogin/>} />
+         <Route path='/coupon' element={isAdmin?<AdminListCoupon/>:<AdminLogin/>} />
+         <Route path='/editCoupon' element={isAdmin?<EditCoupon/>:<AdminLogin/>} />
+         <Route path='/addCoupon' element={isAdmin?<AdminAddCoupon/>:<AdminLogin/>} />
          <Route path='/addCategory' element={isAdmin?<AddCategory/>:<AdminLogin/>} />
          <Route path='/editCategory/:id' element={isAdmin?<EditCategory/>:<AdminLogin/>} />
          <Route path='/students' element={isAdmin?<AdminListStudents/>:<AdminLogin/>} />

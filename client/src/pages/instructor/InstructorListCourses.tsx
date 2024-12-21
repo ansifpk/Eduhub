@@ -46,9 +46,18 @@ export default function InstructorListCourses() {
           </div>
         </div>
         <Separator className="my-6" />
-        <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">
+        <div className="flex flex-col space-y-8 lg:flex-row  lg:space-y-0">
               <InstructorAside  />
-          <div className="flex-1 lg:max-w-full ">
+              <Separator  orientation="vertical"  />
+              <Separator  orientation="vertical"  />
+              <Separator  orientation="vertical"  />
+              <Separator  orientation="vertical"  />
+              <Separator  orientation="vertical"  />
+              <Separator  orientation="vertical"  />
+              <Separator  orientation="vertical"  />
+              <Separator  orientation="vertical"  />
+              <Separator  orientation="vertical"  />
+          <div className="flex-1 lg:max-w-full md:max-w-full">
             <div className="space-y-6">
               <Coursestable  />
             </div>

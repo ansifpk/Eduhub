@@ -1,6 +1,5 @@
-import express, { json, urlencoded } from 'express';
+import express from 'express';
 import cors from 'cors';
-import cookieParser from   'cookie-parser';
 import { UserRouter } from './framwork/webServer/routes/userRouter';
 import { connectDB } from './framwork/webServer/config/mongoDB/db';
 import kafkaWrapper from './framwork/webServer/config/kafka/kafkaWrapper';
@@ -8,7 +7,6 @@ import { UserCreatedConsumer } from './framwork/webServer/config/kafka/consumer/
 import { InstructorRouter } from './framwork/webServer/routes/instructorRouter';
 import { errMiddleware } from './useCases/middlewares/errorMiddleware';
 import { AdminRouter } from './framwork/webServer/routes/adminRouter';
-import fileUpload from 'express-fileupload';
 import bodyParser from 'body-parser';
 import { UserBlockedConsumer } from './framwork/webServer/config/kafka/consumer/user-block-consumer';
 import cookieSession from 'cookie-session';

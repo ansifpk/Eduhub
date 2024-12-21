@@ -466,7 +466,7 @@ const InstructorEditcourse: React.FC = () => {
                               className="bg-white text-black"
                               onClick={() => navigate(-1)}
                             >
-                              Cancell
+                              Cancel
                             </Button>
                           </div>
                         </RadioGroup>
@@ -974,7 +974,7 @@ const InstructorEditcourse: React.FC = () => {
                               type="button"
                               className="bg-white text-black mr-5"
                             >
-                              Cancell
+                              Cancel
                             </Button>
                           </AlertDialogTrigger>
                           <AlertDialogContent>
@@ -983,7 +983,7 @@ const InstructorEditcourse: React.FC = () => {
                                 Are you absolutely sure?
                               </AlertDialogTitle>
                               <AlertDialogDescription>
-                                Are you sure you want to cancell all the
+                                Are you sure you want to cancel all the
                                 changes...?
                               </AlertDialogDescription>
                             </AlertDialogHeader>

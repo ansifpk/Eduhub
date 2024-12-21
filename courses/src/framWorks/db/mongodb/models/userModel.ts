@@ -36,6 +36,12 @@ const userScheema = new mongoose.Schema({
             require:true
         }
     }
+},{
+    toJSON: {
+      transform(doc,ret){
+        delete ret.__v;
+      }
+    }
 });
 const UserModel = mongoose.model<Iuser>('User',userScheema)
 export { UserModel } ;

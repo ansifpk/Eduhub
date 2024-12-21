@@ -52,7 +52,7 @@ export class AdminController{
         
         if(user){
           await new UserBlcokedPublisher(kafkaWrapper.producer as Producer).produce({
-            email: user.email,
+            _id: user._id!,
             isBlock: user.isBlock!
           })
           res.send({success:true,data:user})

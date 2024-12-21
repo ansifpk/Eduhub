@@ -6,6 +6,10 @@ import { ICourse } from "../../../../entities/course";
 
 
 const courseScheema = new mongoose.Schema({
+    _id:{
+         type:mongoose.Schema.Types.ObjectId,
+         require:true
+    },
     instructorId:{
         type:mongoose.Schema.Types.ObjectId,
         required:true,

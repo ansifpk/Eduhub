@@ -52,11 +52,6 @@ export function Coursestable() {
   useEffect(() => {
     const res = async () => {
       const data = await getCourses(instructorId);
-      // const { data } = await axios.get(
-      //   `http://localhost:3002/course/instructor/getCourses/${instructorId}`
-      // );
-      console.log(data);
-
       if (data.success) {
         setCourses(data.courses);
       }
@@ -64,7 +59,6 @@ export function Coursestable() {
     res();
   }, []);
 
-  console.log(courses, "courses");
 
   const listingCourses = courses.filter((val: ICourse) => {
     let arr = val.title
@@ -99,7 +93,8 @@ export function Coursestable() {
 
   return (
     <>
-      <div className="flex items-center justify-between space-y-2">
+      <div className="flex items-center justify-between space-y-2 w-full">
+   
         <div>
           <div className="text-white">
             <h2 className="text-2xl font-bold tracking-tight">Welcome back!</h2>
@@ -143,7 +138,7 @@ export function Coursestable() {
             <SelectItem value="Name Highy - Low">Name Highy - Low</SelectItem>
           </SelectContent>
         </Select>
-        <div className="rounded-md border">
+        <div className="rounded-md border ">
           <Table>
             <TableHeader>
               <TableRow>
@@ -204,8 +199,8 @@ export function Coursestable() {
                               {val.students?.length! > 0 ? (
                                  val.students?.map((student,index)=>(
                                   <TableRow key={index}>
-                                  <TableCell>{student}</TableCell>
-                                  <TableCell>{student}</TableCell>
+                                  <TableCell>{student.name}</TableCell>
+                                  <TableCell>{student.email}</TableCell>
                                   <TableCell>
                                     "{val.createdAt.slice(0, 10)}"
                                   </TableCell>
@@ -221,8 +216,9 @@ export function Coursestable() {
                         </SheetContent>
                       </Sheet>
                     </TableCell>
-                    <TableCell>
-                      <AlertDialog>
+                    <TableCell align='right'>
+                     <div className="flex gap-1">
+                     <AlertDialog>
                             <AlertDialogTrigger asChild>
                               <Button className={val.isListed ? "bg-success text-white" : "bg-danger text-white"}  type="button">
                                 {val.isListed ? "UnList" : "List"}
@@ -262,11 +258,12 @@ export function Coursestable() {
                              onClick={() =>
                               navigate(`/instructor/editCourse/${val._id}`)
                             }
-                            className=" border-white bg-black text-white"
+                            className="border border-white bg-black text-white "
                             
                           >
                             Edit
                           </Button>
+                     </div>
                     </TableCell>
                   </TableRow>
                 ))

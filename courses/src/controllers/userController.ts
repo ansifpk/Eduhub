@@ -20,6 +20,14 @@ export class UserController{
         res.send({success:true,courses:courses})
       }
    }
+   async getCourses(req:Request,res:Response,next:NextFunction){
+  
+      const {instructorId} = req.params;
+      const courses = await this.userUseCase.getCourses(instructorId,next)
+      if(courses){ 
+        res.send({success:true,courses:courses})
+      }
+   }
 
    async courseDetailes(req:Request,res:Response,next:NextFunction){
       const  {courseId} = req.params;
@@ -40,7 +48,7 @@ export class UserController{
    }
 
    async placeOrder(req:Request,res:Response,next:NextFunction){
-   console.log( req.body)
+   console.log(req.body)
       
       const session =  await stripe.checkout.sessions.create({
          payment_method_types:["card"],
@@ -69,5 +77,39 @@ export class UserController{
          res.json({id:session.id})
        }
 
+   }
+
+   async rating(req:Request,res:Response,next:NextFunction){
+       const {review,stars,courseId,userId} = req.body
+       const rating = await this.userUseCase.ratingCourse(courseId,userId,review,stars,next)
+       if(rating){
+       return res.send({success:true,rating:rating})
+       }
+   }
+
+   async getRatings(req:Request,res:Response,next:NextFunction){
+       const {courseId} = req.params
+       const ratings = await this.userUseCase.getRatings(courseId,next)
+       if(ratings){
+       return res.send({success:true,rating:ratings})
+       }
+   }
+
+   async updateRating(req:Request,res:Response,next:NextFunction){
+       const {ratingId,review,stars} = req.body
+       const ratings = await this.userUseCase.updateRating(ratingId,review,stars,next)
+       if(ratings){
+       return res.send({success:true,rating:ratings})
+       }
+   }
+
+   async deleteRating(req:Request,res:Response,next:NextFunction){
+       const {ratingId} = req.params
+       console.log(ratingId);
+       
+       const ratings = await this.userUseCase.deleteRating(ratingId,next)
+       if(ratings){
+       return res.send({success:true,rating:ratings})
+       }
    }
 }

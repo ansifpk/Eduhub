@@ -2,7 +2,7 @@ import { Iuser } from "../../../entities/user"
 
 export interface IToken {
     accessToken:string,
-    refreashToken:string,
+    refreshToken:string,
     role?:string
 }
 

@@ -15,11 +15,11 @@ export class UserBlockedConsumer extends KafkaConsumer<UserBlockedEvent>{
         super(consumer)
     }
 
-     async onMessage(data: { email: string; isBlock: boolean; }): Promise<void> {
+     async onMessage(data: { _id: string; isBlock: boolean; }): Promise<void> {
         try {
 
-           const {email,isBlock} = data
-           await userModel.findOneAndUpdate({email:email},{$set:{isBlock:isBlock}},{new:true})
+           const {_id,isBlock} = data
+           await userModel.findByIdAndUpdate({_id:_id},{$set:{isBlock:isBlock}},{new:true})
         } catch (error) {
             
         }

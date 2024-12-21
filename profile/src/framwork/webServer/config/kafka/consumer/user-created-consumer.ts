@@ -7,6 +7,7 @@ import { userModel } from "../../../../db/mongoDB/models/userModel";
 import { IUserUseCase } from "../../../../../useCases/interfaces/useCasesInterfaces/IuserUseCases";
 import { UserProfileCreatedPublisher } from "../producers/user-profile-created-publisher";
 import kafkaWrapper from "../kafkaWrapper";
+import { cartModel } from "../../../../db/mongoDB/models/cart";
 
 
 
@@ -19,7 +20,7 @@ export class UserCreatedConsumer extends KafkaConsumer<UserCreateEvent>{
     }
     async onMessage(data: { _id: string; name: string; email: string; isInstructor: boolean; }): Promise<void> {
         try {
-            console.log('Consumer received message user from auth service :', data);
+            // console.log('Consumer received message user from auth service :', data);
             // Adding userDta to db in course Service
             const user = await userModel.create(data)
             if(user){
@@ -38,6 +39,7 @@ export class UserCreatedConsumer extends KafkaConsumer<UserCreateEvent>{
                 })
                 
             }
+        await cartModel.create({userId:data._id})
         } catch (error) {
             console.error('Error processing message:', error);
             throw error;

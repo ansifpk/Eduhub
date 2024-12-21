@@ -86,9 +86,10 @@ export class UserController {
        });
        req.session = {};
        
-       req.session = {jwt:user.tokens.accessToken,
-        jwtRefreshToken:user.tokens.refreashToken
-    }
+       req.session = {
+        accessToken:user.tokens.accessToken,
+        refreshToken:user.tokens.refreshToken
+       }
       
       res.send({ succusse: true, user: user });
       }
@@ -104,12 +105,14 @@ export class UserController {
         next
       );
 
-      console.log(userAndTokens,".....");
       
       if (userAndTokens) {
-        req.session = {jwt:userAndTokens.token.accessToken,
-          jwtRefreshToken:userAndTokens.token.refreashToken
-      }
+      
+        req.session = {
+          accessToken:userAndTokens.token.accessToken,
+          refreshToken:userAndTokens.token.refreshToken
+         }
+
         res.send(userAndTokens);
 
       }
@@ -127,9 +130,10 @@ export class UserController {
       );
       if (userAndToken) {
        
-          req.session = {jwt:userAndToken.token.accessToken,
-              jwtRefreshToken:userAndToken.token.refreashToken
-          }
+        req.session = {
+          accessToken:userAndToken.token.accessToken,
+          refreshToken:userAndToken.token.refreshToken
+         }
           res.send({ success: true, user: userAndToken });
       }
     } catch (err) {
@@ -161,7 +165,7 @@ export class UserController {
     } catch (error) {
       catchError(error, next);
     }
-    
+
   }
   async changePassword(req: Request, res: Response, next: NextFunction) {
 
@@ -195,7 +199,7 @@ export class UserController {
   }
 
   async logout(req: Request, res: Response, next: NextFunction) {
-    try {
+    try {      
       req.session = null;
       res.send({ succuss: true, message: "logout success" });
     } catch (error: any) {

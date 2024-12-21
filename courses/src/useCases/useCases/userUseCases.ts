@@ -4,46 +4,10 @@ import { IUserRepository } from "../interfaces/repository/IUserRepository";
 import { IS3bucket } from "../interfaces/service/Is3bucket";
 import { IStripe } from "../interfaces/service/stripe";
 import { IUserUseCase } from "../interfaces/useCases/IUserUseCase";
-import { ICloudinary } from "../interfaces/service/Icloudinery";
-import { Query } from "../../framWorks/webServer/types/type";
-interface Course{
-    _id:string,
-    title:string,
-    instructorId?:string,
-    subCategory:string,
-    description:string,
-    thumbnail:string,
-    category:string,
-    level:string,
-    isListed:boolean,
-    price:number,
-    test?:[];
-    subscription:boolean,
-    videos:string[],
-    image:string,
-    imageUrl:string,
-    videoUrl:string[],
-    createdAt:string,
-}
-interface example{
-    _id:string,
-    title:string,
-    instructorId:string,
-    subCategory:string,
-    description:string,
-    thumbnail:string,
-    category:string,
-    level:string,
-    isListed:boolean,
-    price:number,
-    test:[];
-    subscription:boolean,
-    videos:string[],
-    image:string,
-    imageUrl:string,
-    videoUrl:string[],
-    createdAt:string,
-}
+import { IRating } from "../../entities/ratings";
+import ErrorHandler from "../middlewares/errorHandler";
+
+
 export class UserUseCase implements IUserUseCase{
 
    constructor(
@@ -51,6 +15,65 @@ export class UserUseCase implements IUserUseCase{
     private s3bucketrepository:IS3bucket,
     private stripe:IStripe
    ){}
+
+  async deleteRating(ratingId: string, next: NextFunction): Promise<IRating | void> {
+     try {
+        const checkRating  = await this.userRepository.findRating(ratingId);
+        if(!checkRating){
+         return next(new ErrorHandler(400,"rating not found"));
+        }
+
+        const rating = await this.userRepository.deleteRating(ratingId);
+        if(rating){
+         return rating
+        }
+
+     } catch (error) {
+      console.error(error)
+     }
+   }
+
+   async updateRating(ratingId: string, review: string, stars: number, next: NextFunction): Promise<IRating | void> {
+      try {
+          const rating = await this.userRepository.findRating(ratingId);
+          if(!rating){
+            return next(new ErrorHandler(400,"Rating not Found"))
+          }
+          const updatedRating = await this.userRepository.editRating(ratingId,review,stars);
+          if(updatedRating){
+            return updatedRating;
+          }
+      } catch (error) {
+         console.error(error)
+      }
+   }
+
+   async getRatings(courseId: string, next: NextFunction): Promise<IRating[] | void> {
+      try {
+         const course = await this.userRepository.findById(courseId);
+         if(!course){
+            return next(new ErrorHandler(400,"Course not found"));
+         }
+         const ratings = await this.userRepository.ratings(courseId);
+         if(ratings){
+            return ratings
+         }
+      } catch (error) {
+         console.error(error)
+      }
+   }
+
+    async getCourses(instructorId: string, next: NextFunction): Promise<ICourse[] | void> {
+       try {
+         const courses = await this.userRepository.courses(instructorId)
+         if(courses){
+            return courses;
+         }
+       } catch (error) {
+        console.error(error)
+       }
+    }
+
     async purchasedCourses(userId: string, next: NextFunction): Promise<ICourse[] | void> {
        try {
         const courses = await this.userRepository.findWithCondition(userId)
@@ -93,59 +116,23 @@ let page
          console.error(error)
        }
     }
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-   // async fetchCourses(): Promise<ICourse[] | void> {
-    //      const courses = await this.userRepository.find();
-    //      if(courses){
-       
-    //         for(let i=0;i<courses.length;i++){
-    //             const objectParams = {
-    //                 Key:courses[i].image
-    //             }
-    //             const url =  await this.s3bucketrepository.getGallery(objectParams);
-    //             if(url){
-    //                 courses[i].image = url;
-    //             }
-    //         }
-    
-    //         return courses
-            
-    //     }
-    // }
-    // async courseDetailes(courseId: string): Promise<ICourse | void> {
-    //     const course = await this.userRepository.findById(courseId)
-    //     if(course){
-    //         const objectParams = {
-    //             Key:course.image
-    //         }
-    //         const url = await this.s3bucketrepository.getGallery(objectParams);
-    //         course.image = url!
-    //         return course;
-    //     }
-      
-    // }
-    // async orderCourse(courseData: Course, next: NextFunction): Promise<ICourse | void> {
-    //     throw new Error("Method not implemented.");
-    // }
-   
-//     async orderCourse(courseData: Course): Promise<Course | void> {
-       
-//         const order = await this.orderCourse(courseData)
-//         if(order){
-//             return order
-//         }
 
-//     }
-    
+    async ratingCourse(courseId:string,userId:string,review:string,stars:number,next:NextFunction): Promise<IRating | void> {
+       try {
+             const course = await this.userRepository.findById(courseId);
+             if(!course){
+                return next(new ErrorHandler(400,"Course not Found"))
+             }
+             const checkRatings = await this.userRepository.checkRating(courseId,userId);
+             if(checkRatings){
+               return next(new ErrorHandler(400,"ALready Rated this course."))
+             }
+             const rating =  await this.userRepository.createRating(courseId,userId,review,stars,)
+             if(rating){
+                return rating;
+             }
+       } catch (error) {
+         console.error(error)
+       }
+    }
 }

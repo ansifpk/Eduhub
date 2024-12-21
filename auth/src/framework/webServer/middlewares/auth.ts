@@ -9,12 +9,13 @@ interface User{
 }
 
 export const isAuth = async (req:Request,res:Response,next:NextFunction)=>{ 
+  console.log(req.session);
   
   if(!req.session){
     return next(new ErrorHandler(400,"Tocken Expired"))
    } 
 
-    const check = jwt.verify(req.session?.jwt,'itsjwtaccesskey') as User;
+    const check = jwt.verify(req.session?.accessToken,'itsjwtaccesskey') as User;
     if(check){
       const user = await userModel.findOne({_id:check.id});
       if(user){
@@ -33,10 +34,11 @@ export const isAuth = async (req:Request,res:Response,next:NextFunction)=>{
 export const isAdmin = async (req:Request,res:Response,next:NextFunction)=>{
 
   try {
+    console.log(req.session);
     if(!req.session){
       return next(new ErrorHandler(400,"Tocken Expired"))
      } 
-    const check = jwt.verify(req.session.jwt,'itsjwtaccesskey') as User;
+    const check = jwt.verify(req.session.accessToken,'itsjwtaccesskey') as User;
     if(!check){
       return next(new ErrorHandler(400,"Tocken Expired"))
     }
@@ -61,7 +63,7 @@ export const isInstructor = async (req:Request,res:Response,next:NextFunction)=>
     if(!req.session){
       return next(new ErrorHandler(400,"Tocken Expired"))
      } 
-    const check = jwt.verify(req.session.jwt,'itsjwtaccesskey') as User;
+    const check = jwt.verify(req.session.accessToken,'itsjwtaccesskey') as User;
     if(!check){
       return next(new ErrorHandler(400,"Tocken Expired"))
     }

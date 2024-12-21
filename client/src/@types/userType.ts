@@ -6,4 +6,8 @@ export interface User{
     isBlock:boolean,
     isAdmin:boolean,
     isInstructor:boolean,
+    avatar:{
+        id:string,
+        avatar_url:string
+    }
  }

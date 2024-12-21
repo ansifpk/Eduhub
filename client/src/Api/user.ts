@@ -40,6 +40,41 @@ export const googleLogin = async (loginData:object) =>{
     }
 }
 
+export const instructorCourses = async (instructorId:string) => {
+    try {
+        const response = await ApiGatway.get(`${userRoutes.fetchCourses}/${instructorId}`);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
+export const getInstructorRatings = async (instructorId:string) => {
+    try {
+        const response = await ApiGatway.get(`${userRoutes.instructorRating}/${instructorId}`);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
+export const editInstructorRating = async (ratingId:string,review:string,stars:number) => {
+    try {
+        const response = await ApiGatway.patch(userRoutes.instructorRating,{ratingId,review,stars});
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+export const deleteInstructorRating = async (instructorId:string) => {
+    try {
+        const response = await ApiGatway.delete(`${userRoutes.instructorRating}/${instructorId}`);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
 export const editUser = async (userData:object) =>{
     try {
         const response = await ApiGatway.patch(userRoutes.editUser,userData);
@@ -89,6 +124,41 @@ export const getCourses = async (category:string ="",topic:string = "",level:str
         return error 
     }
 }
+export const addToCart = async (courseId:string,userId:string) =>{
+    try {
+        const response = await ApiGatway.post(userRoutes.addToCart,{courseId,userId});
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
+export const ratingCourse = async (review:string,stars:number,courseId:string,userId:string) =>{
+    try {
+        const response = await ApiGatway.post(userRoutes.ratingCourse,{review,stars,courseId,userId});
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
+export const removeFromcart = async (courseId:string,userId:string) =>{
+    try {
+        const response = await ApiGatway.delete(`${userRoutes.addToCart}/${courseId}/${userId}`);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
+export const userCart = async (userId:string) =>{
+    try {
+        const response = await ApiGatway.get(`${userRoutes.Cart}/${userId}`);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
 export const stripePurchase = async (course:object) =>{
     try {
         const response = await ApiGatway.post(userRoutes.stripePurchase,{course});
@@ -114,9 +184,7 @@ export const courseDetailes = async (courseId:string) =>{
     }
 }
 export const createOrder = async (orderData:any) =>{
-    try {
-        console.log("byr");
-        
+    try {    
         const response = await ApiGatway.post(userRoutes.createOrder,{orderData})
         return response.data
     } catch (error) {
@@ -124,6 +192,58 @@ export const createOrder = async (orderData:any) =>{
         return error 
     }
 }
+
+export const getUserDetailes = async (userId:string) =>{
+    try {
+        
+        const response = await ApiGatway.get(`${userRoutes.profile}/${userId}`)
+        return response.data
+    } catch (error) {
+
+        return error 
+    }
+}
+
+export const getRatings = async (courseId:string) =>{
+    try {
+        const response = await ApiGatway.get(`${userRoutes.ratingCourse}/${courseId}`)
+        return response.data
+    } catch (error) {
+
+        return error 
+    }
+}
+
+export const editRating = async (ratingId:string,review:string,stars:number) =>{
+    try {
+        const response = await ApiGatway.patch(userRoutes.ratingCourse,{ratingId,review,stars})
+        return response.data
+    } catch (error) {
+
+        return error 
+    }
+}
+
+export const deleteRating = async (ratingId:string) =>{
+    try {
+        const response = await ApiGatway.delete(`${userRoutes.ratingCourse}/${ratingId}`)
+        return response.data
+    } catch (error) {
+
+        return error 
+    }
+}
+
+export const instructorRating = async (instructorId:string,userId:string,review:string,stars:number) =>{
+    try {
+        const response = await ApiGatway.post(userRoutes.instructorRating,{instructorId,userId,review,stars})
+        return response.data
+    } catch (error) {
+
+        return error 
+    }
+}
+
 export const logout = async () =>{
     try {
         const response = await ApiGatway.post(userRoutes.logout);

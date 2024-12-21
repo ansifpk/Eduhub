@@ -12,6 +12,7 @@ import { UserBlockedConsumer } from "./framwork/webServer/config/kafka/consumer/
 import { CourseUpdatedConsumer } from "./framwork/webServer/config/kafka/consumer/course-updated-consumer";
 import { CourseListedConsumer } from "./framwork/webServer/config/kafka/consumer/course-listed-consumer";
 import { InstructorAprovedConsumer } from "./framwork/webServer/config/kafka/consumer/instructor-approved-consumer";
+import { EmailChangedConsumer } from "./framwork/webServer/config/kafka/consumer/email-changed-consumer";
 
 async function start(){
     try {
@@ -22,18 +23,21 @@ async function start(){
       const consumerCourseListed = await kafkaWrapper.createConsumer("purchase-course-listed-group")
       const consumerInstructor = await kafkaWrapper.createConsumer("purchase-instructor-approved-group")
       const consumerBlock = await kafkaWrapper.createConsumer("purchase-user-blocked-group")
+      const consumer1 = await kafkaWrapper.createConsumer("purchase-email-changed-group")
        consumerUser.connect();
        consumerCourse.connect();
        consumerCourseUpdated.connect();
        consumerInstructor.connect();
        consumerCourseListed.connect();
        consumerBlock.connect();
+       consumer1.connect();
        const listener = new UserProfileCreatedConsumer(consumerUser)
        const listenerCourse = new CourseCreatedConsumer(consumerCourse)
        const listenerCourseUpdated = new CourseUpdatedConsumer(consumerCourseUpdated)
        const listenerCourseListed = new CourseListedConsumer(consumerCourseListed)
        const listenerInstructor = new InstructorAprovedConsumer(consumerInstructor)
        const blockUser = new UserBlockedConsumer(consumerBlock)
+       await new EmailChangedConsumer(consumer1).listen();
        await listener.listen()
        await listenerCourse.listen()
        await listenerCourseUpdated.listen()

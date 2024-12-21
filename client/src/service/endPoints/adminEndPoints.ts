@@ -11,7 +11,8 @@ const adminRoutes = {
     blockInstructor:'/auth/auth/admin/blockinstructor',
     editProfile:"/admin/editProfile",
     getCourses:"/course/course/admin/getCourses",
-    logout:'/admin/logout'
+    logout:'/admin/logout',
+    coupon:'/course/course/admin/coupon'
    }
    
    export default adminRoutes

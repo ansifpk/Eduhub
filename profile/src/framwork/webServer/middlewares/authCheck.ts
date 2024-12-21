@@ -14,7 +14,7 @@ export const isAuth = async (req:Request,res:Response,next:NextFunction)=>{
    if(!req.session){
     return next(new ErrorHandler(400,"Tocken Expired"))
    } 
-    const check = jwt.verify(req.session.jwt,'itsjwtaccesskey') as User;
+    const check = jwt.verify(req.session.accessToken,'itsjwtaccesskey') as User;
     if(check){
       const user = await userModel.findOne({_id:check.id});
       if(user){
@@ -33,13 +33,17 @@ export const isAuth = async (req:Request,res:Response,next:NextFunction)=>{
 export const isAdmin = async (req:Request,res:Response,next:NextFunction)=>{
 
 try {
+  console.log(req.session);
+  
   if(!req.session){
     return next(new ErrorHandler(400,"Tocken Expired"))
    } 
-  const check = jwt.verify(req.session.jwt,'itsjwtaccesskey') as User;
+  const check = jwt.verify(req.session.accessToken,'itsjwtaccesskey') as User;
   if(!check){
     return next(new ErrorHandler(400,"Tocken Expired"))
   }
+  console.log(check,"ji");
+  
   const user = await userModel.findOne({_id:check.id});
     if(!user){
       return next(new ErrorHandler(400,"Tocken Expired"))
@@ -50,7 +54,8 @@ try {
       return next(new ErrorHandler(400,"You are not admin"))
     }
 } catch (error) {
-  throw new Error("Admin not login")
+  // return next(new ErrorHandler(400,"You are not admin"))
+  console.error(error)
 }
   
   
@@ -63,7 +68,7 @@ export const isInstructor = async (req:Request,res:Response,next:NextFunction)=>
     if(!req.session){
       return next(new ErrorHandler(400,"Tocken Expired"))
      } 
-    const check = jwt.verify(req.session.jwt,'itsjwtaccesskey') as User;
+    const check = jwt.verify(req.session.accessToken,'itsjwtaccesskey') as User;
     if(!check){
       return next(new ErrorHandler(400,"Tocken Expired"))
     }

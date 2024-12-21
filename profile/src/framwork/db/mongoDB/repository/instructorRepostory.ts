@@ -1,3 +1,4 @@
+import { ICourse } from "../../../../entities/course";
 import { Iuser } from "../../../../entities/user";
 import { IInstructorRepository } from "../../../../useCases/interfaces/repositoryInterfaces/IinstructorInterface";
 import { userModel } from "../models/userModel";
@@ -5,6 +6,11 @@ import { userModel } from "../models/userModel";
 
 export class InstructorRepository implements IInstructorRepository{
     constructor(private userModels:typeof userModel){}
+
+  
+
+    // user
+
     async findById(userId: string): Promise<Iuser | void> {
        try {
          const user = await this.userModels.findById({_id:userId})

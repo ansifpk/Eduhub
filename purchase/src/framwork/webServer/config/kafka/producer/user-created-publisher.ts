@@ -1,6 +1,6 @@
 
 import { Publisher } from "../base-publisher";
-import { CourseCreateEvent } from "../events/course-updated-event";
+import { CourseCreateEvent } from "../events/course-created-event";
 import { Topics } from "../topics/topics";
 
 

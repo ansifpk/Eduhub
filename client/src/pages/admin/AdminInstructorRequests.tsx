@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 
 import { Input } from "@/Components/ui/input";
 import { Label } from "@radix-ui/react-label";
-import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/Components/ui/sheet";
+import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/Components/ui/sheet";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/Components/ui/dialog";
 
 interface IUser {

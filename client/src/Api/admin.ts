@@ -98,6 +98,46 @@ export const getCourses = async () =>{
         return error 
     }
 }
+
+//coupons
+
+export const addCoupon = async (title:string,description:string,offer:number,date:Date,couponCode:string) =>{
+    try {
+        const response = await ApiGatway.post(adminRoutes.coupon,{title,description,offer,date,couponCode});       
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
+export const deleteCoupon = async (couponId:string) =>{
+    try {
+        const response = await ApiGatway.delete(`${adminRoutes.coupon}/${couponId}`);       
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
+export const editCoupon = async (couponId:string,title:string,description:string,offer:number,date:Date,couponCode:string) =>{
+    try {
+        const response = await ApiGatway.patch(`${adminRoutes.coupon}/${couponId}`,{title,description,offer,date,couponCode});       
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
+export const getCoupons = async () =>{
+    try {
+        const response = await ApiGatway.get(adminRoutes.coupon);       
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
+//user
 export const instructorAprovel = async (email:string,status:string) =>{
     try {
         const response = await ApiGatway.patch(adminRoutes.instructorAprovel,{email,status});       

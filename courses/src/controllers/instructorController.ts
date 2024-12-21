@@ -69,6 +69,8 @@ export class InstructorController{
         const {instructorId} = req.params;
         const courses = await this.instructorUseCases.fetchCourses(instructorId)
          if(courses){
+      
+            
              res.send({success:true,courses:courses})
         }
     }

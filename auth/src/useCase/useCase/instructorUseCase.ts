@@ -22,7 +22,7 @@ export class InstructorUseCase implements IInstructorInterface{
        if(userNew){
             const user = await this.instructorRepository.makeInstructor(email)
             if(user){
-                const token = await this.jwt.createAccessAndRefreashToken(email) as IToken
+                const token = await this.jwt.createAccessAndRefreashToken(user._id!) as IToken
                 if(token){
                     if(user.isBlock){
                         return next(new ErrorHandler(400,"You are blocked by Admin"))

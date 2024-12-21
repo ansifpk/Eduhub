@@ -9,8 +9,9 @@ const service = {
     auth:'http://localhost:3000',
     category:'http://localhost:3001',
     course:'http://localhost:3002',
+    purchase:'http://localhost:3003',
     profile:'http://localhost:3004',
-    purchase:'http://localhost:3003'
+    message:'http://localhost:3006'
 
 }
 app.use('/auth',createProxyMiddleware({target:service.auth,changeOrigin:true}))

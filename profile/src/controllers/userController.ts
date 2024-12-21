@@ -12,6 +12,85 @@ export class UserController{
        const user = await this.userUseCase.createProfile(req.body,next)
     }
     async userProfile(req:Request,res:Response,next:NextFunction){
-        //  const userProfile =  await this.userUseCase.userProfile(req.body)
+        const {userId} = req.params
+         const userProfile =  await this.userUseCase.userProfile(userId,next)
+         if(userProfile){
+            res.send({success:true,userData:userProfile})
+         }
+    }
+
+    async addToCart(req:Request,res:Response,next:NextFunction){
+        const {courseId,userId} = req.body;
+         const cart =  await this.userUseCase.addToCart(courseId,userId,next)
+         if(cart){
+            return res.send({success:true,cart:cart})
+         }
+    }
+
+    async removeFromCart(req:Request,res:Response,next:NextFunction){
+        const {courseId,userId} = req.params;
+         const cart =  await this.userUseCase.removeFromCart(courseId,userId,next)
+         if(cart){
+            return res.send({success:true,cart:cart})
+         }
+    }
+
+    async Cart(req:Request,res:Response,next:NextFunction){
+        const {userId} = req.params;
+         const cart =  await this.userUseCase.Cart(userId,next)
+         if(cart){
+            return res.send({success:true,cart:cart})
+         }
+    }
+
+    async ratings(req:Request,res:Response,next:NextFunction){
+      try {
+          const {instructorId} = req.params
+           const ratings = await this.userUseCase.getRating(instructorId,next)
+           if(ratings){
+            return res.send({success:true,ratings:ratings})
+           }
+      } catch (error) {
+         console.error(error)
+      }
+    }
+
+    async createRating(req:Request,res:Response,next:NextFunction){
+      try {
+         const {instructorId,review,userId,stars} = req.body
+     
+         const rating = await this.userUseCase.createRating(instructorId,userId,review,stars,next)
+         if(rating){
+            return res.send({success:true,rating:rating})
+         }
+      } catch (error) {
+         console.error(error)
+      }
+    }
+
+    async editRating(req:Request,res:Response,next:NextFunction){
+      try {
+         
+          const {ratingId,review,stars} = req.body
+          console.log(req.body);
+          
+          const rating =await this.userUseCase.editRating(ratingId,review,stars,next);
+          if(rating){
+            return res.send({success:true,rating:rating})
+          }
+      } catch (error) {
+         console.error(error)
+      }
+    }
+    async deleteRating(req:Request,res:Response,next:NextFunction){
+      try {
+         const {ratingId}  =req.params
+         const rating =await this.userUseCase.deleteRating(ratingId,next);
+          if(rating){
+            return res.send({success:true,rating:rating})
+          }
+      } catch (error) {
+         console.error(error)
+      }
     }
 }

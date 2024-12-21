@@ -14,6 +14,8 @@ import { Stripe } from "../../../service/stripe";
 import CloudinaryV2 from "../../../service/cloudiner";
 import { SectionModel } from "../../../db/mongodb/models/sectionModel";
 import { SentEmail } from "../../../service/sentMail";
+import { ratingModel } from "../../../db/mongodb/models/ratingModel";
+import { couponModel } from "../../../db/mongodb/models/couponsModel";
 
 const bcrypt = new Encrypt()
 const stripe = new Stripe()
@@ -26,12 +28,12 @@ const instructorUseCase = new InstructorUseCase(instructorRepository,bcrypt,s3bu
 const instructorController = new InstructorController(instructorUseCase)
 
 //admin
-const adminRepository = new AdminRepository(Course)
+const adminRepository = new AdminRepository(Course,couponModel)
 const adminUseCase = new AdminUseCase(adminRepository)
 const adminController = new AdminController(adminUseCase)
 
 // user
-const userRepository = new UserRepository(Course);
+const userRepository = new UserRepository(Course,ratingModel);
 const userUsecase = new UserUseCase(userRepository,s3bucketrepository,stripe)
 const userController = new UserController(userUsecase)
 

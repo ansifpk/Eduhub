@@ -77,7 +77,7 @@ const AdminAside =  () => {
                  </div>
                </NavLink>
              </li>
-             <li><NavLink style={{ textDecoration: "none" , color:"white"}} to="/admin/coupons">
+             <li><NavLink style={{ textDecoration: "none" , color:"white"}} to="/admin/coupon">
                  <div className="px-4 py-2 mt-2 flex items-center gap-2  rounded">
                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}

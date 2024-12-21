@@ -4,13 +4,13 @@ import { KafkaConsumer } from "../base-listener";
 
 import { Topics } from "../topics/topics";
 import { UserModel } from "../../../../db/mongoDB/models/userMode";
-import { UserProfileCreateEvent } from "../events/user-profile-created-event";
+import { UserProfileCreatedEvent } from "../events/user-profile-created-event";
 
 
 
-export class UserProfileCreatedConsumer extends KafkaConsumer<UserProfileCreateEvent>{
+export class UserProfileCreatedConsumer extends KafkaConsumer<UserProfileCreatedEvent>{
 
-    topic: Topics.profileUpdated = Topics.profileUpdated;
+    topic: Topics.profileCreated = Topics.profileCreated;
     groupId: string = "purchase-user-profile-created-group";
     constructor(consumer:Consumer){
         super(consumer)

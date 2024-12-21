@@ -41,7 +41,7 @@ export class AdminUsecase implements IadminUsecase{
            const hashPassword = await this.encrypt.comparePassword(password,admin.password)
            if(hashPassword){
               if(admin.isAdmin){
-                const token = await this.jwt.createAccessAndRefreashToken(email) as IToken
+                const token = await this.jwt.createAccessAndRefreashToken(admin._id!) as IToken
                 return {token,admin}
               }else{
                 return next(new ErrorHandler(400,"You Are Not Admin"))

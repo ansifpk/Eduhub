@@ -40,7 +40,7 @@ import { Card, CardContent, CardDescription, CardHeader } from "../ui/card";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Label } from "../ui/label";
 import axios from "axios";
-// import { uploadVideos } from "@/utils/cloudinery";
+
 
 interface Title {
   Title: string;
@@ -98,9 +98,7 @@ const formSchema = z.object({
     message: "At least choose one level.",
   }),
   courseprice: z.number(),
-  // courseVideo: z.array(z.instanceof(File)).min(1, {
-  //   message: "At least one video is required.",
-  // }),
+ 
   courseImage: z.instanceof(File, {
     message: "A thumbnile image is required.",
   }),
@@ -115,7 +113,6 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
   const [thumbnail, setThumbnail] = useState("");
   const [topics, setTopics] = useState([]);
   const [price, setPrice] = useState(0);
-  const [video, setVideo] = useState<File[]>([]);
   const [image, setImage] = useState({
     _id:"" as string,
     image_url:"" as string | File
@@ -136,8 +133,6 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
       description: description,
       thumbnail: thumbnail,
       courseprice: price,
-      // courseVideo: video,
-      // courseImage: image,
     },
   });
 
@@ -174,57 +169,22 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
     formData.append("level",level)
     formData.append("price",JSON.stringify(price))
     formData.append("sectionsVideos",JSON.stringify(sections))
+    
     for(let i=0;i<sections.length;i++){
       for(let j=0;j<sections[i].lectures.length;j++){
         let data = sections[i].lectures[j].content.video_url as File
         formData.append('courseVideo',data, `section${i}_lecture${j}_${data.name}`)
       }
     }
-      
-  
-    // const data = await createCourse(formData);
-    const {data} = await axios.post("http://localhost:3002/course/instructor/createCourse",formData,{
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      }
-    })
+
+    const data = await createCourse(formData)
     if(data.success){
       console.log(data.course)
       setLoading(false)
       toast.success("Successfully created Course")
-      // const formData2 = new FormData()
-      navigate('/instructor/courses')
-      // for(let i=0;i<sections.length;i++){
-      //   for(let j=0;j<sections[i].lectures.length;j++){
-      //     console.log("start");
-      //    formData2.append('file',sections[i].lectures[j].content.video_url as File)
-      //    formData2.append('upload_preset',"eduhub")
-        
-      //    const response = await axios.post(
-      //     `https://api.cloudinary.com/v1_1/dbkyg0ds3/video/upload`,
-      //     formData2
-      //   );
-      //   if(response){
-      //     sections[i].lectures[j].content._id = response.data.public_id
-      //     sections[i].lectures[j].content.video_url = response.data.secure_url
-      //     formData2.append('file',"")
-      //     formData2.append('upload_preset',"")
-        
-      //   }
-        
-      //   }
-      // }
-   
-     
-     
-      
-    //   formData2.append("sections",JSON.stringify(sections))
-    //   formData2.append("sectionsId",response.course.sessions)
     
-     
-    // console.log("fnished",sections);
-    //   await uploadVideo({courseId:response.course._id,sections})
-    //   return;
+      navigate('/instructor/courses')
+
     }else{
       setLoading(false)
       return toast.error(data.response.data.message)

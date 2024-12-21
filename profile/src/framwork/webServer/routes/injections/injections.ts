@@ -11,10 +11,13 @@ import { UserUseCases } from "../../../../useCases/useCases/userUseCases";
 import { AdminController } from "../../../../controllers/adminController";
 import { AdminRepository } from "../../../db/mongoDB/repository/adminRepository";
 import { AdminUseCase } from "../../../../useCases/useCases/adminUseCase";
+import { cartModel } from "../../../db/mongoDB/models/cart";
+import { courseModel } from "../../../db/mongoDB/models/courseModel";
+import { ratingModel } from "../../../db/mongoDB/models/ratingModel";
 
 const cloudinary = new CloudinaryV2()
 // user
-const userRepository = new UserRepository(userModel)
+const userRepository = new UserRepository(userModel,cartModel,courseModel,ratingModel)
 const userUseCase = new UserUseCases(userRepository)
 const userController = new UserController(userUseCase)
 // instructor

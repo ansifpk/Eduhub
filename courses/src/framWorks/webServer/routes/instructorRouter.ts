@@ -1,13 +1,8 @@
 import { NextFunction, Request, Response, Router } from "express";
-
-import { PutObjectCommand, S3Client,GetObjectCommand ,DeleteObjectCommand} from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import crypto from 'crypto'
 import dotenv from 'dotenv'
-import sharp from 'sharp'
 import upload from '../../webServer/midllewares/multer';
 import { instructorController } from "./injectionss/injections";
-import { isInstructor } from "../midllewares/isAuth";
+import { isAuth, isInstructor } from "../midllewares/isAuth";
 dotenv.config();
 
 
@@ -24,6 +19,8 @@ export function InstructorRouter(router:Router){
     }) 
     router.get("/getCourses/:instructorId",isInstructor,async(req:Request,res:Response,next:NextFunction)=>{
         try { 
+            console.log("hi");
+            
            instructorController.getCourses(req,res,next)
         } catch (error) {
         console.error(error)          

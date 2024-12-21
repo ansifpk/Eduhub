@@ -14,7 +14,7 @@ export class InstructorAprovedConsumer extends KafkaConsumer<InstructorAprovedEv
    
     
     
-    topic: Topics.instructorAproval = Topics.instructorAproval;
+    topic: Topics.instructorAproved = Topics.instructorAproved;
     groupId: string = "course-instructor-approved-group";
     constructor(consumer:Consumer){
         super(consumer)

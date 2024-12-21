@@ -8,8 +8,10 @@ import { AdminRoute } from './framework/webServer/routes/adminRoute';
 import { InstructorRouter } from './framework/webServer/routes/instructorRouter';
 import kafkaWrapper from './framework/webServer/config/kafka/kafkaWrapper';
 // import cookieParser from 'cookie-parser';
-import { InstructorAprovalConsumer } from './framework/webServer/config/kafka/consumer/instructor-approvel-consumer';
+import { InstructorAprovedConsumer } from './framework/webServer/config/kafka/consumer/instructor-approved-consumer';
 import cookieSession from 'cookie-session';
+import { UserUpdatedConsumer } from './framework/webServer/config/kafka/consumer/update-user-consumer';
+import { EmailChangedConsumer } from './framework/webServer/config/kafka/consumer/email-changed-consumer';
 
 const app = express()
 
@@ -45,10 +47,17 @@ const start = async () => {
     try {
         
         await kafkaWrapper.connect();
-        const consumer = await kafkaWrapper.createConsumer("auth-instructor-aproval-group")
+        const consumer = await kafkaWrapper.createConsumer("auth-instructor-aproved-group")
+        const consumer2 = await kafkaWrapper.createConsumer("auth-user-updated-group")
+        const consumer3 = await kafkaWrapper.createConsumer("email-changed-group")
         consumer.connect()
-        const listener = new InstructorAprovalConsumer(consumer)
-        await listener.listen();
+        consumer2.connect()
+        consumer3.connect()
+
+        await new InstructorAprovedConsumer(consumer).listen()
+        await new UserUpdatedConsumer(consumer2).listen()
+        await new EmailChangedConsumer(consumer3).listen()
+
         await connectDB();
         app.listen(3000, () => console.log("the server is running in http://localhost:3000/auth for auth"))
     } catch (error) {

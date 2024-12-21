@@ -9,35 +9,38 @@ import { InstructorRouter } from './framWorks/webServer/routes/instructorRouter'
 import { UserRouter } from './framWorks/webServer/routes/userRouter';
 import { errMiddleware } from './useCases/middlewares/errorMiddleware';
 import kafkaWrapper from './framWorks/webServer/config/kafka/kafkaWrapper';
-// import { UserCreatedConsumer } from './framWorks/webServer/config/kafka/consumer/user-created-consumer';
 import cookieSession from 'cookie-session';
 import dotenv from 'dotenv';
-import { UserProfileCreateConsumer } from './framWorks/webServer/config/kafka/consumer/user-created-consumer';
+import { UserProfileCreateConsumer } from './framWorks/webServer/config/kafka/consumer/user-profile-created-consumer';
 import { OrderCreatedCreateConsumer } from './framWorks/webServer/config/kafka/consumer/order-created-consumer';
 import { UserBlockedConsumer } from './framWorks/webServer/config/kafka/consumer/user-block-consumer';
 import { InstructorAprovedConsumer } from './framWorks/webServer/config/kafka/consumer/instructor-approved-consumer';
+import { EmailChangedConsumer } from './framWorks/webServer/config/kafka/consumer/email-changed-consumer';
 dotenv.config();
 
 async function start(){
     try {
         
-        await kafkaWrapper.connect();       
-        const consumer = await kafkaWrapper.createConsumer('course-user-profile-created-group')
-        const consumer2 = await kafkaWrapper.createConsumer("course-order-created-group")
-         const consumer3  = await kafkaWrapper.createConsumer("course-user-blocked-group")
-         const instructorApproved  = await kafkaWrapper.createConsumer("course-instructor-approved-group")
-        consumer.connect();
-        consumer2.connect();
-        instructorApproved.connect();
-        consumer3.connect();
-        console.log("consumer connect suuccessfully");
-       const listener = new UserProfileCreateConsumer(consumer)
-       const listener2 = new OrderCreatedCreateConsumer(consumer2)
-       const instructorApprovedListener = new InstructorAprovedConsumer(instructorApproved)
-        await new UserBlockedConsumer(consumer3).listen()
-       await listener.listen()
-       await listener2.listen()
-       await instructorApprovedListener.listen()
+    //     await kafkaWrapper.connect();       
+    //     const consumer = await kafkaWrapper.createConsumer('course-user-profile-created-group')
+    //     const consumer2 = await kafkaWrapper.createConsumer("course-order-created-group")
+    //      const consumer3  = await kafkaWrapper.createConsumer("course-user-blocked-group")
+    //      const instructorApproved  = await kafkaWrapper.createConsumer("course-instructor-approved-group")
+    //      const consumer4  = await kafkaWrapper.createConsumer("course-email-changed-group")
+    //     consumer.connect();
+    //     consumer2.connect();
+    //     instructorApproved.connect();
+    //     consumer3.connect();
+    //     consumer4.connect();
+    //     console.log("consumer connect suuccessfully");
+        
+    //     const listener = new UserProfileCreateConsumer(consumer);
+    //     await listener.listen();
+
+    //    await new OrderCreatedCreateConsumer(consumer2).listen()
+    //    await new InstructorAprovedConsumer(instructorApproved).listen()
+    //     await new UserBlockedConsumer(consumer3).listen()
+    //     await new EmailChangedConsumer(consumer4).listen()
        await connectDB();
        app.listen(3002, () => console.log("the server is running in http://localhost:3002 for course"))
     } catch (error) {

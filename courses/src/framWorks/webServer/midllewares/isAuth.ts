@@ -11,32 +11,39 @@ interface User{
 }
 
 export const isAuth = async (req:Request,res:Response,next:NextFunction)=>{ 
-   if(!req.session){
-    return next(new ErrorHandler(400,"Tocken Expired"))
+ try {
+  console.log(req.session);
+  
+  if(!req.session){
+   return next(new ErrorHandler(400,"Tocken Expired"))
+  } 
+   const check = jwt.verify(req.session.accessToken,'itsjwtaccesskey') as User;
+   if(check){
+     const user = await UserModel.findOne({_id:check.id});
+     if(user){
+        if(user.isBlock){
+         return next(new ErrorHandler(400,"You are blocked by Admin"))
+        }
+        return next();
+     }else{
+       next(new ErrorHandler(400,"Tocken Expired"))
+     }
+   }else{
+     next(new ErrorHandler(400,"Tocken Expired"))
    } 
-    const check = jwt.verify(req.session.jwt,'itsjwtaccesskey') as User;
-    if(check){
-      const user = await UserModel.findOne({_id:check.id});
-      if(user){
-         if(user.isBlock){
-          return next(new ErrorHandler(400,"You are blocked by Admin"))
-         }
-         return next();
-      }else{
-        next(new ErrorHandler(400,"Tocken Expired"))
-      }
-    }else{
-      next(new ErrorHandler(400,"Tocken Expired"))
-    } 
+ } catch (error) {
+  console.error(error)
+ }
 }
 
 export const isAdmin = async (req:Request,res:Response,next:NextFunction)=>{
 
 try {
+  console.log(req.session);
   if(!req.session){
     return next(new ErrorHandler(400,"Tocken Expired"))
    } 
-  const check = jwt.verify(req.session.jwt,'itsjwtverificationkey') as User;
+  const check = jwt.verify(req.session.accessToken,'itsjwtaccesskey') as User;
   if(!check){
     return next(new ErrorHandler(400,"Tocken Expired"))
   }
@@ -50,7 +57,7 @@ try {
       return next(new ErrorHandler(400,"You are not admin"))
     }
 } catch (error) {
-  throw new Error("Admin not login")
+  console.error(error)
 }
   
   
@@ -67,7 +74,7 @@ export const isInstructor = async (req:Request,res:Response,next:NextFunction)=>
     if(!req.session){
       return next(new ErrorHandler(400,"Tocken Expired"))
      } 
-    const check = jwt.verify(req.session.jwt,'itsjwtaccesskey') as User;
+    const check = jwt.verify(req.session.accessToken,'itsjwtaccesskey') as User;
     if(!check){
       return next(new ErrorHandler(400,"Tocken Expired"))
     }
@@ -84,7 +91,8 @@ export const isInstructor = async (req:Request,res:Response,next:NextFunction)=>
         return next(new ErrorHandler(400,"You are not Instructor"))
       }
   } catch (error) {
-    console.error(error)
+    console.error("/////",error)
+    return next(new ErrorHandler(400,"You are not Instructor"))
   }
     
     
