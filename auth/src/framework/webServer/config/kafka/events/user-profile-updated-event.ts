@@ -1,8 +1,8 @@
 
 import { Topics } from "../topics/topics";
 
-export interface UserUpdatedEvent {
-    topic: Topics.userUpdated;
+export interface UserProfileUpdatedEvent {
+    topic: Topics.profileUpdated;
     data: {
         _id: string;
         name: string;

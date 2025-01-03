@@ -9,6 +9,7 @@ import { ISentEmail } from "../interface/serviceInterface/ISentEmail";
 import { IJwt, IToken } from "../interface/serviceInterface/IJwt";
 import ErrorHandler from "../middlewares/errorHandler";
 import { catchError } from "../middlewares/catchError";
+import { Iotp } from "../../entities/otp";
 
 export class UserUseCase implements IuserUseCase {
   constructor(
@@ -19,6 +20,7 @@ export class UserUseCase implements IuserUseCase {
     private sentEmail: ISentEmail,
     private jwtToken: IJwt
   ) {}
+  
 
   async googleLogin(
     email: string,
@@ -264,4 +266,95 @@ export class UserUseCase implements IuserUseCase {
       console.error(err);
     }
   }
+  async resetPassword(
+    userId: string,
+    password: string,
+    newPassword: string,
+    next: NextFunction
+  ): Promise<any | void> {
+    try {
+      const user = await this.userRepository.findById(userId);
+      if (user) {
+        
+        const checkPassword = await this.encrypt.comparePassword(
+          password,
+          user.password
+        );
+        if(!checkPassword){
+          return next(new ErrorHandler(400, "Current password is not matching"));
+        }
+        
+        const Password = await this.encrypt.createHash(newPassword);
+        // user.password = newPassword;
+        console.log(Password);
+        
+        const updatedUser = await this.userRepository.updatePassword(userId,Password)
+        if(updatedUser){
+          return updatedUser;
+        }
+      
+        // return user;
+      } else {
+        return next(new ErrorHandler(400, "User Not Found"));
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async verifyNewEmail(userId: string, email: string, next: NextFunction): Promise<string | void> {
+    try {
+      console.log("usecase start");
+       const checkuser = await this.userRepository.findById(userId);
+       const checkEmail = await this.userRepository.findByEmail(email);
+       if(!checkuser){
+        return next(new ErrorHandler(400, "User Not Found"));
+       }
+       
+       if(checkuser.email == email){
+        return next(new ErrorHandler(400, "You cannot set the old email again"));
+       }
+
+       if(checkEmail){
+        return next(new ErrorHandler(400, "Email Already exists"));
+       }
+
+       const OTP = await this.otpGenerate.createOtp();
+        console.log("otp to change email", OTP);
+        await this.otpRepository.createOtp(checkuser.email, OTP);
+        await this.sentEmail.sentEmailVerification(
+          checkuser.name,
+          checkuser.email,
+          OTP
+        );
+       return OTP
+    } catch (error) {
+     console.error(error)
+    }
+   }
+  async changeEmail(userId: string, email: string,otp:string, next: NextFunction): Promise<Iuser | void> {
+    try {
+   
+       const checkUser = await this.userRepository.findById(userId);
+       if(!checkUser){
+        return next(new ErrorHandler(400, "User Not Found"));
+       }
+       const findOTP=  await this.otpRepository.findOtp(checkUser.email);
+       if(!findOTP){
+        return next(new ErrorHandler(400, "OTP expired"));
+       }
+       if(findOTP.otp !== otp ){
+        return next(new ErrorHandler(400, "Invalid OTP"));
+       }
+      
+       const user  = await this.userRepository.changeEmail(userId,email);
+       if(user){
+          await this.otpRepository.deleteOtp(checkUser.email);
+          return user;
+       }
+    } catch (error) {
+     console.error(error)
+    }
+   }
+
 }

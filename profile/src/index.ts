@@ -13,6 +13,7 @@ import cookieSession from 'cookie-session';
 import { CourseCreatedConsumer } from './framwork/webServer/config/kafka/consumer/course-created-consumer';
 import { CourseListedConsumer } from './framwork/webServer/config/kafka/consumer/course-listed-consumer';
 import { CourseUpdatedConsumer } from './framwork/webServer/config/kafka/consumer/course-updated-consumer';
+import { OrderCreatedCreateConsumer } from './framwork/webServer/config/kafka/consumer/order-created-consumer';
 const app = express()
 
 // Separate routers for user and admin
@@ -54,6 +55,8 @@ const start = async () => {
     const consumerCourse = await kafkaWrapper.createConsumer("profile-course-created-group")
     const consumerCourseUpdated = await kafkaWrapper.createConsumer("profile-course-updated-group")
     const consumerCourseListed = await kafkaWrapper.createConsumer("profile-course-listed-group")
+    const consumer = await kafkaWrapper.createConsumer("profile-order-created-group")
+    consumer.connect()
     consumerCourse.connect()
     consumerCourseUpdated.connect()
     consumerCourseListed.connect()
@@ -67,6 +70,7 @@ const start = async () => {
          await new CourseCreatedConsumer(consumerCourse).listen();
          await new CourseListedConsumer(consumerCourseUpdated).listen();
          await new CourseUpdatedConsumer(consumerCourseListed).listen();
+         await new OrderCreatedCreateConsumer(consumer).listen();
        await connectDB();
         app.listen(3004, () => console.log("the server is running in http://localhost:3004 for profile!!!!!!!!"))
     } catch (error) {

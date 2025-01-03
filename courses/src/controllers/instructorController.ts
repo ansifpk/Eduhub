@@ -66,11 +66,9 @@ export class InstructorController{
         }
     }
     async getCourses(req:Request,res:Response,next:NextFunction){
-        const {instructorId} = req.params;
-        const courses = await this.instructorUseCases.fetchCourses(instructorId)
+        const {instructorId,search,sort} = req.query;
+        const courses = await this.instructorUseCases.fetchCourses(instructorId as string,search as string,sort as string)
          if(courses){
-      
-            
              res.send({success:true,courses:courses})
         }
     }
@@ -90,6 +88,25 @@ export class InstructorController{
             isListed: course.isListed
         })
         return res.send({success:true,course:course});
+      }
+    }
+
+    async addTest(req:Request,res:Response,next:NextFunction){
+          const {testData} = req.body;
+          const {courseId} = req.params;
+      const course =  await this.instructorUseCases.addTest(courseId,testData,next)
+      if(course){
+        return res.send({success:true});
+      }
+    }
+
+    async editTest(req:Request,res:Response,next:NextFunction){
+          const {testData} = req.body;
+          const {testId} = req.params;
+          
+      const course =  await this.instructorUseCases.editTest(testId,testData,next)
+      if(course){
+        return res.send({success:true});
       }
     }
 }

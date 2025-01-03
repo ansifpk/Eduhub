@@ -4,14 +4,12 @@ import {  messageController } from "./injection/injection";
 
 export function MessageRoute(router:Router){
     try {
-       
-        router.get("/:userId",async(req,res,next)=>{
-            console.log("get message");
+
+        router.get("/:chatId",async(req,res,next)=>{
             messageController.getMessages(req,res,next)
         })
       
         router.post("/",async(req,res,next)=>{
-            console.log("post message");
             messageController.createMessage(req,res,next)
         })
 

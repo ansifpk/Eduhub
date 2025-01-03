@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { userController } from "./injectionss/injections";
-import bodyParser from "body-parser";
-import express from "express";
+import express from 'express';
 import { isAuth } from "../midllewares/isAuth";
 
 export function UserRouter(router: Router) {
@@ -29,6 +28,20 @@ export function UserRouter(router: Router) {
     isAuth,
     async (req: Request, res: Response, next: NextFunction) => {
       userController.purchasedCourses(req, res, next);
+    }
+  );
+  router.get(
+    "/test/:testId",
+    isAuth,
+    async (req: Request, res: Response, next: NextFunction) => {
+      userController.getTest(req, res, next);
+    }
+  );
+  router.patch(
+    "/test/:testId",
+    isAuth,
+    async (req: Request, res: Response, next: NextFunction) => {
+      userController.submitTest(req, res, next);
     }
   );
   router.post(
@@ -65,6 +78,25 @@ export function UserRouter(router: Router) {
     isAuth,
     async (req: Request, res: Response, next: NextFunction) => {
       userController.deleteRating(req, res, next);
+    }
+  );
+  //coupons
+
+  router.get(
+    "/coupons",
+    isAuth,
+    async (req: Request, res: Response, next: NextFunction) => {;
+      
+      userController.fetchCoupons(req, res, next);
+    }
+  );
+
+  router.get(
+    "/coupons/:couponCode",
+    isAuth,
+    async (req: Request, res: Response, next: NextFunction) => {;
+      
+      userController.couponDetailes(req, res, next);
     }
   );
 }

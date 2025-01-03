@@ -1,5 +1,7 @@
+import { ICoupon } from "../../../entities/coupon";
 import { ICourse } from "../../../entities/course";
 import { IRating } from "../../../entities/ratings";
+import { ITest } from "../../../entities/test";
 import { Query } from "../../../framWorks/webServer/types/type";
 interface Course{
     _id?:string,
@@ -34,5 +36,18 @@ export interface IUserRepository{
     checkRating(courseId:string,userId:string):Promise<IRating|void>
     deleteRating(ratingId:string):Promise<IRating|void>
 
+    //coupons
+    Coupons():Promise<ICoupon[]|void>
+    findCoupon(couponId:string):Promise<ICoupon|void>
+    findByCouponCode(couponCode:string):Promise<ICoupon|void>
+    useCoupon(couponId:string,userId:string):Promise<ICoupon|void>
+
+    //test
+   
+    findTest(testId:string):Promise<ITest|void>
+    submitTest(userId:string,testId:string,mark:number):Promise<ITest|void>
+
+   
+    
    
 }

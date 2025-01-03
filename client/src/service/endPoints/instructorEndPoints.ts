@@ -16,6 +16,13 @@ const instructorRoutes = {
     listCourses:"/course/course/instructor/listCourses", 
     orders:"/instructor/orders", 
     coursesDetailes:"/course/course/instructor/coursesDetailes", 
+    tests:"/course/course/instructor/tests", 
+
+    //!message
+    message:"/message/message/message",
+     //chat
+    chat:"/message/message/chat",
+    privetChat:"/message/message/chat/privetChat",
 }  
 
 export default instructorRoutes

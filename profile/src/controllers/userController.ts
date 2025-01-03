@@ -1,6 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { userUseCase } from "../framwork/webServer/routes/injections/injections";
 import { IUserUseCase } from "../useCases/interfaces/useCasesInterfaces/IuserUseCases";
+import { UserProfileUpdatedPublisher } from "../framwork/webServer/config/kafka/producers/user-profile-updated-producer";
+import kafkaWrapper from "../framwork/webServer/config/kafka/kafkaWrapper";
+import { Producer } from "kafkajs";
 
 
 export class UserController{
@@ -16,6 +19,19 @@ export class UserController{
          const userProfile =  await this.userUseCase.userProfile(userId,next)
          if(userProfile){
             res.send({success:true,userData:userProfile})
+         }
+    }
+
+    async editProfile(req:Request,res:Response,next:NextFunction){
+        const {userId} = req.params
+        const {name,thumbnail,aboutMe} = req.body;
+         const userProfile =  await this.userUseCase.editProfile(userId,name,thumbnail,aboutMe,next)
+         if(userProfile){
+            await new  UserProfileUpdatedPublisher(kafkaWrapper.producer as Producer).produce({
+               _id: userProfile._id,
+               name: userProfile.name
+            })
+            res.send({success:true,user:userProfile})
          }
     }
 
@@ -93,4 +109,6 @@ export class UserController{
          console.error(error)
       }
     }
+
+   
 }

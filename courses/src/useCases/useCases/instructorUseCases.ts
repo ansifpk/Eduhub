@@ -9,6 +9,7 @@ import ErrorHandler from "../middlewares/errorHandler";
 import { ICloudinary } from "../interfaces/service/Icloudinery";
 import { ISection } from "../../entities/section";
 import { ISentEmail } from "../interfaces/service/ISentMail";
+import { ITest } from "../../entities/test";
 interface FileData {
   fieldname: string;
   originalname: string;
@@ -44,8 +45,43 @@ export class InstructorUseCase implements IInstructorUseCase {
     private sendMail: ISentEmail,
     
   ) {}
+  async editTest(testId: string, testData: ITest, next: NextFunction): Promise<ITest | void> {
+    try {
+         const checkTest = await this.instructorRepository.findTest(testId);
+         if(!checkTest){
+          return next(new ErrorHandler(400,"Test not Found"));
+         }
+        
+         const updatedTest = await this.instructorRepository.editTest(testId,testData) 
+         if(updatedTest){
+          return updatedTest;
+         }
+    } catch (error) {
+     console.error(error)
+    }
+  }
+
+ async addTest(courseId: string, testData: ITest, next: NextFunction): Promise<ITest | void> {
+    try {
+      console.log("add test");
+      
+      const course = await this.instructorRepository.findById(courseId);
+      if(!course){
+        return next(new ErrorHandler(400,"Course not Found"));
+      }
+      const test = await this.instructorRepository.creatTest(testData)
+      if(test){
+        const course = await this.instructorRepository.addTest(courseId,test._id)
+        if(course){
+          return test;
+        }
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
   async editSection(sectionData: ReqUp, next: NextFunction): Promise<Boolean | void> {
-      // console.log(sectionData.courseId,"bodydata");
+      
       const files = sectionData.fileData as
     | { [fieldname: string]: Express.Multer.File[] }
     | undefined;
@@ -151,10 +187,12 @@ console.log("sratr");
     console.error(error)
    }
   }
-  async fetchCourses(instructorId: string): Promise<ICourse[] | void> {
+  async fetchCourses(instructorId: string,search : string,sort:string): Promise<ICourse[] | void> {
       try {
-         const courses = await this.instructorRepository.find(instructorId);
+         const courses = await this.instructorRepository.find(instructorId,search,sort);
          if(courses){
+         
+          
           return courses
          }
       } catch (error) {

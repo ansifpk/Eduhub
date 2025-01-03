@@ -16,6 +16,7 @@ import { SectionModel } from "../../../db/mongodb/models/sectionModel";
 import { SentEmail } from "../../../service/sentMail";
 import { ratingModel } from "../../../db/mongodb/models/ratingModel";
 import { couponModel } from "../../../db/mongodb/models/couponsModel";
+import { testModel } from "../../../db/mongodb/models/testModel";
 
 const bcrypt = new Encrypt()
 const stripe = new Stripe()
@@ -23,9 +24,10 @@ const sendMail = new SentEmail()
 // instructor
 const s3bucketrepository = new S3bucket()
 const cloudinery = new CloudinaryV2()
-const instructorRepository = new InstructorRepository(Course,SectionModel)
+const instructorRepository = new InstructorRepository(Course,SectionModel,testModel)
 const instructorUseCase = new InstructorUseCase(instructorRepository,bcrypt,s3bucketrepository,cloudinery,sendMail);
 const instructorController = new InstructorController(instructorUseCase)
+
 
 //admin
 const adminRepository = new AdminRepository(Course,couponModel)
@@ -33,8 +35,9 @@ const adminUseCase = new AdminUseCase(adminRepository)
 const adminController = new AdminController(adminUseCase)
 
 // user
-const userRepository = new UserRepository(Course,ratingModel);
-const userUsecase = new UserUseCase(userRepository,s3bucketrepository,stripe)
+const userRepository = new UserRepository(Course,ratingModel,couponModel,testModel);
+const userUsecase = new UserUseCase(userRepository,s3bucketrepository,stripe);
 const userController = new UserController(userUsecase)
+
 
 export {adminController,adminUseCase,adminRepository,instructorController,instructorUseCase,instructorRepository,userController,userUsecase,userRepository}

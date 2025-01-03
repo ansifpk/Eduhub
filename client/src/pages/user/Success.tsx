@@ -10,24 +10,24 @@ import { useNavigate } from 'react-router-dom'
 
 const Success = () => {
     const navigate = useNavigate()
-    const user = useSelector((state:User)=>state) 
+    // const user = useSelector((state:User)=>state) 
 
-    const bodyData = localStorage.getItem("bodyDatas");
-    useEffect(()=>{
-       const call = async()=>{
-        if(bodyData){
-            const obj = JSON.parse(bodyData)
-            obj.user  = user
-            const data = await createOrder(obj)
+    // const bodyData = localStorage.getItem("bodyDatas");
+    // useEffect(()=>{
+    //    const call = async()=>{
+    //     if(bodyData){
+    //         const obj = JSON.parse(bodyData)
+    //         obj.user  = user
+    //         const data = await createOrder(obj)
             
-            if(data.success){
-              console.log(data,"idh");
-              localStorage.setItem("bodyDatas","");
-            }
-        }
-       }
-       call();
-    },[bodyData])
+    //         if(data.success){
+    //           console.log(data,"idh");
+    //           localStorage.setItem("bodyDatas","");
+    //         }
+    //     }
+    //    }
+    //    call();
+    // },[bodyData])
   return (
     <>
     <Header />

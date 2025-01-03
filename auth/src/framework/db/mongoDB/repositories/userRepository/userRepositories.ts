@@ -7,6 +7,13 @@ export class UserRepository implements IUserRepository{
     constructor(
         private userModels:typeof userModel,
     ){}
+   
+    async updatePassword(userId: string, password: string): Promise<Iuser | void> {
+        const user = await this.userModels.findByIdAndUpdate({_id:userId},{$set:{password:password}},{new:true})
+       if(user){
+        return user;
+       }
+    }
     async findById(id: string): Promise<Iuser | void> {
        const user = await this.userModels.findById({_id:id})
        if(user){
@@ -34,4 +41,13 @@ export class UserRepository implements IUserRepository{
            return result;
         }
     }
+
+    async changeEmail(userId: string, email: string): Promise<Iuser | void> {
+        try {
+           const user = await this.userModels.findByIdAndUpdate({_id:userId},{email:email},{new:true});
+           if(user) return user;
+        } catch (error) {
+         console.error(error)
+        }
+     }
 }

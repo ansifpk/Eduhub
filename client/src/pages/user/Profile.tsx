@@ -1,20 +1,55 @@
 import ProfileNavbar from '@/Components/Header/ProfileNavbar'
 import Header from '../../Components/Header/Header'
 import { useNavigate } from 'react-router-dom'
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { User } from '@/@types/userType';
 import { Card } from '@/Components/ui/card';
 import { Button } from '@/Components/ui/button';
 import Footer from '@/Components/Footer/Footer';
+import { getUserDetailes, logout } from '@/Api/user';
+import { removeUser } from '@/redux/authSlice';
+import toast from 'react-hot-toast';
+import { useDispatch } from 'react-redux';
+import ChangeEmail from '@/Components/ChangeEmail';
 
 
 const Profile:React.FC = () => {
-  const email = useSelector((state:User)=>state.email)
-  const name = useSelector((state:User)=>state.name)
+  const [name,setName] = useState("")
+  const [email,setEmail] = useState("")
+  const [changeEmail,setChangeEmail] = useState(false)
   const navigate = useNavigate();
+  const userId = useSelector((state:User)=> state.id );
+  const dispatch = useDispatch();
+  useEffect(()=>{
+    const fetch = async () => {
+       const response = await getUserDetailes(userId);
+       if(response.success){
+          setName(response.userData.name);
+          setEmail(response.userData.email);
+       }else if(response.status == 403){
+        const resp = await logout();
+        if (resp.succuss) {
+          localStorage.setItem("accessToken", "");
+          localStorage.setItem("refreshToken", "");
+          dispatch(removeUser());
+          toast.error(response.response.data.message);
+          return navigate("/users/login");
+        }
+      }else{
+        return toast.error(response.response.data.message)
+       }
+    }
+    fetch();
+  },[userId])
+
   const handleProfile = async () =>{
     navigate("/editUser")
+  }
+  if(changeEmail){
+    return(
+      <ChangeEmail/>
+    )
   }
   return (
     <div className='bg-blue-50'>
@@ -26,6 +61,9 @@ const Profile:React.FC = () => {
           <div  className="w-full space-y-4">
               <div className="w-48 h-48 rounded-full overflow-hidden bg-gray-200">
                 <img src="https://github.com/shadcn.png" alt="" />
+              </div>
+              <div onClick={()=>setChangeEmail(true)} className='text-primary underline coursor-pointer'>
+                change emil
               </div>
           </div>
           <div className="space-y-2">

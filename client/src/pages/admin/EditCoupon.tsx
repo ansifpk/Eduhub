@@ -7,7 +7,7 @@ import { Label } from "@/Components/ui/label";
 import { Textarea } from "@/Components/ui/textarea";
 import { Button } from "@/Components/ui/button";
 import toast from "react-hot-toast";
-import { category, editCategory } from "@/Api/admin";
+import {  editCategory } from "@/Api/admin";
 import { ScrollArea } from "@/Components/ui/scroll-area";
 import { Separator } from "@/Components/ui/separator";
 import {

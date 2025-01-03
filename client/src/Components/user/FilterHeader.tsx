@@ -26,11 +26,12 @@ const FilterHeader: React.FC<Props> = ({ categories, onsendcourse }) => {
   const [category, setCategory] = useState("");
   const [topic, setTopic] = useState("");
   const [level, setLevel] = useState("");
+  const [sort, setSort] = useState("");
   const [search, setSearch] = useState("");
 
   useEffect(() => {
     const courses = async () => {
-      const data = await getCourses(category,topic,level,search);
+      const data = await getCourses(category,topic,level,search,sort);
     
       if (data.success) {
         console.log(data.courses, "cour");
@@ -48,7 +49,7 @@ const FilterHeader: React.FC<Props> = ({ categories, onsendcourse }) => {
       });
     };
     cate();
-  }, [categories, category, topic, level, search,search]);
+  }, [categories, category, topic, level, search,search,sort]);
 
   return (
     <div
@@ -75,7 +76,7 @@ const FilterHeader: React.FC<Props> = ({ categories, onsendcourse }) => {
           Search
         </Button>
       </div>
-      <div className="w-3/4 md:w-1/2  grid auto-rows-min gap-4 md:grid-cols-3">
+      <div className="w-3/4 md:w-1/2  grid auto-rows-min gap-4 md:grid-cols-4">
         <Select
           onValueChange={(value) => {
             setCategory(value);
@@ -87,7 +88,11 @@ const FilterHeader: React.FC<Props> = ({ categories, onsendcourse }) => {
           <SelectContent>
             <SelectGroup>
               <SelectLabel>Categories</SelectLabel>
+                 <SelectItem value={"All"}>
+                    All
+                  </SelectItem>
               {categories.map((value: ICategory) => (
+                
                 <SelectItem key={value._id} value={value.title}>
                   {value.title}
                 </SelectItem>
@@ -104,11 +109,15 @@ const FilterHeader: React.FC<Props> = ({ categories, onsendcourse }) => {
               <SelectLabel>Topic</SelectLabel>
               {topics.length > 0 ? (
                 <>
+                 <SelectItem value={"All"}>
+                    All
+                  </SelectItem>
                   {topics.map((val, index) => (
                     <SelectItem key={index} value={val}>
                       {val}
                     </SelectItem>
                   ))}
+                 
                 </>
               ) : (
                 <SelectLabel>No Topics available</SelectLabel>
@@ -118,7 +127,7 @@ const FilterHeader: React.FC<Props> = ({ categories, onsendcourse }) => {
         </Select>
         <Select onValueChange={(value) => setLevel(value)}>
           <SelectTrigger>
-            <SelectValue placeholder="Sort courses" />
+            <SelectValue placeholder="Select Level" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
@@ -127,6 +136,21 @@ const FilterHeader: React.FC<Props> = ({ categories, onsendcourse }) => {
               <SelectItem value="Beginner">Beginner</SelectItem>
               <SelectItem value="Intermediat">Intermediat</SelectItem>
               <SelectItem value="Advance">Advance</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+        <Select onValueChange={(value) => setSort(value)}>
+          <SelectTrigger>
+            <SelectValue placeholder="Sort " />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Sort</SelectLabel>
+              <SelectItem value="All">All</SelectItem>
+              <SelectItem value="Price Low to High">Price Low to High</SelectItem>
+              <SelectItem value="Price High to Low">Price High to Low</SelectItem>
+              <SelectItem value="Old">Old</SelectItem>
+              <SelectItem value="New">New</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>

@@ -1,6 +1,7 @@
 export enum Topics{
     userCreated = "user-created",
     profileCreated = "profile-created",
+    profileUpdated = "profile-updated",
     userBlcoked = "user-blocked",
     instructorAproved = "instructor-aproved",
     courseCreated = "course-created",
@@ -8,7 +9,7 @@ export enum Topics{
     courseListed = "course-listed",
     orderCreated = "order-created",
     videosUploaded = "videos-uploaded",
-
+    couponUsed = "coupon-used",
     emailChanged= "email-changed",
     userUpdated = "user-updated",
 }

@@ -13,6 +13,7 @@ import InstructorEditcourse from "@/pages/instructor/InstructorEditCourse.tsx";
 import CourseCreatePage from "@/Components/instructor/courseCreatePage.tsx";
 import ExamplePage from "@/Components/ExamplePage.tsx";
 import Login from "@/pages/user/Login.tsx";
+import InstructorMessage from "@/pages/instructor/InstructorMessage.tsx";
 
 interface User{
   id:string,
@@ -40,7 +41,7 @@ const InstructorRoter = () => {
          <Route path='/profile' element={isInstructor?<InstructorProfile/>:<InstructorLogin/>} />
          <Route path='/editProfile' element={isInstructor?<InstructorEditProfile/>:<InstructorLogin/>} />
          <Route path='/students' element={isInstructor?<InstructorListStudents/>:<InstructorLogin/>} />
-         <Route path='/messages' element={isInstructor?<ExamplePage/>:<ExamplePage/>} />
+         <Route path='/message' element={isInstructor?<InstructorMessage/>:<Navigate to="/users/login" />} />
          <Route path='/courses' element={isInstructor?<InstructorListCourses/>:<InstructorLogin/>} />
          <Route path='/createCourse' element={isInstructor?<InstructorCreteCourse/>:<InstructorLogin/>} />
          <Route path='/editCourse/:courseId' element={isInstructor?<InstructorEditcourse/>:<InstructorLogin/>} />

@@ -58,6 +58,12 @@ const authSLice = createSlice({
         blockUser:(state)=>{
             state.isBlock = true
         },
+        profileUpdated:(state,action)=>{
+          state.name = action.payload
+        },
+        changeEmail:(state,action)=>{
+          state.email = action.payload.email
+        },
         removeUser:(state)=>{
             state.id = "";
             state.email ="";
@@ -70,7 +76,7 @@ const authSLice = createSlice({
     }
 });
 
-export const {setUser,setAdmin,blockUser,setInstructor,removeUser} = authSLice.actions;
+export const {setUser,setAdmin,blockUser,setInstructor,removeUser,profileUpdated,changeEmail} = authSLice.actions;
 export default authSLice.reducer;
 
 

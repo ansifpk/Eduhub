@@ -42,9 +42,14 @@ const Courses = () => {
 
   const handleHart = async (courseId: string) => {
     const data = await addToCart(courseId, userId);
+    console.log(data,"ccart");
+    
     if (data.success) {
-      setCart(data.cart);
-      toast.success("Item Added to cart..");
+      const cart = await userCart(userId);
+      if (cart.success) {
+        setCart(cart.cart);
+        toast.success("Item Added to cart..");
+      }
     } else {
       toast.error(data.response.data.message);
     }
@@ -84,6 +89,8 @@ const Courses = () => {
                   </div>
                   <p className="font-medium text-xs text-muted-foreground">
                     Created : {course.instructorId.name} <br />
+                    category : {course.category}  <br />
+                    topic : {course.subCategory}  <br />
                     Price: {course.price}
                   </p>
 

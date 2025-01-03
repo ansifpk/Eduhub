@@ -12,6 +12,10 @@ import { InstructorAprovalConsumer } from './framwork/webServer/config/kafka/con
 import { UserBlockedConsumer } from './framwork/webServer/config/kafka/consumer/user-block-consumer';
 import { MessageRoute } from './framwork/webServer/routers/messageRouter';
 import { ChatRoute } from './framwork/webServer/routers/chatRoute';
+import { Socket } from 'socket.io';
+import { errMiddleware } from './useCases/middlewares/errorMiddleware';
+import { UserProfileUpdatedConsumer } from './framwork/webServer/config/kafka/consumer/user-profile-updated-consumer';
+const  {Server} =  require('socket.io') 
 // import { errMiddleware } from './useCases/middlewares/errorMiddleware';
 // import { AdminRouter } from './framwork/webServer/routes/adminRouter';
 dotenv.config();
@@ -42,8 +46,41 @@ app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 // Apply the separate routers to different paths
 app.use('/message/chat',chatRouter);
 app.use('/message/message',messageRouter);
+app.use(errMiddleware);
 
-// app.use(errMiddleware);
+//! web socket configurations
+let onlineUsers:{userId:string,socketId:string}[] = [];
+const io = new Server({cors:"http://localhost:5173",Credential:true})
+io.on("connect",(socket:Socket)=>{
+    console.log("new connection",socket.id);
+    
+    //TODO listen connection
+    socket.on("addNewUser",(userId:string)=>{
+    !onlineUsers.some((user)=>user.userId == userId)&&
+      onlineUsers.push({
+        userId,
+        socketId:socket.id
+      })
+
+      io.emit("getOnlineUsers",onlineUsers)
+    })
+
+    //* add message
+    socket.on("sendMessage",(message)=>{
+       const user = onlineUsers.find((user)=>user.userId == message.recipientId);
+       if(user){
+       
+        io.to(user.socketId).emit("getMessage",message)
+       }
+    })
+
+    //*disconnect user when
+    socket.on("disconnect",()=>{
+        onlineUsers = onlineUsers.filter((user)=>user.socketId !== socket.id)
+        io.emit("getOnlineUsers",onlineUsers)
+    })
+})
+io.listen(4000)
 
 const start = async () => {
     try {
@@ -53,15 +90,19 @@ const start = async () => {
         const userCreatedConsumer = await kafkaWrapper.createConsumer('message-user-created-group')
         const consumser = await kafkaWrapper.createConsumer('message-instructor-approved-group')
         const consumser2 = await kafkaWrapper.createConsumer('message-user-blocked-group')
+        const consumser3 = await kafkaWrapper.createConsumer('message-profile-updated-group')
         userCreatedConsumer.connect();
         consumser.connect();
         consumser2.connect();
+        consumser3.connect();
         const listener1 = new UserProfileCreatedConsumer(userCreatedConsumer)
         const listener2 = new InstructorAprovalConsumer(consumser)
         const listener3 = new UserBlockedConsumer(consumser2)
+        const listener4 = new UserProfileUpdatedConsumer(consumser3)
         await listener1.listen();
         await listener2.listen();
         await listener3.listen();
+        await listener4.listen();
         
         app.listen(PORT, () => console.log(`the Message server is running in http://localhost:${PORT} for message!!!!!!!!`))
     } catch (error) {

@@ -6,6 +6,9 @@ import { IStripe } from "../interfaces/service/stripe";
 import { IUserUseCase } from "../interfaces/useCases/IUserUseCase";
 import { IRating } from "../../entities/ratings";
 import ErrorHandler from "../middlewares/errorHandler";
+import { ICoupon } from "../../entities/coupon";
+import Stripe from "stripe";
+import { ITest } from "../../entities/test";
 
 
 export class UserUseCase implements IUserUseCase{
@@ -15,6 +18,87 @@ export class UserUseCase implements IUserUseCase{
     private s3bucketrepository:IS3bucket,
     private stripe:IStripe
    ){}
+
+  async getTest(testId: string,next: NextFunction): Promise<ITest | void> {
+       try {
+         const test = await this.userRepository.findTest(testId);
+         if(!test)  return next(new ErrorHandler(400,"Test Not found"))
+       
+         if(test){
+         return test
+         }
+         } catch (error) {
+            console.error(error)
+         }
+   }
+  async submitTest(userId:string,testId: string,mark:number,next: NextFunction): Promise<ITest | void> {
+       try {
+         const test = await this.userRepository.findTest(testId);
+         if(!test)  return next(new ErrorHandler(400,"Test Not found"))
+          
+            const updatedTest = await this.userRepository.submitTest(userId,testId,mark);
+            if(updatedTest){
+               return updatedTest;
+            }
+         
+         } catch (error) {
+            console.error(error)
+         }
+   }
+   
+
+   //TODO Coupon
+
+   async addUserToCoupon(couponId: string, userId: string, next: NextFunction): Promise<ICoupon | void> {
+      try {
+         const checkCoupon = await this.userRepository.findCoupon(couponId);
+         if(!checkCoupon)  return next(new ErrorHandler(400,"Coupon Not found"))
+         const coupons  = await this.userRepository.useCoupon(couponId,userId);
+      if(coupons){
+       return coupons
+      }
+      } catch (error) {
+         console.error(error)
+      }
+   }
+
+   async findCouponByCode(couponCode:string,next:NextFunction): Promise<ICoupon|void> {
+      try {
+         const coupons  = await this.userRepository.findByCouponCode(couponCode);
+      if(coupons){
+       return coupons
+      }
+      } catch (error) {
+         console.error(error)
+      }
+   }
+
+   async fetchCoupons(): Promise<ICoupon[] | void> {
+      const coupons  = await this.userRepository.Coupons();
+      if(coupons){
+       return coupons
+      }
+   }
+
+   async couponDetailes(couponCode: string, next: NextFunction): Promise<ICoupon | void> {
+
+      const coupons  = await this.userRepository.findByCouponCode(couponCode);
+      console.log();
+      
+      if(coupons){
+
+         //* return the coupon detailes
+          return coupons
+
+      }else{
+
+         //! coupon not fund error
+
+         return next(new ErrorHandler(400,"Invalid coupon code"))
+      }
+   }
+
+    //TODO Ratings
 
   async deleteRating(ratingId: string, next: NextFunction): Promise<IRating | void> {
      try {
@@ -63,6 +147,28 @@ export class UserUseCase implements IUserUseCase{
       }
    }
 
+   
+   async ratingCourse(courseId:string,userId:string,review:string,stars:number,next:NextFunction): Promise<IRating | void> {
+      try {
+            const course = await this.userRepository.findById(courseId);
+            if(!course){
+               return next(new ErrorHandler(400,"Course not Found"))
+            }
+            const checkRatings = await this.userRepository.checkRating(courseId,userId);
+            if(checkRatings){
+              return next(new ErrorHandler(400,"ALready Rated this course."))
+            }
+            const rating =  await this.userRepository.createRating(courseId,userId,review,stars,)
+            if(rating){
+               return rating;
+            }
+      } catch (error) {
+        console.error(error)
+      }
+   }
+
+    //TODO Courses
+    
     async getCourses(instructorId: string, next: NextFunction): Promise<ICourse[] | void> {
        try {
          const courses = await this.userRepository.courses(instructorId)
@@ -85,17 +191,18 @@ export class UserUseCase implements IUserUseCase{
        }
     }
 
-    async fetchCourses(category:string,topic:string,level:string,search:string): Promise<ICourse[] | void> {
+    async fetchCourses(category:string,topic:string,level:string,search:string, sort : string,): Promise<ICourse[] | void> {
         try {
            
     
-let page 
+            let page 
             const courses = await this.userRepository.find({
                 page:page,
                 search,
                 category,
                 level,
                 topic,
+                sort
             })
             if(courses){
               
@@ -117,22 +224,4 @@ let page
        }
     }
 
-    async ratingCourse(courseId:string,userId:string,review:string,stars:number,next:NextFunction): Promise<IRating | void> {
-       try {
-             const course = await this.userRepository.findById(courseId);
-             if(!course){
-                return next(new ErrorHandler(400,"Course not Found"))
-             }
-             const checkRatings = await this.userRepository.checkRating(courseId,userId);
-             if(checkRatings){
-               return next(new ErrorHandler(400,"ALready Rated this course."))
-             }
-             const rating =  await this.userRepository.createRating(courseId,userId,review,stars,)
-             if(rating){
-                return rating;
-             }
-       } catch (error) {
-         console.error(error)
-       }
-    }
 }

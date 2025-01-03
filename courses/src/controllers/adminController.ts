@@ -23,8 +23,11 @@ export class AdminController{
         try {
       
         const {couponId} = req.params;
-        const {title,description,offer,date,couponCode} = req.body;
-         const coupon = await this.adminUseCase.editCoupon(couponId,title,description,offer,date,couponCode,next)
+       
+        const {title,startingTime,expiryTime,description,offer,startingDate,expiryDate,couponCode} = req.body;
+        
+        
+         const coupon = await this.adminUseCase.editCoupon(couponId,title,description,offer,startingDate,startingTime,expiryDate,expiryTime,couponCode,next)
          if(coupon){
             return res.send({success:true,coupon:coupon})
          }
@@ -34,10 +37,10 @@ export class AdminController{
     }
     async createCoupons(req:Request,res:Response,next:NextFunction){
         try {
-            const {title,description,offer,date,couponCode} = req.body;
+            const {title,description,startingTime,expiryTime,offer,startingDate,expiryDate,couponCode} = req.body;
             console.log(offer);
             
-         const coupon = await this.adminUseCase.createCoupon(title,description,offer,date,couponCode,next)
+         const coupon = await this.adminUseCase.createCoupon(title,description,offer,startingDate,startingTime,expiryDate,expiryTime,couponCode,next)
          if(coupon){
             return res.send({success:true,coupon:coupon})
          }
@@ -72,8 +75,13 @@ export class AdminController{
     // courses
     async getCourses(req:Request,res:Response,next:NextFunction){
         
-        const courses = await this.adminUseCase.fetchCourses();
-        return res.send(courses)
+        try {
+            const {search,sort} = req.query;
+            const courses = await this.adminUseCase.fetchCourses(search as string,sort as string);
+            return res.send(courses)
+        } catch (error) {
+            console.error(error)
+        }
     }
     
 }

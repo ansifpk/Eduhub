@@ -2,7 +2,6 @@
 import { Consumer } from "kafkajs";
 import { KafkaConsumer } from "../base-listener";
 import { Topics } from "../topics/topics";
-import { UserModel } from "../../../../db/mongodb/models/userModel";
 import { OrderCreateEvent } from "../events/order-created-event";
 import { Course } from "../../../../db/mongodb/models/courseModel";
 
@@ -22,6 +21,7 @@ export class OrderCreatedCreateConsumer extends KafkaConsumer<OrderCreateEvent>{
                 { $addToSet:{students:data.userId} },
                 { new: true } 
               ) 
+               
         } catch (error) {
             
         }

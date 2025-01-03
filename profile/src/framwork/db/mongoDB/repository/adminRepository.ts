@@ -5,9 +5,37 @@ import { userModel } from "../models/userModel";
 export class AdminRepository implements IAdminRepository{
    
     constructor(private userModels:typeof userModel){}
-    async find(): Promise<Iuser[] | void> {
+    async find(search:string,sort:string): Promise<Iuser[] | void> {
         try {
-            const students = await this.userModels.find({isAdmin:false}).sort({createdAt:-1})
+
+            let queryData:any = {}
+            let sortQuery:any = {}
+                
+                switch (sort) {
+                    case "All":
+                      sortQuery.createdAt = -1
+                      break;
+                    case "Name Aa-Zz":
+                      sortQuery.name = 1
+                      break;
+                    case "Name Zz-Aa":
+                      sortQuery.name = -1
+                      break;
+                    case "Old":
+                      sortQuery.createdAt = 1
+                      break;
+                    case "New":
+                        sortQuery.createdAt = -1
+                        break;
+                    default:
+                        sortQuery.createdAt = -1
+                        break;
+                  }
+            
+                  if(search){
+                    queryData.name = {$regex:search,$options: "i"}
+                  }
+            const students = await this.userModels.find(queryData).sort(sortQuery)
             if(students){
               return students;
             }
@@ -40,9 +68,36 @@ export class AdminRepository implements IAdminRepository{
        }
     }
 
-    async findInstructors(): Promise<Iuser[] | void> {
+    async findInstructors(search:string,sort:string): Promise<Iuser[] | void> {
         try {
-             const users = await this.userModels.find({isAdmin:false,$or:[{status:'pending'},{status:"Approved"}]}).sort({createdAt:-1})
+            let queryData:any = {isAdmin:false,$or:[{status:'pending'},{status:"Approved"}]}
+            let sortQuery:any = {}
+                
+                switch (sort) {
+                    case "All":
+                      sortQuery.createdAt = -1
+                      break;
+                    case "Name Aa-Zz":
+                      sortQuery.name = 1
+                      break;
+                    case "Name Zz-Aa":
+                      sortQuery.name = -1
+                      break;
+                    case "Old":
+                      sortQuery.createdAt = 1
+                      break;
+                    case "New":
+                        sortQuery.createdAt = -1
+                        break;
+                    default:
+                        sortQuery.createdAt = -1
+                        break;
+                  }
+            
+                  if(search){
+                    queryData.name = {$regex:search,$options: "i"}
+                  }
+             const users = await this.userModels.find(queryData).sort(sortQuery)
              if(users){
                 return users;
              }

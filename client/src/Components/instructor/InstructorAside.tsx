@@ -61,8 +61,20 @@ export default function InstructorAside() {
         >
           Students
         </NavLink>
+      <NavLink
+          to={"/instructor/message"}
+          className={({isActive})=>cn(
+            buttonVariants({ variant: "ghost" }),
+            isActive
+              ? "bg-gray-600 hover:bg-gray-600 text-white no-underline"
+              : "hover:bg-transparent hover:underline text-white no-underline",
+            "justify-start"
+          )}
+        >
+          Messages
+        </NavLink>
       <li
-          // to={"/instructor/login"}
+          
           onClick={handleLogout}
           
           className={cn(

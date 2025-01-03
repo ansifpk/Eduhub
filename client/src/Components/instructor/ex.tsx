@@ -178,8 +178,10 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
     }
 
     const data = await createCourse(formData)
+    console.log(data);
+    
     if(data.success){
-      console.log(data.course)
+      // console.log(data.course)
       setLoading(false)
       toast.success("Successfully created Course")
     

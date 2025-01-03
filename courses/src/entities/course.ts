@@ -1,4 +1,5 @@
 import { ISection } from "./section";
+import { Iuser } from "./user";
 
 export interface ICourse{
     _id?:string,
@@ -11,13 +12,13 @@ export interface ICourse{
     level:string,
     isListed:boolean,
     price:number,
-    test?:[];
+    test?:string;
     subscription:boolean,
     image:{
         _id:string,
         image_url:string
     },
-    students?:string[],
+    students?:Iuser[],
     createdAt:string,
     sections:string[],
 }

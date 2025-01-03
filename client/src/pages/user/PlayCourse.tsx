@@ -10,6 +10,7 @@ import {
   courseDetailes,
   deleteRating,
   editRating,
+  getInstructorRatings,
   getRatings,
   instructorRating,
   ratingCourse,
@@ -56,7 +57,6 @@ import { IRating } from "@/@types/ratingType";
 import {
   AlertDialog,
   AlertDialogAction,
-  
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
@@ -64,6 +64,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/Components/ui/alert-dialog";
+import { IInstructorRating } from "@/@types/instructorRatingType";
+import moment from "moment";
 
 const PlayCourse: React.FC = () => {
   const [course, setCourse] = useState<ICourse>();
@@ -75,11 +77,15 @@ const PlayCourse: React.FC = () => {
   const [stars, setStars] = useState(0);
   const [review, setReview] = useState("");
   const [ratings, setRatings] = useState<IRating[]>([]);
+  const [instructorRatings, setInstructorRatings] = useState<
+    IInstructorRating[]
+  >([]);
   const [errors, setErrors] = useState({
     ratingError: true,
   });
 
   const userId = useSelector((state: User) => state.id);
+  const userEmail = useSelector((state: User) => state.email);
 
   const { courseId } = useParams();
   const navigate = useNavigate();
@@ -89,7 +95,17 @@ const PlayCourse: React.FC = () => {
 
       if (course.success) {
         setCourse(course.course);
+
         setChapter(course.course.sections[0].lectures[0].content.video_url);
+        const instructorRatings = await getInstructorRatings(
+          course.course.instructorId._id
+        );
+
+        if (instructorRatings.success) {
+          setInstructorRatings(instructorRatings.ratings);
+        } else {
+          return toast.error(instructorRatings.response.data.message);
+        }
       } else {
         return toast.error(course.response.data.message);
       }
@@ -101,11 +117,12 @@ const PlayCourse: React.FC = () => {
       }
     };
     course();
-  }, []);
+  }, [courseId]);
 
   const handleChange = (event: React.SyntheticEvent, navbar: string) => {
     setNavbar(navbar);
   };
+  console.log("test",course);
 
   const labels: { [index: string]: string } = {
     0.5: "Useless",
@@ -144,14 +161,11 @@ const PlayCourse: React.FC = () => {
   };
 
   const handleEditRatings = async (ratingId: string) => {
-  
-
     const response = await editRating(ratingId, review, stars);
-   
+
     if (response.success) {
       const ratings = await getRatings(courseId!);
       if (ratings.success) {
-       
         setRatings(ratings.rating);
         setValue(1);
         setStars(0!);
@@ -161,43 +175,50 @@ const PlayCourse: React.FC = () => {
       } else {
         return toast.error(ratings.response.data.message);
       }
-      
     } else {
       return toast.error(response.response.data.message);
     }
   };
 
   const handleDeleteRating = async (ratingId: string) => {
-
     const response = await deleteRating(ratingId);
 
-    if(response.success){
+    if (response.success) {
       const ratings = await getRatings(courseId!);
       if (ratings.success) {
-       
         setRatings(ratings.rating);
-        toast.success("Review deleted successfully..")
+        toast.success("Review deleted successfully..");
       } else {
         return toast.error(ratings.response.data.message);
       }
-     
-    }else{
-      return toast.error(response.response.data.message)
+    } else {
+      return toast.error(response.response.data.message);
     }
   };
-  
-  const handleInstructorRating = async() => {
-         
-    const response = await  instructorRating(course?.instructorId._id!,userId,review,stars)
 
-    
-    if(response.success){
-        return toast.success("instrutcor rated succesfuly...")
-    }else{
-      return toast.error(response.response.data.message)
+  const handleInstructorRating = async () => {
+    const response = await instructorRating(
+      course?.instructorId._id!,
+      userId,
+      review,
+      stars
+    );
+
+    if (response.success) {
+      const instructorRatings = await getInstructorRatings(
+        course?.instructorId?._id!
+      );
+
+      if (instructorRatings.success) {
+        setInstructorRatings(instructorRatings.ratings);
+        return toast.success("instrutcor rated succesfuly...");
+      } else {
+        return toast.error(instructorRatings.response.data.message);
+      }
+    } else {
+      return toast.error(response.response.data.message);
     }
-         
-  }
+  };
 
   return (
     <div className="bg-blue-100">
@@ -206,7 +227,10 @@ const PlayCourse: React.FC = () => {
       <main className="w-full flex justify-center  gap-10    py-8">
         <div className="bg-white w-[650px]">
           <div className="flex items-center space-x-2 m-3">
-            <Button className="bg-[#49BBBD] hover:bg-[#49BBBD]">
+            <Button
+              className="bg-[#49BBBD] hover:bg-[#49BBBD]"
+              onClick={() => navigate(-1)}
+            >
               <KeyboardBackspaceIcon />
             </Button>
             <div className=" bg-white border rounded-4 w-full ">
@@ -266,6 +290,88 @@ const PlayCourse: React.FC = () => {
                       <br />
                       created At : {course?.createdAt.slice(0, 10)}
                     </p>
+                    <div>
+                      <h6 className="font-bold">Tests</h6>
+                      {/* <div>
+                        {}
+                      </div> */}
+                      <div>
+                        {/* {course?.test &&
+                        // !course.test.students.includes(userId) ? (
+                        course?.test?.students.some(
+                          (value) => value.user !== userId
+                        ) ? (
+                          <div className="flex flex-col w-25 h-[200px] gap-2">
+                            <img
+                              className="border rounded-2 shadow-lg w-full h-[150px]"
+                              src={course.image.image_url}
+                            />
+                            <Button
+                              className=" shadow-lg bg-teal-300 hover:bg-teal-300 w-full"
+                              onClick={() =>
+                                navigate(
+                                  `/user/assesmentTest/${course.test._id}`
+                                )
+                              }
+                            >
+                              Go to test
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="flex flex-col w-25 h-[200px] gap-2">
+                            <div className="border rounded-2 shadow-lg w-full h-[150px]">
+                              <h4 className="font-medium text-sm ">
+                                Your Score
+                              </h4>
+                            </div>
+                            <Button
+                              disabled
+                              className="text-black  shadow-lg bg-teal-300 hover:bg-teal-300 w-full"
+                            >
+                              Test Attended
+                            </Button>
+                          </div>
+                        )
+                        } */}
+                        {course?.test?course.test.students.some((val)=>val.user==userId)?
+                        (
+                          <div className="flex flex-col w-25 h-[200px] gap-2">
+                            <div className="border rounded-2 shadow-lg w-full h-[150px]">
+                              <h4 className="font-medium text-sm ">
+                                Your Score
+                              </h4>
+                              <div className="flex h-full w-full items-center justify-center">
+                               <h1 >{course.test.students.find((val)=>val.user==userId)?.score}</h1>
+                              </div>
+                            </div>
+                            <Button
+                              disabled
+                              className="text-black  shadow-lg bg-teal-300 hover:bg-teal-300 w-full"
+                            >
+                              Test Attended
+                            </Button>
+                          </div>
+                        ):(
+                          <div className="flex flex-col w-25 h-[200px] gap-2">
+                            <img
+                              className="border rounded-2 shadow-lg w-full h-[150px]"
+                              src={course.image.image_url}
+                            />
+                            <Button
+                              className=" shadow-lg bg-teal-300 hover:bg-teal-300 w-full"
+                              onClick={() =>
+                                navigate(
+                                  `/user/assesmentTest/${course.test._id}`
+                                )
+                              }
+                            >
+                              Go to test
+                            </Button>
+                          </div>
+                        ):
+                        "illa"}
+                      </div>
+                    </div>
                   </div>
                 ) : navbar == "two" ? (
                   <div>
@@ -294,14 +400,16 @@ const PlayCourse: React.FC = () => {
                                 <div>
                                   <AlertDialog>
                                     <AlertDialogTrigger asChild>
-                                      <Edit
-                                        onClick={() => {
-                                          setReview(val.review);
-                                          setStars(val.stars);
-                                          setValue(val.stars);
-                                        }}
-                                        className="h-3 m-1 cursor-pointer"
-                                      />
+                                      {val.userId._id == userId && (
+                                        <Edit
+                                          onClick={() => {
+                                            setReview(val.review);
+                                            setStars(val.stars);
+                                            setValue(val.stars);
+                                          }}
+                                          className="h-3 m-1 cursor-pointer"
+                                        />
+                                      )}
                                     </AlertDialogTrigger>
                                     <AlertDialogContent>
                                       <AlertDialogHeader>
@@ -399,7 +507,9 @@ const PlayCourse: React.FC = () => {
                                   </AlertDialog>
                                   <AlertDialog>
                                     <AlertDialogTrigger asChild>
-                                      <Trash className="h-3 m-1 cursor-pointer" />
+                                      {val.userId._id == userId && (
+                                        <Trash className="h-3 m-1 cursor-pointer" />
+                                      )}
                                     </AlertDialogTrigger>
                                     <AlertDialogContent>
                                       <AlertDialogHeader>
@@ -448,7 +558,7 @@ const PlayCourse: React.FC = () => {
                               </div>
                               <p className="text-black font-medium text-xs">
                                 {" "}
-                                {val.updatedAt.slice(0, 10)}
+                                {moment(val.updatedAt).calendar()}
                               </p>
                             </div>
                           </div>
@@ -510,9 +620,15 @@ const PlayCourse: React.FC = () => {
 
                       <Dialog>
                         <DialogTrigger>
-                          <Button className="underline" variant="link">
-                            Rate this course
-                          </Button>
+                          {ratings.some(
+                            (value) => value.userId.email == userEmail
+                          ) ? (
+                            ""
+                          ) : (
+                            <Button className="underline" variant="link">
+                              Rate this course
+                            </Button>
+                          )}
                         </DialogTrigger>
                         <DialogContent>
                           <DialogHeader>
@@ -626,7 +742,14 @@ const PlayCourse: React.FC = () => {
                         backgroundPosition: "center",
                       }}
                     >
-                      <div  onClick={()=>navigate(`/user/instructorProfile/${course?.instructorId._id}`)} className="w-48 h-48 m-2 rounded-full  overflow-hidden bg-gray-200">
+                      <div
+                        onClick={() =>
+                          navigate(
+                            `/user/instructorProfile/${course?.instructorId._id}`
+                          )
+                        }
+                        className="w-48 h-48 m-2 rounded-full  overflow-hidden bg-gray-200"
+                      >
                         <img
                           src={
                             course?.instructorId.avatar.avatart_url
@@ -650,113 +773,116 @@ const PlayCourse: React.FC = () => {
                             <p className="text-sm font-medium">
                               <Rating readOnly max={1} />
                             </p>
-                            <p className="">2 instructor Ratings</p>
+                            <p className="">
+                              {instructorRatings.length} instructor Ratings
+                            </p>
                           </div>
                         </CardDescription>
                       </Card>
                     </div>
                     <Dialog>
-                        <DialogTrigger>
+                      <DialogTrigger>
+                        {instructorRatings.some(
+                          (value) => value.userId.email == userEmail
+                        ) ? (
+                          ""
+                        ) : (
                           <Button className="underline" variant="link">
                             Rate this instructor
                           </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                          <DialogHeader>
-                            <DialogTitle>
-                              How whould you Rate this instructor?
-                            </DialogTitle>
-                            <DialogDescription>
-                              <div className="space-y-3">
-                                {value !== null && (
-                                  <Box sx={{ ml: 2, font: "caption" }}>
-                                    {labels[hover !== -1 ? hover : value]}
-                                  </Box>
-                                )}
-                                <Rating
-                                  className="mx-5"
-                                  name="hover-feedback"
-                                  value={value}
-                                  precision={0.5}
-                                  getLabelText={getLabelText}
-                                  onChange={(event, newValue) => {
-                                    setValue(newValue);
-                                    setStars(newValue!);
-                                    // setExpant(true);
-                                    // handleRating(newValue!)
-                                  }}
-                                  onChangeActive={(event, newHover) => {
-                                    setHover(newHover);
-                                  }}
-                                  emptyIcon={
-                                    <StarIcon
-                                      style={{ opacity: 0.55 }}
-                                      fontSize="inherit"
-                                    />
-                                  }
-                                />
-      
-                                  <div>
-                                    <div className="grid w-full gap-1.5">
-                                      <Label
-                                        htmlFor="message-2"
-                                        className={
-                                          errors.ratingError
-                                            ? "text-danger"
-                                            : "text-black"
-                                        }
-                                      >
-                                        Your Message
-                                      </Label>
-                                      <Textarea
-                                        onChange={(e) => {
-                                          if (e.target.value.length < 3) {
-                                            setErrors((prev) => ({
-                                              ...prev,
-                                              ratingError: true,
-                                            }));
-                                          } else {
-                                            setErrors((prev) => ({
-                                              ...prev,
-                                              ratingError: false,
-                                            }));
-                                            setReview(e.target.value);
-                                          }
-                                        }}
-                                        className="text-black"
-                                        placeholder=" Please share your personal expierience after taking this course."
-                                        id="message-2"
-                                      />
-                                      {errors.ratingError ? (
-                                        <p className="text-sm text-danger text-muted-foreground">
-                                          Your message will be show to the
-                                          public.
-                                        </p>
-                                      ) : (
-                                        <p className="text-sm text-muted-foreground">
-                                          Your message will be show to the
-                                          public.
-                                        </p>
-                                      )}
-                                    </div>
-                                    <DialogClose asChild>
-                                      <Button
-                                        type="button"
-                                        disabled={
-                                          errors.ratingError ? true : false
-                                        }
-                                        onClick={handleInstructorRating}
-                                      >
-                                        submit
-                                      </Button>
-                                    </DialogClose>
-                                  </div>
-                                
+                        )}
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>
+                            How whould you Rate this instructor?
+                          </DialogTitle>
+                          <DialogDescription>
+                            <div className="space-y-3">
+                              {value !== null && (
+                                <Box sx={{ ml: 2, font: "caption" }}>
+                                  {labels[hover !== -1 ? hover : value]}
+                                </Box>
+                              )}
+                              <Rating
+                                className="mx-5"
+                                name="hover-feedback"
+                                value={value}
+                                precision={0.5}
+                                getLabelText={getLabelText}
+                                onChange={(event, newValue) => {
+                                  setValue(newValue);
+                                  setStars(newValue!);
+                                  // setExpant(true);
+                                  // handleRating(newValue!)
+                                }}
+                                onChangeActive={(event, newHover) => {
+                                  setHover(newHover);
+                                }}
+                                emptyIcon={
+                                  <StarIcon
+                                    style={{ opacity: 0.55 }}
+                                    fontSize="inherit"
+                                  />
+                                }
+                              />
+
+                              <div>
+                                <div className="grid w-full gap-1.5">
+                                  <Label
+                                    htmlFor="message-2"
+                                    className={
+                                      errors.ratingError
+                                        ? "text-danger"
+                                        : "text-black"
+                                    }
+                                  >
+                                    Your Message
+                                  </Label>
+                                  <Textarea
+                                    onChange={(e) => {
+                                      if (e.target.value.length < 3) {
+                                        setErrors((prev) => ({
+                                          ...prev,
+                                          ratingError: true,
+                                        }));
+                                      } else {
+                                        setErrors((prev) => ({
+                                          ...prev,
+                                          ratingError: false,
+                                        }));
+                                        setReview(e.target.value);
+                                      }
+                                    }}
+                                    className="text-black"
+                                    placeholder=" Please share your personal expierience after taking this course."
+                                    id="message-2"
+                                  />
+                                  {errors.ratingError ? (
+                                    <p className="text-sm text-danger text-muted-foreground">
+                                      Your message will be show to the public.
+                                    </p>
+                                  ) : (
+                                    <p className="text-sm text-muted-foreground">
+                                      Your message will be show to the public.
+                                    </p>
+                                  )}
+                                </div>
+                                <DialogClose asChild>
+                                  <Button
+                                    type="button"
+                                    disabled={errors.ratingError ? true : false}
+                                    onClick={handleInstructorRating}
+                                  >
+                                    submit
+                                  </Button>
+                                </DialogClose>
                               </div>
-                            </DialogDescription>
-                          </DialogHeader>
-                        </DialogContent>
-                      </Dialog>
+                            </div>
+                          </DialogDescription>
+                        </DialogHeader>
+                      </DialogContent>
+                    </Dialog>
                   </div>
                 )}
               </div>

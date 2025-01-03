@@ -10,6 +10,13 @@ export function UserRouter(router: Router) {
       console.error(error);
     }
   });
+  router.patch("/profile/:userId", isAuth, async (req, res, next) => {
+    try {
+      userController.editProfile(req, res, next);
+    } catch (error) {
+      console.error(error);
+    }
+  });
 
   router.post("/Cart", isAuth, async (req, res, next) => {
     try {
@@ -19,7 +26,7 @@ export function UserRouter(router: Router) {
       console.error(error);
     }
   });
-  router.get("/Cart/:userId", isAuth, async (req, res, next) => {
+  router.get("/Cart/:userId", async (req, res, next) => {
     try {
       userController.Cart(req, res, next);
     } catch (error) {
@@ -59,11 +66,10 @@ export function UserRouter(router: Router) {
   });
   router.get("/rating/:instructorId", isAuth, async (req, res, next) => {
     try {
-      // console.log(req.params);
-
       userController.ratings(req, res, next);
     } catch (error) {
       console.error(error);
     }
   });
+ 
 }

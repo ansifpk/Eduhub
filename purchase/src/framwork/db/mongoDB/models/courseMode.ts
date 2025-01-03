@@ -76,6 +76,12 @@ const courseScheema = new mongoose.Schema({
             ref: 'Section',
         }
     ]
+},{
+    toJSON: {
+      transform(doc,ret){
+        delete ret.__v;
+      }
+    }
 });
 const courseModel = mongoose.model<ICourse>('Course',courseScheema)
 export {courseModel} ;

@@ -50,8 +50,8 @@ const courseScheema = new mongoose.Schema({
         default: false
     },
     test:{
-        type:Array,
-        required:true
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'Test'
     },
     price:{
         type:Number,
@@ -80,6 +80,7 @@ const courseScheema = new mongoose.Schema({
         }
     ],
 },{
+    timestamps:true,
     toJSON: {
       transform(doc,ret){
         delete ret.__v;

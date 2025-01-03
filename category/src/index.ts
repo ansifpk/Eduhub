@@ -2,12 +2,13 @@ import express from 'express';
 import { json,urlencoded } from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-
+import dotenv from 'dotenv'
 import { connectDB } from './framework/webServer/config/db';
 import { CategoryRoute } from './framework/webServer/routes/categoryRoute';
 import { errMiddleware } from './useCase/middlewares/errorMiddleware';
 import { InstructorRouter } from './framework/webServer/routes/instructorRoute';
 import cookieSession from 'cookie-session';
+dotenv.config()
 connectDB()
 const app = express();
 
@@ -32,4 +33,4 @@ app.use(cors({credentials:true,origin:["http://localhost:5173",'http://eduhub.de
 app.use("/category/admin",categoryRouter)
 app.use("/category/instructor",instructorRoute)
 app.use(errMiddleware);
-app.listen(3001,()=>console.log("catecory server running 3001 port"))
+app.listen(process.env.PORT,()=>console.log(`catecory server running ${process.env.PORT} port`))

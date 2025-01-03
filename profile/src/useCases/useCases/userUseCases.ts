@@ -9,6 +9,21 @@ import { IRating } from "../../entities/ratings";
 
 export class UserUseCases implements IUserUseCase {
   constructor(private userRepository: IUserRepository) {}
+
+  async editProfile(userId: string, name: string, thumbnail: string, aboutMe: string, next: NextFunction): Promise<Iuser | void> {
+   try {
+     const user = await this.userRepository.findById(userId);
+     if(!user){
+      return next(new ErrorHandler(400,"User Not Found"))
+     }
+     const updatedUser = await this.userRepository.findByIdAndUpdate(userId,name,thumbnail,aboutMe);
+     if(updatedUser){
+      return updatedUser;
+     }
+   } catch (error) {
+    console.error(error)
+   }
+  }
   
   async createRating(instructorId: string, userId: string, review: string, stars: number, next: NextFunction): Promise<IRating | void> {
     try {

@@ -1,9 +1,10 @@
+import { IUser } from "./chatUser";
 import { User } from "./userType";
 
 
 export interface IRating{
     _id:string,
-    userId:User,
+    userId:IUser,
     courseId:string,
     review:string,
     stars:number,

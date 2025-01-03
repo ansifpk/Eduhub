@@ -1,6 +1,6 @@
 import axios from 'axios'
 const ApiGatway = axios.create({
-    baseURL:' http://localhost:3005',
+    baseURL: import.meta.env.VITE_APIGATEWAY, 
     headers:{
         "Content-Type": 'application/json',
     },

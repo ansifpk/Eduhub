@@ -28,6 +28,11 @@ export function UserRoute(router: Router) {
 
     userController.forgetPassword(req, res, next);
   });
+  router.patch("/resetPassword/:userId", async (req, res, next) => {
+    
+    
+    userController.resetPassword(req, res, next);
+  });
   router.post("/verifyOtp", async (req, res, next) => {
     
     userController.verifyOtp(req, res, next);
@@ -35,12 +40,17 @@ export function UserRoute(router: Router) {
   router.post("/newPassword", async (req, res, next) => {
     userController.changePassword(req, res, next);
   });
-  router.get("/check", async (req, res, next) => {
-    res.send("hiiii")
-  });
+
 
   router.post("/logout", async (req, res, next) => {
 
     userController.logout(req, res, next);
+  });
+  router.post("/verifyEmail/:userId", async (req, res, next) => {
+    userController.verifyEmail(req, res, next);
+  });
+  router.patch("/changeEmail/:userId", async (req, res, next) => {
+    console.log("router",req.params,req.body);
+    userController.changeEmail(req, res, next);
   });
 }

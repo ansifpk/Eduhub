@@ -1,7 +1,7 @@
 import AdminAside from "@/Components/admin/AdminAside";
 import { Card } from "@/Components/ui/card";
 import { useEffect, useState } from "react";
-import { instructors, blockUser } from "@/Api/admin";
+import { instructors, blockUser, adminCreateMessage } from "@/Api/admin";
 import toast from "react-hot-toast";
 import {
   Table,
@@ -25,32 +25,25 @@ import {
   AlertDialogTrigger,
 } from "@/Components/ui/alert-dialog";
 import { log } from "node:console";
+import { useSelector } from "react-redux";
+import { IUser } from "@/@types/chatUser";
+import { User } from "@/@types/userType";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/Components/ui/select";
+import { Input } from "@/Components/ui/input";
 
-interface IUser {
-  _id?: string;
-  name: string;
-  email: string;
-  status: string;
-  isBlock: boolean;
-  isInstructor: boolean;
-  isAdmin: boolean;
-  avatar: {
-    id: string;
-    avatar_url: string;
-  };
-}
 
 const AdminListInstructors = () => {
   const [instructor, setInstructors] = useState([]);
   const [requests, setRequests] = useState(0);
-  const navigate = useNavigate();
+  const [search, setSearch] = useState("");
+  const [sort, setSort] = useState("");
 
+  const navigate = useNavigate();
+  const userId = useSelector((state:User)=>state.id)
   useEffect(() => {
     const fetchAllinstructors = async () => {
-      const response = await instructors();
+      const response = await instructors(search,sort);
       if (response) {
-       
-        
         const arr = response.filter((value:IUser)=>value.status == "Approved" )
         setInstructors(arr)
 
@@ -65,7 +58,8 @@ const AdminListInstructors = () => {
       }
     };
     fetchAllinstructors();
-  }, []);
+  },[search,sort]);
+
   const handleBlockInstructroctor = async (userId: string) => {
     const response = await blockUser(userId);
     if (response.success) {
@@ -89,6 +83,22 @@ const AdminListInstructors = () => {
       return toast.error(response.response.data.message);
     }
   };
+
+   const createMessageWithUser = async (recipientId: string) => {
+      try {
+        const response = await adminCreateMessage(
+          userId!,
+          recipientId,
+          "userToInstructor"
+        );
+        if (response.success) {
+          return navigate(`/admin/messages?chatId=${response.chat._id}`);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
   return (
     <div className="container-fluid ">
       <div className="row">
@@ -105,22 +115,47 @@ const AdminListInstructors = () => {
           <div className="grid grid-cols-1">
             <div className="d-flex justify-content-between">
               <h1 className="text-lg font-bold">Instructors</h1>
-              <Button
+              <div className="flex w-50 gap-1">
+              <Input
+                type="search"
+                placeholder="Search..."
+                onChange={(e) => setSearch(e.target.value)}
+                className="md:w-[100px] lg:w-[300px] "
+              />
+                <Select onValueChange={(value) => setSort(value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sort..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Sort</SelectLabel>
+                      <SelectItem value="All">All</SelectItem>
+                      <SelectItem value="Name Aa-Zz">Name Aa-Zz</SelectItem>
+                      <SelectItem value="Name Zz-Aa">Name Zz-Aa</SelectItem>
+                      <SelectItem value="Old">Old</SelectItem>
+                      <SelectItem value="New">New</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+                <Button
                 type="button"
                 onClick={() => navigate("/admin/instructorRequests")}
                 className="mb-3"
               >
                 Instructor Requests {requests}
               </Button>
+              </div>
+             
             </div>
             <Card>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[100px] ">Image</TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead className="text-center w-[100px] ">Image</TableHead>
+                    <TableHead className=" text-center w-[200px]">Name</TableHead>
+                    <TableHead className="text-center w-[100px]">Email</TableHead>
+                    <TableHead className="text-center w-[100px]">Connect</TableHead>
+                    <TableHead className="text-center w-[100px]">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -142,18 +177,24 @@ const AdminListInstructors = () => {
                           </TableCell>
                           <TableCell>{value.name}</TableCell>
                           <TableCell>{value.email}</TableCell>
-                          <TableCell className="text-right">
+                          <TableCell align="center">
+                            <Button onClick={() => createMessageWithUser(value?._id!)} className="bg-light border-1 border-black rounded-full text-black">
+                              message
+                            </Button>
+                          </TableCell>
+                          <TableCell className="text-center">
                             <AlertDialog>
                               <AlertDialogTrigger asChild>
-                                <button
+                                <Button
                                   className={
-                                    value.isBlock
-                                      ? "btn btn-danger"
-                                      : "btn btn-success"
+
+                                    `rounded-full ${value.isBlock
+                                      ?"bg-danger"
+                                      :"bg-success-500"}`
                                   }
                                 >
                                   {value.isBlock ? "UnBlock" : "BLock"}
-                                </button>
+                                </Button>
                               </AlertDialogTrigger>
                               <AlertDialogContent>
                                 <AlertDialogHeader>
@@ -173,6 +214,7 @@ const AdminListInstructors = () => {
                               </AlertDialogContent>
                             </AlertDialog>
                           </TableCell>
+                          
                         </TableRow>
                       ))
                   ) : (

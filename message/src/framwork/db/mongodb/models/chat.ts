@@ -4,10 +4,15 @@ import { IChat } from "../../../../entities/chat";
 
 const chatScheema = new Schema({
 
-    members:{
-        type:Array,
-        required:true
-    },
+    members:[{
+        type:mongoose.Types.ObjectId,
+        required:true,
+        ref:"User"
+    }],
+    role:{
+        type:String,
+        require:true
+    }
 
 },{
 

@@ -8,7 +8,10 @@ export class AdminController{
     constructor(private adminUseCase:IAdminUseCase){}
     async fetchInstructors(req:Request,res:Response,next:NextFunction){
       try {
-       const instructors =  await this.adminUseCase.fetchInstructors(next)
+        const { search,sort } = req.query
+       
+        
+       const instructors =  await this.adminUseCase.fetchInstructors(search as string, sort as string,next)
        if(instructors){
         return res.send(instructors)
        }
@@ -19,8 +22,10 @@ export class AdminController{
 
     async fetchStudents(req:Request,res:Response,next:NextFunction){
         try {
-            
-        const students = await this.adminUseCase.fetchStudents(next)
+        const { search,sort } = req.query
+        console.log(sort,"cinj");
+        
+        const students = await this.adminUseCase.fetchStudents(search as string,sort as string,next)
        if(students){
         return res.send(students)
        }

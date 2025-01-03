@@ -5,21 +5,23 @@ import { IOrder } from "../../../../entities/order";
 
 const orderScheema = new mongoose.Schema({
   user:{
-    type:Object,
+    type:mongoose.Schema.Types.ObjectId,
     require:true
   },
-  product:{
+  course:{
     type:Object,
     require:true
   },
   purchaseMethord:{
-    type:Object,
-    require:true
-  },
-  orderDate:{
     type:String,
-    require:true,
-    default: new Date().toLocaleString(),
+    require:true
+  }
+},{
+  timestamps:true,
+  toJSON: {
+    transform(doc,ret){
+      delete ret.__v;
+    }
   }
 });
 

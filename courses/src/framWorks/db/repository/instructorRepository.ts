@@ -1,8 +1,10 @@
 import { ICourse } from "../../../entities/course";
 import { ISection } from "../../../entities/section";
+import { ITest } from "../../../entities/test";
 import { IInstructorrepository } from "../../../useCases/interfaces/repository/IInstructorRepository";
 import { Course } from "../mongodb/models/courseModel";
 import { SectionModel } from "../mongodb/models/sectionModel";
+import { testModel } from "../mongodb/models/testModel";
 
 interface Course{
     _id?:string,
@@ -26,8 +28,54 @@ interface Course{
 export class InstructorRepository implements IInstructorrepository{
     constructor(
         private courseModel:typeof Course,
-        private sectionModel:typeof SectionModel
+        private sectionModel:typeof SectionModel,
+        private testModels:typeof testModel,
     ){}
+   async findTest(testId: string): Promise<ITest | void> {
+       try {
+           const test = await this.testModels.findById({_id:testId});
+           if(test){
+            return test;
+           }
+       } catch (error) {
+        console.error(error)
+       }
+    }
+   async editTest(testId: string, testData: ITest): Promise<ITest | void> {
+       try {
+        
+        const testUpdated = await this.testModels.findByIdAndUpdate({_id:testId},{$set:{test:testData}},{new:true});
+        if(testUpdated){
+         return testUpdated;
+        }
+       } catch (error) {
+        console.error(error)
+       }
+    }
+    async addTest(courseId: string, testId: string): Promise<ICourse | void> {
+       try {
+          const course = await this.courseModel.findByIdAndUpdate({_id:courseId},{$set:{test:testId}},{new:true})
+          if(course){
+            return course;
+          }
+        } catch (error) {
+        console.error(error)
+       }
+    }
+
+   async creatTest(testData: ITest): Promise<ITest | void> {
+        try {
+           const test = await this.testModels.create({
+              test:testData
+           })
+           if(test){            
+            return test
+           }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
     async addSecton(courseId: string, sectionId: string): Promise<ICourse | void> {
        try {
        
@@ -44,7 +92,7 @@ export class InstructorRepository implements IInstructorrepository{
     }
     async editSecton(sectionData:ISection): Promise<ISection | void> {
        try {
-           console.log(sectionData.sectionTitle);
+          
            const section = await this.sectionModel.findOneAndUpdate({_id:sectionData._id},{$set:{sectionTitle:sectionData.sectionTitle,lectures:sectionData.lectures}})
            if(section){
             return section
@@ -75,9 +123,43 @@ export class InstructorRepository implements IInstructorrepository{
       }
     }
 
-    async find(instructorId: string): Promise<ICourse[] | void> {
+    async find(instructorId: string,search:string,sort:string): Promise<ICourse[] | void> {
        try {
-        const course = await this.courseModel.find({instructorId:instructorId}).sort({createdAt:-1}).populate("sections").populate("instructorId").populate("students")
+        let sortQuery:any = {}
+        let queryData:any = {instructorId:instructorId}
+        switch (sort) {
+            case "All":
+              sortQuery.createdAt = -1
+              break;
+            case "Name A-Z":
+              sortQuery.name = 1
+              break;
+            case "Name Z-A":
+              sortQuery.name = -1
+              break;
+            case "Old":
+              sortQuery.createdAt = 1
+              break;
+            case "New":
+                sortQuery.createdAt = -1
+                break;
+            default:
+                sortQuery.createdAt = -1
+                break;
+          }
+          if(search){
+             queryData = {
+                instructorId:instructorId,
+                students: {
+                  $elemMatch: {
+                    name: { $regex: 's', $options: 'i' }
+                  }
+                }
+              };
+          }
+        // console.log(sortQuery,queryData.students);
+        // const course = await this.courseModel.find(queryData).sort(sortQuery).populate("sections").populate("instructorId").populate("students").populate("test")
+        const course = await this.courseModel.find({instructorId:instructorId}).sort({createdAt:-1}).populate("sections").populate("instructorId").populate("students").populate("test")
        if(course){
            return course;
        }

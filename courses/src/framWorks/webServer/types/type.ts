@@ -46,6 +46,7 @@ export interface Query {
     category: string;
     level: string;
     topic: string;
+    sort: string;
   }
 
 export interface Section{

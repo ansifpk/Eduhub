@@ -4,7 +4,7 @@ import { isAuth, isInstructor } from "../middlewares/auth";
 
 
 export function InstructorRouter(router:Router){
-    router.patch('/editProfile',async(req,res,next)=>{
+    router.patch('/editProfile',isAuth,async(req,res,next)=>{
         instructorController.editProfile(req,res,next)
     })
     router.post('/register',isAuth,async(req,res,next)=>{

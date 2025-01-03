@@ -10,14 +10,17 @@ export class AdminRepository implements IAdminRepository{
         private couponModels:typeof couponModel,
 
     ){}
-    async createCoupon(title:string,description:string,offer:number,date:Date,couponCode:string):Promise<ICoupon|void>{
+    async createCoupon(title:string,description:string,offer:number,startingDate:string,startingTime:string,expiryDate:string,expiryTime:string,couponCode:string):Promise<ICoupon|void>{
         try {
             const coupon = await this.couponModels.create({
-               title:title,
-               expiryDate:date,
-               offer:offer,
-              description:description,
-              couponCode:couponCode
+               title,
+               startingDate,
+               expiryDate,
+               startingTime,
+               expiryTime,
+               offer,
+               description,
+               couponCode
 
             })
             if(coupon){
@@ -37,9 +40,10 @@ export class AdminRepository implements IAdminRepository{
             console.error(error)
            }
     }
-   async editCoupon(couponId: string, title: string, description: string, offer: number, date: Date, couponCode: string): Promise<ICoupon | void> {
+   async editCoupon(couponId: string, title: string, description: string, offer: number, startingDate:string,startingTime:string,expiryDate:string,expiryTime:string, couponCode: string): Promise<ICoupon | void> {
     try {
-        const couponse = await this.couponModels.findByIdAndUpdate({_id:couponId},{$set:{title:title,description:description,offer:offer,expiryDate:date,couponCode:couponCode}},{new:true});
+        
+        const couponse = await this.couponModels.findByIdAndUpdate({_id:couponId},{$set:{title:title,description:description,offer:offer,startingDate:startingDate,expiryDate:expiryDate,startingTime:startingTime,expiryTime,couponCode:couponCode}},{new:true});
         if(couponse){
             return couponse
         }
@@ -59,9 +63,43 @@ export class AdminRepository implements IAdminRepository{
         console.error(error)
        }
     }
-    async find(): Promise<ICourse[]> {
-       const courses =  await this.courseModel.find();
-       return courses
+    async find(search:string,sort:string): Promise<ICourse[]|void> {
+       try {
+        console.log(search,sort,"repo");
+        let queryData:any = {}
+        let sortQuery:any = {}
+            
+            switch (sort) {
+                case "All":
+                  sortQuery.createdAt = -1
+                  break;
+                case "Name Aa-Zz":
+                  sortQuery.name = 1
+                  break;
+                case "Name Zz-Aa":
+                  sortQuery.name = -1
+                  break;
+                case "Old":
+                  sortQuery.createdAt = 1
+                  break;
+                case "New":
+                    sortQuery.createdAt = -1
+                    break;
+                default:
+                    sortQuery.createdAt = -1
+                    break;
+              }
+        
+              if(search){
+                queryData.title = {$regex:search,$options: "i"}
+              }
+        const courses =  await this.courseModel.find(queryData).sort(sortQuery).populate("students");
+        if(courses){
+            return courses
+        }
+       } catch (error) {
+        console.error(error)
+       }
     }
     create(courseData: ICourse): Promise<ICourse | void> {
         throw new Error("Method not implemented.");

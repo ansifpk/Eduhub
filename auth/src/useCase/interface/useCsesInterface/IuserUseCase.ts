@@ -1,6 +1,7 @@
 import { NextFunction } from "express";
 import { Iuser } from "../../../entities/user";
 import { IToken } from "../serviceInterface/IJwt";
+import { Iotp } from "../../../entities/otp";
 
 export interface IuserUseCase{
     userSignUp(user:Iuser,next:NextFunction):Promise <string|void>
@@ -11,5 +12,9 @@ export interface IuserUseCase{
     verifyEmail(email:string,next:NextFunction):Promise <any|void>
     verifyOtp(email:string,otp:string,next:NextFunction):Promise <any|void>
     changePassword(email:string,password:string,next:NextFunction):Promise <any|void>
+    resetPassword(userId:string,password:string,newPassword:string,next:NextFunction):Promise <any|void>
     editUser(userId:string,name:string,email:string,next:NextFunction):Promise <Iuser|void>
+    verifyNewEmail(userId:string,email:string,next:NextFunction):Promise <string|void>
+    changeEmail(userId:string,email:string,otp:string,next:NextFunction):Promise <Iuser|void>
+
 }

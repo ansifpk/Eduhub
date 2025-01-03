@@ -7,7 +7,10 @@ export interface ICoupon{
     description:string,
     offer:string,
     expiryDate:string,
+    startingDate:string,
+    expiryTime:string,
+    startingTime:string,
+    users:string[]
     createdAt:string,
-    users:User[]
     updatedAt:string,
 }

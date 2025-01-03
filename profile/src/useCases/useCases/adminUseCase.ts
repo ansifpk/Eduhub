@@ -7,9 +7,9 @@ import ErrorHandler from "../middlewares/errorHandler";
 export class AdminUseCase implements IAdminUseCase{
        constructor(private adminRepository:IAdminRepository){}
 
-   async fetchInstructors(next: NextFunction): Promise<Iuser[] | void> {
+   async fetchInstructors(search:string,sort:string,next: NextFunction): Promise<Iuser[] | void> {
         try {
-            let instructors = await this.adminRepository.findInstructors();
+            let instructors = await this.adminRepository.findInstructors(search,sort);
         
         if(instructors){
             instructors = instructors.filter((user:Iuser)=>user.isInstructor == true || user.status == "pending")
@@ -21,9 +21,10 @@ export class AdminUseCase implements IAdminUseCase{
         }
     }
 
-    async fetchStudents(next: NextFunction): Promise<Iuser[] | void> {
+    async fetchStudents(search:string,sort:string,next: NextFunction): Promise<Iuser[] | void> {
         try {
-            const students = await this.adminRepository.find()
+           
+            const students = await this.adminRepository.find(search,sort)
         if(students){
         
             return students;

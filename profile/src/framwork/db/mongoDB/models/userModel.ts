@@ -90,6 +90,12 @@ const userScheema = new Schema({
          type:String,
          default:"",
         }
+    },
+    about:{
+      type:String,
+    },
+    thumbnail:{
+      type:String,
     }
    },{
       toJSON:{

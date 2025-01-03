@@ -8,5 +8,6 @@ export interface Iuser {
     avatar:{
         id:string,
         avatar_url:string
-    }
+    },
+    createdAt:string
  }

@@ -150,6 +150,18 @@ export class UserController {
     catchError(error, next);
    }
   }
+  async resetPassword(req: Request, res: Response, next: NextFunction) {
+   try {
+    const {userId} = req.params
+    const {password,newPassword} = req.body
+     const data = await this.userUseCase.resetPassword(userId,password,newPassword, next);
+     if (data) {
+       return res.send({ success: true });
+     }
+   } catch (error) {
+    catchError(error, next);
+   }
+  }
   async verifyOtp(req: Request, res: Response, next: NextFunction) {
     
     try {
@@ -202,6 +214,34 @@ export class UserController {
     try {      
       req.session = null;
       res.send({ succuss: true, message: "logout success" });
+    } catch (error: any) {
+      console.log("userlogout err", error);
+      catchError(error, next);
+    }
+  }
+
+  async verifyEmail(req: Request, res: Response, next: NextFunction) {
+    try {      
+      const   {userId}= req.params
+      const   {email}= req.body
+      const otp  = await this.userUseCase.verifyNewEmail(userId,email,next)
+      if(otp){
+        return res.send({success:true,otp:otp});
+      }
+    } catch (error: any) {
+      console.log("userlogout err", error);
+      catchError(error, next);
+    }
+  }
+
+  async changeEmail(req: Request, res: Response, next: NextFunction) {
+    try {      
+      const   {userId}= req.params
+      const   {email,otp}= req.body
+      const user  = await this.userUseCase.changeEmail(userId,email,otp,next)
+      if(user){
+        return res.send({success:true,user:user});
+      }
     } catch (error: any) {
       console.log("userlogout err", error);
       catchError(error, next);

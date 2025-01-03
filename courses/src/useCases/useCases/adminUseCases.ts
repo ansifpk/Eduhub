@@ -7,9 +7,9 @@ import ErrorHandler from "../middlewares/errorHandler";
 
 export class AdminUseCase implements IAdminUseCase{
     constructor(private adminRepository:IAdminRepository,){}
-    async createCoupon(title: string, description: string, offer: number, date: Date, couponCode: string, next: NextFunction): Promise<ICoupon | void> {
+    async createCoupon(title: string, description: string, offer: number, startingDate:string, startingTime:string, expiryDate:string, expiryTime:string, couponCode: string, next: NextFunction): Promise<ICoupon | void> {
        try {
-        const coupon = await this.adminRepository.createCoupon(title,description,offer,date,couponCode);
+        const coupon = await this.adminRepository.createCoupon(title,description,offer,startingDate,startingTime,expiryDate,expiryTime,couponCode);
         if(coupon){
             return coupon
         }
@@ -18,7 +18,7 @@ export class AdminUseCase implements IAdminUseCase{
        }
 
     }
-    async editCoupon(couponId: string, title: string, description: string, offer: number, date: Date, couponCode: string, next: NextFunction): Promise<ICoupon | void> {
+    async editCoupon(couponId: string, title: string, description: string, offer: number, startingDate:string, startingTime:string, expiryDate:string, expiryTime:string, couponCode: string, next: NextFunction): Promise<ICoupon[] | void> {
         try {
             const couponCheck = await this.adminRepository.findCouponById(couponId);
 
@@ -26,10 +26,11 @@ export class AdminUseCase implements IAdminUseCase{
                 return next(new ErrorHandler(400,"Coupon Not found"))
             }
                 
-            const coupon = await this.adminRepository.editCoupon(couponId,title,description,offer,date,couponCode);
+            const coupon = await this.adminRepository.editCoupon(couponId,title,description,offer,startingDate,startingTime,expiryDate,expiryTime,couponCode);
           
             if(coupon){
-                return coupon
+                const coupons = await this.adminRepository.coupons();
+                return coupons
             }
            } catch (error) {
             console.error(error)
@@ -80,9 +81,13 @@ export class AdminUseCase implements IAdminUseCase{
            }
     
     }
-    async fetchCourses(): Promise<ICourse[]> {
-       const courses = await this.adminRepository.find()
-       return courses
+    async fetchCourses(search:string,sort:string): Promise<ICourse[]|void> {
+      try {
+        const courses = await this.adminRepository.find(search,sort)
+        if(courses) return courses
+      } catch (error) {
+        console.error(error)
+      }
     }
     createCourse(courseData: ICourse): Promise<ICourse | void> {
         throw new Error("Method not implemented.");

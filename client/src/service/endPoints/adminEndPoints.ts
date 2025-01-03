@@ -12,7 +12,13 @@ const adminRoutes = {
     editProfile:"/admin/editProfile",
     getCourses:"/course/course/admin/getCourses",
     logout:'/admin/logout',
-    coupon:'/course/course/admin/coupon'
+    coupon:'/course/course/admin/coupon',
+     //!message
+     message:"/message/message/message",
+     //chat
+    chat:"/message/message/chat",
+    privetChat:"/message/message/chat/privetChat",
    }
+
    
    export default adminRoutes

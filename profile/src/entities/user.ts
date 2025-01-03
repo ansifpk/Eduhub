@@ -23,5 +23,7 @@ export interface Iuser {
         id:string,
         avatar_url:string
     },
+    about:string,
+    thumbnail:string
    
  }

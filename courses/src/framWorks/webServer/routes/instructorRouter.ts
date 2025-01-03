@@ -17,9 +17,9 @@ export function InstructorRouter(router:Router){
         }
     
     }) 
-    router.get("/getCourses/:instructorId",isInstructor,async(req:Request,res:Response,next:NextFunction)=>{
+    router.get("/getCourses",isInstructor,async(req:Request,res:Response,next:NextFunction)=>{
         try { 
-            console.log("hi");
+            console.log("hi",req.query);
             
            instructorController.getCourses(req,res,next)
         } catch (error) {
@@ -27,6 +27,16 @@ export function InstructorRouter(router:Router){
         }
     
     }) 
+    // router.get("/getCourses/:instructorId/:filter",isInstructor,async(req:Request,res:Response,next:NextFunction)=>{
+    //     try { 
+    //         console.log("hi",req.params);
+            
+    //     //    instructorController.getCourses(req,res,next)
+    //     } catch (error) {
+    //     console.error(error)          
+    //     }
+    
+    // }) 
    
     router.get("/allCourses",isInstructor,async(req:Request,res:Response,next:NextFunction)=>{
         try { 
@@ -46,10 +56,26 @@ export function InstructorRouter(router:Router){
     }) 
     router.patch("/editCourse",isInstructor,upload,async(req:Request,res:Response,next:NextFunction)=>{
         try { 
-            // console.log(req.body);
-            
-           
            instructorController.editCourse(req,res,next)
+        } catch (error) {
+        console.error(error)          
+        }
+    
+    }) 
+    router.post("/tests/:courseId",isInstructor,upload,async(req:Request,res:Response,next:NextFunction)=>{
+        try {  
+          instructorController.addTest(req,res,next)
+        } catch (error) {
+        console.error(error)          
+        }
+    
+    }) 
+
+    router.patch("/tests/:testId",isInstructor,upload,async(req:Request,res:Response,next:NextFunction)=>{
+        try {  
+            console.log(req.params,req.body);
+            
+          instructorController.editTest(req,res,next)
         } catch (error) {
         console.error(error)          
         }

@@ -2,7 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import jwt from 'jsonwebtoken';
 import { userModel } from "../../db/mongoDB/models/userModel";
 import ErrorHandler from "../../../useCases/middlewares/errorHandler";
-
+import dotenv from 'dotenv';
+dotenv.config();
 
 
 interface User{
@@ -14,12 +15,15 @@ export const isAuth = async (req:Request,res:Response,next:NextFunction)=>{
    if(!req.session){
     return next(new ErrorHandler(400,"Tocken Expired"))
    } 
-    const check = jwt.verify(req.session.accessToken,'itsjwtaccesskey') as User;
+   if(!req.session.accessToken){
+    return next(new ErrorHandler(400,"Tocken Expired"))
+   } 
+    const check = jwt.verify(req.session.accessToken,process.env.JWT_ACCESSKEY!) as User;
     if(check){
       const user = await userModel.findOne({_id:check.id});
       if(user){
          if(user.isBlock){
-          return next(new ErrorHandler(400,"You are blocked by Admin"))
+          return next(new ErrorHandler(403,"You are blocked by Admin"))
          }
          return next();
       }else{
@@ -33,16 +37,19 @@ export const isAuth = async (req:Request,res:Response,next:NextFunction)=>{
 export const isAdmin = async (req:Request,res:Response,next:NextFunction)=>{
 
 try {
-  console.log(req.session);
+ 
   
   if(!req.session){
     return next(new ErrorHandler(400,"Tocken Expired"))
    } 
-  const check = jwt.verify(req.session.accessToken,'itsjwtaccesskey') as User;
+   if(!req.session.accessToken){
+    return next(new ErrorHandler(400,"Tocken Expired"))
+   } 
+  const check = jwt.verify(req.session.accessToken,process.env.JWT_ACCESSKEY!) as User;
   if(!check){
     return next(new ErrorHandler(400,"Tocken Expired"))
   }
-  console.log(check,"ji");
+ 
   
   const user = await userModel.findOne({_id:check.id});
     if(!user){
@@ -68,7 +75,10 @@ export const isInstructor = async (req:Request,res:Response,next:NextFunction)=>
     if(!req.session){
       return next(new ErrorHandler(400,"Tocken Expired"))
      } 
-    const check = jwt.verify(req.session.accessToken,'itsjwtaccesskey') as User;
+     if(!req.session.accessToken){
+      return next(new ErrorHandler(400,"Tocken Expired"))
+     } 
+    const check = jwt.verify(req.session.accessToken,process.env.JWT_ACCESSKEY!) as User;
     if(!check){
       return next(new ErrorHandler(400,"Tocken Expired"))
     }
@@ -77,7 +87,7 @@ export const isInstructor = async (req:Request,res:Response,next:NextFunction)=>
         return next(new ErrorHandler(400,"Tocken Expired"))
       }
       if(user.isBlock){
-        return next(new ErrorHandler(400,"You are blocked by admin")) 
+        return next(new ErrorHandler(403,"You are blocked by Admin"))
       }
       if(user.isInstructor){
          next()

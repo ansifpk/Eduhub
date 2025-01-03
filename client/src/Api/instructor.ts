@@ -136,9 +136,11 @@ export const createCourse = async (data:object) =>{
     }
 }
 
-export const getCourses = async(instructorId:string)=>{
+export const getCourses = async(instructorId:string,search:string="",sort:string="")=>{
     try {
-        const response = await ApiGatway.get(`${instructorRoutes.getCourses}/${instructorId}`);
+        // console.log("",filter,instructorId);
+        
+        const response = await ApiGatway.get(`${instructorRoutes.getCourses}?instructorId=${instructorId}&&search=${search}&&sort=${sort}`);
         return response.data;
     } catch (error) {
         return error;
@@ -168,6 +170,25 @@ export const listCourses = async(courseId:string)=>{
         return error;
     }
 }
+
+export const addTestToCourse = async(testData:object,courseId:string)=>{
+    try {
+        const response = await ApiGatway.post(`${instructorRoutes.tests}/${courseId}`,{testData});
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+}
+
+export const editTestToCourse = async(testData:object,testId:string)=>{
+    try {
+        const response = await ApiGatway.patch(`${instructorRoutes.tests}/${testId}`,{testData});
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+}
+
 export const getStudents = async () =>{
     try {
         const response = await ApiGatway.get(instructorRoutes.getStudents);       
@@ -195,5 +216,40 @@ export const editCourse = async(courseData:object)=>{
         return response.data;
     } catch (error) {
         return error;
+    }
+}
+
+export const instructorSendMessage = async(chatId:string,senderId:string,text:string)=>{
+    try {
+        const response = await ApiGatway.post(instructorRoutes.message,{chatId,senderId,text});
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+export const instructorChats = async(userId:string)=>{
+    try {
+        const response = await ApiGatway.get(`${instructorRoutes.chat}?userId=${userId}`);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
+export const getInstructorMessages = async(chatId:string)=>{
+    try {
+        const response = await ApiGatway.get(`${instructorRoutes.message}/${chatId}`);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
+export const getInstructorCurrentChat = async(chatId:string)=>{
+    try {
+        const response = await ApiGatway.get(`${instructorRoutes.privetChat}/${chatId}`);
+        return response.data
+    } catch (error) {
+        return error 
     }
 }

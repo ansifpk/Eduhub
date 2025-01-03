@@ -20,14 +20,27 @@ description:{
     require:true
  },
   expiryDate:{
-    type:Date,
+    type:String,
     require:true
  },
- users:{
-     type:mongoose.Schema.Types.ObjectId,
-     require:true,
-     ref:"User"
- }
+ startingDate:{
+    type:String,
+    require:true
+ },
+  expiryTime:{
+    type:String,
+    require:true
+ },
+ startingTime:{
+    type:String,
+    require:true
+ },
+ users:[
+         {
+             type: mongoose.Schema.Types.ObjectId,
+             ref: 'User',
+         }
+     ],
 },{
     timestamps:true,
     toJSON: {

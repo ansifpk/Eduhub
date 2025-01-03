@@ -1,8 +1,21 @@
-import { courseDetailes, stripePurchase } from "@/Api/user";
+import {
+  courseDetailes,
+  deleteRating,
+  editRating,
+  getRatings,
+  logout,
+  stripePurchase,
+} from "@/Api/user";
 import Footer from "@/Components/Footer/Footer";
 import Header from "@/Components/Header/Header";
 import { Button } from "@/Components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/Components/ui/card";
 
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -15,13 +28,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/Components/ui/accordion";
-import { allCourses } from "@/Api/instructor";
-import std from "../../assets/home-page/studnet.jpg";
-import schoole from "../../assets/home-page/lovely-teenage-girl-with-curly-hair-posing-yellow-tshirt-min 1.png";
-import tec from "../../assets/home-page/teacher-home.jpg";
-import sss from "../../assets/home-page/9906021.jpg";
-import dd from "../../assets/home-page/3099563.jpg";
-import { students } from "@/Api/admin";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -35,27 +42,79 @@ import {
 } from "@/Components/ui/alert-dialog";
 import { RadioGroup, RadioGroupItem } from "@/Components/ui/radio-group";
 import { Label } from "@/Components/ui/label";
-import axios from "axios";
 import { useSelector } from "react-redux";
 import { User } from "@/@types/userType";
-import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
+import { Avatar, AvatarImage } from "@/Components/ui/avatar";
+import { IRating } from "@/@types/ratingType";
+import moment from "moment";
+import { DialogTitle, Rating } from "@mui/material";
+import { Edit, StarIcon, Trash } from "lucide-react";
+import { Textarea } from "@/Components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTrigger,
+} from "@/Components/ui/dialog";
+import { ScrollArea } from "@/Components/ui/scroll-area";
+import { useDispatch } from "react-redux";
+import { removeUser } from "@/redux/authSlice";
 
 const CourseDetailesPage = () => {
   const [course, setCourse] = useState<ICourse>();
   const [totellStudents, setStudents] = useState(0);
   const [option, setOption] = useState(true);
   const [totellCourses, setTotellCourses] = useState(0);
-
+  const [ratings, setRatings] = useState<IRating[]>([]);
   const [paymentMethord, setPaymentMethord] = useState("Wallet");
   const { courseId } = useParams();
   const userId = useSelector((state: User) => state.id);
+  const [val, setVal] = useState<number | null>(1);
+  const [stars, setStars] = useState(0);
+  const [review, setReview] = useState("");
+  const dispatch = useDispatch();
+  function getLabelText(value: number) {
+    return `${value} Star${value !== 1 ? "s" : ""}, ${labels[value]}`;
+  }
+
   const navigate = useNavigate();
+  const [errors, setErrors] = useState({
+    ratingError: false,
+  });
+  const labels: { [index: string]: string } = {
+    0.5: "Useless",
+    1: "Useless+",
+    1.5: "Poor",
+    2: "Poor+",
+    2.5: "Ok",
+    3: "Ok+",
+    3.5: "Good",
+    4: "Good+",
+    4.5: "Excellent",
+    5: "Excellent+",
+  };
 
   useEffect(() => {
     const call = async () => {
       const data = await courseDetailes(courseId!);
       if (data.success) {
         setCourse(data.course);
+      }else if(data.status == 403){
+        const response = await logout();
+        if (response.succuss) {
+          localStorage.setItem("accessToken", "");
+          localStorage.setItem("refreshToken", "");
+          dispatch(removeUser());
+          toast.error(data.response.data.message);
+          return navigate("/users/login");
+        }
+      }
+      const ratings = await getRatings(courseId!);
+      if (ratings.success) {
+        setRatings(ratings.rating);
+      } else {
+        return toast.error(ratings.response.data.message);
       }
     };
     call();
@@ -69,23 +128,97 @@ const CourseDetailesPage = () => {
         const stripe = await loadStripe(
           "pk_test_51Q4gnKRv81OVLd0JhH7b5mQdxu167NGLbtFW9DlMYb4HSblpNEHgvUNRpBbss0eb3g6moVOOvbof2Tp9sNMXKSXL00nMMkFuq7"
         );
-        const data = await stripePurchase(course!);
+        const data = await stripePurchase([course!], userId);
+
         if (data) {
           localStorage.setItem("bodyDatas", JSON.stringify(course));
 
           await stripe?.redirectToCheckout({
             sessionId: data.id,
           });
+        }else if(data.status == 403){
+          const response = await logout();
+          if (response.succuss) {
+            localStorage.setItem("accessToken", "");
+            localStorage.setItem("refreshToken", "");
+            dispatch(removeUser());
+            toast.error(data.response.data.message);
+            return navigate("/users/login");
+          }
         }
       }
     } catch (error) {
       console.error(error);
     }
   };
+  let wr =
+    "Hi everyone, I’m Ansif, a student on Udemy, and I’m excited to be here! This website has been incredibly helpful in my learning journey, and I’m looking forward to making the most of it. Can’t wait to dive into more knowledge and improve my skills!  and ibelieve also everyone feels this same Hi everyone, I’m Ansif, a student on Udemy, and I’m excited to be here! This website has been incredibly helpful in my learning journey, and I’m looking forward to making the most of it. Can’t wait dive into";
+  console.log(wr.length);
+
+  const handleEditRatings = async (ratingId: string) => {
+    const response = await editRating(ratingId, review, stars);
+    if (response.success) {
+      const ratings = await getRatings(courseId!);
+      if (ratings.success) {
+        setRatings(ratings.rating);
+        setVal(1);
+        setStars(0!);
+        setReview("");
+        return toast.success("Review edit successfully..");
+      } else {
+        return toast.error(ratings.response.data.message);
+      }
+    }else if(response.status == 403){
+      const resp = await logout();
+      if (resp.succuss) {
+        localStorage.setItem("accessToken", "");
+        localStorage.setItem("refreshToken", "");
+        dispatch(removeUser());
+        toast.error(response.response.data.message);
+        return navigate("/users/login");
+      }
+    }
+    else {
+      return toast.error(response.response.data.message);
+    }
+  };
+
+  const handleDeleteRating = async (ratingId: string) => {
+    const response = await deleteRating(ratingId);
+    if (response.success) {
+      const ratings = await getRatings(courseId!);
+      if (ratings.success) {
+        setRatings(ratings.rating);
+        toast.success("Review deleted successfully..");
+      }else if(response.status == 403){
+        const resp = await logout();
+        if (resp.succuss) {
+          localStorage.setItem("accessToken", "");
+          localStorage.setItem("refreshToken", "");
+          dispatch(removeUser());
+          toast.error(response.response.data.message);
+          return navigate("/users/login");
+        }
+      }else {
+        return toast.error(ratings.response.data.message);
+      }
+    }else if(response.status == 403){
+      const resp = await logout();
+      if (resp.succuss) {
+        localStorage.setItem("accessToken", "");
+        localStorage.setItem("refreshToken", "");
+        dispatch(removeUser());
+        toast.error(response.response.data.message);
+        return navigate("/users/login");
+      }
+    }else {
+      return toast.error(response.response.data.message);
+    }
+  };
+
   return (
     <div className="bg-blue-200">
       <Header />
-
       <div className="flex bg-gray-900 w-full h-[250px] ">
         <img
           src={course?.image.image_url}
@@ -128,7 +261,7 @@ const CourseDetailesPage = () => {
                 className="w-full border  bg-gray-200"
               >
                 {course?.sections.map((val, index) => (
-                  <AccordionItem key={index} value={`${index}`} >
+                  <AccordionItem key={index} value={`${index}`}>
                     <AccordionTrigger className="text-base font-bold hover:no-underline mx-3">
                       Section {index + 1} - {val.sectionTitle}
                     </AccordionTrigger>
@@ -155,71 +288,442 @@ const CourseDetailesPage = () => {
                 </div>
                 <div className="m-3">
                   <h6>Reviews</h6>
-
                   <div className="grid gap-2 grid-cols-2 ">
+                    {ratings.length > 0 ? (
+                      ratings.slice(0,4).map((value,index) => (
+                        <div className="border" key={index}>
+                            <div className="m-3">
+                              <div className="flex items-center justify-between">
+                                <div className="flex  gap-3 items-center">
+                                  <Avatar>
+                                    <AvatarImage
+                                      src={
+                                        value.userId.avatar.avatar_url
+                                          ? value.userId.avatar.avatar_url
+                                          : "https://github.com/shadcn.png"
+                                      }
+                                      alt="user profile"
+                                    />
+                                  </Avatar>
+                                  <p className="text-black font-medium">
+                                    {value.userId.name}
+                                  </p>
+                                </div>
+                                <div>
+                                  <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                     {value.userId._id == userId&&  <Edit
+                                         onClick={() => {
+                                           setReview(value.review);
+                                           setStars(value.stars);
+                                           setVal(value.stars);
+                                         }}
+                                         className="h-3 m-1 cursor-pointer"
+                                       />}
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                      <AlertDialogHeader>
+                                        <AlertDialogTitle>
+                                          Edit your Review
+                                        </AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                          <div className="grid w-full gap-1.5">
+                                            <Rating
+                                              className="mx-5"
+                                              name="hover-feedback"
+                                              value={val}
+                                              precision={0.5}
+                                              getLabelText={getLabelText}
+                                              onChange={(event, newValue) => {
+                                                setVal(newValue);
+                                                setStars(newValue!);
+                                              }}
 
-                    <div className=" border">
-                      <div className="m-3">
-                      <div className="flex  gap-3 items-center">
-                        <Avatar>
-                          <AvatarImage
-                            src={
-                              course?.instructorId.avatar.avatart_url
-                                ? course?.instructorId.avatar.avatart_url
-                                : "https://github.com/shadcn.png"
-                            }
-                            alt="instrutcor profile"
-                          />
-                        </Avatar>
-                        <p className="text-black font-medium">
-                          {"ansif pk"} 
-                    
-                        </p>
-                      </div>
-                      <div className="text-sm my-2">
-                        this is ma very nyse course . really usefull course from...
-                      </div>
-                      <p className="text-black font-medium text-xs"> {"12/4/2002"}</p>
-                      </div>
-                     
-                    </div>
+                                              emptyIcon={
+                                                <StarIcon
+                                                  style={{ opacity: 0.55 }}
+                                                  fontSize="inherit"
+                                                />
+                                              }
+                                            />
+                                            <Label
+                                              className={
+                                                errors.ratingError
+                                                  ? "text-danger"
+                                                  : ""
+                                              }
+                                              htmlFor="message-2"
+                                            >
+                                              Your Message
+                                            </Label>
+                                            <Textarea
+                                              value={review}
+                                              onChange={(e) => {
+                                                if (e.target.value.length < 3) {
+                                                  setErrors((prev) => ({
+                                                    ...prev,
+                                                    ratingError: true,
+                                                  }));
+                                                } else {
+                                                  setErrors((prev) => ({
+                                                    ...prev,
+                                                    ratingError: false,
+                                                  }));
+                                                }
+                                                setReview(e.target.value);
+                                              }}
+                                              placeholder="Type your message here."
+                                              id="message-2"
+                                            />
+                                            {errors.ratingError ? (
+                                              <p className="text-sm text-danger text-muted-foreground">
+                                                Your message will be show to the
+                                                public.
+                                              </p>
+                                            ) : (
+                                              <p className="text-sm text-muted-foreground">
+                                                Your message will be show to the
+                                                public.
+                                              </p>
+                                            )}
+                                          </div>
+                                        </AlertDialogDescription>
+                                      </AlertDialogHeader>
+                                      <AlertDialogFooter>
+                                        <AlertDialogAction
+                                          className="bg-teal-500 hover:bg-teal-500"
+                                          type="button"
+                                        >
+                                          Cancel
+                                        </AlertDialogAction>
+                                        <AlertDialogAction disabled={errors.ratingError}
+                                          onClick={() =>
+                                            handleEditRatings(value._id)
+                                          }
+                                          type="button"
+                                          className="bg-teal-500 hover:bg-teal-500"
+                                        >
+                                          Continue
+                                        </AlertDialogAction>
+                                      </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                  </AlertDialog>
+                                  <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                       {value.userId._id == userId&&   <Trash className="h-3 m-1 cursor-pointer" />}
 
-                    <div className=" border">hi</div>
-                  </div>
-                  {/* <div>
-                    review this course
-                  </div> */}
-                </div>
-                <div>
-                  <h5 className="my-4 ml-5">Instructor</h5>
-                  <div className="mx-3 pb-5">
-                    <Card>
-                      <CardHeader>
-                        <h2 className="text-lg font-semibold">
-                          {course?.instructorId.name}
-                        </h2>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="flex items-center gap-3 mb-4 last:mb-0">
-                          <img
-                            onClick={()=>navigate(`/user/instructorProfile/${course?.instructorId._id}`)}
-                            src={
-                              course?.instructorId.avatar.avatart_url
-                                ? course?.instructorId.avatar.avatart_url
-                                : "https://github.com/shadcn.png"
-                            }
-                            alt={"review.name"}
-                            className="w-8 h-8 rounded-full"
-                          />
-                          <div>
-                            <div>no of courses {totellCourses}</div>
-                            <div className="text-sm text-gray-500">
-                              no of students {totellStudents}
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                      <AlertDialogHeader>
+                                        <AlertDialogTitle>
+                                          Are you absolutely sure?
+                                        </AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                          This action cannot be undone. This
+                                          will permanently delete this review
+                                          and remove data from our servers.
+                                        </AlertDialogDescription>
+                                      </AlertDialogHeader>
+                                      <AlertDialogFooter>
+                                        <AlertDialogAction
+                                          className="bg-teal-500 hover:bg-teal-500"
+                                          type="button"
+                                        >
+                                          Cancel
+                                        </AlertDialogAction>
+                                        <AlertDialogAction
+                                          onClick={() =>
+                                            handleDeleteRating(value._id)
+                                          }
+                                          type="button"
+                                          className="bg-teal-500 hover:bg-teal-500"
+                                        >
+                                          Continue
+                                        </AlertDialogAction>
+                                      </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                  </AlertDialog>
+                                </div>
+                              </div>
+                              <div className="text-sm my-2">
+                                <div>
+                                  {" "}
+                                  <Rating
+                                    name="customized-10"
+                                    defaultValue={1}
+                                    max={1}
+                                    size="small"
+                                  />{" "}
+                                  {value.stars} {labels[`${value.stars}`]}
+                                </div>
+                                {value.review}
+                              </div>
+                              <p className="text-black font-medium text-xs">
+                                {" "}
+                                {moment(value.updatedAt).calendar()}
+                              </p>
                             </div>
                           </div>
-                        </div>
-                      </CardContent>
-                    </Card>
+
+                      ))
+                       
+                    ) : (
+                      <p>No reviews available for this course</p>
+                    )}
+                  </div>
+                  <Dialog>
+                    <DialogTrigger className="text-primary">
+                      {ratings.length > 4&& "see more" }
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[900px]">
+                    <ScrollArea className="sm:max-w-[800px] h-[450px]">
+                          <div className="grid gap-2 grid-cols-2 ">
+                           
+                             { ratings.map((value, index) => (
+                                <div className="border" key={index}>
+                                  <div className="m-3">
+                                    <div className="flex items-center justify-between">
+                                      <div className="flex  gap-3 items-center">
+                                        <Avatar>
+                                          <AvatarImage
+                                            src={
+                                              value.userId.avatar.avatar_url
+                                                ? value.userId.avatar.avatar_url
+                                                : "https://github.com/shadcn.png"
+                                            }
+                                            alt="user profile"
+                                          />
+                                        </Avatar>
+                                        <p className="text-black font-medium">
+                                          {value.userId.name}
+                                        </p>
+                                      </div>
+                                      <div>
+                                        <AlertDialog>
+                                          <AlertDialogTrigger asChild>
+                                            {value.userId._id == userId && (
+                                              <Edit
+                                                onClick={() => {
+                                                  setReview(value.review);
+                                                  setStars(value.stars);
+                                                  setVal(value.stars);
+                                                }}
+                                                className="h-3 m-1 cursor-pointer"
+                                              />
+                                            )}
+                                          </AlertDialogTrigger>
+                                          <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                              <AlertDialogTitle>
+                                                Edit your Review
+                                              </AlertDialogTitle>
+                                              <AlertDialogDescription>
+                                                <div className="grid w-full gap-1.5">
+                                                  <Rating
+                                                    className="mx-5"
+                                                    name="hover-feedback"
+                                                    value={val}
+                                                    precision={0.5}
+                                                    getLabelText={getLabelText}
+                                                    onChange={(
+                                                      event,
+                                                      newValue
+                                                    ) => {
+                                                      setVal(newValue);
+                                                      setStars(newValue!);
+                                                    }}
+                                                    emptyIcon={
+                                                      <StarIcon
+                                                        style={{
+                                                          opacity: 0.55,
+                                                        }}
+                                                        fontSize="inherit"
+                                                      />
+                                                    }
+                                                  />
+                                                  <Label
+                                                    className={
+                                                      errors.ratingError
+                                                        ? "text-danger"
+                                                        : ""
+                                                    }
+                                                    htmlFor="message-2"
+                                                  >
+                                                    Your Message
+                                                  </Label>
+                                                  <Textarea
+                                                    value={review}
+                                                    onChange={(e) => {
+                                                      if (
+                                                        e.target.value.length <
+                                                        3
+                                                      ) {
+                                                        setErrors((prev) => ({
+                                                          ...prev,
+                                                          ratingError: true,
+                                                        }));
+                                                      } else {
+                                                        setErrors((prev) => ({
+                                                          ...prev,
+                                                          ratingError: false,
+                                                        }));
+                                                      }
+                                                      setReview(e.target.value);
+                                                    }}
+                                                    placeholder="Type your message here."
+                                                    id="message-2"
+                                                  />
+                                                  {errors.ratingError ? (
+                                                    <p className="text-sm text-danger text-muted-foreground">
+                                                      Your message will be show
+                                                      to the public.
+                                                    </p>
+                                                  ) : (
+                                                    <p className="text-sm text-muted-foreground">
+                                                      Your message will be show
+                                                      to the public.
+                                                    </p>
+                                                  )}
+                                                </div>
+                                              </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                              <AlertDialogAction
+                                                className="bg-teal-500 hover:bg-teal-500"
+                                                type="button"
+                                              >
+                                                Cancel
+                                              </AlertDialogAction>
+                                              <AlertDialogAction
+                                                disabled={errors.ratingError}
+                                                onClick={() =>
+                                                  handleEditRatings(value._id)
+                                                }
+                                                type="button"
+                                                className="bg-teal-500 hover:bg-teal-500"
+                                              >
+                                                Continue
+                                              </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                          </AlertDialogContent>
+                                        </AlertDialog>
+                                        <AlertDialog>
+                                          <AlertDialogTrigger asChild>
+                                            {value.userId._id == userId && (
+                                              <Trash className="h-3 m-1 cursor-pointer" />
+                                            )}
+                                          </AlertDialogTrigger>
+                                          <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                              <AlertDialogTitle>
+                                                Are you absolutely sure?
+                                              </AlertDialogTitle>
+                                              <AlertDialogDescription>
+                                                This action cannot be undone.
+                                                This will permanently delete
+                                                this review and remove data from
+                                                our servers.
+                                              </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                              <AlertDialogAction
+                                                className="bg-teal-500 hover:bg-teal-500"
+                                                type="button"
+                                              >
+                                                Cancel
+                                              </AlertDialogAction>
+                                              <AlertDialogAction
+                                                onClick={() =>
+                                                  handleDeleteRating(value._id)
+                                                }
+                                                type="button"
+                                                className="bg-teal-500 hover:bg-teal-500"
+                                              >
+                                                Continue
+                                              </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                          </AlertDialogContent>
+                                        </AlertDialog>
+                                      </div>
+                                    </div>
+                                    <div className="text-sm my-2">
+                                      <div>
+                                        {" "}
+                                        <Rating
+                                          name="customized-10"
+                                          defaultValue={1}
+                                          max={1}
+                                          size="small"
+                                        />{" "}
+                                        {value.stars} {labels[`${value.stars}`]}
+                                      </div>
+                                      {value.review}
+                                    </div>
+                                    <p className="text-black font-medium text-xs">
+                                      {" "}
+                                      {moment(value.updatedAt).calendar()}
+                                    </p>
+                                  </div>
+                                </div>
+                              ))}
+                          
+                          </div>
+                        </ScrollArea>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+                <div>
+                  <div>
+                    <p className="font-medium text-lg">Instructor info</p>
+                    <div
+                      className="flex items-center bg-blue-200 rounded-3"
+                      style={{
+                        backgroundImage: `linear-gradient(
+                      rgba(4, 18, 19, 0.5),
+                  rgba(10, 10, 10, 0.5)
+                    ), url(https://github.com/shadcn.png)`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                      }}
+                    >
+                      <div
+                        onClick={() =>
+                          navigate(
+                            `/user/instructorProfile/${course?.instructorId._id}`
+                          )
+                        }
+                        className="w-48 h-48 m-2 rounded-full  overflow-hidden bg-gray-200"
+                      >
+                        <img
+                          src={
+                            course?.instructorId.avatar.avatart_url
+                              ? course?.instructorId.avatar.avatart_url
+                              : "https://github.com/shadcn.png"
+                          }
+                          alt="instructor image"
+                        />
+                      </div>
+
+                      <Card className="m-2 w-[600px] bg-gray-50/50 backdrop-blur-sm">
+                        <CardDescription className="m-4 space-y-2 overflow-hidden break-words">
+                          <div className="font-bold text-black">
+                            {course?.instructorId.name}
+                          </div>
+                          <div className="font-bold">{"im developer"}</div>
+                          <div className="font-bold text-xs text-black">
+                            {wr}
+                          </div>
+                          <div className="flex items-center">
+                            <p className="text-sm font-medium">
+                              <Rating readOnly max={1} />
+                            </p>
+                            <p className="">
+                              {/* {instructorRatings.length} instructor Ratings */}
+                            </p>
+                          </div>
+                        </CardDescription>
+                      </Card>
+                    </div>
                   </div>
                 </div>
               </div>

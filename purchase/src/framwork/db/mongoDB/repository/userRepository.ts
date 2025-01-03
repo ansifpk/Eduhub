@@ -57,24 +57,22 @@ export class UserRepository implements IUserRepository{
 
   }
 
-    async create(userId:string,courseId:string,data: IOrder): Promise<ICourse | void> {
+    async create(userId:string,course: ICourse): Promise<ICourse | void> {
    try {
-    console.log("repost statrt");
-    const course = await this.orderMedels.create({user:data.user,product:data})
+    // console.log("repost statrt");
+    const order = await this.orderMedels.create({user:userId,course:course})
     
-    
-    if(course){
-      console.log("repo updte statrt",'courseId',courseId,'courseId',courseId);
+    if(order){
+      console.log("repo updte statrt",'courseId',userId,'courseId',course._id);
       let check = await this.courseModels.findByIdAndUpdate(
-          { _id: courseId }, 
-          { $push: { students: userId } },
+          { _id: course._id! }, 
+          { $addToSet: { students: userId } },
           { new: true } 
         )
-        console.log(check,"ccheck");
+        // console.log(check,"ccheck");
         
       if(check){
-        console.log("repo updte end");
-        console.log("repo  end");
+        // console.log("repo updte end");
         return check
       }
   }

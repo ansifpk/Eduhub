@@ -55,9 +55,9 @@ export const listCategory = async (categoryId:string) =>{
         return error 
     }
 }
-export const students = async () =>{
+export const students = async (search:string="",sort:string="") =>{
     try {
-        const response = await ApiGatway.get(adminRoutes.students);       
+        const response = await ApiGatway.get(`${adminRoutes.students}?search=${search}&&sort=${sort}`);       
         return response.data
     } catch (error) {
         return error 
@@ -72,9 +72,9 @@ export const blockUser = async (userId:string) =>{
         return error 
     }
 }
-export const instructors = async () =>{
+export const instructors = async (search:string="",sort:string="") =>{
     try {
-        const response = await ApiGatway.get(adminRoutes.instructors);       
+        const response = await ApiGatway.get(`${adminRoutes.instructors}?search=${search}&&sort=${sort}`);       
         return response.data
     } catch (error) {
         return error 
@@ -90,9 +90,9 @@ export const editProfile = async (instructorData:object) =>{
         return error 
     }
 }
-export const getCourses = async () =>{
+export const getCourses = async (search:string="",sort:string="") =>{
     try {
-        const response = await ApiGatway.get(adminRoutes.getCourses);       
+        const response = await ApiGatway.get(`${adminRoutes.getCourses}?search=${search}&&sort=${sort}`);       
         return response.data
     } catch (error) {
         return error 
@@ -101,9 +101,9 @@ export const getCourses = async () =>{
 
 //coupons
 
-export const addCoupon = async (title:string,description:string,offer:number,date:Date,couponCode:string) =>{
+export const addCoupon = async (title:string,description:string,offer:number,startingDate:string,startingTime:string,expiryDate:string,expiryTime:string,couponCode:string) =>{
     try {
-        const response = await ApiGatway.post(adminRoutes.coupon,{title,description,offer,date,couponCode});       
+        const response = await ApiGatway.post(adminRoutes.coupon,{title,description,offer,startingDate,startingTime,expiryDate,expiryTime,couponCode});       
         return response.data
     } catch (error) {
         return error 
@@ -119,9 +119,9 @@ export const deleteCoupon = async (couponId:string) =>{
     }
 }
 
-export const editCoupon = async (couponId:string,title:string,description:string,offer:number,date:Date,couponCode:string) =>{
+export const editCoupon = async (couponId:string,title:string,description:string,offer:number,startingDate:string,startingTime:string,expiryDate:string,expiryTime:string,couponCode:string) =>{
     try {
-        const response = await ApiGatway.patch(`${adminRoutes.coupon}/${couponId}`,{title,description,offer,date,couponCode});       
+        const response = await ApiGatway.patch(`${adminRoutes.coupon}/${couponId}`,{title,description,offer,expiryDate,expiryTime,startingDate,startingTime,couponCode});       
         return response.data
     } catch (error) {
         return error 
@@ -137,10 +137,58 @@ export const getCoupons = async () =>{
     }
 }
 
+
+
 //user
 export const instructorAprovel = async (email:string,status:string) =>{
     try {
         const response = await ApiGatway.patch(adminRoutes.instructorAprovel,{email,status});       
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
+//!message
+
+export const AdminSendMessage = async(chatId:string,senderId:string,text:string)=>{
+    try {
+        const response = await ApiGatway.post(adminRoutes.message,{chatId,senderId,text});
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+export const AdminChats = async(userId:string)=>{
+    try {
+        const response = await ApiGatway.get(`${adminRoutes.chat}?userId=${userId}`);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
+export const getAdminMessages = async(chatId:string)=>{
+    try {
+        const response = await ApiGatway.get(`${adminRoutes.message}/${chatId}`);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
+export const getAdminCurrentChat = async(chatId:string)=>{
+    try {
+        const response = await ApiGatway.get(`${adminRoutes.privetChat}/${chatId}`);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
+export const adminCreateMessage = async(userId:string,recipientId:string,role:string)=>{
+    try {
+        const response = await ApiGatway.post(adminRoutes.chat,{userId,recipientId,role});
         return response.data
     } catch (error) {
         return error 

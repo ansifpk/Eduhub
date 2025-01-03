@@ -16,12 +16,7 @@ interface ICourse{
 
 export interface IOrder{
   _id:string,
-  user:{
-    id:string,
-    name:string,
-    email:string,
-    createdAt:Date
-  },
+  user:string,
   product:ICourse,
   purchaseMethord:string,
   orderDate:string

@@ -16,6 +16,19 @@ export class UserRepository implements IUserRepository {
     private ratingModels: typeof ratingModel
   ) {}
 
+  async findByIdAndUpdate(userId: string, name: string, thumbnail: string, aboutMe: string): Promise<Iuser | void> {
+   try {
+     console.log(userId,name,thumbnail,aboutMe);
+     const user = await this.userModels.findByIdAndUpdate({_id:userId},{$set:{name:name,thumbnail:thumbnail,about:aboutMe}},{new:true});
+     if(user) {
+      return user;
+     }
+     
+   } catch (error) {
+    console.error(error)
+   }
+  }
+
   async createRating(
     instructorId: string,
     userId: string,

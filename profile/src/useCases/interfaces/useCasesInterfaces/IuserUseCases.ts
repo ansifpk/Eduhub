@@ -3,9 +3,11 @@ import { Iuser } from "../../../entities/user";
 import { ICourse } from "../../../entities/course";
 import { ICart } from "../../../entities/cart";
 import { IRating } from "../../../entities/ratings";
+import { Iotp } from "../../../entities/otp";
 
 export interface IUserUseCase{
     userProfile(userId:string,next:NextFunction):Promise<Iuser|void>
+    editProfile(userId:string,name:string,thumbnail:string,aboutMe:string,next:NextFunction):Promise<Iuser|void>
     createProfile(userData:Iuser,next:NextFunction):Promise<Iuser|void>
     addToCart(courseId:string,userId:string,next:NextFunction):Promise<ICart|void>
     removeFromCart(courseId:string,userId:string,next:NextFunction):Promise<ICart|void>
@@ -15,4 +17,5 @@ export interface IUserUseCase{
     getRating(instructorId:string,next:NextFunction):Promise<IRating[]|void>
     editRating(ratingId:string,review:string,stars:number,next:NextFunction):Promise<IRating|void>
     deleteRating(ratingId:string,next:NextFunction):Promise<IRating|void>
+   
 }

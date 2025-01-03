@@ -1,35 +1,61 @@
 // import { NextFunction, Request, Response } from "express";
 // import jwt from'jsonwebtoken';
-
+// import dotenv from 'dotenv';
 // import ErrorHandler from "../../../useCase/middlewares/errorHandler";
+// dotenv.config();
+
 
 // interface User{
 //   id:string,
 //   iat:number
 // }
 
-// export const isAuth = async (req:Request,res:Response,next:NextFunction)=>{
-//     const check = jwt.verify(req.session?.accessToken,'itsjwtaccesskey') as User;
-//     if(check){
-//       return next()
-//     }else{
-//       throw new Error("Use not login")
-//     } 
+// export const isAuth = async (req:Request,res:Response,next:NextFunction)=>{ 
+//  try {
+   
+//   if(!req.session){
+//    return next(new ErrorHandler(400,"Tocken Expired"))
+//   } 
+//   if(!req.session.accessToken){
+//    return next(new ErrorHandler(400,"Tocken Expired"))
+//   } 
+  
+//    const check = jwt.verify(req.session.accessToken,process.env.JWT_ACCESSKEY!) as User;
+//    if(check){
+//      const user = await userMode.findOne({_id:check.id});
+//      if(user){
+//         if(user.isBlock){
+//          return next(new ErrorHandler(403,"You are blocked by Admin"))
+//         }
+//         return next();
+//      }else{
+//        next(new ErrorHandler(400,"Tocken Expired"))
+//      }
+//    }else{
+//      next(new ErrorHandler(400,"Tocken Expired"))
+//    } 
+//  } catch (error) {
+//   console.error(error)
+//  }
 // }
 
 // export const isAdmin = async (req:Request,res:Response,next:NextFunction)=>{
 
 // try {
+
 //   if(!req.session){
-//     throw new Error("Admin not login")
-//   }
-//   const check = jwt.verify(req.session.accessToken,'itsjwtaccesskey') as User;
+//     return next(new ErrorHandler(400,"Tocken Expired"))
+//    } 
+//    if(!req.session.accessToken){
+//     return next(new ErrorHandler(400,"Tocken Expired"))
+//    } 
+//   const check = jwt.verify(req.session.accessToken,process.env.JWT_ACCESSKEY!) as User;
 //   if(!check){
-//     throw new Error("Admin not login")
+//     return next(new ErrorHandler(400,"Tocken Expired"))
 //   }
-//   const user = await userModel.findOne({email:check.id});
+//   const user = await UserModel.findOne({_id:check.id});
 //     if(!user){
-//       throw new Error("user not registered")
+//       return next(new ErrorHandler(400,"Tocken Expired"))
 //     }
 //     if(user.isAdmin){
 //        next()
@@ -37,8 +63,43 @@
 //       return next(new ErrorHandler(400,"You are not admin"))
 //     }
 // } catch (error) {
-//   throw new Error("Admin not login")
+//   console.error(error)
 // }
   
   
 // }
+
+
+// export const isInstructor = async (req:Request,res:Response,next:NextFunction)=>{
+
+//   try {
+  
+//     if(!req.session){
+//       return next(new ErrorHandler(400,"Tocken Expired"))
+//      } 
+//      if(!req.session.accessToken){
+//       return next(new ErrorHandler(400,"Tocken Expired"))
+//      } 
+//     const check = jwt.verify(req.session.accessToken,process.env.JWT_ACCESSKEY!) as User;
+//     if(!check){
+//       return next(new ErrorHandler(400,"Tocken Expired"))
+//     }
+//     const user = await UserModel.findOne({_id:check.id});
+//       if(!user){
+//         return next(new ErrorHandler(400,"Tocken Expired"))
+//       }
+//       if(user.isBlock){
+//         return next(new ErrorHandler(400,"You are blocked by admin")) 
+//       }
+//       if(user.isInstructor){
+//          next()
+//       }else{
+//         return next(new ErrorHandler(400,"You are not Instructor"))
+//       }
+//   } catch (error) {
+//     console.error("/////",error)
+//     return next(new ErrorHandler(400,"You are not Instructor"))
+//   }
+    
+    
+//   }

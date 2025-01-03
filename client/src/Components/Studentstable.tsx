@@ -28,23 +28,34 @@ import { getCourses } from "@/Api/instructor";
 import { useSelector } from "react-redux";
 import { ICourse } from "@/@types/courseType";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-interface IUser {
-  id: string;
-}
+import { IUser } from "@/@types/chatUser";
+import { User } from "@/@types/userType";
+
 export function Studentstable() {
   const [search, setSearch] = useState("");
-  const [courses, setCourses] = useState([]);
-  const userId = useSelector((state: IUser) => state.id);
+  const [sort, setSort] = useState("");
+  const [students, setStudents] = useState<IUser[]>([]);
+  const userId = useSelector((state: User) => state.id);
+
   useEffect(() => {
     const stude = async () => {
-      const respons = await getCourses(userId);
-      if (respons.success) {
-        setCourses(respons.courses);
-        console.log(respons.courses);
+      const response = await getCourses(userId,search,sort);
+      if (response.success) {
+        const uniqueStudents: IUser[] = Array.from(
+          new Map<string, IUser>(
+            response?.courses
+              ?.flatMap((course: ICourse) => course.students) 
+              .map((student: IUser) => [student._id, student]) 
+          ).values() 
+        );
+
+        setStudents(uniqueStudents);
       }
     };
     stude();
-  }, []);
+  }, [userId,search,sort]);
+  console.log(students, "students");
+
   return (
     <>
       <div className="flex items-center justify-between space-y-2">
@@ -66,24 +77,20 @@ export function Studentstable() {
                 className="md:w-[100px] lg:w-[300px] bg-black text-white"
               />
             </div>
-            <Select>
+            <Select onValueChange={(value) => setSort(value)}>
               <SelectTrigger
                 id="framework"
                 className="h-10 w-[50px] lg:w-[150px] text-black"
+                
               >
                 <SelectValue placeholder="Filter" />
               </SelectTrigger>
               <SelectContent position="popper">
+                <SelectItem value="All">All</SelectItem>
                 <SelectItem value="New">New</SelectItem>
                 <SelectItem value="Old">Old</SelectItem>
-                <SelectItem value="Name - A-Z">Name - A-Z</SelectItem>
+                <SelectItem value="Name A-Z">Name A-Z</SelectItem>
                 <SelectItem value="Name Z-A">Name Z-A</SelectItem>
-                <SelectItem value="Price Low - Highy">
-                  Price Low - Highy
-                </SelectItem>
-                <SelectItem value="Name Highy - Low">
-                  Name Highy - Low
-                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -101,20 +108,31 @@ export function Studentstable() {
               </TableRow>
             </TableHeader>
             <TableBody className="text-white">
-              {courses.map((value: ICourse) =>
-                value.students?.map((val, inde) => (
-                  <TableRow key={inde}>
-                     <TableCell>
+              {students.length > 0 ? (
+                students.map((student,index) => (
+                  <TableRow key={index}>
+                    <TableCell>
                       <Avatar className="h-9 w-9">
-                        <AvatarImage src={val.avatar.avatar_url?val.avatar.avatar_url:"/avatars/03.png"} alt="@shadcn" />
-                        <AvatarFallback>SC</AvatarFallback>
+                        <AvatarImage
+                          src={
+                            student.avatar?.avatar_url ||
+                            "https://github.com/shadcn.png"
+                          }
+                          alt={student.name || "Student"}
+                        />
+                        <AvatarFallback>
+                          {student.name?.[0] || "SC"}
+                        </AvatarFallback>
                       </Avatar>
                     </TableCell>
-                    <TableCell>{val.name}</TableCell>
-                    <TableCell>{val.email}</TableCell>
-                   
+                    <TableCell>{student.name}</TableCell>
+                    <TableCell>{student.email}</TableCell>
                   </TableRow>
                 ))
+              ) : (
+                <TableRow>
+                  <TableCell>You dont have any students</TableCell>
+                </TableRow>
               )}
             </TableBody>
           </Table>
