@@ -1,6 +1,5 @@
 import { NextFunction } from "express";
 import { IOrder } from "../../entities/order";
-// import { ICourse } from "../../entities/course";
 import { ICourse } from "../../entities/course";
 import { IUserUseCase } from "../interfaces/useCases/IUserUseCase";
 import { IUserRepository } from "../interfaces/repository/IUserRepositoru";
@@ -11,13 +10,110 @@ import { OrderCreatedPublisher } from "../../framwork/webServer/config/kafka/pro
 import kafkaWrapper from "../../framwork/webServer/config/kafka/kafkaWrapper";
 import { Producer } from "kafkajs";
 import { CouponUsedPublisher } from "../../framwork/webServer/config/kafka/producer/coupon-used-producer";
+import { ISubcription } from "../../entities/subscription";
+import { IUserSubcription } from "../../entities/userSubscription";
+import { IUserSubscribe } from "../../entities/userSubscribe";
 
+const stripe = new Stripe(process.env.STRIPE_SECRET!, {
+   apiVersion: "2024-12-18.acacia",
+ });
 
 
 export class UserUseCase implements IUserUseCase{
     constructor(
         private userRepository:IUserRepository
     ){}
+    async purchasedSubscriptions(userId: string, next: NextFunction): Promise<IUserSubscribe[] | void> {
+     try {
+       const user = await this.userRepository.findUser(userId)
+       if(!user){
+         return next(new ErrorHandler(400,"user not fount"))
+       } 
+       const plans = await this.userRepository.plans(userId);
+       if(plans){
+         return plans
+       }
+     } catch (error) {
+      console.error(error)
+     }
+    }
+
+   async purchaseSubscriptions(userId: string,subscriptionId:string, next: NextFunction): Promise<string | void> {
+      try {
+        
+         const user = await this.userRepository.findUser(userId)
+         if(!user){
+            return next(new ErrorHandler(400,"user not fount"))
+         }
+         const subscription =  await this.userRepository.subscriptionFindById(subscriptionId)
+         if(!subscription){
+            return next(new ErrorHandler(400,"Subscription not fount"))
+         }
+         console.log(subscription);
+         let customer = await stripe.customers.create({
+            name: user.name,
+            email: user.email,
+            address: {
+              line1: "123 Street Name",
+              city: "City Name",
+              country: "AE",
+              postal_code: "12345",
+            },
+            metadata:{
+              userType:"user"
+            }
+          });
+        
+      
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ["card"],
+            customer:customer.id,
+            mode:'subscription',
+            line_items:[{
+                price:subscription.priceId,
+                quantity:1,
+            }],
+            metadata:{
+                userId:userId,
+                buyer:"user",
+                customerId:customer.id,
+                subscriptionId:JSON.stringify(subscription._id),
+                edited:''
+            },
+            success_url: "http://localhost:5173/user/success",
+            cancel_url: "https://localhost:5173/user/faile",
+            
+        })
+   
+        return session.id;
+         
+         
+      } catch (error) {
+         console.error(error)
+      }
+   }
+
+   async getPlans(userId: string, next: NextFunction): Promise<IUserSubscribe[] | void> {
+      try {
+         const plans = await this.userRepository.plans(userId)
+         if(plans){
+            return plans
+         }
+      } catch (error) {
+         console.error(error)
+      }
+   }
+
+   async getSubscriptions(instructorId: string, next: NextFunction): Promise<IUserSubcription[] | void> {
+      try {
+         const subscriptions = await this.userRepository.subscriptions(instructorId)
+         if(subscriptions){
+            return subscriptions
+         }
+      } catch (error) {
+         console.error(error)
+      }
+   }
 
     async fetchOrders(userId:string,next: NextFunction): Promise<ICourse[] | void> {
         
@@ -30,7 +126,7 @@ export class UserUseCase implements IUserUseCase{
         console.error(error)
        }
          
-        // throw new Error("Method not implemented.");
+        
     }
 
    async createOrder(data: {courseId:string,user:Iuser,order:IOrder}, next: NextFunction): Promise<ICourse | void> {
@@ -52,6 +148,21 @@ export class UserUseCase implements IUserUseCase{
         
     }
     
+     async subscriptionDetailes(customerId: string, next: NextFunction): Promise<string | void> {
+           try {
+              const portalSession = await stripe.billingPortal.sessions.create({
+                customer:customerId,
+                return_url:`http://localhost:5173/users/courses`
+              })
+             
+              if(portalSession){
+                return portalSession.url
+              }
+           } catch (error) {
+            console.error(error)
+           }
+      }
+      
     async webHook(event: Stripe.Event,next:NextFunction): Promise<void> {
    
         const session = event.data.object as Stripe.Checkout.Session;
@@ -67,12 +178,11 @@ export class UserUseCase implements IUserUseCase{
                  courses.push(course)
               }
            }
-           let total = courses.reduce((acc,cur)=>{
-              return acc+cur.price
-           },0)
+         
          
            switch (event.type){
               case 'checkout.session.completed':
+               
                  
                  for(let value of courses){
 

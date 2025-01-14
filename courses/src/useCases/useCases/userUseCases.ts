@@ -9,6 +9,7 @@ import ErrorHandler from "../middlewares/errorHandler";
 import { ICoupon } from "../../entities/coupon";
 import Stripe from "stripe";
 import { ITest } from "../../entities/test";
+import { IReport } from "../../entities/report";
 
 
 export class UserUseCase implements IUserUseCase{
@@ -18,6 +19,39 @@ export class UserUseCase implements IUserUseCase{
     private s3bucketrepository:IS3bucket,
     private stripe:IStripe
    ){}
+
+   async getReports(userId: string, courseId: string, next: NextFunction): Promise<IReport[] | void> {
+      try {
+        
+         const reports = await this.userRepository.findReports(userId,courseId)
+          if(reports){
+            return reports
+          }
+         } catch (error) {
+         console.error(error)
+        }
+     }
+
+    async report(userId: string, report: string, content: string, courseId: string, next: NextFunction): Promise<IReport| void> {
+     try {
+      
+      const course = await this.userRepository.findById(courseId);
+      if(!course){
+         return next(new ErrorHandler(400,"Course not found"));
+      }
+
+      const checkReport = await this.userRepository.checkReport(userId,content,courseId)
+      if(checkReport){
+         return next(new ErrorHandler(400,"Already report this video"));
+      }
+      const createReport = await this.userRepository.createReport(userId,report,content,courseId)
+       if(createReport){
+         return createReport
+       }
+   } catch (error) {
+      console.error(error)
+     }
+   }
 
   async getTest(testId: string,next: NextFunction): Promise<ITest | void> {
        try {

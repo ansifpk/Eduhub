@@ -16,6 +16,9 @@ import AdminListCoupon from "@/pages/admin/AdminListCoupons";
 import EditCoupon from "@/pages/admin/EditCoupon";
 import AdminAddCoupon from "@/pages/admin/AddCoupon";
 import AdminMessage from "@/pages/admin/AdminMessage";
+import AdminSubscriptions from "@/pages/admin/AdminSubscriptions";
+import AddSubscription from "@/pages/admin/AddSubscription";
+import SalesReports from "@/pages/admin/SalesReports";
 
 
 interface User{
@@ -45,9 +48,12 @@ const AdminRouter = () => {
          <Route path='/editCategory/:id' element={isAdmin?<EditCategory/>:<AdminLogin/>} />
          <Route path='/students' element={isAdmin?<AdminListStudents/>:<AdminLogin/>} />
          <Route path='/messages' element={isAdmin?<AdminMessage/>:<AdminLogin/>} />
+         <Route path='/reports' element={isAdmin?<SalesReports/>:<AdminLogin/>} />
          <Route path='/instructors' element={isAdmin?<AdminListInstructors/>:<AdminLogin/>} />
          <Route path="/instructorRequests" element={isAdmin?<AdminInstructorRequests/>:<AdminLogin/>} />
          <Route path='/courses' element={isAdmin?<AdminListCourses/>:<AdminLogin/>} />
+         <Route path='/subscriptions' element={isAdmin?<AdminSubscriptions/>:<AdminLogin/>} />
+         <Route path='/addSubscription' element={isAdmin?<AddSubscription/>:<AdminLogin/>} />
          <Route path='*' element={<ErrorPage/>} />
        </Routes>
     </>

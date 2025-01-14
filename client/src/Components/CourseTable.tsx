@@ -1,4 +1,4 @@
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, SubscriptIcon } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -19,7 +19,7 @@ import { Badge } from "./ui/badge";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { User } from "@/@types/userType";
-import { addTestToCourse, editTestToCourse, getCourses, listCourses } from "@/Api/instructor";
+import { addTestToCourse, editTestToCourse, getCourses, getSubscriptions, instructorPlans, listCourses } from "@/Api/instructor";
 import toast from "react-hot-toast";
 import { Separator } from "./ui/separator";
 import { useNavigate } from "react-router-dom";
@@ -64,6 +64,7 @@ import {
 import {
   AlertDialog,
   AlertDialogAction,
+  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
@@ -84,6 +85,9 @@ import {
 import { Card, CardContent } from "./ui/card";
 import { ITest } from "@/@types/testType";
 import { IUser } from "@/@types/chatUser";
+import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
+import { ISubcription } from "@/@types/subscriptionType";
+import { IInstructorSubscribe } from "@/@types/instructorSubscribe";
 
 export function Coursestable() {
   const [courses, setCourses] = useState([]);
@@ -93,7 +97,6 @@ export function Coursestable() {
   const [sort, setSort] = useState("");
   const instructorId = useSelector((state: User) => state.id);
   const { isOpen:isAddOpen, onOpen:addOpen, onClose:addClose } = useDisclosure();
-  // const { isOpen:isTestOpen, onOpen:testOpen, onClose:testClose } = useDisclosure();
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);  
@@ -101,6 +104,8 @@ export function Coursestable() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [students, setStudents] = useState<IUser[]>([]);
   const [test, setTest] = useState<ITest>();
+  const [subscriptions, setSubscriptions] = useState<IInstructorSubscribe[]>([]);
+  
   interface Question {
     question: string;
     option1: string;
@@ -185,8 +190,6 @@ export function Coursestable() {
     })));
   }
   const addTest = async() => {
-    // console.log(courseId,"ind");
-    
     addOpen();
     let success 
     errors.map((val)=>{
@@ -201,12 +204,8 @@ export function Coursestable() {
     }
     
     const response = await addTestToCourse(questions,courseId!._id)
-    // console.log(response);
-    
     if(response.success){
       const data = await getCourses(instructorId,sort);
-     
-      
       if (data.success) {
         setCourses(data.courses);
         addClose()
@@ -216,11 +215,9 @@ export function Coursestable() {
       
     }else{
      return toast.error(response.respons.data.message)
-    }
-    
-   
+    } 
   }
-  // console.log(courses,"//");
+  
   
   const editTest = async() => {
     addStates(questions)
@@ -272,10 +269,23 @@ export function Coursestable() {
   useEffect(() => {
     const res = async () => {
       const data = await getCourses(instructorId,sort);
-      // console.log(data,"data");
-      
       if (data.success) {
         setCourses(data.courses);
+      }else if(data.status == 403){
+        return toast.error("Blocked by admin")
+      }else{
+        return toast.error(data.response.data.message)
+      }
+      
+      const response = await instructorPlans(instructorId)
+      if(response.success){
+       setSubscriptions(response.plans);
+       return 
+      }else if(response.status == 403){
+        toast.error(response.response.data.message)
+        return navigate('/instructor/login')
+      }else{
+       return toast.error(response.response.data.message)
       }
     };
     res();
@@ -309,9 +319,16 @@ export function Coursestable() {
     }
   };
 
+  const checkSubscription = (course:ICourse) => {
+      if(subscriptions.length>0){
+        setCourseId(course);
+        addOpen()
+      }else{
+        navigate("/instructor/purchaseSubscription")
+      }
+  } 
   const navigate = useNavigate();
-  console.log("questions",questions);
-  console.log("currentCours",courseId);
+
   
   return (
     <>
@@ -368,6 +385,7 @@ export function Coursestable() {
                 <TableHead>Thumbnail</TableHead>
                 <TableHead>Created At</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Price</TableHead>
                 <TableHead align="center">Students</TableHead>
                 {/* <TableHead align="center">Test</TableHead> */}
                 <TableHead>Action</TableHead>
@@ -377,20 +395,26 @@ export function Coursestable() {
               {listingCourses.length > 0 ? (
                 listingCourses.map((val: ICourse, index) => (
                   <TableRow key={index}>
-                    <TableCell>{val.title}</TableCell>
-                    <TableCell>{val.thumbnail}</TableCell>
-                    <TableCell>{val.createdAt.slice(0, 10)}</TableCell>
-                    <TableCell>
+                    <TableCell className="text-xs">{val.title}</TableCell>
+                    <TableCell className="text-xs">{val.thumbnail}</TableCell>
+                    <TableCell className="text-xs">{val.createdAt.slice(0, 10)}</TableCell>
+                    <TableCell >
                       <Badge
                         className={
                           val.isListed
-                            ? "bg-black text-success"
-                            : "bg-black text-danger"
+                            ? "bg-black text-success text-xs"
+                            : "bg-black text-danger text-xs"
                         }
                       >
                         {val.isListed ? "Listed" : "UnListed"}
                       </Badge>
+                      </TableCell>
+                    <TableCell className="text-xs">
+                      
+                        {val.price}
+                     
                     </TableCell>
+                   
                     {/* <TableCell>
                       <Sheet key={"left"}>
                         <SheetTrigger>
@@ -524,65 +548,7 @@ export function Coursestable() {
                             </DrawerContent>
                           </Drawer>
                         </TableCell>
-                        {/* <TableCell align="center">
-                          <Button
-                            onClick={()=>{
-                              setCourseId(val)
-                              testOpen()
-                            }}
-                            className="bg-light text-black rounded-full border-1 border-black"
-                          >
-                            View Tests
-                          </Button>
-
-                          <Drawer
-                            isOpen={isTestOpen}
-                            size={"4xl"}
-                            onClose={testClose}
-                            className="bg-black"
-                          >
-                            <DrawerContent>
-                              {(testClose) => (
-                                <>
-                                  <DrawerHeader className="flex flex-col gap-1">
-                                    Tests
-                                  </DrawerHeader>
-                                  <DrawerBody className="flex  items-center">
-                                <div className=" text-center text-sm text-white text-muted-foreground">
-                                  Slide {current} of {count}
-                                </div>
-                                <Carousel
-                                  setApi={setApi}
-                                  className="w-50 h-[400px] "
-                                >
-                                  <CarouselContent>
-                                    {courseId?
-                                    "Test und"
-                                    :
-                                    "No Test for this course"
-                                    }
-                                  </CarouselContent>
-                                  <CarouselPrevious />
-                                  <CarouselNext />
-                                </Carousel>
-                              </DrawerBody>
-                                  <DrawerFooter>
-                                    <Button
-                                      color="danger"
-                                      // variant="light"
-                                      onClick={testClose}
-                                    >
-                                      Close
-                                    </Button>
-                                    <Button color="primary" onClick={testClose}>
-                                      Action
-                                    </Button>
-                                  </DrawerFooter>
-                                </>
-                              )}
-                            </DrawerContent>
-                          </Drawer>
-                        </TableCell> */}
+                     
                     <TableCell>
                       <Dialog>
                         <DropdownMenu>
@@ -613,10 +579,9 @@ export function Coursestable() {
                               Edit Test
                             </DropdownMenuItem>
                             :
-                            <DropdownMenuItem onClick={() => { 
-                              setCourseId(val)     
-                              addOpen()}}>
+                            <DropdownMenuItem onClick={() =>checkSubscription(val)} >
                               Add Test
+                              < WorkspacePremiumIcon className="text-warning" />
                             </DropdownMenuItem>
                             }
                           </DropdownMenuContent>

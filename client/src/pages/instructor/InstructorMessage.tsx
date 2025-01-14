@@ -120,7 +120,14 @@ import { io, Socket } from "socket.io-client"
 import {DefaultEventsMap} from '@socket.io/component-emitter';
 import moment from "moment"
 import toast from "react-hot-toast"
-import { getInstructorCurrentChat, getInstructorMessages, instructorChats, instructorSendMessage } from "@/Api/instructor"
+import { getInstructorCurrentChat, getInstructorMessages, getNotifications, instructorChats, instructorSendMessage, sendNotification } from "@/Api/instructor"
+import { INotification } from "@/@types/notificationType"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/Components/ui/popover";
+import MarkEmailUnreadIcon from "@mui/icons-material/MarkEmailUnread";
 
 
 
@@ -136,6 +143,8 @@ export default function InstructorMessage() {
   const [onlineUsers, setOnlineUsers] = useState<{userId:string,socketId:string}[]>([]);
   const [socket, setSocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | undefined>();
   const [search, setSearch] = useState("");
+  const [notifications, setNotifications] = useState<INotification[]>([]);
+  const [isOpen,setIsOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
     // Function to scroll to bottom
@@ -175,7 +184,7 @@ export default function InstructorMessage() {
   useEffect(()=>{
     if(!socket) return;
     const recipientId = currentChat?.members.find((value)=>value._id !== userId)
-    socket.emit("sendMessage",{text:newMessage,recipientId:recipientId?._id})
+    socket.emit("sendMessage",{text:newMessage,recipientId:recipientId?._id,senderId:userId})
    
   },[newMessage])
 
@@ -185,15 +194,30 @@ export default function InstructorMessage() {
     if(!socket) return;
 
     socket.on("getMessage",(message)=>{
-      console.log(message,"ivade");
-      
-         if(userId !== message.recipientId) return;
-         console.log("hi");
+      const chatUser = currentChat?.members.find(
+        (value) => value._id !== userId
+      );
+         if(chatUser?._id !== message.senderId) return;
          setMessages((prev)=>[...prev,message])
     })
 
+    socket.on("getMessageNotification", (res) => {
+
+      const isChatOpen = currentChat?.members.find(
+        (value) => value._id !== res.recipientId
+      );
+      
+      toast.success(`You got a new message`)
+      if (isChatOpen?._id == res.senderId) {
+        setNotifications((prev) => [{ ...res, isRead: true }, ...prev]);
+      } else {
+        setNotifications((prev) => [res, ...prev]);
+      }
+    });
+
     return ()=>{
       socket.off("getMessage")
+      socket.off("getMessageNotification")
     }
    
   },[socket,currentChat])
@@ -231,16 +255,57 @@ export default function InstructorMessage() {
     }
   }, [chatId]);
 
-  const handletext = async () => {   
+   useEffect(()=>{
+      const fetching  = async () =>{
+        const respo = await getNotifications(userId);
+        if(respo.success){
+          setNotifications(respo.notifications)
+        }
+      }
+      fetching ();
+     },[])
+     console.log('notifications',notifications);
+     
+  const handletext = async () => {  
+    let reciever = '';
+           currentChat?.members.map((user)=>{
+            if(user._id !== userId){
+                 reciever = user._id
+            }
+           }) 
     const response = await instructorSendMessage(currentChat?._id!, userId, text);
     if(response.success){
        setNewMessage(response.message.text)
        setMessages((prev)=>[...prev,response.message])
        setText("")
+       await sendNotification(reciever,userId)
     }else{
       return toast.error(response.response.data.message);
     }
   };
+
+  let  user = ''
+  const modification = notifications.map((notify:INotification)=>{
+     chats.map((chat:IChat)=>{
+       chat.members.map((value)=>{
+        if(value._id == notify.senderId){
+          user = value.name;
+        }
+       })
+    })
+    return {
+      ...notify,
+      senderName:user
+    }
+   })
+
+   const markAsRead  = (sentId:string) => {
+      
+      const mdNotifications = notifications.filter((value:INotification)=>value.senderId !== sentId);
+      if(mdNotifications){
+        setNotifications(mdNotifications)
+      }
+   }
 
   return (
     <div className="bg-black">
@@ -262,9 +327,43 @@ export default function InstructorMessage() {
             <h3 className="m-3 text-sm font-medium text-white leading-none">
               Messages
             </h3>
-            <div className="flex">
-              <Input className="bg-white"  placeholder="serch"  />
-            </div>
+         
+            <Popover>
+              <PopoverTrigger><MarkEmailUnreadIcon  />{notifications.length}</PopoverTrigger>
+              <PopoverContent>
+              <div className="flex justify-between gap-3">
+                      <h5>Notifications</h5>
+                     
+              </div>
+             
+                      {modification.length>0?(
+                         modification.map((value:INotification,index)=>(
+                            <div onClick={() => {
+                              let id=''
+                              let sentId=''
+                              chats.map((chat:IChat)=>{
+                                chat.members.map((val)=>{
+                                 if(val._id == value.senderId){
+                                  id = chat._id;
+                                  sentId = value.senderId
+                                 }
+                                })
+                             })
+                              markAsRead(sentId)
+                              searchParams.set("chatId", id)
+                              setSearchParams(searchParams);
+                            }} className={`p-2 ${value.isRead?"bg-white":"bg-success-600"}`} key={index}>
+                                <div>{`${value.senderName} Sent you a new message`}</div>
+                                <div>{moment(value.date).calendar()}</div>
+                            </div>
+                         ))
+                      ):(
+                        <p>No New Notifications...</p>
+                      )
+                      }
+               
+              </PopoverContent>
+            </Popover>
             </div>
             <ScrollArea className="h-[450px] w-[330px] rounded-md border bg-white p-2">
               {chats.length > 0 ? (
@@ -283,6 +382,8 @@ export default function InstructorMessage() {
                       </Avatar>
                       <div
                         onClick={() => {
+                              let id = chat.members.find((member) => member._id !== userId)?._id
+                              markAsRead(id!)
                           searchParams.set("chatId", chat._id);
                           setSearchParams(searchParams);
                         }}

@@ -24,6 +24,7 @@ import InstructorProfile from "@/pages/user/InstructorProfile.tsx"
 import UserListCoupons from "@/pages/user/UserListCoupons.tsx"
 import AssesmentTest from "@/pages/user/AssesmentTest.tsx"
 import Settings from "@/pages/user/Settings.tsx"
+import Plans from "@/pages/user/Plans.tsx"
 
 interface User{
   id:string,
@@ -61,6 +62,7 @@ const UserRoter = () => {
          <Route path="/user/instructorProfile/:instructorId" element={<InstructorProfile/>} /> 
          <Route path="/user/faile" element={<Faile/>} /> 
          <Route path="/profile/message" element={<Message/>} /> 
+         <Route path="/profile/Plans" element={<Plans/>} /> 
          <Route path="*" element={<ErrorPage/>}/>
        </Routes>
     </>

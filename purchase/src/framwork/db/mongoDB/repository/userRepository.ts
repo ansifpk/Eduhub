@@ -6,16 +6,67 @@ import { courseModel } from "../models/courseMode";
 import { OrderModel } from "../models/orderModel";
 import { UserModel } from "../models/userMode";
 import { Iuser } from "../../../../entities/user";
+import { IUserSubscribe } from "../../../../entities/userSubscribe";
+import { userSubscriptionModel } from "../models/userSuscriptionModel";
+import { userSubscribeModel } from "../models/userSubscribe";
+import { ISubcription } from "../../../../entities/subscription";
+import { subscriptionModel } from "../models/subscriptionModel";
+import { IUserSubcription } from "../../../../entities/userSubscription";
 
-interface orderData{
 
-}
 export class UserRepository implements IUserRepository{
     constructor(
         private orderMedels:typeof OrderModel,
         private courseModels:typeof courseModel,
         private userModels:typeof UserModel,
+        private subscriptionUserModel:typeof userSubscriptionModel,
+        private subscribeModel:typeof userSubscribeModel,
+        private subscribtionModel:typeof subscriptionModel,
     ){}
+
+  async subscriptionFindById(subscriptionId: string): Promise<IUserSubcription | void> {
+     try {
+        const subscription = await this.subscriptionUserModel.findById({_id:subscriptionId})
+        if (subscription) {
+          return subscription 
+        }
+       } catch (error) {
+        console.error(error)
+       }
+  }
+
+    async  plans(userId: string): Promise<IUserSubscribe[] | void> {
+      try {
+        const plans = await this.subscribeModel.find({userId:userId}).populate('subscriptionId')
+        if (plans) {
+          return plans 
+        }
+       } catch (error) {
+        console.error(error)
+       }
+      }
+
+    async subscriptions(instructorId: string): Promise<IUserSubcription[] | void> {
+      try {
+        const subscriptions = await this.subscriptionUserModel.find({instructorId:instructorId})
+        if (subscriptions) {
+          return subscriptions 
+        }
+       } catch (error) {
+        console.error(error)
+       }
+      }
+
+    async purchaseSubscription(customerId:string,subscriptionId:string,subscription:string,userId:string): Promise<IUserSubscribe | void> {
+      try {
+        console.log(customerId,subscriptionId,subscription,userId);
+        // const subscriprion = await this.subscribeModel.create({
+          
+        // })
+       } catch (error) {
+        console.error(error)
+       }
+    }
 
   async findById(courseId: string): Promise<ICourse | void> {
      try {
@@ -26,7 +77,6 @@ export class UserRepository implements IUserRepository{
      } catch (error) {
       console.error(error)
      }
-    
   }
   async findUser(userId: string): Promise<Iuser | void> {
      try {
@@ -81,5 +131,6 @@ export class UserRepository implements IUserRepository{
     console.error(error)
    }
     }
+    
     
 }

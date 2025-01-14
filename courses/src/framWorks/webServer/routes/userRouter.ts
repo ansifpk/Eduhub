@@ -99,4 +99,19 @@ export function UserRouter(router: Router) {
       userController.couponDetailes(req, res, next);
     }
   );
+
+  router.post(
+    "/report/:userId",
+    isAuth,
+    async (req: Request, res: Response, next: NextFunction) => {;
+      userController.report(req, res, next);
+    }
+  );
+  router.get(
+    "/report/:userId/:courseId",
+    isAuth,
+    async (req: Request, res: Response, next: NextFunction) => {
+      userController.getReports(req, res, next);
+    }
+  );
 }

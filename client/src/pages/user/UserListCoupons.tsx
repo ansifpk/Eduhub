@@ -44,21 +44,27 @@ const UserListCoupons :React.FC = () => {
     <ProfileNavbar/>
     <main className="w-full mx-auto flex justify-center flex-wrap gap-10"> 
     {coupons.length > 0 ? ( 
-         coupons.map((value:ICoupon,index)=>(
-          <div key={index} className={value.users.includes(userId)?"w-[350px] h-[250px] border-1 border-gray-500 rounded-3 p-2 mt-5":value.expiryDate>today?"w-[350px] h-[250px] border-1 border-green-500 rounded-3 p-2 mt-5":"w-[350px] h-[250px] border-1 border-danger rounded-3 p-2 mt-5"}>
+         coupons
+         .filter((valu:ICoupon)=> date > new Date(valu.startingDate))
+         .map((value:ICoupon,index)=>(
+       
+          <div key={index} className={`w-[350px] h-[250px] border-1 rounded-3 p-2 mt-5 ${!value.users.includes(userId)?date > new Date(value.expiryDate)?"bg-danger-100 border-danger":"bg-success-50 border-success-500":"bg-gray-100 border-gray-500"}`}>
+           
           <div>
             <div className="flex justify-between items-center">
+             
             <h3>Flate {value.offer}% off</h3>
-            <Code className={value.users.includes(userId)?"bg-gray-300":value.expiryDate>today?"bg-success-200 text-success":"bg-danger-100 text-danger"}>{value.users.includes(userId)?"Used":value.expiryDate>today?"Active":"Expired"}</Code>
+           
+            <Code className={!value.users.includes(userId)?date > new Date(value.expiryDate)?"bg-danger-200 text-danger":"bg-success-200 text-success":"bg-gray-200 text-gray-500"} >{!value.users.includes(userId)?date > new Date(value.expiryDate)?"Expired":"Active":"Used"}</Code>
             </div>
              <p>{value.title}</p>
           </div>
           <div className="flex justify-between" >
-           <div className="text-primary ">
+            <div className="text-primary ">
                code : {value.couponCode} 
             </div>  
-           
-            <Button  size="sm" disabled={value.users.includes(userId)?true:value.expiryDate<today?true:false} className="bg-blue-50 hover:bg-blue-50 text-primary"  onClick={()=>{
+         
+            <Button  size="sm" disabled={!value.users.includes(userId)?date>new Date(value.startingDate)?date < new Date(value.expiryDate)?false:true:true:true} className="bg-white hover:bg-blue-50 text-primary"  onClick={()=>{
                navigator.clipboard
                .writeText(value.couponCode)
                .then(()=>{
@@ -68,7 +74,7 @@ const UserListCoupons :React.FC = () => {
                 toast.error("copyed failed")
                })
             }}>
-            <span className="">Copy</span>
+            <span >Copy</span>
             <Copy className="color-primary text-primary" />
           </Button>
          

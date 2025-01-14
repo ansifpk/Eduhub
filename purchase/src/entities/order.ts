@@ -1,3 +1,4 @@
+import { Iuser } from "./user";
 
 interface ICourse{
    _id:string,
@@ -9,15 +10,16 @@ interface ICourse{
     category:string,
     image:string,
     subscription:boolean,
-    isted:boolean,
+    students:Iuser[],
+    isListed:boolean,
     createdAt:string,
-    
+    price:number
 }
 
 export interface IOrder{
   _id:string,
-  user:string,
-  product:ICourse,
-  purchaseMethord:string,
-  orderDate:string
+  user:Iuser,
+  course:ICourse,
+  orderDate:string,
+  createdAt:Date
 }

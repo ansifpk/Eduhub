@@ -162,6 +162,7 @@ const ChangeEmail = () => {
           <Label htmlFor="message-2">Enter OTP</Label>
           <div className="relative">
             <Input
+              maxLength={6}
               value={otp}
               onChange={(e) => setOTP(e.target.value.trim())}
               placeholder="Current password"

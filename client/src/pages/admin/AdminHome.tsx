@@ -2,30 +2,31 @@ import {Card, CardContent, CardHeader  } from '../../Components/ui/card';
 import AdminAside from '../../Components/admin/AdminAside';
 import { Avatar, AvatarImage } from '@/Components/ui/avatar';
 import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { IOrder } from '@/@types/orderTypes';
+import { ICourse } from '@/@types/courseType';
+import { getCourses, top5Courses, top5Instructors } from '@/Api/admin';
+import { IUser } from '@/@types/chatUser';
 
-interface Course {
-    name: string;
-    registered: number;
-  }
-  
-  interface Review {
-    name: string;
-    comment: string;
-    avatar: string;
-  }
+
   
 const AdminHome = () => {
-    const courses: Course[] = [
-        { name: "HTML", registered: 80 },
-        { name: "React", registered: 70 },
-        { name: "Node.js", registered: 60 },
-      ];
-      const reviews: Review[] = [
-        { name: "Lina", comment: "Very good class, cover every parts", avatar: "/api/placeholder/32/32" },
-        { name: "John", comment: "Nice presentation", avatar: "/api/placeholder/32/32" },
-        { name: "Rocky", comment: "Good work", avatar: "/api/placeholder/32/32" },
-      ];
+   const [orders,setOrders] = useState<IOrder[]>([]);
+   const [users,setUsers] = useState<IUser[]>([]);
+   const [courses,setCourses] = useState<ICourse[]>([]);
+      
        const navigate = useNavigate()
+       useEffect(()=>{
+         const fetching = async() => {
+           const response = await top5Courses() 
+           if(response){
+             setCourses(response)
+            }
+            const respo = await top5Instructors()
+            console.log('respo',respo);
+         }
+         fetching()
+       },[])
   return (
     <div className="container-fluid ">
     <div className="row">
@@ -44,13 +45,18 @@ const AdminHome = () => {
            
             <Card>
               <CardHeader>
-                <h2 className="text-lg font-semibold">YOUR TOP 3 COURSES</h2>
+                <h2 className="text-lg font-semibold">TOP 5 COURSES</h2>
               </CardHeader>
               <CardContent>
                 {courses.map((course, index) => (
-                  <div key={index} className="mb-4 last:mb-0">
-                    <div className="font-medium">{course.name}</div>
-                    <div className="text-sm text-gray-500">{course.registered} Registed</div>
+                   <div key={index} className="mb-4 last:mb-0 flex justify-between" >
+                    <div >
+                    <div className="font-medium">{course.title}</div>
+                    <div className="text-sm text-gray-500">studnets : {course.students?.length}</div>
+                    </div>
+                    <div  className="font-medium text-sm">
+                      Price {course.price}
+                    </div>
                   </div>
                 ))}
               </CardContent>
@@ -59,19 +65,19 @@ const AdminHome = () => {
             {/* Reviews Section */}
             <Card>
               <CardHeader>
-                <h2 className="text-lg font-semibold">Reviews</h2>
+                <h2 className="text-lg font-semibold">Top instructors</h2>
               </CardHeader>
               <CardContent>
-                {reviews.map((review, index) => (
+                {courses.map((review, index) => (
                   <div key={index} className="flex items-center gap-3 mb-4 last:mb-0">
                     <img 
-                      src={review.avatar} 
-                      alt={review.name} 
+                      src={review.image.image_url} 
+                      
                       className="w-8 h-8 rounded-full"
                     />
                     <div>
-                      <div className="font-medium">{review.name}</div>
-                      <div className="text-sm text-gray-500">{review.comment}</div>
+                      <div className="font-medium">{review.title}</div>
+                      <div className="text-sm text-gray-500">{review.price}</div>
                     </div>
                   </div>
                 ))}

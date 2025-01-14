@@ -19,6 +19,17 @@ export class AdminController{
             console.error(error)
         }
     }
+    async getReports(req:Request,res:Response,next:NextFunction){
+        try {
+        
+         const reports = await this.adminUseCase.getReports()
+         if(reports){
+            return res.send(reports)
+         }
+        } catch (error) {
+            console.error(error)
+        }
+    }
     async editCoupons(req:Request,res:Response,next:NextFunction){
         try {
       
@@ -26,6 +37,7 @@ export class AdminController{
        
         const {title,startingTime,expiryTime,description,offer,startingDate,expiryDate,couponCode} = req.body;
         
+       
         
          const coupon = await this.adminUseCase.editCoupon(couponId,title,description,offer,startingDate,startingTime,expiryDate,expiryTime,couponCode,next)
          if(coupon){
@@ -78,6 +90,16 @@ export class AdminController{
         try {
             const {search,sort} = req.query;
             const courses = await this.adminUseCase.fetchCourses(search as string,sort as string);
+            return res.send(courses)
+        } catch (error) {
+            console.error(error)
+        }
+    }
+    
+    async top5Courses(req:Request,res:Response,next:NextFunction){
+        
+        try {
+            const courses = await this.adminUseCase.top5Courses(next);
             return res.send(courses)
         } catch (error) {
             console.error(error)

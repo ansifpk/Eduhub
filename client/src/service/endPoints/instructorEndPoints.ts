@@ -14,15 +14,22 @@ const instructorRoutes = {
     getStudents:"/instructor/getStudents", 
    
     listCourses:"/course/course/instructor/listCourses", 
-    orders:"/instructor/orders", 
     coursesDetailes:"/course/course/instructor/coursesDetailes", 
     tests:"/course/course/instructor/tests", 
 
     //!message
     message:"/message/message/message",
+    notification:"/message/message/notification",
      //chat
     chat:"/message/message/chat",
     privetChat:"/message/message/chat/privetChat",
+    //*subscription
+    subscription:"/purchase/purchase/instructor/subscription",
+    subscribe:"/purchase/purchase/instructor/subscribe",
+    customer:"/purchase/purchase/instructor/customer",
+    //*salesReports
+    salesReports:"/purchase/purchase/instructor/salesReports",
+    order:"/purchase/purchase/instructor/order",
 }  
 
 export default instructorRoutes

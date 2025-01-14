@@ -26,4 +26,9 @@ export function AdminRouter(router:Router){
           console.error(error)
         }
  })
+
+ router.get("/top5Instructors",async(req,res,next)=>{
+  adminController.top5Instructors(req,res,next);
+})
+
 }

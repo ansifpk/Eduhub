@@ -31,6 +31,8 @@ import {
   Loader2,
   Plus,
   
+  Terminal,
+  
   Trash2,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -40,6 +42,7 @@ import { Card, CardContent, CardDescription, CardHeader } from "../ui/card";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Label } from "../ui/label";
 import axios from "axios";
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 
 
 interface Title {
@@ -181,10 +184,8 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
     console.log(data);
     
     if(data.success){
-      // console.log(data.course)
       setLoading(false)
       toast.success("Successfully created Course")
-    
       navigate('/instructor/courses')
 
     }else{
@@ -976,8 +977,9 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
                               </div>
                               <CardDescription>
                                 Please Add an Apropier Price for your
-                                course.Users Can buy your course for this price
+                                course.Users Can buy your course for this price.
                               </CardDescription>
+                               
                             </CardHeader>
                             <CardContent>
                               <FormField
@@ -1012,6 +1014,13 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
                                         the Price should be in betwee RS: 50 -
                                         Rs: 7999
                                       </span>
+                                      <Alert className="bg-black text-white">
+                                      <Terminal className="h-4 w-4 " />
+                                      <AlertTitle>Please Note!</AlertTitle>
+                                      <AlertDescription>
+                                       With the price you are enter an adiitional amount will add with this price. that is the price will show to users who are willing to purchase this course.
+                                      </AlertDescription>
+                                    </Alert>
                                     </FormDescription>
                                     <FormMessage />
                                   </FormItem>

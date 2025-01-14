@@ -40,11 +40,11 @@ const Header = () => {
                   ? "text-black px-4 py-1 rounded-full bg-gray-100  no-underline" 
                   : "no-underline text-white"
               } to={'/users/cart'}>Cart</NavLink></li>
-                <li ><NavLink  className={({ isActive }) =>
+                {/* <li ><NavLink  className={({ isActive }) =>
                 isActive 
                   ? "text-black px-4 py-1 rounded-full bg-gray-100  no-underline" 
                   : "no-underline text-white"
-              } to={'/users/wishlist'}>Wishlist</NavLink></li>
+              } to={'/users/wishlist'}>Wishlist</NavLink></li> */}
                {id?(
                  <li><Link to={'/profile'}>
                  <Avatar>

@@ -22,7 +22,6 @@ interface Props {
 }
 const FilterHeader: React.FC<Props> = ({ categories, onsendcourse }) => {
   const [topics, setTopics] = useState<string[]>([]);
-
   const [category, setCategory] = useState("");
   const [topic, setTopic] = useState("");
   const [level, setLevel] = useState("");
@@ -32,9 +31,7 @@ const FilterHeader: React.FC<Props> = ({ categories, onsendcourse }) => {
   useEffect(() => {
     const courses = async () => {
       const data = await getCourses(category,topic,level,search,sort);
-    
       if (data.success) {
-        console.log(data.courses, "cour");
         onsendcourse(data.courses);
       }
     };

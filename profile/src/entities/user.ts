@@ -19,6 +19,7 @@ export interface Iuser {
     },
     isBlock:boolean,
     createdAt:Date,
+    reviewCount?:number,
     avatar:{
         id:string,
         avatar_url:string

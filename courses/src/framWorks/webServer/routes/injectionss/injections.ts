@@ -17,6 +17,7 @@ import { SentEmail } from "../../../service/sentMail";
 import { ratingModel } from "../../../db/mongodb/models/ratingModel";
 import { couponModel } from "../../../db/mongodb/models/couponsModel";
 import { testModel } from "../../../db/mongodb/models/testModel";
+import { reportModel } from "../../../db/mongodb/models/reportModel";
 
 const bcrypt = new Encrypt()
 const stripe = new Stripe()
@@ -30,12 +31,12 @@ const instructorController = new InstructorController(instructorUseCase)
 
 
 //admin
-const adminRepository = new AdminRepository(Course,couponModel)
+const adminRepository = new AdminRepository(Course,couponModel,reportModel)
 const adminUseCase = new AdminUseCase(adminRepository)
 const adminController = new AdminController(adminUseCase)
 
 // user
-const userRepository = new UserRepository(Course,ratingModel,couponModel,testModel);
+const userRepository = new UserRepository(Course,ratingModel,couponModel,testModel,reportModel);
 const userUsecase = new UserUseCase(userRepository,s3bucketrepository,stripe);
 const userController = new UserController(userUsecase)
 

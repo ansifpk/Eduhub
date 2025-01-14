@@ -12,8 +12,10 @@ import {
   editRating,
   getInstructorRatings,
   getRatings,
+  getReports,
   instructorRating,
   ratingCourse,
+  reportCourse,
 } from "@/Api/user";
 import toast from "react-hot-toast";
 import { ICourse } from "@/@types/courseType";
@@ -66,23 +68,28 @@ import {
 } from "@/Components/ui/alert-dialog";
 import { IInstructorRating } from "@/@types/instructorRatingType";
 import moment from "moment";
+import { ILecture } from "@/@types/lectureType";
+import { IReport } from "@/@types/report";
 
 const PlayCourse: React.FC = () => {
   const [course, setCourse] = useState<ICourse>();
   const [chapter, setChapter] = useState("");
+  const [lecture, setLecture] = useState<ILecture>();
+  const [reports, setReports] = useState<IReport[]>([]);
   const [hover, setHover] = React.useState(-1);
   const [expant, setExpant] = useState(false);
   const [navbar, setNavbar] = React.useState("one");
   const [value, setValue] = React.useState<number | null>(1);
   const [stars, setStars] = useState(0);
   const [review, setReview] = useState("");
+  const [report, setReport] = useState("");
   const [ratings, setRatings] = useState<IRating[]>([]);
   const [instructorRatings, setInstructorRatings] = useState<
     IInstructorRating[]
   >([]);
   const [errors, setErrors] = useState({
     ratingError: true,
-  });
+  })
 
   const userId = useSelector((state: User) => state.id);
   const userEmail = useSelector((state: User) => state.email);
@@ -95,12 +102,17 @@ const PlayCourse: React.FC = () => {
 
       if (course.success) {
         setCourse(course.course);
-
+        setLecture(course.course.sections[0].lectures[0])
         setChapter(course.course.sections[0].lectures[0].content.video_url);
+        const reports = await getReports(courseId!,userId);
+        if (reports.success) {
+          setReports(reports.reports);
+        } else {
+          return toast.error(reports.response.data.message);
+        }
         const instructorRatings = await getInstructorRatings(
           course.course.instructorId._id
         );
-
         if (instructorRatings.success) {
           setInstructorRatings(instructorRatings.ratings);
         } else {
@@ -115,6 +127,8 @@ const PlayCourse: React.FC = () => {
       } else {
         return toast.error(ratings.response.data.message);
       }
+
+      
     };
     course();
   }, [courseId]);
@@ -122,7 +136,8 @@ const PlayCourse: React.FC = () => {
   const handleChange = (event: React.SyntheticEvent, navbar: string) => {
     setNavbar(navbar);
   };
-  console.log("test",course);
+
+  console.log("reports", reports);
 
   const labels: { [index: string]: string } = {
     0.5: "Useless",
@@ -220,6 +235,18 @@ const PlayCourse: React.FC = () => {
     }
   };
 
+  const handleReport = async (url:string) => {
+   
+    const response = await reportCourse(url,course?._id!,report,userId)
+    if(response.success){
+      setReport("");
+      toast.success("reported successfully");
+    }else{
+      setReport("");
+      toast.error(response.response.data.message)
+    }
+  };
+
   return (
     <div className="bg-blue-100">
       <Header />
@@ -256,6 +283,43 @@ const PlayCourse: React.FC = () => {
                   muted={false}
                   controlsList="nodownload"
                 />
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <button
+                      style={{
+                        position: "absolute",
+                        top: "10px",
+                        right: "10px",
+                        backgroundColor: "rgba(255, 0, 0, 0.8)",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: "4px",
+                        padding: "5px 10px",
+                        cursor: "pointer",
+                        fontSize: "14px",
+                      }}
+                    >
+                      Report
+                    </button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>Edit profile</DialogTitle>
+                      <DialogDescription>
+                       Your reporting the video {lecture?.title}. of course {course?.title}
+                      </DialogDescription>
+                    </DialogHeader>
+                      <Textarea value={report} onChange={(e)=>setReport(e.target.value)} placeholder="Type your mesage" />
+                    <DialogFooter className="sm:justify-center">
+                    <DialogClose asChild>
+                      <Button  onClick={() => handleReport(chapter)} disabled={report.length>0?false:true} type="button" className="bg-danger">
+                        Report
+                      </Button>
+                    </DialogClose>
+                  </DialogFooter>
+                  
+                  </DialogContent>
+                </Dialog>
               </ImageListItem>
             </ImageList>
             <div className="m-2">
@@ -292,84 +356,54 @@ const PlayCourse: React.FC = () => {
                     </p>
                     <div>
                       <h6 className="font-bold">Tests</h6>
-                      {/* <div>
-                        {}
-                      </div> */}
                       <div>
-                        {/* {course?.test &&
-                        // !course.test.students.includes(userId) ? (
-                        course?.test?.students.some(
-                          (value) => value.user !== userId
-                        ) ? (
-                          <div className="flex flex-col w-25 h-[200px] gap-2">
-                            <img
-                              className="border rounded-2 shadow-lg w-full h-[150px]"
-                              src={course.image.image_url}
-                            />
-                            <Button
-                              className=" shadow-lg bg-teal-300 hover:bg-teal-300 w-full"
-                              onClick={() =>
-                                navigate(
-                                  `/user/assesmentTest/${course.test._id}`
-                                )
-                              }
-                            >
-                              Go to test
-                            </Button>
-                          </div>
-                        ) : (
-                          <div className="flex flex-col w-25 h-[200px] gap-2">
-                            <div className="border rounded-2 shadow-lg w-full h-[150px]">
-                              <h4 className="font-medium text-sm ">
-                                Your Score
-                              </h4>
-                            </div>
-                            <Button
-                              disabled
-                              className="text-black  shadow-lg bg-teal-300 hover:bg-teal-300 w-full"
-                            >
-                              Test Attended
-                            </Button>
-                          </div>
-                        )
-                        } */}
-                        {course?.test?course.test.students.some((val)=>val.user==userId)?
-                        (
-                          <div className="flex flex-col w-25 h-[200px] gap-2">
-                            <div className="border rounded-2 shadow-lg w-full h-[150px]">
-                              <h4 className="font-medium text-sm ">
-                                Your Score
-                              </h4>
-                              <div className="flex h-full w-full items-center justify-center">
-                               <h1 >{course.test.students.find((val)=>val.user==userId)?.score}</h1>
+                        {course?.test ? (
+                          course.test.students.some(
+                            (val) => val.user == userId
+                          ) ? (
+                            <div className="flex flex-col w-25 h-[200px] gap-2">
+                              <div className="border rounded-2 shadow-lg w-full h-[150px]">
+                                <h4 className="font-medium text-sm ">
+                                  Your Score
+                                </h4>
+                                <div className="flex h-full w-full items-center justify-center">
+                                  <h1>
+                                    {
+                                      course.test.students.find(
+                                        (val) => val.user == userId
+                                      )?.score
+                                    }
+                                  </h1>
+                                </div>
                               </div>
+                              <Button
+                                disabled
+                                className="text-black  shadow-lg bg-teal-300 hover:bg-teal-300 w-full"
+                              >
+                                Test Attended
+                              </Button>
                             </div>
-                            <Button
-                              disabled
-                              className="text-black  shadow-lg bg-teal-300 hover:bg-teal-300 w-full"
-                            >
-                              Test Attended
-                            </Button>
-                          </div>
-                        ):(
-                          <div className="flex flex-col w-25 h-[200px] gap-2">
-                            <img
-                              className="border rounded-2 shadow-lg w-full h-[150px]"
-                              src={course.image.image_url}
-                            />
-                            <Button
-                              className=" shadow-lg bg-teal-300 hover:bg-teal-300 w-full"
-                              onClick={() =>
-                                navigate(
-                                  `/user/assesmentTest/${course.test._id}`
-                                )
-                              }
-                            >
-                              Go to test
-                            </Button>
-                          </div>
-                        ):
-                        "illa"}
+                          ) : (
+                            <div className="flex flex-col w-25 h-[200px] gap-2">
+                              <img
+                                className="border rounded-2 shadow-lg w-full h-[150px]"
+                                src={course.image.image_url}
+                              />
+                              <Button
+                                className=" shadow-lg bg-teal-300 hover:bg-teal-300 w-full"
+                                onClick={() =>
+                                  navigate(
+                                    `/user/assesmentTest/${course.test._id}`
+                                  )
+                                }
+                              >
+                                Go to test
+                              </Button>
+                            </div>
+                          )
+                        ) : (
+                          "No Tests Available for this Course."
+                        )}
                       </div>
                     </div>
                   </div>
@@ -890,7 +924,7 @@ const PlayCourse: React.FC = () => {
           </div>
         </div>
         <div className="w-[400px] mt-3">
-          <div className=" bg-white border border-danger rounded-4 ">
+          <div className="bg-white border border-danger rounded-4 ">
             <div className="m-3 space-y-2">
               <p className="font-bold">Course contents</p>
 
@@ -908,7 +942,11 @@ const PlayCourse: React.FC = () => {
                       {section.lectures.map((lecture, ind) => (
                         <AccordionContent
                           key={ind}
-                          onClick={() => setChapter(lecture.content.video_url)}
+
+                          onClick={() =>{
+                             setLecture(lecture)
+                             setChapter(lecture.content.video_url);
+                            }}
                           className="flex justify-between py-2 my-1 border-top bg-white mx-2"
                         >
                           <div className="cursor-pointer">{lecture.title}</div>

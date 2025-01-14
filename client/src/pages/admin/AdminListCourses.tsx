@@ -1,7 +1,7 @@
 import AdminAside from "@/Components/admin/AdminAside";
 import { Card, CardContent, CardDescription } from "@/Components/ui/card";
 import { useEffect, useState } from "react";
-import { getCourses, students } from "@/Api/admin";
+import { getCourses, getReports, students } from "@/Api/admin";
 import toast from "react-hot-toast";
 import {
   Table,
@@ -50,25 +50,52 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import { IUser } from "@/@types/chatUser";
+import { IReport } from "@/@types/report";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/Components/ui/dialog";
+import { ISection } from "@/@types/sectionType";
+import { ILecture } from "@/@types/lectureType";
 
 const AdminListCourses = () => {
   const [courses, setCourses] = useState([]);
   const [students, setStudents] = useState<IUser[]>([]);
   const [search, setSearch] = useState("");
+  const [video, setVideo] = useState("");
   const [sort, setSort] = useState("");
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
+  const { isOpen:isStudentOpen , onOpen:onStudentOpen, onClose:onStudentClose } = useDisclosure();
+  const {
+    isOpen: isReportOpen,
+    onOpen: onReportOpen,
+    onClose: onReportClose,
+  } = useDisclosure();
+  const [reports, setReports] = useState<IReport[]>([]);
+  const [id, setId] = useState("");
+  const [open, setOpen] = useState(false)
   useEffect(() => {
     const fetchAllStudents = async () => {
       const response = await getCourses(search, sort);
       setCourses(response);
+      const repo = await getReports();
+      if (repo) {
+        setReports(repo);
+      }
     };
+
     fetchAllStudents();
   }, [search, sort]);
   const handleListeCourse = (id: string) => {
     console.log("hi", id);
   };
-  console.log(students);
+  // console.log("courses", courses);
+
+  const viewReports = (course: ICourse) => {
+    console.log("courseId", course);
+    setId(course._id);
+    onReportOpen();
+  };
+
+  const handlePlay = (url: string,course:ICourse) => {
+    setVideo(url)
+  };
   
   return (
     <div className="container-fluid ">
@@ -114,10 +141,11 @@ const AdminListCourses = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[100px] ">Image</TableHead>
-                    <TableHead>Name</TableHead>
+                    <TableHead className="text-xs ">Image</TableHead>
+                    <TableHead className="text-xs"> Name</TableHead>
                     <TableHead>Thumbnail</TableHead>
                     <TableHead>Created At</TableHead>
+                    <TableHead>Reports</TableHead>
                     <TableHead className="text-center">Students</TableHead>
                     <TableHead className="text-center">Actions</TableHead>
                   </TableRow>
@@ -134,26 +162,155 @@ const AdminListCourses = () => {
                             className="profile-pic"
                           />
                         </TableCell>
-                        <TableCell>{value.title}</TableCell>
-                        <TableCell>{value.thumbnail}</TableCell>
-                        <TableCell>
+                        <TableCell className="text-xs">{value.title}</TableCell>
+                        <TableCell className="text-xs">
+                          {value.thumbnail}
+                        </TableCell>
+                        <TableCell className="text-xs">
                           {moment(value.createdAt).calendar()}
+                        </TableCell>
+                        <TableCell className="text-xs">
+                          <Button
+                            size={"sm"}
+                          
+                            onClick={() => {
+                              viewReports(value);
+
+                            }}
+                            className="bg-light text-xs text-black rounded-full border-1 border-black"
+                          >
+                            {(() => {
+                              let c = 0;
+                              reports.forEach((val) => {
+                                if (val.courseId._id === value._id) {
+                                  c++;
+                                }
+                              });
+                              return `View ${c}`;
+                            })()}
+                          </Button>
+                          <Drawer
+                            isOpen={isReportOpen}
+                            size={"4xl"}
+                            onClose={onReportClose}
+                          >
+                            <DrawerContent>
+                              {(onClose) => (
+                                <>
+                                  <DrawerHeader className="flex flex-col gap-1">
+                                    report Lists.
+                                  </DrawerHeader>
+                                  <DrawerBody >
+                                    {video?(
+                                     
+                                      <video
+                                      src={`${video}`}
+                                      autoPlay={true}
+                                      controls
+                                     
+                                      muted={false}
+                                      controlsList="nodownload"
+                                    />
+                                  
+                                    ):(
+                                      <Table>
+                                      <TableHeader>
+                                        <TableRow>
+                                          <TableHead className="w-[100px] ">
+                                            Image
+                                          </TableHead>
+                                          <TableHead>Name</TableHead>
+                                          <TableHead>Reason</TableHead>
+                                          <TableHead className="">Actions</TableHead>
+                                        </TableRow>
+                                      </TableHeader>
+                                      <TableBody>
+                                        {reports?.length! > 0 ? (
+                                          reports
+                                            ?.filter(
+                                              (val) => val.courseId._id == id
+                                            )
+                                            .map((report) => (
+                                              <TableRow key={report._id}>
+                                                <TableCell className="font-medium">
+                                                  {" "}
+                                                  <img
+                                                    src={
+                                                      report.courseId.image
+                                                        .image_url
+                                                    }
+                                                    alt="Profile Picture"
+                                                    className="profile-pic"
+                                                  />
+                                                </TableCell>
+                                                <TableCell>
+                                                  {report.courseId.title}
+                                                </TableCell>
+                                                <TableCell>
+                                                  {report.report}
+                                                </TableCell>
+                                                 <TableCell align="center" >
+                                                   <div className="flex gap-3">
+                                                   <Button  type="button" size={'sm'} className="rounded-full " onClick={()=>handlePlay(report.content,value)}>play</Button>
+                                                   <Button
+                                                      size={"sm"}
+                                                      type="button"
+                                                      className={`rounded-full ${
+                                                        value.isListed
+                                                          ? "bg-success-400 text-xs"
+                                                          : "bg-danger-500 text-xs"
+                                                      }`}
+                                                    >
+                                                        {value.isListed ? "UnList" : "List"}
+                                                      </Button>
+                                                   </div>
+                                                 </TableCell>
+                                              </TableRow>
+                                            ))
+                                        ) : (
+                                          <TableRow>
+                                            <TableCell>
+                                              No reports for this course.
+                                            </TableCell>
+                                          </TableRow>
+                                        )}
+                                      </TableBody>
+                                    </Table>
+                                    )}
+                                  
+                                  </DrawerBody>
+                                  <DrawerFooter>
+                                     {video?(
+                                       <Button color="danger" onClick={()=>setVideo('')}>
+                                       Close
+                                     </Button>
+                                     ):(
+                                      <Button color="danger" onClick={onClose}>
+                                      Close
+                                    </Button>
+                                     )}
+                                  </DrawerFooter>
+                                </>
+                              )}
+                            </DrawerContent>
+                          </Drawer>
                         </TableCell>
                         <TableCell align="center">
                           <Button
-                            onClick={()=>{
-                              setStudents(value?.students!)
-                              onOpen()
+                            size={"sm"}
+                            onClick={() => {
+                              setStudents(value?.students!);
+                              onStudentOpen();
                             }}
-                            className="bg-light text-black rounded-full border-1 border-black"
+                            className="bg-light text-xs text-black rounded-full border-1 border-black"
                           >
-                            View Students
+                            View
                           </Button>
 
                           <Drawer
-                            isOpen={isOpen}
-                            size={"4xl"}
-                            onClose={onClose}
+                            isOpen={isStudentOpen}
+                            size={"full"}
+                            onClose={onStudentClose}
                           >
                             <DrawerContent>
                               {(onClose) => (
@@ -170,12 +327,13 @@ const AdminListCourses = () => {
                                           </TableHead>
                                           <TableHead>Name</TableHead>
                                           <TableHead>email</TableHead>
+                                          
                                         </TableRow>
                                       </TableHeader>
                                       <TableBody>
                                         {students?.length! > 0 ? (
                                           students?.map((student) => (
-                                            <TableRow  key={student._id}> 
+                                            <TableRow key={student._id}>
                                               <TableCell className="font-medium">
                                                 {" "}
                                                 <img
@@ -192,6 +350,7 @@ const AdminListCourses = () => {
                                               <TableCell>
                                                 {student.email}
                                               </TableCell>
+                                             
                                             </TableRow>
                                           ))
                                         ) : (
@@ -201,7 +360,6 @@ const AdminListCourses = () => {
                                             </TableCell>
                                           </TableRow>
                                         )}
-                                        
                                       </TableBody>
                                     </Table>
                                   </DrawerBody>
@@ -226,11 +384,12 @@ const AdminListCourses = () => {
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
                               <Button
+                                size={"sm"}
                                 type="button"
                                 className={`rounded-full ${
                                   value.isListed
-                                    ? "bg-success-400"
-                                    : "bg-danger-500"
+                                    ? "bg-success-400 text-xs"
+                                    : "bg-danger-500 text-xs"
                                 }`}
                               >
                                 {value.isListed ? "UnList" : "List"}

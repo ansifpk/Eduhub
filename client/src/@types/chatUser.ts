@@ -4,6 +4,7 @@ export interface IUser{
     email:string,
     isVerified:boolean,
     isBlock:boolean,
+    reviewCount?:number,
     status: string,
     isAdmin:boolean,
     isInstructor:boolean,

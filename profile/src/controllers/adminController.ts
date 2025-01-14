@@ -10,7 +10,6 @@ export class AdminController{
       try {
         const { search,sort } = req.query
        
-        
        const instructors =  await this.adminUseCase.fetchInstructors(search as string, sort as string,next)
        if(instructors){
         return res.send(instructors)
@@ -33,6 +32,7 @@ export class AdminController{
             console.error(error)
           }
     }
+    
 
 
     async instructorAprovel(req:Request,res:Response,next:NextFunction){
@@ -53,4 +53,19 @@ export class AdminController{
             console.error(error)
           }
     }
+
+   
+    async top5Instructors(req:Request,res:Response,next:NextFunction){
+      try {
+
+         const users = await this.adminUseCase.top5Instructors()
+       if(users){
+           res.send(users);
+         }
+       
+      } catch (error) {
+       console.error(error)
+      }
+   }
+
 }

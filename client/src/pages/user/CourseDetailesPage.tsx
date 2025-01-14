@@ -3,8 +3,11 @@ import {
   deleteRating,
   editRating,
   getRatings,
+  instructorSubscriptions,
   logout,
+  purchaseSubscription,
   stripePurchase,
+  userPlans,
 } from "@/Api/user";
 import Footer from "@/Components/Footer/Footer";
 import Header from "@/Components/Header/Header";
@@ -60,7 +63,17 @@ import {
 import { ScrollArea } from "@/Components/ui/scroll-area";
 import { useDispatch } from "react-redux";
 import { removeUser } from "@/redux/authSlice";
-
+import { IUserSubscribe } from "@/@types/userSubscribe";
+import { ISubcription } from "@/@types/subscriptionType";
+import {
+  Drawer,
+  DrawerBody,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  useDisclosure,
+} from "@nextui-org/react";
+const stripe = await loadStripe(import.meta.env.VITE_PUBLISH_SECRET);
 const CourseDetailesPage = () => {
   const [course, setCourse] = useState<ICourse>();
   const [totellStudents, setStudents] = useState(0);
@@ -73,6 +86,9 @@ const CourseDetailesPage = () => {
   const [val, setVal] = useState<number | null>(1);
   const [stars, setStars] = useState(0);
   const [review, setReview] = useState("");
+  const [subscriptions, setSubscriptions] = useState<ISubcription[]>([]);
+  const [plans, setPlans] = useState<IUserSubscribe[]>([]);
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const dispatch = useDispatch();
   function getLabelText(value: number) {
     return `${value} Star${value !== 1 ? "s" : ""}, ${labels[value]}`;
@@ -100,7 +116,11 @@ const CourseDetailesPage = () => {
       const data = await courseDetailes(courseId!);
       if (data.success) {
         setCourse(data.course);
-      }else if(data.status == 403){
+        const subscriptions = await instructorSubscriptions(
+          data.course.instructorId._id
+        );
+        setSubscriptions(subscriptions.subscriptions);
+      } else if (data.status == 403) {
         const response = await logout();
         if (response.succuss) {
           localStorage.setItem("accessToken", "");
@@ -116,35 +136,33 @@ const CourseDetailesPage = () => {
       } else {
         return toast.error(ratings.response.data.message);
       }
+
+      const plans = await userPlans(userId);
+      if (plans.success) {
+        setPlans(plans.plans);
+      } else {
+        return toast.error(plans.response.data.message);
+      }
     };
     call();
-  }, []);
+  }, [courseId]);
+  console.log("plans", plans);
 
   const handleOrder = async () => {
     try {
-      if (paymentMethord == "Wallet") {
-        console.log("wallet");
-      } else {
-        const stripe = await loadStripe(
-          "pk_test_51Q4gnKRv81OVLd0JhH7b5mQdxu167NGLbtFW9DlMYb4HSblpNEHgvUNRpBbss0eb3g6moVOOvbof2Tp9sNMXKSXL00nMMkFuq7"
-        );
-        const data = await stripePurchase([course!], userId);
-
-        if (data) {
-          localStorage.setItem("bodyDatas", JSON.stringify(course));
-
-          await stripe?.redirectToCheckout({
-            sessionId: data.id,
-          });
-        }else if(data.status == 403){
-          const response = await logout();
-          if (response.succuss) {
-            localStorage.setItem("accessToken", "");
-            localStorage.setItem("refreshToken", "");
-            dispatch(removeUser());
-            toast.error(data.response.data.message);
-            return navigate("/users/login");
-          }
+      const data = await stripePurchase([course!], userId);
+      if (data) {
+        await stripe?.redirectToCheckout({
+          sessionId: data.id,
+        });
+      } else if (data.status == 403) {
+        const response = await logout();
+        if (response.succuss) {
+          localStorage.setItem("accessToken", "");
+          localStorage.setItem("refreshToken", "");
+          dispatch(removeUser());
+          toast.error(data.response.data.message);
+          return navigate("/users/login");
         }
       }
     } catch (error) {
@@ -153,7 +171,8 @@ const CourseDetailesPage = () => {
   };
   let wr =
     "Hi everyone, I’m Ansif, a student on Udemy, and I’m excited to be here! This website has been incredibly helpful in my learning journey, and I’m looking forward to making the most of it. Can’t wait to dive into more knowledge and improve my skills!  and ibelieve also everyone feels this same Hi everyone, I’m Ansif, a student on Udemy, and I’m excited to be here! This website has been incredibly helpful in my learning journey, and I’m looking forward to making the most of it. Can’t wait dive into";
-  console.log(wr.length);
+
+  console.log(subscriptions, "subscriptions");
 
   const handleEditRatings = async (ratingId: string) => {
     const response = await editRating(ratingId, review, stars);
@@ -168,7 +187,7 @@ const CourseDetailesPage = () => {
       } else {
         return toast.error(ratings.response.data.message);
       }
-    }else if(response.status == 403){
+    } else if (response.status == 403) {
       const resp = await logout();
       if (resp.succuss) {
         localStorage.setItem("accessToken", "");
@@ -177,8 +196,7 @@ const CourseDetailesPage = () => {
         toast.error(response.response.data.message);
         return navigate("/users/login");
       }
-    }
-    else {
+    } else {
       return toast.error(response.response.data.message);
     }
   };
@@ -190,7 +208,7 @@ const CourseDetailesPage = () => {
       if (ratings.success) {
         setRatings(ratings.rating);
         toast.success("Review deleted successfully..");
-      }else if(response.status == 403){
+      } else if (response.status == 403) {
         const resp = await logout();
         if (resp.succuss) {
           localStorage.setItem("accessToken", "");
@@ -199,10 +217,10 @@ const CourseDetailesPage = () => {
           toast.error(response.response.data.message);
           return navigate("/users/login");
         }
-      }else {
+      } else {
         return toast.error(ratings.response.data.message);
       }
-    }else if(response.status == 403){
+    } else if (response.status == 403) {
       const resp = await logout();
       if (resp.succuss) {
         localStorage.setItem("accessToken", "");
@@ -211,11 +229,24 @@ const CourseDetailesPage = () => {
         toast.error(response.response.data.message);
         return navigate("/users/login");
       }
-    }else {
+    } else {
       return toast.error(response.response.data.message);
     }
   };
+  console.log("cour", course);
 
+  const subscribe = async (subscriptionId: string) => {
+    console.log(subscriptionId);
+    const response = await purchaseSubscription(subscriptionId, userId);
+    console.log(response);
+    if (response.success) {
+      await stripe?.redirectToCheckout({
+        sessionId: response.sessionId,
+      });
+    } else {
+      return toast.error(response.response.data.message);
+    }
+  };
   return (
     <div className="bg-blue-200">
       <Header />
@@ -241,7 +272,7 @@ const CourseDetailesPage = () => {
             </Avatar>
             <p className="text-white">{course?.instructorId.name}</p>
             <p className="text-white font-medium text-xs">
-              Created : {course?.createdAt.slice(0, 9)}
+              Created : {moment(course?.createdAt).calendar()}
             </p>
           </div>
           <div className="flex text-white m-3 gap-3 font-medium text-xs">
@@ -290,385 +321,379 @@ const CourseDetailesPage = () => {
                   <h6>Reviews</h6>
                   <div className="grid gap-2 grid-cols-2 ">
                     {ratings.length > 0 ? (
-                      ratings.slice(0,4).map((value,index) => (
+                      ratings.slice(0, 4).map((value, index) => (
                         <div className="border" key={index}>
-                            <div className="m-3">
-                              <div className="flex items-center justify-between">
-                                <div className="flex  gap-3 items-center">
-                                  <Avatar>
-                                    <AvatarImage
-                                      src={
-                                        value.userId.avatar.avatar_url
-                                          ? value.userId.avatar.avatar_url
-                                          : "https://github.com/shadcn.png"
-                                      }
-                                      alt="user profile"
-                                    />
-                                  </Avatar>
-                                  <p className="text-black font-medium">
-                                    {value.userId.name}
-                                  </p>
-                                </div>
-                                <div>
-                                  <AlertDialog>
-                                    <AlertDialogTrigger asChild>
-                                     {value.userId._id == userId&&  <Edit
-                                         onClick={() => {
-                                           setReview(value.review);
-                                           setStars(value.stars);
-                                           setVal(value.stars);
-                                         }}
-                                         className="h-3 m-1 cursor-pointer"
-                                       />}
-                                    </AlertDialogTrigger>
-                                    <AlertDialogContent>
-                                      <AlertDialogHeader>
-                                        <AlertDialogTitle>
-                                          Edit your Review
-                                        </AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                          <div className="grid w-full gap-1.5">
-                                            <Rating
-                                              className="mx-5"
-                                              name="hover-feedback"
-                                              value={val}
-                                              precision={0.5}
-                                              getLabelText={getLabelText}
-                                              onChange={(event, newValue) => {
-                                                setVal(newValue);
-                                                setStars(newValue!);
-                                              }}
-
-                                              emptyIcon={
-                                                <StarIcon
-                                                  style={{ opacity: 0.55 }}
-                                                  fontSize="inherit"
-                                                />
-                                              }
-                                            />
-                                            <Label
-                                              className={
-                                                errors.ratingError
-                                                  ? "text-danger"
-                                                  : ""
-                                              }
-                                              htmlFor="message-2"
-                                            >
-                                              Your Message
-                                            </Label>
-                                            <Textarea
-                                              value={review}
-                                              onChange={(e) => {
-                                                if (e.target.value.length < 3) {
-                                                  setErrors((prev) => ({
-                                                    ...prev,
-                                                    ratingError: true,
-                                                  }));
-                                                } else {
-                                                  setErrors((prev) => ({
-                                                    ...prev,
-                                                    ratingError: false,
-                                                  }));
-                                                }
-                                                setReview(e.target.value);
-                                              }}
-                                              placeholder="Type your message here."
-                                              id="message-2"
-                                            />
-                                            {errors.ratingError ? (
-                                              <p className="text-sm text-danger text-muted-foreground">
-                                                Your message will be show to the
-                                                public.
-                                              </p>
-                                            ) : (
-                                              <p className="text-sm text-muted-foreground">
-                                                Your message will be show to the
-                                                public.
-                                              </p>
-                                            )}
-                                          </div>
-                                        </AlertDialogDescription>
-                                      </AlertDialogHeader>
-                                      <AlertDialogFooter>
-                                        <AlertDialogAction
-                                          className="bg-teal-500 hover:bg-teal-500"
-                                          type="button"
-                                        >
-                                          Cancel
-                                        </AlertDialogAction>
-                                        <AlertDialogAction disabled={errors.ratingError}
-                                          onClick={() =>
-                                            handleEditRatings(value._id)
-                                          }
-                                          type="button"
-                                          className="bg-teal-500 hover:bg-teal-500"
-                                        >
-                                          Continue
-                                        </AlertDialogAction>
-                                      </AlertDialogFooter>
-                                    </AlertDialogContent>
-                                  </AlertDialog>
-                                  <AlertDialog>
-                                    <AlertDialogTrigger asChild>
-                                       {value.userId._id == userId&&   <Trash className="h-3 m-1 cursor-pointer" />}
-
-                                    </AlertDialogTrigger>
-                                    <AlertDialogContent>
-                                      <AlertDialogHeader>
-                                        <AlertDialogTitle>
-                                          Are you absolutely sure?
-                                        </AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                          This action cannot be undone. This
-                                          will permanently delete this review
-                                          and remove data from our servers.
-                                        </AlertDialogDescription>
-                                      </AlertDialogHeader>
-                                      <AlertDialogFooter>
-                                        <AlertDialogAction
-                                          className="bg-teal-500 hover:bg-teal-500"
-                                          type="button"
-                                        >
-                                          Cancel
-                                        </AlertDialogAction>
-                                        <AlertDialogAction
-                                          onClick={() =>
-                                            handleDeleteRating(value._id)
-                                          }
-                                          type="button"
-                                          className="bg-teal-500 hover:bg-teal-500"
-                                        >
-                                          Continue
-                                        </AlertDialogAction>
-                                      </AlertDialogFooter>
-                                    </AlertDialogContent>
-                                  </AlertDialog>
-                                </div>
+                          <div className="m-3">
+                            <div className="flex items-center justify-between">
+                              <div className="flex  gap-3 items-center">
+                                <Avatar>
+                                  <AvatarImage
+                                    src={
+                                      value.userId.avatar.avatar_url
+                                        ? value.userId.avatar.avatar_url
+                                        : "https://github.com/shadcn.png"
+                                    }
+                                    alt="user profile"
+                                  />
+                                </Avatar>
+                                <p className="text-black font-medium">
+                                  {value.userId.name}
+                                </p>
                               </div>
-                              <div className="text-sm my-2">
-                                <div>
-                                  {" "}
-                                  <Rating
-                                    name="customized-10"
-                                    defaultValue={1}
-                                    max={1}
-                                    size="small"
-                                  />{" "}
-                                  {value.stars} {labels[`${value.stars}`]}
-                                </div>
-                                {value.review}
+                              <div>
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    {value.userId._id == userId && (
+                                      <Edit
+                                        onClick={() => {
+                                          setReview(value.review);
+                                          setStars(value.stars);
+                                          setVal(value.stars);
+                                        }}
+                                        className="h-3 m-1 cursor-pointer"
+                                      />
+                                    )}
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>
+                                        Edit your Review
+                                      </AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        <div className="grid w-full gap-1.5">
+                                          <Rating
+                                            className="mx-5"
+                                            name="hover-feedback"
+                                            value={val}
+                                            precision={0.5}
+                                            getLabelText={getLabelText}
+                                            onChange={(event, newValue) => {
+                                              setVal(newValue);
+                                              setStars(newValue!);
+                                            }}
+                                            emptyIcon={
+                                              <StarIcon
+                                                style={{ opacity: 0.55 }}
+                                                fontSize="inherit"
+                                              />
+                                            }
+                                          />
+                                          <Label
+                                            className={
+                                              errors.ratingError
+                                                ? "text-danger"
+                                                : ""
+                                            }
+                                            htmlFor="message-2"
+                                          >
+                                            Your Message
+                                          </Label>
+                                          <Textarea
+                                            value={review}
+                                            onChange={(e) => {
+                                              if (e.target.value.length < 3) {
+                                                setErrors((prev) => ({
+                                                  ...prev,
+                                                  ratingError: true,
+                                                }));
+                                              } else {
+                                                setErrors((prev) => ({
+                                                  ...prev,
+                                                  ratingError: false,
+                                                }));
+                                              }
+                                              setReview(e.target.value);
+                                            }}
+                                            placeholder="Type your message here."
+                                            id="message-2"
+                                          />
+                                          {errors.ratingError ? (
+                                            <p className="text-sm text-danger text-muted-foreground">
+                                              Your message will be show to the
+                                              public.
+                                            </p>
+                                          ) : (
+                                            <p className="text-sm text-muted-foreground">
+                                              Your message will be show to the
+                                              public.
+                                            </p>
+                                          )}
+                                        </div>
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogAction
+                                        className="bg-teal-500 hover:bg-teal-500"
+                                        type="button"
+                                      >
+                                        Cancel
+                                      </AlertDialogAction>
+                                      <AlertDialogAction
+                                        disabled={errors.ratingError}
+                                        onClick={() =>
+                                          handleEditRatings(value._id)
+                                        }
+                                        type="button"
+                                        className="bg-teal-500 hover:bg-teal-500"
+                                      >
+                                        Continue
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    {value.userId._id == userId && (
+                                      <Trash className="h-3 m-1 cursor-pointer" />
+                                    )}
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>
+                                        Are you absolutely sure?
+                                      </AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        This action cannot be undone. This will
+                                        permanently delete this review and
+                                        remove data from our servers.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogAction
+                                        className="bg-teal-500 hover:bg-teal-500"
+                                        type="button"
+                                      >
+                                        Cancel
+                                      </AlertDialogAction>
+                                      <AlertDialogAction
+                                        onClick={() =>
+                                          handleDeleteRating(value._id)
+                                        }
+                                        type="button"
+                                        className="bg-teal-500 hover:bg-teal-500"
+                                      >
+                                        Continue
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
                               </div>
-                              <p className="text-black font-medium text-xs">
-                                {" "}
-                                {moment(value.updatedAt).calendar()}
-                              </p>
                             </div>
+                            <div className="text-sm my-2">
+                              <div>
+                                {" "}
+                                <Rating
+                                  name="customized-10"
+                                  defaultValue={1}
+                                  max={1}
+                                  size="small"
+                                />{" "}
+                                {value.stars} {labels[`${value.stars}`]}
+                              </div>
+                              {value.review}
+                            </div>
+                            <p className="text-black font-medium text-xs">
+                              {" "}
+                              {moment(value.updatedAt).calendar()}
+                            </p>
                           </div>
-
+                        </div>
                       ))
-                       
                     ) : (
                       <p>No reviews available for this course</p>
                     )}
                   </div>
                   <Dialog>
                     <DialogTrigger className="text-primary">
-                      {ratings.length > 4&& "see more" }
+                      {ratings.length > 4 && "see more"}
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[900px]">
-                    <ScrollArea className="sm:max-w-[800px] h-[450px]">
-                          <div className="grid gap-2 grid-cols-2 ">
-                           
-                             { ratings.map((value, index) => (
-                                <div className="border" key={index}>
-                                  <div className="m-3">
-                                    <div className="flex items-center justify-between">
-                                      <div className="flex  gap-3 items-center">
-                                        <Avatar>
-                                          <AvatarImage
-                                            src={
-                                              value.userId.avatar.avatar_url
-                                                ? value.userId.avatar.avatar_url
-                                                : "https://github.com/shadcn.png"
-                                            }
-                                            alt="user profile"
-                                          />
-                                        </Avatar>
-                                        <p className="text-black font-medium">
-                                          {value.userId.name}
-                                        </p>
-                                      </div>
-                                      <div>
-                                        <AlertDialog>
-                                          <AlertDialogTrigger asChild>
-                                            {value.userId._id == userId && (
-                                              <Edit
-                                                onClick={() => {
-                                                  setReview(value.review);
-                                                  setStars(value.stars);
-                                                  setVal(value.stars);
-                                                }}
-                                                className="h-3 m-1 cursor-pointer"
-                                              />
-                                            )}
-                                          </AlertDialogTrigger>
-                                          <AlertDialogContent>
-                                            <AlertDialogHeader>
-                                              <AlertDialogTitle>
-                                                Edit your Review
-                                              </AlertDialogTitle>
-                                              <AlertDialogDescription>
-                                                <div className="grid w-full gap-1.5">
-                                                  <Rating
-                                                    className="mx-5"
-                                                    name="hover-feedback"
-                                                    value={val}
-                                                    precision={0.5}
-                                                    getLabelText={getLabelText}
-                                                    onChange={(
-                                                      event,
-                                                      newValue
-                                                    ) => {
-                                                      setVal(newValue);
-                                                      setStars(newValue!);
-                                                    }}
-                                                    emptyIcon={
-                                                      <StarIcon
-                                                        style={{
-                                                          opacity: 0.55,
-                                                        }}
-                                                        fontSize="inherit"
-                                                      />
-                                                    }
-                                                  />
-                                                  <Label
-                                                    className={
-                                                      errors.ratingError
-                                                        ? "text-danger"
-                                                        : ""
-                                                    }
-                                                    htmlFor="message-2"
-                                                  >
-                                                    Your Message
-                                                  </Label>
-                                                  <Textarea
-                                                    value={review}
-                                                    onChange={(e) => {
-                                                      if (
-                                                        e.target.value.length <
-                                                        3
-                                                      ) {
-                                                        setErrors((prev) => ({
-                                                          ...prev,
-                                                          ratingError: true,
-                                                        }));
-                                                      } else {
-                                                        setErrors((prev) => ({
-                                                          ...prev,
-                                                          ratingError: false,
-                                                        }));
-                                                      }
-                                                      setReview(e.target.value);
-                                                    }}
-                                                    placeholder="Type your message here."
-                                                    id="message-2"
-                                                  />
-                                                  {errors.ratingError ? (
-                                                    <p className="text-sm text-danger text-muted-foreground">
-                                                      Your message will be show
-                                                      to the public.
-                                                    </p>
-                                                  ) : (
-                                                    <p className="text-sm text-muted-foreground">
-                                                      Your message will be show
-                                                      to the public.
-                                                    </p>
-                                                  )}
-                                                </div>
-                                              </AlertDialogDescription>
-                                            </AlertDialogHeader>
-                                            <AlertDialogFooter>
-                                              <AlertDialogAction
-                                                className="bg-teal-500 hover:bg-teal-500"
-                                                type="button"
-                                              >
-                                                Cancel
-                                              </AlertDialogAction>
-                                              <AlertDialogAction
-                                                disabled={errors.ratingError}
-                                                onClick={() =>
-                                                  handleEditRatings(value._id)
-                                                }
-                                                type="button"
-                                                className="bg-teal-500 hover:bg-teal-500"
-                                              >
-                                                Continue
-                                              </AlertDialogAction>
-                                            </AlertDialogFooter>
-                                          </AlertDialogContent>
-                                        </AlertDialog>
-                                        <AlertDialog>
-                                          <AlertDialogTrigger asChild>
-                                            {value.userId._id == userId && (
-                                              <Trash className="h-3 m-1 cursor-pointer" />
-                                            )}
-                                          </AlertDialogTrigger>
-                                          <AlertDialogContent>
-                                            <AlertDialogHeader>
-                                              <AlertDialogTitle>
-                                                Are you absolutely sure?
-                                              </AlertDialogTitle>
-                                              <AlertDialogDescription>
-                                                This action cannot be undone.
-                                                This will permanently delete
-                                                this review and remove data from
-                                                our servers.
-                                              </AlertDialogDescription>
-                                            </AlertDialogHeader>
-                                            <AlertDialogFooter>
-                                              <AlertDialogAction
-                                                className="bg-teal-500 hover:bg-teal-500"
-                                                type="button"
-                                              >
-                                                Cancel
-                                              </AlertDialogAction>
-                                              <AlertDialogAction
-                                                onClick={() =>
-                                                  handleDeleteRating(value._id)
-                                                }
-                                                type="button"
-                                                className="bg-teal-500 hover:bg-teal-500"
-                                              >
-                                                Continue
-                                              </AlertDialogAction>
-                                            </AlertDialogFooter>
-                                          </AlertDialogContent>
-                                        </AlertDialog>
-                                      </div>
-                                    </div>
-                                    <div className="text-sm my-2">
-                                      <div>
-                                        {" "}
-                                        <Rating
-                                          name="customized-10"
-                                          defaultValue={1}
-                                          max={1}
-                                          size="small"
-                                        />{" "}
-                                        {value.stars} {labels[`${value.stars}`]}
-                                      </div>
-                                      {value.review}
-                                    </div>
-                                    <p className="text-black font-medium text-xs">
-                                      {" "}
-                                      {moment(value.updatedAt).calendar()}
+                      <ScrollArea className="sm:max-w-[800px] h-[450px]">
+                        <div className="grid gap-2 grid-cols-2 ">
+                          {ratings.map((value, index) => (
+                            <div className="border" key={index}>
+                              <div className="m-3">
+                                <div className="flex items-center justify-between">
+                                  <div className="flex  gap-3 items-center">
+                                    <Avatar>
+                                      <AvatarImage
+                                        src={
+                                          value.userId.avatar.avatar_url
+                                            ? value.userId.avatar.avatar_url
+                                            : "https://github.com/shadcn.png"
+                                        }
+                                        alt="user profile"
+                                      />
+                                    </Avatar>
+                                    <p className="text-black font-medium">
+                                      {value.userId.name}
                                     </p>
                                   </div>
+                                  <div>
+                                    <AlertDialog>
+                                      <AlertDialogTrigger asChild>
+                                        {value.userId._id == userId && (
+                                          <Edit
+                                            onClick={() => {
+                                              setReview(value.review);
+                                              setStars(value.stars);
+                                              setVal(value.stars);
+                                            }}
+                                            className="h-3 m-1 cursor-pointer"
+                                          />
+                                        )}
+                                      </AlertDialogTrigger>
+                                      <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                          <AlertDialogTitle>
+                                            Edit your Review
+                                          </AlertDialogTitle>
+                                          <AlertDialogDescription>
+                                            <div className="grid w-full gap-1.5">
+                                              <Rating
+                                                className="mx-5"
+                                                name="hover-feedback"
+                                                value={val}
+                                                precision={0.5}
+                                                getLabelText={getLabelText}
+                                                onChange={(event, newValue) => {
+                                                  setVal(newValue);
+                                                  setStars(newValue!);
+                                                }}
+                                                emptyIcon={
+                                                  <StarIcon
+                                                    style={{
+                                                      opacity: 0.55,
+                                                    }}
+                                                    fontSize="inherit"
+                                                  />
+                                                }
+                                              />
+                                              <Label
+                                                className={
+                                                  errors.ratingError
+                                                    ? "text-danger"
+                                                    : ""
+                                                }
+                                                htmlFor="message-2"
+                                              >
+                                                Your Message
+                                              </Label>
+                                              <Textarea
+                                                value={review}
+                                                onChange={(e) => {
+                                                  if (
+                                                    e.target.value.length < 3
+                                                  ) {
+                                                    setErrors((prev) => ({
+                                                      ...prev,
+                                                      ratingError: true,
+                                                    }));
+                                                  } else {
+                                                    setErrors((prev) => ({
+                                                      ...prev,
+                                                      ratingError: false,
+                                                    }));
+                                                  }
+                                                  setReview(e.target.value);
+                                                }}
+                                                placeholder="Type your message here."
+                                                id="message-2"
+                                              />
+                                              {errors.ratingError ? (
+                                                <p className="text-sm text-danger text-muted-foreground">
+                                                  Your message will be show to
+                                                  the public.
+                                                </p>
+                                              ) : (
+                                                <p className="text-sm text-muted-foreground">
+                                                  Your message will be show to
+                                                  the public.
+                                                </p>
+                                              )}
+                                            </div>
+                                          </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                          <AlertDialogAction
+                                            className="bg-teal-500 hover:bg-teal-500"
+                                            type="button"
+                                          >
+                                            Cancel
+                                          </AlertDialogAction>
+                                          <AlertDialogAction
+                                            disabled={errors.ratingError}
+                                            onClick={() =>
+                                              handleEditRatings(value._id)
+                                            }
+                                            type="button"
+                                            className="bg-teal-500 hover:bg-teal-500"
+                                          >
+                                            Continue
+                                          </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                      </AlertDialogContent>
+                                    </AlertDialog>
+                                    <AlertDialog>
+                                      <AlertDialogTrigger asChild>
+                                        {value.userId._id == userId && (
+                                          <Trash className="h-3 m-1 cursor-pointer" />
+                                        )}
+                                      </AlertDialogTrigger>
+                                      <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                          <AlertDialogTitle>
+                                            Are you absolutely sure?
+                                          </AlertDialogTitle>
+                                          <AlertDialogDescription>
+                                            This action cannot be undone. This
+                                            will permanently delete this review
+                                            and remove data from our servers.
+                                          </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                          <AlertDialogAction
+                                            className="bg-teal-500 hover:bg-teal-500"
+                                            type="button"
+                                          >
+                                            Cancel
+                                          </AlertDialogAction>
+                                          <AlertDialogAction
+                                            onClick={() =>
+                                              handleDeleteRating(value._id)
+                                            }
+                                            type="button"
+                                            className="bg-teal-500 hover:bg-teal-500"
+                                          >
+                                            Continue
+                                          </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                      </AlertDialogContent>
+                                    </AlertDialog>
+                                  </div>
                                 </div>
-                              ))}
-                          
-                          </div>
-                        </ScrollArea>
+                                <div className="text-sm my-2">
+                                  <div>
+                                    {" "}
+                                    <Rating
+                                      name="customized-10"
+                                      defaultValue={1}
+                                      max={1}
+                                      size="small"
+                                    />{" "}
+                                    {value.stars} {labels[`${value.stars}`]}
+                                  </div>
+                                  {value.review}
+                                </div>
+                                <p className="text-black font-medium text-xs">
+                                  {" "}
+                                  {moment(value.updatedAt).calendar()}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </ScrollArea>
                     </DialogContent>
                   </Dialog>
                 </div>
@@ -742,34 +767,195 @@ const CourseDetailesPage = () => {
                   alt={"review.name"}
                   className="w-auto h-auto"
                 />
-                <RadioGroup
-                  onValueChange={(value) => {
-                    setPaymentMethord(value);
-                    setOption(false);
-                  }}
-                  defaultValue={paymentMethord}
-                >
-                  <h6>Choose a payment option</h6>
+                {/* {plans.map((plan) => {
+                  const isSubscribed = subscriptions.some(
+                    (value) => value._id == plan?.subscriptionId._id
+                  );
+                  return (
+                    <div key={plan.subscriptionId._id}>
+                      {isSubscribed ? (
+                        <Button
+                          type="button"
+                          onClick={() =>
+                            navigate(`/user/playCourse/${course?._id}`)
+                          }
+                          className="w-full"
+                        >
+                          Go to class
+                        </Button>
+                      ) : (
+                        <div className="space-y-2">
+                          <RadioGroup
+                            onValueChange={(value) => {
+                              setPaymentMethord(value);
+                              setOption(false);
+                            }}
+                            defaultValue={paymentMethord}
+                          >
+                            <h6>Choose a payment option</h6>
 
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="Stripe" id="option-two" />
-                    <Label htmlFor="Stripe">Stripe</Label>
-                  </div>
-                </RadioGroup>
-                <div>
-                  {course?.students?.some((value) => value._id == userId) ? (
-                    <Button
-                      type="button"
-                      onClick={() => navigate(`/user/playCourse/${course._id}`)}
-                      className="w-full"
-                    >
-                      Go to class
-                    </Button>
-                  ) : (
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="Stripe" id="option-two" />
+                              <Label htmlFor="Stripe">Stripe</Label>
+                            </div>
+                          </RadioGroup>
+                          <div>
+                            {course?.students?.some(
+                              (value) => value._id == userId
+                            ) ? (
+                              <Button
+                                type="button"
+                                onClick={() =>
+                                  navigate(`/user/playCourse/${course._id}`)
+                                }
+                                className="w-full"
+                              >
+                                Go to class
+                              </Button>
+                            ) : (
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button
+                                    disabled={option}
+                                    type="button"
+                                    className="w-full"
+                                  >
+                                    purchase
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>
+                                      Are you absolutely sure?
+                                    </AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Are you sure to purchase this course?
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogAction type="button">
+                                      Cancel
+                                    </AlertDialogAction>
+                                    <AlertDialogAction
+                                      onClick={handleOrder}
+                                      type="button"
+                                    >
+                                      Continue
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            )}
+                          </div>
+                          {subscriptions.length > 0 && (
+                            <>
+                              <div>
+                                <h4 className="text-xs">OR</h4>
+                                <div className="space-y-3">
+                                  <div className="text-xs">
+                                    get access to this course and also all the
+                                    courses of this instructor
+                                  </div>
+                                  <Button
+                                    className="w-full"
+                                    onClick={() => onOpen()}
+                                  >
+                                    subscribe
+                                  </Button>
+                                </div>
+                              </div>
+                              <Drawer
+                                isOpen={isOpen}
+                                size={"full"}
+                                onClose={onClose}
+                              >
+                                <DrawerContent>
+                                  {(onClose) => (
+                                    <>
+                                      <DrawerHeader className="flex flex-col gap-1">
+                                        Instructor subscriptions
+                                      </DrawerHeader>
+                                      <DrawerBody>
+                                        {subscriptions.map((value, index) => (
+                                          <div
+                                            key={index}
+                                            className="border w-25 h-[300px] rounded-1"
+                                          >
+                                            <h4 className=" underline">
+                                              Personal Plan
+                                            </h4>
+                                            <div className="  m-1">
+                                              <div className="flex flex-col items-center justify-center h-[210px]">
+                                                <div>
+                                                  {value.plan == "Monthly"
+                                                    ? `Rs : ${value.price}/- per Month`
+                                                    : `Rs : ${value.price}/- per Year`}
+                                                </div>
+                                                <div className="text-xs">
+                                                  {value.plan == "Monthly"
+                                                    ? `Billed monthly.`
+                                                    : `Billed annually.`}
+                                                </div>
+                                                <div className="space-y-3 m-3">
+                                                  {value.description.map(
+                                                    (val, index) => (
+                                                      <li
+                                                        className="text-xs"
+                                                        key={index}
+                                                      >
+                                                        {val}
+                                                      </li>
+                                                    )
+                                                  )}
+                                                </div>
+                                              </div>
+                                              <div className="flex items-end ">
+                                                <Button
+                                                  onClick={() =>
+                                                    subscribe(value._id)
+                                                  }
+                                                  type="button"
+                                                  className="w-full bg-teal-500 hover:bg-teal-500 text-white"
+                                                >
+                                                  Start Subscription
+                                                </Button>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        ))}
+                                      </DrawerBody>
+                                      <DrawerFooter>
+                                        <Button
+                                          className="text-danger bg-light"
+                                          onClick={onClose}
+                                        >
+                                          Close
+                                        </Button>
+                                      </DrawerFooter>
+                                    </>
+                                  )}
+                                </DrawerContent>
+                              </Drawer>
+                            </>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })} */}
+                {course?.students?.some((user) => user._id == userId) ? (
+                  <Button
+                    type="button"
+                    onClick={() => navigate(`/user/playCourse/${course._id}`)}
+                    className="w-full"
+                  >
+                    Go to class
+                  </Button>
+                ) : subscriptions.length > 0 ? (
+                  <>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button
-                          disabled={option}
                           type="button"
                           className="w-full"
                         >
@@ -798,8 +984,105 @@ const CourseDetailesPage = () => {
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>
-                  )}
-                </div>
+                    <div>
+                      <h4 className="text-xs">OR</h4>
+                      <div className="space-y-3">
+                        <div className="text-xs">
+                          get access to this course and also all the courses of
+                          this instructor
+                        </div>
+                        <Button className="w-full" onClick={() => onOpen()}>
+                          subscribe
+                        </Button>
+                      </div>
+                    </div>
+                    <Drawer isOpen={isOpen} size={"full"} onClose={onClose}>
+                      <DrawerContent>
+                        {(onClose) => (
+                          <>
+                            <DrawerHeader className="flex flex-col gap-1">
+                              Instructor subscriptions
+                            </DrawerHeader>
+                            <DrawerBody>
+                              {subscriptions.map((value, index) => (
+                                <div
+                                  key={index}
+                                  className="border w-25 h-[300px] rounded-1"
+                                >
+                                  <h4 className=" underline">Personal Plan</h4>
+                                  <div className="  m-1">
+                                    <div className="flex flex-col items-center justify-center h-[210px]">
+                                      <div>
+                                        {value.plan == "Monthly"
+                                          ? `Rs : ${value.price}/- per Month`
+                                          : `Rs : ${value.price}/- per Year`}
+                                      </div>
+                                      <div className="text-xs">
+                                        {value.plan == "Monthly"
+                                          ? `Billed monthly.`
+                                          : `Billed annually.`}
+                                      </div>
+                                      <div className="space-y-3 m-3">
+                                        {value.description.map((val, index) => (
+                                          <li className="text-xs" key={index}>
+                                            {val}
+                                          </li>
+                                        ))}
+                                      </div>
+                                    </div>
+                                    <div className="flex items-end ">
+                                      <Button
+                                        onClick={() => subscribe(value._id)}
+                                        type="button"
+                                        className="w-full bg-teal-500 hover:bg-teal-500 text-white"
+                                      >
+                                        Start Subscription
+                                      </Button>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </DrawerBody>
+                            <DrawerFooter>
+                              <Button
+                                className="text-danger bg-light"
+                                onClick={onClose}
+                              >
+                                Close
+                              </Button>
+                            </DrawerFooter>
+                          </>
+                        )}
+                      </DrawerContent>
+                    </Drawer>
+                  </>
+                ) : (
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button type="button" className="w-full">
+                        purchase
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you absolutely sure?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Are you sure to purchase this course?
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogAction type="button">
+                          Cancel
+                        </AlertDialogAction>
+                        <AlertDialogAction onClick={handleOrder} type="button">
+                          Continue
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                )}
               </div>
             </CardContent>
           </Card>

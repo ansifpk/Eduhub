@@ -25,7 +25,7 @@ const instructorRepository = new InstructorRepository(userModel)
 const instructorUseCase = new InstructorUseCase(instructorRepository,cloudinary)
 const instructorController = new InstructorController(instructorUseCase)
 // admin
-const adminRepository = new AdminRepository(userModel)
+const adminRepository = new AdminRepository(userModel,ratingModel)
 const adminUseCase = new AdminUseCase(adminRepository)
 const adminController = new AdminController(adminUseCase)
 

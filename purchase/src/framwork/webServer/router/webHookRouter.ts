@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response, Router } from "express";
 import express from 'express';
-import { userController } from "./injectes/injectes";
+import { adminController, instructorController, userController, webhookController } from "./injectes/injectes";
 
 
 export function webHookRouter(router: Router) {
@@ -8,9 +8,23 @@ export function webHookRouter(router: Router) {
     "/webhook",
     express.raw({ type: 'application/json' }),
     async (req: Request, res: Response, next: NextFunction) => {
-        // console.log("hi");
-        
        userController.webhook(req, res, next);
+    }
+  );
+
+  // router.post(
+  //   "/instructor/webhook",
+  //   express.raw({ type: 'application/json' }),
+  //   async (req: Request, res: Response, next: NextFunction) => {
+  //      instructorController.webhook(req, res, next);
+  //   }
+  // );
+
+  router.post(
+    "/subscription/webhook",
+    express.raw({ type: 'application/json' }),
+    async (req: Request, res: Response, next: NextFunction) => {
+       webhookController.webhook(req, res, next);
     }
   );
 }

@@ -12,7 +12,7 @@ export function ChatRoute(router:Router){
             chatController.findUserChats(req,res,next)
         })
         router.get("/privetChat/:chatId",async(req,res,next)=>{
-            // console.log("get mesaage");
+            console.log("get mesaage",req.params);
             chatController.findChate(req,res,next)
         })
     } catch (error) {

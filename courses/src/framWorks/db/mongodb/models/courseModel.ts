@@ -62,11 +62,6 @@ const courseScheema = new mongoose.Schema({
         required:true,
         default:false
     },
-    createdAt:{
-        type:String,
-        required:true,
-        default: new Date().toLocaleString(),
-    },
     students:[
         {
             type: mongoose.Schema.Types.ObjectId,

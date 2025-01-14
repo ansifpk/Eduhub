@@ -15,6 +15,7 @@ import { ChatRoute } from './framwork/webServer/routers/chatRoute';
 import { Socket } from 'socket.io';
 import { errMiddleware } from './useCases/middlewares/errorMiddleware';
 import { UserProfileUpdatedConsumer } from './framwork/webServer/config/kafka/consumer/user-profile-updated-consumer';
+import { NotificationRoute } from './framwork/webServer/routers/notificationRouter';
 const  {Server} =  require('socket.io') 
 // import { errMiddleware } from './useCases/middlewares/errorMiddleware';
 // import { AdminRouter } from './framwork/webServer/routes/adminRouter';
@@ -25,11 +26,13 @@ const app = express()
 // Separate routers for user and admin
 const messageRouter = express.Router()
 const chatRouter = express.Router()
+const notificationRouter = express.Router()
 
 
 // Set up routes on the separate routers
 MessageRoute(messageRouter);
 ChatRoute(chatRouter);
+NotificationRoute(notificationRouter)
 
 
 app.use(cors({credentials:true,origin:["http://localhost:5173",'http://eduhub.dev']}));
@@ -46,6 +49,7 @@ app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 // Apply the separate routers to different paths
 app.use('/message/chat',chatRouter);
 app.use('/message/message',messageRouter);
+app.use('/message/notification',notificationRouter);
 app.use(errMiddleware);
 
 //! web socket configurations
@@ -69,8 +73,13 @@ io.on("connect",(socket:Socket)=>{
     socket.on("sendMessage",(message)=>{
        const user = onlineUsers.find((user)=>user.userId == message.recipientId);
        if(user){
-       
-        io.to(user.socketId).emit("getMessage",message)
+        io.to(user.socketId).emit("getMessage",message);
+        io.to(user.socketId).emit("getMessageNotification",{
+            recipientId:message.recipientId,
+            senderId:message.senderId,
+            isRead:false,
+            date:new Date()
+        });
        }
     })
 

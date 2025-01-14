@@ -4,11 +4,45 @@ import { IUserRepository } from "../interfaces/repositoryInterfaces/IUserReposit
 import { IUserUseCase } from "../interfaces/useCasesInterfaces/IuserUseCas"
 import ErrorHandler from "../middlewares/errorHandler"
 import { IMessage } from "../../entities/message"
+import { INotification } from "../../entities/notifications"
 
 export class UseruseCase implements IUserUseCase{
     constructor(
         private userRepository:IUserRepository
     ){}
+   async  getNotifications(recipientId: string, next: NextFunction): Promise<INotification[] | void> {
+    try {
+        const user  = await this.userRepository.findUserById(recipientId);
+
+        if(!user){
+         return next(new ErrorHandler(400,"User Not Found"))
+        }
+        const notifications = await this.userRepository.findAllNotification(recipientId);
+        if(notifications){
+           return  notifications
+        }
+     } catch (error) {
+         console.error(error)
+     }
+    }
+    async createNotifications(recipientId: string, senderId: string, next: NextFunction): Promise<INotification | void> {
+        try {
+            const user  = await this.userRepository.findUserById(recipientId);
+            if(!user){
+             return next(new ErrorHandler(400,"User Not Found"))
+            }
+            const user2  = await this.userRepository.findUserById(senderId);
+            if(!user2){
+             return next(new ErrorHandler(400,"User Not Found"))
+            }
+            const notifications = await this.userRepository.createNotification(recipientId,senderId);
+            if(notifications){
+               return  notifications
+            }
+         } catch (error) {
+             console.error(error)
+         }
+    }
  
     async createChat(userId: string, recipientId: string,role:string,next:NextFunction): Promise<IChat | void> {
         try {
@@ -54,6 +88,7 @@ export class UseruseCase implements IUserUseCase{
         try {
      
            const chat = await this.userRepository.findChatById(chatId);
+           
            if(!chat){
             return next(new ErrorHandler(400,"Chat Not Found"))
            }

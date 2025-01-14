@@ -159,6 +159,22 @@ export const AdminSendMessage = async(chatId:string,senderId:string,text:string)
         return error 
     }
 }
+export const AdminSendNotification = async(recipientId:string,senderId:string)=>{
+    try {
+        const response = await ApiGatway.post(adminRoutes.notification,{recipientId,senderId});
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+export const getNotifications = async(recipientId:string)=>{
+    try {
+        const response = await ApiGatway.get(`${adminRoutes.notification}/${recipientId}`);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
 export const AdminChats = async(userId:string)=>{
     try {
         const response = await ApiGatway.get(`${adminRoutes.chat}?userId=${userId}`);
@@ -186,6 +202,15 @@ export const getAdminCurrentChat = async(chatId:string)=>{
     }
 }
 
+export const top10Courses = async(limit:number)=>{
+    try {
+        const response = await ApiGatway.get(`${adminRoutes.getCourses}/${limit}`);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
 export const adminCreateMessage = async(userId:string,recipientId:string,role:string)=>{
     try {
         const response = await ApiGatway.post(adminRoutes.chat,{userId,recipientId,role});
@@ -194,3 +219,83 @@ export const adminCreateMessage = async(userId:string,recipientId:string,role:st
         return error 
     }
 }
+
+//* subscriptions
+
+export const adminCreateSubscription = async(price:number,plan:string,description:string[])=>{
+    try {
+        const response = await ApiGatway.post(adminRoutes.subscription,{price,plan,description});
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
+export const getSubscriptions = async()=>{
+    try {
+        const response = await ApiGatway.get(adminRoutes.subscription);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
+export const deleteSubscription = async(subscriptionId:string)=>{
+    try {
+        const response = await ApiGatway.delete(`${adminRoutes.subscription}/${subscriptionId}`);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
+export const editSubscription = async(subscriptionId:string,price:number)=>{
+    try {
+        const response = await ApiGatway.patch(`${adminRoutes.subscription}/${subscriptionId}`,{price});
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+export const getSalesReports = async (report:string,year:string,month:number)=>{
+    try {
+        const response = await ApiGatway.get(`${adminRoutes.order}?report=${report}&&year=${year}&&month=${month}`);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+export const createReport = async (report:string,year:string,month:number)=>{
+    try {
+        const response = await ApiGatway.get(`${adminRoutes.salesReports}?report=${report}&&year=${year}&&month=${month}`,{responseType:'blob'});
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
+export const getReports = async ()=>{
+    try {
+        const response = await ApiGatway.get(adminRoutes.report);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+export const top5Courses = async ()=>{
+    try {
+        const response = await ApiGatway.get(adminRoutes.course);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+export const top5Instructors = async ()=>{
+    try {
+        const response = await ApiGatway.get(adminRoutes.top5Instructors);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+

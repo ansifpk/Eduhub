@@ -197,14 +197,14 @@ export const getStudents = async () =>{
         return error 
     }
 }
-export const orders = async () =>{
-    try {
-        const response = await ApiGatway.get(instructorRoutes.orders);       
-        return response.data
-    } catch (error) {
-        return error 
-    }
-}
+// export const orders = async () =>{
+//     try {
+//         const response = await ApiGatway.get(instructorRoutes.orders);       
+//         return response.data
+//     } catch (error) {
+//         return error 
+//     }
+// }
 export const editCourse = async(courseData:object)=>{
     try {
         
@@ -248,6 +248,110 @@ export const getInstructorMessages = async(chatId:string)=>{
 export const getInstructorCurrentChat = async(chatId:string)=>{
     try {
         const response = await ApiGatway.get(`${instructorRoutes.privetChat}/${chatId}`);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
+export const getSubscriptions = async()=>{
+    try {
+        const response = await ApiGatway.get(instructorRoutes.subscription);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
+export const getInstructorSubscriptions = async(userId:string)=>{
+    try {
+        const response = await ApiGatway.get(`${instructorRoutes.subscription}/${userId}`);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
+export const purchaseSubscription = async(method:string,userId:string)=>{
+    try {
+        const response = await ApiGatway.get(`${instructorRoutes.subscribe}/${method}/${userId}`);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+export const instructorPlans = async(userId:string)=>{
+    try {
+        const response = await ApiGatway.get(`${instructorRoutes.subscribe}/${userId}`);    
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+export const viewDetailes = async(customerId:string)=>{
+    try {
+        const response = await ApiGatway.get(`${instructorRoutes.customer}/${customerId}`);    
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
+export const createSubscription = async(userId:string,price:number,plan:string,description:string[])=>{
+    try {
+        const response = await ApiGatway.post(`${instructorRoutes.subscription}/${userId}`,{price,plan,description});    
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
+export const editSubscription = async(subscriptionId:string,price:number)=>{
+    try {
+        const response = await ApiGatway.patch(`${instructorRoutes.subscription}/${subscriptionId}`,{price});    
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
+export const getSalesReports = async (instructorId:string,report:string,year:string,month:number)=>{
+    try {
+        const response = await ApiGatway.get(`${instructorRoutes.order}?userId=${instructorId}&&report=${report}&&year=${year}&&month=${month}`);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+export const createReport = async (instructorId:string,report:string,year:string,month:number)=>{
+    try {
+        const response = await ApiGatway.get(`${instructorRoutes.salesReports}?userId=${instructorId}&&report=${report}&&year=${year}&&month=${month}`,{responseType:'blob'});
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
+export const sendNotification = async(recipientId:string,senderId:string)=>{
+    try {
+        const response = await ApiGatway.post(instructorRoutes.notification,{recipientId,senderId});
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+export const getNotifications = async(recipientId:string)=>{
+    try {
+        const response = await ApiGatway.get(`${instructorRoutes.notification}/${recipientId}`);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
+export const getOrders = async(userId:string)=>{
+    try {
+        const response = await ApiGatway.get(`${instructorRoutes.order}/${userId}`);
         return response.data
     } catch (error) {
         return error 

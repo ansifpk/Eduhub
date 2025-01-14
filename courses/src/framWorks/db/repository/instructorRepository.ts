@@ -157,11 +157,11 @@ export class InstructorRepository implements IInstructorrepository{
                 }
               };
           }
-        // console.log(sortQuery,queryData.students);
-        // const course = await this.courseModel.find(queryData).sort(sortQuery).populate("sections").populate("instructorId").populate("students").populate("test")
-        const course = await this.courseModel.find({instructorId:instructorId}).sort({createdAt:-1}).populate("sections").populate("instructorId").populate("students").populate("test")
-       if(course){
-           return course;
+       
+        const course = await this.courseModel.find({instructorId:instructorId}).sort({createdAt:-1}).populate("sections").populate("instructorId").populate("students").populate("test").limit(5)
+        
+        if(course){
+           return course.sort((a,b)=>a.students!.length + b.students!.length);
        }
        } catch (error) {
         console.error(error)

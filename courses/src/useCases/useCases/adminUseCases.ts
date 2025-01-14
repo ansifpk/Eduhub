@@ -4,9 +4,13 @@ import { ICourse } from "../../entities/course";
 import { IAdminRepository } from "../interfaces/repository/IAdminRepository";
 import { IAdminUseCase } from "../interfaces/useCases/IadminUseCase";
 import ErrorHandler from "../middlewares/errorHandler";
+import { IReport } from "../../entities/report";
 
 export class AdminUseCase implements IAdminUseCase{
     constructor(private adminRepository:IAdminRepository,){}
+
+   
+
     async createCoupon(title: string, description: string, offer: number, startingDate:string, startingTime:string, expiryDate:string, expiryTime:string, couponCode: string, next: NextFunction): Promise<ICoupon | void> {
        try {
         const coupon = await this.adminRepository.createCoupon(title,description,offer,startingDate,startingTime,expiryDate,expiryTime,couponCode);
@@ -56,6 +60,7 @@ export class AdminUseCase implements IAdminUseCase{
            }
     
     }
+
     async couponDetailes(couponId: string, next: NextFunction): Promise<ICoupon | void> {
         try {
             const coupon = await this.adminRepository.findCouponById(couponId);
@@ -65,6 +70,17 @@ export class AdminUseCase implements IAdminUseCase{
             }else{
                 return next(new ErrorHandler(400,"Coupon Not found"))
             }
+           } catch (error) {
+            console.error(error)
+           }
+    
+    }
+    async getReports(): Promise<IReport[] | void> {
+        try {
+             const reports = await this.adminRepository.findReports();
+             if(reports){
+                return reports;
+             }
            } catch (error) {
             console.error(error)
            }
@@ -89,14 +105,23 @@ export class AdminUseCase implements IAdminUseCase{
         console.error(error)
       }
     }
-    createCourse(courseData: ICourse): Promise<ICourse | void> {
-        throw new Error("Method not implemented.");
+
+    async top5Courses(next: NextFunction): Promise<ICourse[] | void> {
+        try {
+            const courses = await this.adminRepository.findTop5()
+            if(courses) return courses
+          } catch (error) {
+            console.error(error)
+          }
     }
-    editCourse(courseData: ICourse): Promise<ICourse | void> {
-        throw new Error("Method not implemented.");
-    }
-    listCourse(courseId: string): Promise<ICourse | void> {
-        throw new Error("Method not implemented.");
+
+    async listCourse(courseId: string): Promise<ICourse | void> {
+        try {
+           
+            
+          } catch (error) {
+            console.error(error)
+          }
     }
     
 } 

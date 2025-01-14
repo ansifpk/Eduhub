@@ -227,8 +227,11 @@ console.log("sratr");
           }
         }
       }
-      
-      
+      //! Adding 10% extra to the instrecture provided amound
+      courseData.bodyData.price = courseData.bodyData.price*1 
+      let adminPrice = (courseData.bodyData.price*10/100);
+      courseData.bodyData.price = courseData.bodyData.price + adminPrice
+     
       const course = await this.instructorRepository.create(courseData.bodyData)
       if(course){
         return course;
@@ -259,7 +262,11 @@ console.log("sratr");
             }
           }
      
-  
+          //! Adding 10% extra to the instrecture provided amound
+          courseData.bodyData.price = courseData.bodyData.price*1 
+          let adminPrice = (courseData.bodyData.price*10/100);
+          courseData.bodyData.price = courseData.bodyData.price + adminPrice
+    
           courseData.bodyData.sections = JSON.parse(courseData.bodyData.sections as unknown as string)
      
           

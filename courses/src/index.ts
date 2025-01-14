@@ -23,30 +23,28 @@ dotenv.config();
 async function start(){
     try {
         
-        await kafkaWrapper.connect();       
-        const consumer = await kafkaWrapper.createConsumer('course-user-profile-created-group')
-        const consumer2 = await kafkaWrapper.createConsumer("course-order-created-group")
-         const consumer3  = await kafkaWrapper.createConsumer("course-user-blocked-group")
-         const instructorApproved  = await kafkaWrapper.createConsumer("course-instructor-approved-group")
-         const consumer4  = await kafkaWrapper.createConsumer("course-email-changed-group")
-         const consumer5  = await kafkaWrapper.createConsumer("course-coupon-used-group")
-         const consumer6  = await kafkaWrapper.createConsumer("course-profile-updated-group")
-        consumer.connect();
-        consumer2.connect();
-        instructorApproved.connect();
-        consumer3.connect();
-        consumer4.connect();
-        consumer5.connect();
-        consumer6.connect();
-        console.log("consumer connect suuccessfully");
-        
-        await new UserProfileCreateConsumer(consumer).listen()
-       await new OrderCreatedCreateConsumer(consumer2).listen()
-       await new InstructorAprovedConsumer(instructorApproved).listen()
-        await new UserBlockedConsumer(consumer3).listen()
-        await new EmailChangedConsumer(consumer4).listen()
-        await new CouponUsedConsumer(consumer5).listen()
-        await new UserProfileUpdatedConsumer(consumer6).listen()
+    //     await kafkaWrapper.connect();       
+    //     const consumer = await kafkaWrapper.createConsumer('course-user-profile-created-group')
+    //     const consumer2 = await kafkaWrapper.createConsumer("course-order-created-group")
+    //      const consumer3  = await kafkaWrapper.createConsumer("course-user-blocked-group")
+    //      const instructorApproved  = await kafkaWrapper.createConsumer("course-instructor-approved-group")
+    //      const consumer4  = await kafkaWrapper.createConsumer("course-email-changed-group")
+    //      const consumer5  = await kafkaWrapper.createConsumer("course-coupon-used-group")
+    //      const consumer6  = await kafkaWrapper.createConsumer("course-profile-updated-group")
+    //     consumer.connect();
+    //     consumer2.connect();
+    //     instructorApproved.connect();
+    //     consumer3.connect();
+    //     consumer4.connect();
+    //     consumer5.connect();
+    //     consumer6.connect();
+    //     await new UserProfileCreateConsumer(consumer).listen()
+    //    await new OrderCreatedCreateConsumer(consumer2).listen()
+    //    await new InstructorAprovedConsumer(instructorApproved).listen()
+    //     await new UserBlockedConsumer(consumer3).listen()
+    //     await new EmailChangedConsumer(consumer4).listen()
+    //     await new CouponUsedConsumer(consumer5).listen()
+    //     await new UserProfileUpdatedConsumer(consumer6).listen()
        await connectDB();
        app.listen(process.env.PORT, () => console.log(`the server is running in ${process.env.PORT} for course`))
     } catch (error) {

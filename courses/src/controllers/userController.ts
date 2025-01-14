@@ -212,4 +212,19 @@ export class UserController {
       return res.send({ success: true });
     }
   }
+  async report(req: Request, res: Response, next: NextFunction) {
+    const { userId } = req.params;
+    const { report,content,courseId } = req.body;
+    const createReport = await this.userUseCase.report(userId,report,content,courseId,next);
+    if (createReport) {
+      return res.send({ success: true,report:createReport });
+    }
+  }
+  async getReports(req: Request, res: Response, next: NextFunction) {
+    const { userId,courseId } = req.params;
+    const reports = await this.userUseCase.getReports(userId,courseId,next);
+    if (reports) {
+      return res.send({ success: true,reports:reports });
+    }
+  }
 }

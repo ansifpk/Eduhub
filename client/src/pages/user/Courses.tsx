@@ -42,7 +42,6 @@ const Courses = () => {
 
   const handleHart = async (courseId: string) => {
     const data = await addToCart(courseId, userId);
-    console.log(data,"ccart");
     
     if (data.success) {
       const cart = await userCart(userId);

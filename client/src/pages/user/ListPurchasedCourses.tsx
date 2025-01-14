@@ -42,6 +42,8 @@ const ListPurchasedCourses: React.FC = () => {
     const courses = async () => {
       const data = await puchasedCourses(userId);
       if (data.success) {
+        console.log(data);
+        
         setCourses(data.course);
       }else if(data.status == 403){
         const resp = await logout();

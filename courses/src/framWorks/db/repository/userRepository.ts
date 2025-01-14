@@ -9,7 +9,8 @@ import { ICoupon } from "../../../entities/coupon";
 import { couponModel } from "../mongodb/models/couponsModel";
 import { ITest } from "../../../entities/test";
 import { testModel } from "../mongodb/models/testModel";
-import { ALL } from "dns";
+import { reportModel } from "../mongodb/models/reportModel";
+import { IReport } from "../../../entities/report";
 
 
 
@@ -20,9 +21,47 @@ export class UserRepository implements IUserRepository{
         private ratingModels:typeof ratingModel,
         private couponModels:typeof couponModel,
         private testModels:typeof testModel,
+        private reportModels:typeof reportModel,
     ){
 
     }
+
+    async checkReport(userId: string, content: string, courseId: string): Promise<IReport | void> {
+      try {
+        const report  = await this.reportModels.findOne({userId:userId,courseId:courseId,content})
+        if(report){
+          return report
+        }
+       } catch (error) {
+        console.error(error)
+       }
+    }
+
+     async findReports(userId: string, courseId: string): Promise<IReport[] | void> {
+       try {
+        const report  = await this.reportModels.find({userId:userId,courseId:courseId}).populate('userId')
+        if(report){
+          return report
+        }
+       } catch (error) {
+        console.error(error)
+       }
+      }
+  async createReport(userId: string, report: string, content: string, courseId: string): Promise<IReport|void> {
+    try {
+       const reportCreate = await this.reportModels.create({
+        userId,
+        report,
+        content,
+        courseId
+       })
+       if(reportCreate){
+        return reportCreate
+       }
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
     async findTest(testId: string): Promise<ITest | void> {
         try {

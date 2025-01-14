@@ -1,10 +1,74 @@
+import { IRating } from "../../../../entities/ratings";
 import { Iuser } from "../../../../entities/user";
 import { IAdminRepository } from "../../../../useCases/interfaces/repositoryInterfaces/IadminRepository";
+import { ratingModel } from "../models/ratingModel";
 import { userModel } from "../models/userModel";
 
 export class AdminRepository implements IAdminRepository{
    
-    constructor(private userModels:typeof userModel){}
+    constructor(
+      private userModels:typeof userModel,
+      private ratingModels:typeof ratingModel,
+    ){}
+
+
+      async findTop5Instructors(): Promise<Iuser[] | void> {
+       try {
+         const instructors = await this.userModels.find({isInstructor:true,isAdmin:false})
+         if(instructors){
+            return instructors;
+         }
+       } catch (error) {
+        console.error(error)
+       }
+      }
+
+      async findInstructorRatings(instructorId:string):Promise<IRating[]|void> {
+       try {
+        // const highestRatedInstructor = await ratingModel.aggregate([
+        //   {
+        //     $group: {
+        //       _id: "$instructorId", // Group by instructor ID
+        //       averageRating: { $avg: "$stars" }, // Calculate the average stars
+        //       totalReviews: { $count: {} } // Count the total reviews
+        //     }
+        //   },
+        //   {
+        //     $sort: { averageRating: -1, totalReviews: -1 } // Sort by rating and reviews
+        //   },
+        //   {
+        //     $lookup: {
+        //       from: "users", // Reference the users collection
+        //       localField: "_id", // Match instructor ID
+        //       foreignField: "_id", // Match with user ID
+        //       as: "instructorDetails"
+        //     }
+        //   },
+        //   {
+        //     $unwind: "$instructorDetails" // Flatten the instructor details array
+        //   },
+        //   {
+        //     $project: {
+        //       _id: 0,
+        //       instructorId: "$_id",
+        //       name: "$instructorDetails.name",
+        //       email: "$instructorDetails.email",
+        //       averageRating: 1,
+        //       totalReviews: 1
+        //     }
+        //   }
+        // ]);
+        // console.log(highestRatedInstructor)
+        const ratings = await this.ratingModels.find({instructorId:instructorId,stars:{$gte:4.5}})
+         if(ratings){
+            return ratings;
+         }
+       } catch (error) {
+        console.error(error)
+       }
+      }
+
+
     async find(search:string,sort:string): Promise<Iuser[] | void> {
         try {
 

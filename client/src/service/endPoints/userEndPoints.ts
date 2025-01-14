@@ -23,6 +23,7 @@ const userRoutes = {
  stripePurchase:"/course/course/user/create-checkout-session",
  courseDeatiles:"/course/course/user/courseDetailes",
  ratingCourse:"/course/course/user/rating",
+ report:"/course/course/user/report",
  test:"/course/course/user/test",
 
 
@@ -43,7 +44,12 @@ const userRoutes = {
 
  //chat
  message:"/message/message/message",
+ notification:"/message/message/notification",
 
+ //*subscriptions
+ subscriptions:"/purchase/purchase/user/subscription",
+ plans:"/purchase/purchase/user/subscribe",
+ customer:"/purchase/purchase/user/customer",
 
 }
 

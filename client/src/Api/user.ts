@@ -366,3 +366,73 @@ export const sendMessage = async(chatId:string,senderId:string,text:string)=>{
         return error 
     }
 }
+
+export const instructorSubscriptions = async(userId:string)=>{
+    try {
+        const response = await ApiGatway.get(`${userRoutes.subscriptions}/${userId}`);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
+export const userPlans = async(userId:string)=>{
+    try {
+        const response = await ApiGatway.get(`${userRoutes.plans}/${userId}`);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
+export const purchaseSubscription = async(subscriptionId:string,userId:string)=>{
+    try {
+        const response = await ApiGatway.post(`${userRoutes.subscriptions}/${subscriptionId}`,{userId});
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
+export const viewDetailes = async(customerId:string)=>{
+    try {
+        const response = await ApiGatway.get(`${userRoutes.customer}/${customerId}`);    
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
+export const reportCourse = async (content:string,courseId:string,report:string,userId:string)=>{
+    try {
+        const response = await ApiGatway.post(`${userRoutes.report}/${userId}`,{content,courseId,report});    
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+export const getReports = async (courseId:string,userId:string)=>{
+    try {
+        const response = await ApiGatway.get(`${userRoutes.report}/${userId}/${courseId}`);    
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
+export const sendNotification = async(recipientId:string,senderId:string)=>{
+    try {
+        const response = await ApiGatway.post(userRoutes.notification,{recipientId,senderId});
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+export const getNotifications = async(recipientId:string)=>{
+    try {
+        const response = await ApiGatway.get(`${userRoutes.notification}/${recipientId}`);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}

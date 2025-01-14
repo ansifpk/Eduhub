@@ -1,4 +1,4 @@
-import { Navigate, replace, Route, Routes, useNavigate } from "react-router-dom";
+import { Navigate,  Route, Routes, } from "react-router-dom";
 import InstructorLogin from "../pages/instructor/InstructorLogin.tsx";
 import InstructorHome from "../pages/instructor/InstructorHome.tsx";
 import ErrorPage from '../pages/ErrorPage';
@@ -10,10 +10,14 @@ import InstructorRegister from "@/pages/instructor/InstructorRegister.tsx";
 import InstructorEditProfile from "@/pages/instructor/InstructorEditProfile.tsx";
 import InstructorCreteCourse from "@/pages/instructor/InstructorCreateCourse.tsx";
 import InstructorEditcourse from "@/pages/instructor/InstructorEditCourse.tsx";
-import CourseCreatePage from "@/Components/instructor/courseCreatePage.tsx";
-import ExamplePage from "@/Components/ExamplePage.tsx";
-import Login from "@/pages/user/Login.tsx";
 import InstructorMessage from "@/pages/instructor/InstructorMessage.tsx";
+import InstructorSubscriptions from "@/pages/instructor/InstructorSubscriptions.tsx";
+import Subscriptions from "@/pages/instructor/Subscriptions.tsx";
+import InstructorPlans from "@/pages/instructor/InstructorPlans.tsx";
+import Success from "@/pages/instructor/success.tsx";
+import AddSubscription from "@/pages/instructor/AddSubscription.tsx";
+import SalesReports from "@/pages/instructor/SalesReports.tsx";
+// import Faile from "@/pages/instructor/faile.tsx";
 
 interface User{
   id:string,
@@ -45,6 +49,13 @@ const InstructorRoter = () => {
          <Route path='/courses' element={isInstructor?<InstructorListCourses/>:<InstructorLogin/>} />
          <Route path='/createCourse' element={isInstructor?<InstructorCreteCourse/>:<InstructorLogin/>} />
          <Route path='/editCourse/:courseId' element={isInstructor?<InstructorEditcourse/>:<InstructorLogin/>} />
+         <Route path='/subscriptions' element={isInstructor?<InstructorSubscriptions/>:<InstructorLogin/>} />
+         <Route path='/purchaseSubscription' element={isInstructor?<Subscriptions/>:<InstructorLogin/>} />
+         <Route path='/createSubscription' element={isInstructor?<AddSubscription/>:<InstructorLogin/>} />
+         <Route path='/success' element={isInstructor?<Success/>:<InstructorLogin/>} />
+         {/* <Route path='/faile' element={isInstructor?<Faile/>:<InstructorLogin/>} /> */}
+         <Route path='/plans' element={isInstructor?<InstructorPlans/>:<InstructorLogin/>} />
+         <Route path='/reports' element={isInstructor?<SalesReports/>:<InstructorLogin/>} />
          <Route path='*' element={<ErrorPage/>} />  
        </Routes>
     </>

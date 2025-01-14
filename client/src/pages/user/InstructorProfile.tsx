@@ -8,6 +8,9 @@ import {
   getInstructorRatings,
   getUserDetailes,
   instructorCourses,
+  instructorSubscriptions,
+  userPlans,
+  viewDetailes,
 } from "@/Api/user";
 import Footer from "@/Components/Footer/Footer";
 import Header from "@/Components/Header/Header";
@@ -36,6 +39,9 @@ import toast from "react-hot-toast";
 import { IUser } from "@/@types/chatUser";
 import { useSelector } from "react-redux";
 import moment from "moment";
+import { ISubcription } from "@/@types/subscriptionType";
+import { IUserSubscribe } from "@/@types/userSubscribe";
+import { IInstructorSubscribe } from "@/@types/instructorSubscribe";
 
 const InstructorProfile = () => {
   const { instructorId } = useParams();
@@ -48,6 +54,8 @@ const InstructorProfile = () => {
   const [review, setReview] = useState("");
   const navigate = useNavigate();
   const userId = useSelector((state: User) => state.id);
+  const [subscriptions, setSubscriptions] = useState<ISubcription[]>([]);
+  const [plans, setPlans] = useState<IUserSubscribe[]>([]);
 
   useEffect(() => {
     const fetching = async () => {
@@ -62,6 +70,18 @@ const InstructorProfile = () => {
       const review = await getInstructorRatings(instructorId!);
       if (review.success) {
         setReviews(review.ratings);
+      }
+      const subscriptions = await instructorSubscriptions(instructorId!);
+      if (subscriptions.success) {
+        setSubscriptions(subscriptions.subscriptions);
+      } else {
+        return toast.error(subscriptions.response.data.message);
+      }
+      const plans = await userPlans(userId);
+      if (plans.success) {
+        setPlans(plans.plans);
+      } else {
+        return toast.error(plans.response.data.message);
       }
     };
     fetching();
@@ -125,6 +145,19 @@ const InstructorProfile = () => {
       return toast.error(response.response.data.message);
     }
   };
+   
+  const goToDetailes = async(plan:IUserSubscribe)=>{
+    const response = await viewDetailes(plan.customerId);
+    if(response.success){
+      window.location.href = response.url;
+     return 
+    }else if(response.status == 403){
+      toast.error(response.response.data.message);
+      return navigate('/instructor/login');
+    }else{
+     return toast.error(response.response.data.message)
+    }
+ }
 
   const createMessageWithUser = async (recipientId: string) => {
     try {
@@ -142,7 +175,8 @@ const InstructorProfile = () => {
   };
 
   let wr =
-  "Hi everyone, I’m Ansif, a student on EduHub, and I’m thrilled to be here! This platform has been incredibly helpful in my learning journey. The variety of courses available, taught by expert instructors, has allowed me to dive deep into new areas and build valuable skills. What I love most about EduHub is the supportive community of like-minded learners who share the same passion for growth. With flexible learning options and expert guidance, EduHub makes it easy for anyone to improve their skills. I’m excited to continue learning and growing here, and I hope you are too!"
+    "Hi everyone, I’m Ansif, a student on EduHub, and I’m thrilled to be here! This platform has been incredibly helpful in my learning journey. The variety of courses available, taught by expert instructors, has allowed me to dive deep into new areas and build valuable skills. What I love most about EduHub is the supportive community of like-minded learners who share the same passion for growth. With flexible learning options and expert guidance, EduHub makes it easy for anyone to improve their skills. I’m excited to continue learning and growing here, and I hope you are too!";
+  console.log(plans, "planse", subscriptions, "subscriptions");
 
   return (
     <div className="bg-blue-200">
@@ -235,19 +269,40 @@ const InstructorProfile = () => {
                                   Price: {course.price}
                                 </p>
 
-                                <div className="space-y-1">
-                                  <Button
-                                    type="button"
-                                    onClick={() =>
-                                      navigate(
-                                        `/users/courseDetailes/${course._id}`
-                                      )
-                                    }
-                                    className="bg-[#49BBBD] text-sm  w-full text-white hover:bg-[#49BBBD]"
-                                  >
-                                    view Details
-                                  </Button>
-                                </div>
+                                {plans.map((plan) => {
+                                  const isSubscribed = subscriptions.some(
+                                    (value) => value._id === plan.subscriptionId._id
+                                  );
+                                  return (
+                                    <div key={plan.subscriptionId._id}>
+                                      {isSubscribed ? (
+                                        <Button
+                                          type="button"
+                                          onClick={() =>
+                                            navigate(
+                                              `/user/playCourse/${course?._id}`
+                                            )
+                                          }
+                                          className="w-full"
+                                        >
+                                          Go to class
+                                        </Button>
+                                      ) : (
+                                        <Button
+                                          type="button"
+                                          onClick={() =>
+                                            navigate(
+                                              `/users/courseDetailes/${course._id}`
+                                            )
+                                          }
+                                          className="bg-[#49BBBD] text-sm  w-full text-white hover:bg-[#49BBBD]"
+                                        >
+                                          view Details
+                                        </Button>
+                                      )}
+                                    </div>
+                                  );
+                                })}
                               </div>
                             </div>
                           ))}
@@ -465,6 +520,83 @@ const InstructorProfile = () => {
                           )}
                         </div>
                       </div>
+                    </ScrollArea>
+                  </CardBody>
+                </Card>
+              </Tab>
+              <Tab key="Subscriptions" title="Subscriptions">
+                <Card className="mx-3">
+                  <CardBody>
+                    <ScrollArea>
+                      <div className="relative flex">
+                        <div className="flex  mx-5 my-4 gap-3 m-auto ">
+                          {subscriptions.map((value, index) => (
+                            <div
+                              key={index}
+                              className="border w-full h-[300px] rounded-1"
+                            >
+                              <h4 className=" underline">Personal Plan</h4>
+                              <div className="  m-1">
+                                <div className="flex flex-col items-center justify-center h-[210px]">
+                                  <div>
+                                    {value.plan == "Monthly"
+                                      ? `Rs : ${value.price}/- per Month`
+                                      : `Rs : ${value.price}/- per Year`}
+                                  </div>
+                                  <div className="text-xs">
+                                    {value.plan == "Monthly"
+                                      ? `Billed monthly.`
+                                      : `Billed annually.`}
+                                  </div>
+                                  <div className="space-y-3 m-3">
+                                    {value.description.map((val, index) => (
+                                      <li className="text-xs" key={index}>
+                                        {val}
+                                      </li>
+                                    ))}
+                                  </div>
+                                </div>
+                          
+
+                                {plans.map((plan) => {
+                                  const isSubscribed = subscriptions.some(
+                                    (val) => val._id === plan.subscriptionId._id
+                                  );
+                                  return (
+                                    <div key={plan.subscriptionId._id}>
+                                      {isSubscribed ? (
+                                        <Button
+                                          type="button"
+                                          onClick={() =>
+                                           goToDetailes(plan)
+                                          }
+                                          className="w-full"
+                                        >
+                                          View detailes
+                                        </Button>
+                                      ) : (
+                                        <Button
+                                          type="button"
+                                          // onClick={() =>
+                                          //   navigate(
+                                          //     `/users/courseDetailes/${course._id}`
+                                          //   )
+                                          // }
+                                          className="bg-[#49BBBD] text-sm  w-full text-white hover:bg-[#49BBBD]"
+                                        >
+                                         Start subscription
+                                        </Button>
+                                      )}
+                                    </div>
+                                  );
+                                })}
+
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <ScrollBar orientation="horizontal" />
                     </ScrollArea>
                   </CardBody>
                 </Card>

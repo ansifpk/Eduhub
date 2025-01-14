@@ -63,6 +63,11 @@ const ProfileNavbar = () => {
                   ? "text-black px-4 py-1 rounded-full bg-gray-100  no-underline"
                   : "no-underline text-white"
               } to={'/profile/coupons'}>Coupons</NavLink></li>
+                <li><NavLink end  className={({ isActive }) =>
+                isActive
+                  ? "text-black px-4 py-1 rounded-full bg-gray-100  no-underline"
+                  : "no-underline text-white"
+              } to={'/profile/Plans'}>Plans</NavLink></li>
                <li ><NavLink end  className={({ isActive }) =>
                 isActive
                   ? "text-black px-4 py-1 rounded-full bg-gray-100  no-underline"

@@ -73,6 +73,42 @@ export default function InstructorAside() {
         >
           Messages
         </NavLink>
+      <NavLink
+          to={"/instructor/subscriptions"}
+          className={({isActive})=>cn(
+            buttonVariants({ variant: "ghost" }),
+            isActive
+              ? "bg-gray-600 hover:bg-gray-600 text-white no-underline"
+              : "hover:bg-transparent hover:underline text-white no-underline",
+            "justify-start"
+          )}
+        >
+          Subscriptions
+        </NavLink>
+      <NavLink
+          to={"/instructor/plans"}
+          className={({isActive})=>cn(
+            buttonVariants({ variant: "ghost" }),
+            isActive
+              ? "bg-gray-600 hover:bg-gray-600 text-white no-underline"
+              : "hover:bg-transparent hover:underline text-white no-underline",
+            "justify-start"
+          )}
+        >
+          Your Planse
+        </NavLink>
+      <NavLink
+          to={"/instructor/reports"}
+          className={({isActive})=>cn(
+            buttonVariants({ variant: "ghost" }),
+            isActive
+              ? "bg-gray-600 hover:bg-gray-600 text-white no-underline"
+              : "hover:bg-transparent hover:underline text-white no-underline",
+            "justify-start"
+          )}
+        >
+          Reports
+        </NavLink>
       <li
           
           onClick={handleLogout}
