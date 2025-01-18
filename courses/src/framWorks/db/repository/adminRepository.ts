@@ -1,18 +1,40 @@
+import { DeleteResult } from "mongoose";
 import { ICoupon } from "../../../entities/coupon";
 import { ICourse } from "../../../entities/course";
 import { IReport } from "../../../entities/report";
+import { ISection } from "../../../entities/section";
 import { IAdminRepository } from "../../../useCases/interfaces/repository/IAdminRepository";
 import { couponModel } from "../mongodb/models/couponsModel";
 import { Course } from "../mongodb/models/courseModel";
 import { reportModel } from "../mongodb/models/reportModel";
+import { SectionModel } from "../mongodb/models/sectionModel";
 
 export class AdminRepository implements IAdminRepository{
     constructor(
         private courseModel:typeof Course,
         private couponModels:typeof couponModel,
         private reportModels:typeof reportModel,
+        private sectionModel:typeof SectionModel,
 
     ){}
+   
+
+    async deleteLecture(lectureUrl: string): Promise<ISection | void> {
+       try {
+        const updatedSection = await SectionModel.findOneAndUpdate(
+            { 'lectures.content.video_url': lectureUrl }, 
+            { $pull: { lectures: { 'content.video_url': lectureUrl } } },
+            { new: true } 
+          );
+        if(updatedSection){
+            console.log('updatedSection',updatedSection);
+            
+            return updatedSection
+        }
+       } catch (error) {
+        console.error(error)
+       }
+    }
    
 
     async findReports(): Promise<IReport[] | void> {
@@ -44,6 +66,16 @@ export class AdminRepository implements IAdminRepository{
         } catch (error) {
            console.error(error)
         }
+   }
+   async findReportsByUrl(lectureUrl:string):Promise<DeleteResult|void>{
+    try {
+       const reports = await this.reportModels.deleteMany({content:lectureUrl})
+       if(reports){
+        return reports
+       }
+    } catch (error) {
+      console.error(error)
+    }
    }
     async deleteCoupon(couponId: string): Promise<ICoupon | void> {
         try {
@@ -78,9 +110,9 @@ export class AdminRepository implements IAdminRepository{
         console.error(error)
        }
     }
-    async find(search:string,sort:string): Promise<ICourse[]|void> {
+    async find(search:string,sort:string,page:number): Promise<ICourse[]|void> {
        try {
-        console.log(search,sort,"repo");
+
         let queryData:any = {}
         let sortQuery:any = {}
             
@@ -108,10 +140,14 @@ export class AdminRepository implements IAdminRepository{
               if(search){
                 queryData.title = {$regex:search,$options: "i"}
               }
-        const courses =  await this.courseModel.find(queryData).sort(sortQuery).populate("students").populate("sections");
-        if(courses){
-            return courses;
-        }
+             
+              let limit = 4;
+            const courses =  await this.courseModel.find({...queryData}).limit(limit * 1).skip((page - 1) * limit).sort(sortQuery).populate("students").populate("sections").exec()
+          
+            
+            if(courses){
+                return courses;
+            }
        } catch (error) {
         console.error(error)
        }
@@ -120,7 +156,24 @@ export class AdminRepository implements IAdminRepository{
     list(courseId: string): Promise<ICourse | void> {
         throw new Error("Method not implemented.");
     }
-    
+     
+    async  getPages(search: string, sort: string): Promise<number | void> {
+        try {
+            let queryData:any = {}
+                  if(search){
+                    queryData.title = {$regex:search,$options: "i"}
+                  }
+            const limit = 4;
+            const pages =  await this.courseModel.countDocuments({...queryData})
+            const  count = Math.ceil(pages / limit)
+             if(pages>=0){
+                 return count;
+             }
+            
+           } catch (error) {
+            console.error(error)
+           }
+    }
 
      async findCouponById(couponId:string):Promise<ICoupon|void>{
         try {
@@ -139,6 +192,26 @@ export class AdminRepository implements IAdminRepository{
             
             if(courses){
                 return courses.sort((a,b)=>b.students!.length - a.students!.length).slice(0,5);
+            }
+           } catch (error) {
+            console.error(error)
+           }
+    }
+
+    async top5Rated(): Promise<ICourse[] | void> {
+        try {
+            // const courses = await this.courseModel.find()
+            const courses = await this.courseModel.aggregate([
+                {$lookup: {
+                from: "ratings", 
+                localField: "_id", 
+                foreignField: "courseId",
+                as: "courseReviews" 
+              }}
+            ])
+
+            if(courses){
+                return courses
             }
            } catch (error) {
             console.error(error)

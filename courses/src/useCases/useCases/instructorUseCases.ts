@@ -39,12 +39,12 @@ interface ReqUp {
 export class InstructorUseCase implements IInstructorUseCase {
   constructor(
     private instructorRepository: IInstructorrepository,
-    private bcrypt: IRandomName,
-    private s3bucketrepository: IS3bucket,
     private cloudinery: ICloudinary,
     private sendMail: ISentEmail,
     
   ) {}
+
+ 
   async editTest(testId: string, testData: ITest, next: NextFunction): Promise<ITest | void> {
     try {
          const checkTest = await this.instructorRepository.findTest(testId);
@@ -63,8 +63,7 @@ export class InstructorUseCase implements IInstructorUseCase {
 
  async addTest(courseId: string, testData: ITest, next: NextFunction): Promise<ITest | void> {
     try {
-      console.log("add test");
-      
+     
       const course = await this.instructorRepository.findById(courseId);
       if(!course){
         return next(new ErrorHandler(400,"Course not Found"));
@@ -92,7 +91,6 @@ export class InstructorUseCase implements IInstructorUseCase {
            for(let key in files){
              if(key == "courseVideo"){
               for(let i=0;i<files[key].length;i++){
-                // console.log(files[key][i]);
                 let sectionIdx = parseInt(files[key][i].originalname.slice(7,8))
                 let lectureIdx = parseInt(files[key][i].originalname.slice(16,17))
 
@@ -107,22 +105,14 @@ export class InstructorUseCase implements IInstructorUseCase {
               }
              }
            }
-console.log("sratr");
 
            for(let i=0 ; i<sectionData.bodyData.length;i++ ){
                  if(course.sections.includes(sectionData.bodyData[i]._id!)){
-                  console.log(sectionData.bodyData[i]._id,"hu");
                   
                   }else{
-                    // console.log(sectionData.bodyData[i],"first");
-                    
                     const section = await this.instructorRepository.upload(sectionData.bodyData[i])
-                    if(section){
-                      
-                     const course = await this.instructorRepository.addSecton(sectionData.courseId,section._id!)
-                     if(course){
-                       console.log(course,"success");
-                     }
+                    if(section){ 
+                      await this.instructorRepository.addSecton(sectionData.courseId,section._id!)
                     }
                  }
            
@@ -208,6 +198,33 @@ console.log("sratr");
       } catch (error) {
         console.error(error)
       }
+  }
+  async top5Courses(userId: string, next: NextFunction): Promise<ICourse[] | void> {
+    try {
+      const courses = await this.instructorRepository.findTop5(userId)
+      
+      if(courses){
+       return courses.sort((a,b)=>b.students?.length!-a.students?.length!).slice(0,5)
+      }
+    } catch (error) {
+      console.error(error)
+   }
+  }
+  async topRated(userId: string, next: NextFunction): Promise<ICourse[] | void> {
+    try {
+      const datas = await this.instructorRepository.findTopRated(userId)
+      console.log(datas);
+      if(datas){
+        const courses =  datas.filter((value)=>value.courseReviews?.length!>0)
+         .filter((val)=>val.courseReviews?.find((review)=>review.stars>=2.5))
+        if(courses){
+          return courses.slice(0,5)
+        }
+      }
+      
+    } catch (error) {
+      console.error(error)
+   }
   }
   async createCourse(courseData: Req,next:NextFunction): Promise<ICourse | void> {
 

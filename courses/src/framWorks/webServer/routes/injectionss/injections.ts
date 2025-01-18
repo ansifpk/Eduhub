@@ -26,12 +26,12 @@ const sendMail = new SentEmail()
 const s3bucketrepository = new S3bucket()
 const cloudinery = new CloudinaryV2()
 const instructorRepository = new InstructorRepository(Course,SectionModel,testModel)
-const instructorUseCase = new InstructorUseCase(instructorRepository,bcrypt,s3bucketrepository,cloudinery,sendMail);
+const instructorUseCase = new InstructorUseCase(instructorRepository,cloudinery,sendMail);
 const instructorController = new InstructorController(instructorUseCase)
 
 
 //admin
-const adminRepository = new AdminRepository(Course,couponModel,reportModel)
+const adminRepository = new AdminRepository(Course,couponModel,reportModel,SectionModel)
 const adminUseCase = new AdminUseCase(adminRepository)
 const adminController = new AdminController(adminUseCase)
 

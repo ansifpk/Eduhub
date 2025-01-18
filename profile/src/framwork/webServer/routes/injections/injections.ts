@@ -18,10 +18,10 @@ import { ratingModel } from "../../../db/mongoDB/models/ratingModel";
 const cloudinary = new CloudinaryV2()
 // user
 const userRepository = new UserRepository(userModel,cartModel,courseModel,ratingModel)
-const userUseCase = new UserUseCases(userRepository)
+const userUseCase = new UserUseCases(userRepository,cloudinary)
 const userController = new UserController(userUseCase)
 // instructor
-const instructorRepository = new InstructorRepository(userModel)
+const instructorRepository = new InstructorRepository(userModel,ratingModel)
 const instructorUseCase = new InstructorUseCase(instructorRepository,cloudinary)
 const instructorController = new InstructorController(instructorUseCase)
 // admin

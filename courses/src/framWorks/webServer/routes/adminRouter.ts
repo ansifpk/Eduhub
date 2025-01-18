@@ -4,10 +4,17 @@ import { isAdmin } from "../midllewares/isAuth";
 
 export function AdminRouter(router:Router){
      router.get("/getCourses",isAdmin,(req,res,next)=>{
+
         adminController.getCourses(req,res,next)
      })
      router.get("/course",isAdmin,(req,res,next)=>{
         adminController.top5Courses(req,res,next)
+     })
+     router.patch("/course",isAdmin,(req,res,next)=>{
+        adminController.deletLecture(req,res,next)
+     })
+     router.get("/top5Course",isAdmin,(req,res,next)=>{
+        adminController.top5RatedCourses(req,res,next)
      })
      router.get("/coupon",isAdmin,(req,res,next)=>{
         adminController.getCoupons(req,res,next)

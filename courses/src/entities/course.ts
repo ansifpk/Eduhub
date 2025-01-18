@@ -1,3 +1,4 @@
+import { IRating } from "./ratings";
 import { ISection } from "./section";
 import { Iuser } from "./user";
 
@@ -14,6 +15,7 @@ export interface ICourse{
     price:number,
     test?:string;
     subscription:boolean,
+    courseReviews?:IRating[],
     image:{
         _id:string,
         image_url:string

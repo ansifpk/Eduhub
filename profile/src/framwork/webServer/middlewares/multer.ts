@@ -6,5 +6,6 @@ const upload = multer({storage:storage,limits: {
 
 export default upload.fields([
   { name: 'certificateImage', maxCount: 1 },  
-  { name: 'cvImage', maxCount: 1 }  
-])
+  { name: 'cvImage', maxCount: 1 }  ,
+  { name: 'profileImage', maxCount: 1 }  ,
+]);

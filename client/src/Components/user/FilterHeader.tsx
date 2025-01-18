@@ -19,8 +19,10 @@ import { ICourse } from "@/@types/courseType";
 interface Props {
   categories: ICategory[];
   onsendcourse: (courses: ICourse[]) => void;
+  onsendpages: (pages: number) => void;
+  page:number;
 }
-const FilterHeader: React.FC<Props> = ({ categories, onsendcourse }) => {
+const FilterHeader: React.FC<Props> = ({ categories, onsendcourse,onsendpages,page }) => {
   const [topics, setTopics] = useState<string[]>([]);
   const [category, setCategory] = useState("");
   const [topic, setTopic] = useState("");
@@ -30,9 +32,10 @@ const FilterHeader: React.FC<Props> = ({ categories, onsendcourse }) => {
 
   useEffect(() => {
     const courses = async () => {
-      const data = await getCourses(category,topic,level,search,sort);
+      const data = await getCourses(category,topic,level,search,sort,page);
       if (data.success) {
         onsendcourse(data.courses);
+        onsendpages(data.pages);
       }
     };
     courses();
@@ -46,7 +49,7 @@ const FilterHeader: React.FC<Props> = ({ categories, onsendcourse }) => {
       });
     };
     cate();
-  }, [categories, category, topic, level, search,search,sort]);
+  }, [categories, category, topic, level, search,search,sort,page]);
 
   return (
     <div

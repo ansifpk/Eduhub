@@ -5,6 +5,7 @@ import { IAdminRepository } from "../interfaces/repository/IAdminRepository";
 import { IAdminUseCase } from "../interfaces/useCases/IadminUseCase";
 import ErrorHandler from "../middlewares/errorHandler";
 import { IReport } from "../../entities/report";
+import { ISection } from "../../entities/section";
 
 export class AdminUseCase implements IAdminUseCase{
     constructor(private adminRepository:IAdminRepository,){}
@@ -97,10 +98,16 @@ export class AdminUseCase implements IAdminUseCase{
            }
     
     }
-    async fetchCourses(search:string,sort:string): Promise<ICourse[]|void> {
+    async fetchCourses(search:string,sort:string,page:number): Promise<{courses:ICourse[],pages:number}|void> {
       try {
-        const courses = await this.adminRepository.find(search,sort)
-        if(courses) return courses
+
+        const count = await this.adminRepository.getPages(search,sort);
+        const pages = count as number 
+        const courses = await this.adminRepository.find(search,sort,page)
+      
+        if(courses && pages>=0) {
+            return {courses,pages}
+        }
       } catch (error) {
         console.error(error)
       }
@@ -114,10 +121,28 @@ export class AdminUseCase implements IAdminUseCase{
             console.error(error)
           }
     }
-
-    async listCourse(courseId: string): Promise<ICourse | void> {
+    
+    async top5RatedCourses(next: NextFunction): Promise<ICourse[] | void> {
         try {
+                const courses = await this.adminRepository.top5Rated()
+                const data = courses?.filter((value)=>value.courseReviews?.length!>0)
+                let topCourse = data?.filter((value)=>value.courseReviews?.find((val)=>val.stars>=2.5))
+                if(topCourse){
+                    return topCourse.slice(0,5)
+                } 
            
+          } catch (error) {
+            console.error(error)
+          }
+    }
+
+    async deletLecture(lectureUrl:string,next:NextFunction):Promise<ISection|void> {
+        try {
+            const reports  =  await this.adminRepository.findReportsByUrl(lectureUrl);
+           const section = await this.adminRepository.deleteLecture(lectureUrl);
+           if(section){
+            return section;
+           }
             
           } catch (error) {
             console.error(error)

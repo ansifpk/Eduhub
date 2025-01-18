@@ -13,12 +13,15 @@ import { addToCart, userCart } from "@/Api/user";
 import { useSelector } from "react-redux";
 import { User } from "@/@types/userType";
 import { ICart } from "@/@types/cartType";
+import { Pagination, Stack } from "@mui/material";
 
 const Courses = () => {
   const [courses, setCourses] = useState<ICourse[]>([]);
   const [cart, setCart] = useState<ICart>();
   const [categories, setCategories] = useState<ICategory[]>([]);
   const userId = useSelector((state: User) => state.id);
+  const [page, setPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(0);
 
   useEffect(() => {
     const category = async () => {
@@ -39,6 +42,9 @@ const Courses = () => {
   const handleCoursesfromChild = (courses: ICourse[]) => {
     setCourses(courses);
   };
+  const handlepagesfromChild = (pages:number) => {
+    setTotalPage(pages);
+  };
 
   const handleHart = async (courseId: string) => {
     const data = await addToCart(courseId, userId);
@@ -53,13 +59,20 @@ const Courses = () => {
       toast.error(data.response.data.message);
     }
   };
+console.log('totalPage',totalPage);
+
+  const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    setPage(value);
+  };
 
   return (
     <div>
       <Header />
       <FilterHeader
         onsendcourse={handleCoursesfromChild}
+        onsendpages={handlepagesfromChild}
         categories={categories}
+        page={page}
       />
       {courses.length > 0 ? (
         <div className="relative flex justify-content-center ">
@@ -145,7 +158,11 @@ const Courses = () => {
           </div>
         </>
       )}
-
+        <Stack className="flex items-center justify-center" spacing={2}>
+                    <div>
+                        <Pagination count={totalPage} page={page} onChange={handleChange} />
+                    </div>
+          </Stack>
       <Footer />
     </div>
   );

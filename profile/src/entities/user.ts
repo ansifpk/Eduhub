@@ -1,3 +1,4 @@
+import { IRating } from "./ratings"
 
 export interface Iuser {
     _id:string,
@@ -19,7 +20,7 @@ export interface Iuser {
     },
     isBlock:boolean,
     createdAt:Date,
-    reviewCount?:number,
+    instructorReviews?:IRating[],
     avatar:{
         id:string,
         avatar_url:string

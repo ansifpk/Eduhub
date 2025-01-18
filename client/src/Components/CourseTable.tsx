@@ -139,7 +139,7 @@ export function Coursestable() {
     option4: true,
     answer: true
   })));
-  // console.log('courses',courses);
+  
   
   const handleQuestionChange = (index: number,key:keyof Question, errKey:keyof QuestionError, value: string) => {
     const updatedQuestions = [...questions];
@@ -147,7 +147,7 @@ export function Coursestable() {
     item[key]=value;
     const err = [...errors];
     let errItem = err[index]    
-    if(value.length>2){
+    if(value.length>0){
       errItem[errKey]=false;
       setErrors(err)
     }else{    
@@ -177,7 +177,6 @@ export function Coursestable() {
   }
 
   const addStates = (test:ITest[]) => {  
-    // console.log(test,"/l");
     
     setQuestions(test);
     setErrors(Array.from({ length: 5 }, () => ({
@@ -210,6 +209,7 @@ export function Coursestable() {
         setCourses(data.courses);
         addClose()
         clearStates()
+        
         return toast.success(`Successfully added the Test`)
       }
       
@@ -381,11 +381,11 @@ export function Coursestable() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Title</TableHead>
-                <TableHead>Thumbnail</TableHead>
-                <TableHead>Created At</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Price</TableHead>
+                <TableHead className="text-xs">Title</TableHead>
+                <TableHead className="text-xs">Thumbnail</TableHead>
+                <TableHead className="text-xs">Created At</TableHead>
+                <TableHead className="text-xs">Status</TableHead>
+                <TableHead className="text-xs">Price</TableHead>
                 <TableHead align="center">Students</TableHead>
                 {/* <TableHead align="center">Test</TableHead> */}
                 <TableHead>Action</TableHead>
@@ -395,11 +395,12 @@ export function Coursestable() {
               {listingCourses.length > 0 ? (
                 listingCourses.map((val: ICourse, index) => (
                   <TableRow key={index}>
-                    <TableCell className="text-xs">{val.title}</TableCell>
-                    <TableCell className="text-xs">{val.thumbnail}</TableCell>
+                    <TableCell className=" text-xs ">{val.title}</TableCell>
+                    <TableCell className="text-xs ">{val.thumbnail}</TableCell>
                     <TableCell className="text-xs">{val.createdAt.slice(0, 10)}</TableCell>
                     <TableCell >
                       <Badge
+                      
                         className={
                           val.isListed
                             ? "bg-black text-success text-xs"
@@ -414,64 +415,15 @@ export function Coursestable() {
                         {val.price}
                      
                     </TableCell>
-                   
-                    {/* <TableCell>
-                      <Sheet key={"left"}>
-                        <SheetTrigger>
-                          <Button
-                            className="bg-black border border-white rounded-full"
-                            type="button"
-                          >
-                            students
-                          </Button>
-                        </SheetTrigger>
-                        <SheetContent className="w-[900px] h-[900px] ">
-                          <SheetHeader>
-                            <SheetTitle>Studnets list</SheetTitle>
-                            <SheetDescription>
-                              This action cannot be undone. This will
-                              permanently delete your account and remove your
-                              data from our servers.
-                            </SheetDescription>
-                          </SheetHeader>
-                          <Table className="rounded-md border">
-                            <TableHeader>
-                              <TableRow>
-                                <TableHead>name</TableHead>
-                                <TableHead>email</TableHead>
-                                <TableHead>Created At</TableHead>
-                              </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                              {val.students?.length! > 0 ? (
-                                val.students?.map((student, index) => (
-                                  <TableRow key={index}>
-                                    <TableCell>{student.name}</TableCell>
-                                    <TableCell>{student.email}</TableCell>
-                                    <TableCell>
-                                      "{val.createdAt.slice(0, 10)}"
-                                    </TableCell>
-                                  </TableRow>
-                                ))
-                              ) : (
-                                <TableRow>
-                                  <TableCell align="center" colSpan={20}>
-                                    No students purchased this course
-                                  </TableCell>
-                                </TableRow>
-                              )}
-                            </TableBody>
-                          </Table>
-                        </SheetContent>
-                      </Sheet>
-                    </TableCell> */}
+                  
                     <TableCell align="center">
                           <Button
+                            size={"sm"}
                             onClick={()=>{
                               setStudents(val?.students!)
                               onOpen()
                             }}
-                            className="bg-black text-white rounded-full border-1 border-white"
+                            className="bg-black text-xs text-white rounded-full border-1 border-white"
                           >
                             View Students
                           </Button>
@@ -584,6 +536,7 @@ export function Coursestable() {
                               < WorkspacePremiumIcon className="text-warning" />
                             </DropdownMenuItem>
                             }
+                           
                           </DropdownMenuContent>
                         </DropdownMenu>
                         <DialogContent>

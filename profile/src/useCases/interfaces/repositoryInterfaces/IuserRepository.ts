@@ -7,6 +7,7 @@ export interface IUserRepository{
     //user
     findById(userId:string):Promise<Iuser|void>
     findByIdAndUpdate(userId:string,name:string,thumbnail:string,aboutMe:string,):Promise<Iuser|void>
+    uploadProfile(userId:string,avatar:{id:string,avatar_url:string}):Promise<Iuser|void>
      //course
      findCourse(courseId:string):Promise<ICourse|void>
     

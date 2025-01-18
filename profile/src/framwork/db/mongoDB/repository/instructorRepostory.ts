@@ -1,13 +1,27 @@
 import { ICourse } from "../../../../entities/course";
+import { IRating } from "../../../../entities/ratings";
 import { Iuser } from "../../../../entities/user";
 import { IInstructorRepository } from "../../../../useCases/interfaces/repositoryInterfaces/IinstructorInterface";
+import { ratingModel } from "../models/ratingModel";
 import { userModel } from "../models/userModel";
 
 
 export class InstructorRepository implements IInstructorRepository{
-    constructor(private userModels:typeof userModel){}
+    constructor(
+        private userModels:typeof userModel,
+        private ratingModels:typeof ratingModel,
+    ){}
 
-  
+    async findRatings(userId: string): Promise<IRating[] | void> {
+        try {
+            const user = await this.ratingModels.find({instructorId:userId}).sort({createdAt:-1}).limit(5).populate("userId")
+            if(user){
+               return user
+            }
+          } catch (error) {
+           
+          }
+    }
 
     // user
 

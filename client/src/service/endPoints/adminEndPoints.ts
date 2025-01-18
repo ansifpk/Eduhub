@@ -15,6 +15,7 @@ const adminRoutes = {
     logout:'/admin/logout',
     coupon:'/course/course/admin/coupon',
     report:'/course/course/admin/report',
+    top5RatedCourse:'/course/course/admin/top5Course',
      //!message
      message:"/message/message/message",
      notification:"/message/message/notification",

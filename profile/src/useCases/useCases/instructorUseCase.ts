@@ -5,14 +5,8 @@ import {  IInstructorRepository } from "../interfaces/repositoryInterfaces/Iinst
 import { ICloudinary } from "../interfaces/serviceInterfaces/ICloudinery";
 import { IInstructorUseCase } from "../interfaces/useCasesInterfaces/IinstructorUsecase";
 import ErrorHandler from "../middlewares/errorHandler";
-interface FileData {
-    fieldname: string;
-    originalname: string;
-    encoding: string;
-    mimetype: string;
-    buffer: Buffer;
-    size: number;
-  }
+import { IRating } from "../../entities/ratings";
+
   interface Req {
   bodyData:{
     email:string,
@@ -44,6 +38,16 @@ export class InstructorUseCase implements IInstructorUseCase{
         private instructorRepository:IInstructorRepository,
         private cloudinary:ICloudinary,
     ){}
+    async ratings(userId: string, next: NextFunction): Promise<IRating[] | void> {
+       try {
+        const reports = await this.instructorRepository.findRatings(userId);
+        if(reports){
+            return reports;
+        }
+       } catch (error) {
+        console.error(error)
+       }
+    }
     async register(userData:Req,next:NextFunction): Promise<Iuser | void> {
         
         const user = await this.instructorRepository.findByEmail(userData.bodyData.email)

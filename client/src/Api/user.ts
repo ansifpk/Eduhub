@@ -133,9 +133,9 @@ export const newPassword = async (email:string,password:string) =>{
         return error 
     }
 }
-export const getCourses = async (category:string ="",topic:string = "",level:string="",search:string = "",sort:string="") =>{
+export const getCourses = async (category:string ="",topic:string = "",level:string="",search:string = "",sort:string="",page:number) =>{
     try {
-        const response = await ApiGatway.get(`${userRoutes.getCourses}?category=${category}&&topic=${topic}&&level=${level}&&search=${search}&&sort=${sort}`);
+        const response = await ApiGatway.get(`${userRoutes.getCourses}?category=${category}&&topic=${topic}&&level=${level}&&search=${search}&&sort=${sort}&&page=${page}`);
         return response.data
     } catch (error) {
         return error 
@@ -431,6 +431,18 @@ export const sendNotification = async(recipientId:string,senderId:string)=>{
 export const getNotifications = async(recipientId:string)=>{
     try {
         const response = await ApiGatway.get(`${userRoutes.notification}/${recipientId}`);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+export const changeProfileImage = async(userId:string,formData:object)=>{
+    try {
+        const response = await ApiGatway.patch(`${userRoutes.profileImage}/${userId}`,formData,{
+            headers:{
+                'Content-Type':"multipart/form-data"
+            }
+        });
         return response.data
     } catch (error) {
         return error 

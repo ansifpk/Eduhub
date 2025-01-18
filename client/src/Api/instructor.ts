@@ -1,45 +1,8 @@
 import ApiGatway from "@/service/axios";
-import { axInstence } from "@/service/client";
 import instructorRoutes from "@/service/endPoints/instructorEndPoints";
 import imageCompression from 'browser-image-compression'
  
-// import { File } from "buffer";
-// interface Section {
-//     id: number;
-//     sessionTitle: string;
-//     isExpanded: boolean;
-//     lectures: Lecture[];
-//   }
-  
-//   interface Lecture {
-//     id: number;
-//     title: string;
-//     content: {
-//         _id:string,
-//         video_url: File | string;
-//     }
-//     duration: string;
-//     type: string;
-//   }
-  
-// interface ApiSection {
-//     id: number;
-//     sessionTitle: string;
-//     isExpanded: boolean;
-//     lectures: ApiLecture[];
-//   }
-  
-//   interface ApiLecture {
-//     id: number;
-//     title: string;
-//     content: {
-//         _id:string,
-//         video_url: string | null;
-//     }|null
-//     duration: string;
-//     type: string;
-//   }
-  
+
 interface Iuser {
     email:string,
     name:string,
@@ -85,14 +48,10 @@ export const register = async (instructorData:Iuser) =>{
           
           if (instructorData.cv.cv_url instanceof File) {
             const newCv = await imageCompression(instructorData.cv.cv_url, { maxSizeMB: 1, maxWidthOrHeight: 800, useWebWorker: true })
-          
+
             formData.append("cvImage",newCv)
           }
-        //  formData.append("certificateImage",instructorData.certificate.certificate_url)
-        //  formData.append("cvImage",instructorData.cv.cv_url)
 
-          console.log("nc");
-          
          const response = await ApiGatway.patch(instructorRoutes.register,formData,{
             headers:{
                 'Content-Type':"multipart/form-data"
@@ -189,22 +148,6 @@ export const editTestToCourse = async(testData:object,testId:string)=>{
     }
 }
 
-export const getStudents = async () =>{
-    try {
-        const response = await ApiGatway.get(instructorRoutes.getStudents);       
-        return response.data
-    } catch (error) {
-        return error 
-    }
-}
-// export const orders = async () =>{
-//     try {
-//         const response = await ApiGatway.get(instructorRoutes.orders);       
-//         return response.data
-//     } catch (error) {
-//         return error 
-//     }
-// }
 export const editCourse = async(courseData:object)=>{
     try {
         
@@ -357,3 +300,30 @@ export const getOrders = async(userId:string)=>{
         return error 
     }
 }
+export const getTop5Courses = async(userId:string)=>{
+    try {
+        const response = await ApiGatway.get(`${instructorRoutes.top5Courses}/${userId}`);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+export const getTop5RatedCourses = async(userId:string)=>{
+    try {
+        const response = await ApiGatway.get(`${instructorRoutes.top5RatedCourses}/${userId}`);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+export const getRecentRatings = async(userId:string)=>{
+    try {
+        const response = await ApiGatway.get(`${instructorRoutes.ratings}/${userId}`);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
+
+

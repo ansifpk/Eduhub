@@ -36,39 +36,47 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/Components/ui/select";
+import { Pagination, Stack } from "@mui/material";
 
 const AdminListStudents = () => {
   const [student, setStudents] = useState([]);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(0);
 
   useEffect(() => {
     const fetchAllStudents = async () => {
-      const response = await students(search,sort);
-      setStudents(response);
+      const response = await students(search,sort,page);
+      setStudents(response.students);
+      setTotalPage(response.pages);
     };
     fetchAllStudents();
-  }, [search,sort]);
-  console.log(sort);
+  }, [search,sort,page]);
+  // console.log(sort);
 
   const handleBlockStudents = async (userId: string) => {
     const response = await blockUser(userId);
     if (response.success) {
       if (response.data.isBlock) {
-        const res = await students();
-        setStudents(res);
+        const res = await students(search,sort,page);
+        setStudents(res.students);
+        setTotalPage(res.pages);
         toast.success("Successfully Block User");
         return;
       } else {
-        const res = await students();
-        setStudents(res);
+        const res = await students(search,sort,page);
+        setStudents(res.students);
+        setTotalPage(res.pages);
         return toast.success("Successfully UnBLock User");
       }
     } else {
       return toast.error(response.response.data.message);
     }
   };
-
+  const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    setPage(value);
+  };
   return (
     <div className="container-fluid ">
       <div className="row">
@@ -203,6 +211,11 @@ const AdminListStudents = () => {
                   )}
                 </TableBody>
               </Table>
+              <Stack className="flex items-center justify-center" spacing={2}>
+                    <div>
+                        <Pagination count={totalPage} page={page} onChange={handleChange} />
+                    </div>
+              </Stack>
             </Card>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import { NextFunction } from "express";
 import { ICourse } from "../../../entities/course";
 import { ITest } from "../../../entities/test";
+import { IRating } from "../../../entities/ratings";
 
 export  interface  IInstructorUseCase {
    fetchCourses(instructorId:string,search : string,sort:string):Promise<ICourse[]|void>
@@ -12,4 +13,7 @@ export  interface  IInstructorUseCase {
    listCourse(courseId:string,next:NextFunction):Promise<ICourse|void>
    addTest(courseId:string,testData:ITest,next:NextFunction):Promise<ITest|void>
    editTest(testId:string,testData:ITest,next:NextFunction):Promise<ITest|void>
+   top5Courses(userId:string,next:NextFunction):Promise<ICourse[]|void>
+   topRated(userId:string,next:NextFunction):Promise<ICourse[]|void>
+   
 }

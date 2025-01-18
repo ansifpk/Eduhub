@@ -88,19 +88,46 @@ export class AdminController{
     async getCourses(req:Request,res:Response,next:NextFunction){
         
         try {
-            const {search,sort} = req.query;
-            const courses = await this.adminUseCase.fetchCourses(search as string,sort as string);
-            return res.send(courses)
+            const {search,sort,page} = req.query;
+            const courses = await this.adminUseCase.fetchCourses(search as string,sort as string,parseInt(page as string));
+            if(courses){
+                return res.send({courses:courses.courses,pages:courses.pages})
+            }
         } catch (error) {
             console.error(error)
         }
     }
     
     async top5Courses(req:Request,res:Response,next:NextFunction){
-        
         try {
             const courses = await this.adminUseCase.top5Courses(next);
-            return res.send(courses)
+            if(courses){
+                return res.send(courses)
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    async top5RatedCourses(req:Request,res:Response,next:NextFunction){
+        
+        try {
+            const courses = await this.adminUseCase.top5RatedCourses(next);
+            if(courses){
+                return res.send(courses)
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+    async deletLecture(req:Request,res:Response,next:NextFunction){
+        
+        try {
+            const {lectureUrl} = req.body
+            const courses = await this.adminUseCase.deletLecture(lectureUrl,next);
+            if(courses){
+                return res.send({success:true})
+            }
         } catch (error) {
             console.error(error)
         }

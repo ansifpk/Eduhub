@@ -1,4 +1,3 @@
-import { IRating } from "../../../../entities/ratings";
 import { Iuser } from "../../../../entities/user";
 import { IAdminRepository } from "../../../../useCases/interfaces/repositoryInterfaces/IadminRepository";
 import { ratingModel } from "../models/ratingModel";
@@ -11,10 +10,101 @@ export class AdminRepository implements IAdminRepository{
       private ratingModels:typeof ratingModel,
     ){}
 
+     async getUserPages(search: string, sort: string): Promise<number | void> {
+        try {
+          let queryData:any = {}
+          let sortQuery:any = {}
+              
+              switch (sort) {
+                  case "All":
+                    sortQuery.createdAt = -1
+                    break;
+                  case "Name Aa-Zz":
+                    sortQuery.name = 1
+                    break;
+                  case "Name Zz-Aa":
+                    sortQuery.name = -1
+                    break;
+                  case "Old":
+                    sortQuery.createdAt = 1
+                    break;
+                  case "New":
+                      sortQuery.createdAt = -1
+                      break;
+                  default:
+                      sortQuery.createdAt = -1
+                      break;
+                }
+          
+                if(search){
+                  queryData.name = {$regex:search,$options: "i"}
+                }
+          
+                const limit = 4;
+                const pages =  await this.userModels.countDocuments({...queryData})
+                const  count = Math.ceil(pages / limit)
+                 if(pages>=0){
+                     return count;
+                 }
+        } catch (error) {
+          console.error(error)
+        }
+      }
+     async getInstructorPages(search: string, sort: string): Promise<number | void> {
+        try {
+          let queryData:any = {isAdmin:false,$or:[{status:'pending'},{status:"Approved"}]}
+          let sortQuery:any = {}
+              
+              switch (sort) {
+                  case "All":
+                    sortQuery.createdAt = -1
+                    break;
+                  case "Name Aa-Zz":
+                    sortQuery.name = 1
+                    break;
+                  case "Name Zz-Aa":
+                    sortQuery.name = -1
+                    break;
+                  case "Old":
+                    sortQuery.createdAt = 1
+                    break;
+                  case "New":
+                      sortQuery.createdAt = -1
+                      break;
+                  default:
+                      sortQuery.createdAt = -1
+                      break;
+                }
+          
+                if(search){
+                  queryData.name = {$regex:search,$options: "i"}
+                }
+                const limit = 4;
+                const pages =  await this.userModels.countDocuments({...queryData})
+                const  count = Math.ceil(pages / limit)
+                 if(pages>=0){
+                     return count;
+                 }
+        } catch (error) {
+          console.error(error)
+        }
+      }
+
 
       async findTop5Instructors(): Promise<Iuser[] | void> {
        try {
-         const instructors = await this.userModels.find({isInstructor:true,isAdmin:false})
+        const instructors = await this.userModels.aggregate([
+        {
+          $match:{isInstructor:true}
+        },
+        {$lookup: {
+          from: "ratings", 
+          localField: "_id", 
+          foreignField: "instructorId",
+          as: "instructorReviews" 
+        }}
+      ])
+       
          if(instructors){
             return instructors;
          }
@@ -23,56 +113,10 @@ export class AdminRepository implements IAdminRepository{
        }
       }
 
-      async findInstructorRatings(instructorId:string):Promise<IRating[]|void> {
-       try {
-        // const highestRatedInstructor = await ratingModel.aggregate([
-        //   {
-        //     $group: {
-        //       _id: "$instructorId", // Group by instructor ID
-        //       averageRating: { $avg: "$stars" }, // Calculate the average stars
-        //       totalReviews: { $count: {} } // Count the total reviews
-        //     }
-        //   },
-        //   {
-        //     $sort: { averageRating: -1, totalReviews: -1 } // Sort by rating and reviews
-        //   },
-        //   {
-        //     $lookup: {
-        //       from: "users", // Reference the users collection
-        //       localField: "_id", // Match instructor ID
-        //       foreignField: "_id", // Match with user ID
-        //       as: "instructorDetails"
-        //     }
-        //   },
-        //   {
-        //     $unwind: "$instructorDetails" // Flatten the instructor details array
-        //   },
-        //   {
-        //     $project: {
-        //       _id: 0,
-        //       instructorId: "$_id",
-        //       name: "$instructorDetails.name",
-        //       email: "$instructorDetails.email",
-        //       averageRating: 1,
-        //       totalReviews: 1
-        //     }
-        //   }
-        // ]);
-        // console.log(highestRatedInstructor)
-        const ratings = await this.ratingModels.find({instructorId:instructorId,stars:{$gte:4.5}})
-         if(ratings){
-            return ratings;
-         }
-       } catch (error) {
-        console.error(error)
-       }
-      }
-
-
-    async find(search:string,sort:string): Promise<Iuser[] | void> {
+    async find(search:string,sort:string,page:number): Promise<Iuser[] | void> {
         try {
 
-            let queryData:any = {}
+            let queryData:any = {isAdmin:false}
             let sortQuery:any = {}
                 
                 switch (sort) {
@@ -99,7 +143,8 @@ export class AdminRepository implements IAdminRepository{
                   if(search){
                     queryData.name = {$regex:search,$options: "i"}
                   }
-            const students = await this.userModels.find(queryData).sort(sortQuery)
+            let limit = 4;
+            const students = await this.userModels.find({...queryData}).limit(limit * 1).skip((page - 1) * limit).sort(sortQuery);
             if(students){
               return students;
             }
@@ -132,7 +177,7 @@ export class AdminRepository implements IAdminRepository{
        }
     }
 
-    async findInstructors(search:string,sort:string): Promise<Iuser[] | void> {
+    async findInstructors(search:string,sort:string,page:number): Promise<Iuser[] | void> {
         try {
             let queryData:any = {isAdmin:false,$or:[{status:'pending'},{status:"Approved"}]}
             let sortQuery:any = {}
@@ -161,7 +206,9 @@ export class AdminRepository implements IAdminRepository{
                   if(search){
                     queryData.name = {$regex:search,$options: "i"}
                   }
-             const users = await this.userModels.find(queryData).sort(sortQuery)
+                  let limit = 4;
+           
+             const users = await this.userModels.find({...queryData}).limit(limit * 1).skip((page - 1) * limit).sort(sortQuery)
              if(users){
                 return users;
              }

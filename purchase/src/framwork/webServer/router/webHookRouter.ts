@@ -12,14 +12,6 @@ export function webHookRouter(router: Router) {
     }
   );
 
-  // router.post(
-  //   "/instructor/webhook",
-  //   express.raw({ type: 'application/json' }),
-  //   async (req: Request, res: Response, next: NextFunction) => {
-  //      instructorController.webhook(req, res, next);
-  //   }
-  // );
-
   router.post(
     "/subscription/webhook",
     express.raw({ type: 'application/json' }),

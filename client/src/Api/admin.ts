@@ -1,8 +1,6 @@
 import { loginType } from "@/@types/loginType";
 import ApiGatway from "@/service/axios";
 
-import { axInstence } from "@/service/client";
-
 import adminRoutes from "@/service/endPoints/adminEndPoints";
 
 
@@ -55,9 +53,9 @@ export const listCategory = async (categoryId:string) =>{
         return error 
     }
 }
-export const students = async (search:string="",sort:string="") =>{
+export const students = async (search:string="",sort:string="",page:number) =>{
     try {
-        const response = await ApiGatway.get(`${adminRoutes.students}?search=${search}&&sort=${sort}`);       
+        const response = await ApiGatway.get(`${adminRoutes.students}?search=${search}&&sort=${sort}&&page=${page}`);       
         return response.data
     } catch (error) {
         return error 
@@ -72,9 +70,9 @@ export const blockUser = async (userId:string) =>{
         return error 
     }
 }
-export const instructors = async (search:string="",sort:string="") =>{
+export const instructors = async (search:string="",sort:string="",page:number) =>{
     try {
-        const response = await ApiGatway.get(`${adminRoutes.instructors}?search=${search}&&sort=${sort}`);       
+        const response = await ApiGatway.get(`${adminRoutes.instructors}?search=${search}&&sort=${sort}&&page=${page}`);       
         return response.data
     } catch (error) {
         return error 
@@ -90,9 +88,11 @@ export const editProfile = async (instructorData:object) =>{
         return error 
     }
 }
-export const getCourses = async (search:string="",sort:string="") =>{
+export const getCourses = async (search:string="",sort:string="",page:number) =>{
     try {
-        const response = await ApiGatway.get(`${adminRoutes.getCourses}?search=${search}&&sort=${sort}`);       
+        console.log("hi");
+        
+        const response = await ApiGatway.get(`${adminRoutes.getCourses}?search=${search}&&sort=${sort}&&page=${page}`);       
         return response.data
     } catch (error) {
         return error 
@@ -202,14 +202,7 @@ export const getAdminCurrentChat = async(chatId:string)=>{
     }
 }
 
-export const top10Courses = async(limit:number)=>{
-    try {
-        const response = await ApiGatway.get(`${adminRoutes.getCourses}/${limit}`);
-        return response.data
-    } catch (error) {
-        return error 
-    }
-}
+
 
 export const adminCreateMessage = async(userId:string,recipientId:string,role:string)=>{
     try {
@@ -293,6 +286,22 @@ export const top5Courses = async ()=>{
 export const top5Instructors = async ()=>{
     try {
         const response = await ApiGatway.get(adminRoutes.top5Instructors);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+export const top5RatedCourse = async ()=>{
+    try {
+        const response = await ApiGatway.get(adminRoutes.top5RatedCourse);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+export const delteLecture = async (lectureUrl:string)=>{
+    try {
+        const response = await ApiGatway.patch(adminRoutes.course,{lectureUrl});
         return response.data
     } catch (error) {
         return error 

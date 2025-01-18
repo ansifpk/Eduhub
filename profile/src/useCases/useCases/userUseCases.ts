@@ -6,9 +6,43 @@ import { ICourse } from "../../entities/course";
 import { ICart } from "../../entities/cart";
 import ErrorHandler from "../middlewares/errorHandler";
 import { IRating } from "../../entities/ratings";
+import { ICloudinary } from "../interfaces/serviceInterfaces/ICloudinery";
 
 export class UserUseCases implements IUserUseCase {
-  constructor(private userRepository: IUserRepository) {}
+  constructor(
+    private userRepository: IUserRepository,
+    private cloudinary:ICloudinary,
+  ) {}
+
+  async profileImage(userId: string,image:{ 
+    profileImage?: Express.Multer.File[]
+  }, next: NextFunction): Promise<Iuser | void> {
+   try {
+    const user = await this.userRepository.findById(userId);
+    if(!user){
+     return next(new ErrorHandler(400,"User Not Found"))
+    }
+    if(user.avatar.avatar_url){
+      const profile =  await this.cloudinary.addFile(image.profileImage![0]);
+      if(profile){
+        const update =  await this.userRepository.uploadProfile(userId,{id:profile.public_id,avatar_url:profile.secure_url});
+        if(update){
+          return update;
+        }
+      }
+    }else{
+      const profile =  await this.cloudinary.updateFile(image.profileImage![0],user.avatar.id) 
+      if(profile){
+        const update =  await this.userRepository.uploadProfile(userId,{id:profile.public_id,avatar_url:profile.secure_url});
+        if(update){
+          return update;
+        }
+      }
+    }
+   } catch (error) {
+     console.error(error)
+   }
+  }
 
   async editProfile(userId: string, name: string, thumbnail: string, aboutMe: string, next: NextFunction): Promise<Iuser | void> {
    try {

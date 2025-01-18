@@ -225,11 +225,18 @@ export class UserUseCase implements IUserUseCase{
        }
     }
 
-    async fetchCourses(category:string,topic:string,level:string,search:string, sort : string,): Promise<ICourse[] | void> {
+    async fetchCourses(category:string,topic:string,level:string,search:string, sort : string,page:number): Promise<{courses:ICourse[],pages:number}|void> {
         try {
            
     
-            let page 
+          const count = await this.userRepository.getPages( 
+            search,
+            category,
+            level,
+            topic,
+            sort);
+            console.log(count);
+            const pages = count as number 
             const courses = await this.userRepository.find({
                 page:page,
                 search,
@@ -238,11 +245,9 @@ export class UserUseCase implements IUserUseCase{
                 topic,
                 sort
             })
-            if(courses){
-              
-                
-                return courses;
-            }
+            if(courses && pages>=0) {
+               return {courses,pages}
+           }
         } catch (error) {
             console.error(error)
         }

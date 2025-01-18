@@ -32,9 +32,7 @@ interface User{
 const InstructorRoter = () => {
   const isInstructor = useSelector((state:User)=>state.isInstructor)
   const id = useSelector((state:User)=>state.id)
-  // const navigate = useNavigate()
-  console.log(id?"ind":"illa");
-  console.log(isInstructor?"isInstructor ann":"isInstructor alla");
+ 
   
   return (
     <>

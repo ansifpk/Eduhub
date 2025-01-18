@@ -66,7 +66,7 @@ export class InstructorController{
         }
     }
     async getCourses(req:Request,res:Response,next:NextFunction){
-        const {instructorId,search,sort} = req.query;
+        const {instructorId,search,sort,page} = req.query;
         const courses = await this.instructorUseCases.fetchCourses(instructorId as string,search as string,sort as string)
          if(courses){
              res.send({success:true,courses:courses})
@@ -109,4 +109,22 @@ export class InstructorController{
         return res.send({success:true});
       }
     }
+
+    async top5Courses(req:Request,res:Response,next:NextFunction){
+          const {userId} = req.params;
+          const courses =  await this.instructorUseCases.top5Courses(userId,next)
+      if(courses){
+        return res.send({success:true,courses});
+      }
+    }
+
+    async topRated(req:Request,res:Response,next:NextFunction){
+          const {userId} = req.params;
+          const courses =  await this.instructorUseCases.topRated(userId,next)
+      if(courses){
+        return res.send({success:true,courses});
+      }
+    }
+
+   
 }

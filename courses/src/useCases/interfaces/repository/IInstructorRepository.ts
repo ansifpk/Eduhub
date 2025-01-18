@@ -1,25 +1,8 @@
 import { ICourse } from "../../../entities/course";
 import { ISection } from "../../../entities/section";
 import { ITest } from "../../../entities/test";
-interface Course{
-    _id?:string,
-    title:string,
-    instructorId?:string,
-    subCategory:string,
-    description:string,
-    thumbnail:string,
-    category:string,
-    level:string,
-    isListed:boolean,
-    price:number,
-    test?:[];
-    subscription:boolean,
-    videos:string[],
-    image:string,
-    imageUrl?:string,
-    videoUrl?:string[],
-    createdAt:string,
-}
+import { Iuser } from "../../../entities/user";
+
 export interface IInstructorrepository{
     find(instructorId:string,search : string,sort:string):Promise<ICourse[]|void>
     get():Promise<ICourse[]|void>
@@ -34,4 +17,6 @@ export interface IInstructorrepository{
     editTest(testId:string,testData:ITest):Promise<ITest|void>
     addTest(courseId:string,testId:string):Promise<ICourse|void>
     findTest(testId:string):Promise<ITest|void>
+    findTop5(userId:string):Promise<ICourse[]|void>
+    findTopRated(userId:string):Promise<ICourse[]|void>
 }

@@ -33,6 +33,7 @@ const userRoutes = {
  addToCart:"/profile/profile/user/Cart",
  Cart:"/profile/profile/user/Cart",
  profile:"/profile/profile/user/profile",
+ profileImage:"/profile/profile/user/profileImage",
  instructorRating:"/profile/profile/user/rating",
  
  //coupons

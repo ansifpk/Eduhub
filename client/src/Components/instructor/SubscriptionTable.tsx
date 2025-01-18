@@ -119,11 +119,12 @@ export function SubscriptionTable() {
     };
     res();
   }, [sort]);
-
+  
+  console.log(subscriptions,"subss")
   
   const handleEdit = async (e:FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-     console.log("edit",price,subscriptionId);
+  
      
    const response = await editSubscription(subscriptionId,parseInt(price));
    if (response.success) {
@@ -174,7 +175,7 @@ export function SubscriptionTable() {
               onClick={() => navigate("/instructor/createSubscription")}
               variant="outline"
             >
-              create Course
+              Create Subscription
             </Button>
           </div>
         </div>

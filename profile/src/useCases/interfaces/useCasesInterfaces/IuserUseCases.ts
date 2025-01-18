@@ -1,9 +1,8 @@
 import { NextFunction } from "express";
 import { Iuser } from "../../../entities/user";
-import { ICourse } from "../../../entities/course";
 import { ICart } from "../../../entities/cart";
 import { IRating } from "../../../entities/ratings";
-import { Iotp } from "../../../entities/otp";
+
 
 export interface IUserUseCase{
     userProfile(userId:string,next:NextFunction):Promise<Iuser|void>
@@ -17,5 +16,8 @@ export interface IUserUseCase{
     getRating(instructorId:string,next:NextFunction):Promise<IRating[]|void>
     editRating(ratingId:string,review:string,stars:number,next:NextFunction):Promise<IRating|void>
     deleteRating(ratingId:string,next:NextFunction):Promise<IRating|void>
+    profileImage(userId:string,image:{ 
+        profileImage?: Express.Multer.File[]
+      },next:NextFunction):Promise<Iuser|void>
    
 }

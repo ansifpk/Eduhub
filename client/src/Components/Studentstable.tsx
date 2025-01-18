@@ -30,12 +30,14 @@ import { ICourse } from "@/@types/courseType";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { IUser } from "@/@types/chatUser";
 import { User } from "@/@types/userType";
+import { Pagination, Stack } from "@mui/material";
 
 export function Studentstable() {
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("");
   const [students, setStudents] = useState<IUser[]>([]);
   const userId = useSelector((state: User) => state.id);
+ 
 
   useEffect(() => {
     const stude = async () => {
@@ -136,6 +138,11 @@ export function Studentstable() {
               )}
             </TableBody>
           </Table>
+          {/* <Stack className="flex items-center justify-center" spacing={2}>
+              <div>
+                        <Pagination count={totalPage} page={page} onChange={handleChange} />
+                    </div>
+          </Stack> */}
         </div>
       </div>
     </>

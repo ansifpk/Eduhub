@@ -1,4 +1,5 @@
 import { IUser } from "./chatUser"
+import { IRating } from "./ratingType"
 import { ITest } from "./testType"
 
 export interface ICourse{
@@ -33,15 +34,7 @@ export interface ICourse{
         _id:string,
         image_url:string
     },
-    // students?:{
-    //    _id:string,
-    //    name:string,
-    //    avatar:{
-    //     avatar_url:string
-    //    }
-    //    email:string,
-    //    createdAt:string
-    // }[],
+    courseReviews:IRating[],
     students?:IUser[],
     createdAt:string,
     sections:{

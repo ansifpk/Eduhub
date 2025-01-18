@@ -3,33 +3,17 @@ import { ISection } from "../../../entities/section";
 import { ITest } from "../../../entities/test";
 import { IInstructorrepository } from "../../../useCases/interfaces/repository/IInstructorRepository";
 import { Course } from "../mongodb/models/courseModel";
+import { ratingModel } from "../mongodb/models/ratingModel";
 import { SectionModel } from "../mongodb/models/sectionModel";
 import { testModel } from "../mongodb/models/testModel";
 
-interface Course{
-    _id?:string,
-    title:string,
-    instructorId?:string,
-    subCategory:string,
-    description:string,
-    thumbnail:string,
-    category:string,
-    level:string,
-    isListed:boolean,
-    price:number,
-    test?:[];
-    subscription:boolean,
-    videos:string[],
-    image:string,
-    imageUrl?:string,
-    videoUrl?:string[],
-    createdAt:string,
-}
+
 export class InstructorRepository implements IInstructorrepository{
     constructor(
         private courseModel:typeof Course,
         private sectionModel:typeof SectionModel,
         private testModels:typeof testModel,
+   
     ){}
    async findTest(testId: string): Promise<ITest | void> {
        try {
@@ -161,7 +145,8 @@ export class InstructorRepository implements IInstructorrepository{
         const course = await this.courseModel.find({instructorId:instructorId}).sort({createdAt:-1}).populate("sections").populate("instructorId").populate("students").populate("test").limit(5)
         
         if(course){
-           return course.sort((a,b)=>a.students!.length + b.students!.length);
+        //    return course.sort((a,b)=>a.students!.length + b.students!.length);
+           return course
        }
        } catch (error) {
         console.error(error)
@@ -177,6 +162,34 @@ export class InstructorRepository implements IInstructorrepository{
             console.error(error)
         }
     }
+    async findTop5(userId: string): Promise<ICourse[] | void> {
+        try {
+            const course = await this.courseModel.find({instructorId:userId});
+            if(course){
+                return course;
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+    async findTopRated(userId: string): Promise<ICourse[] | void> {
+        try {
+            const course = await this.courseModel.aggregate([{
+                $lookup:{
+                    from:"ratings",
+                    localField:"_id",
+                    foreignField:"courseId",
+                    as:"courseReviews"
+                }
+            }]);
+            if(course){
+                return course;
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+    
     async create(courseData: ICourse): Promise<ICourse | void> {
         try {
             const course = await this.courseModel.create(courseData);

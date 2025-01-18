@@ -2,7 +2,7 @@ import InstructorAside from '@/Components/instructor/InstructorAside'
 import { SubscriptionTable } from '@/Components/instructor/SubscriptionTable'
 import { Avatar, AvatarFallback, AvatarImage } from '@/Components/ui/avatar'
 import { Separator } from '@/Components/ui/separator'
-import React from 'react'
+
 
 const InstructorSubscriptions = () => {
   return (

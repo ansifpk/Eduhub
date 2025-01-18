@@ -8,11 +8,12 @@ export class AdminController{
     constructor(private adminUseCase:IAdminUseCase){}
     async fetchInstructors(req:Request,res:Response,next:NextFunction){
       try {
-        const { search,sort } = req.query
-       
-       const instructors =  await this.adminUseCase.fetchInstructors(search as string, sort as string,next)
+        const { search,sort,page } = req.query
+        console.log(req.query,"instru");
+       const instructors =  await this.adminUseCase.fetchInstructors(search as string, sort as string,parseInt(page as string),next)
        if(instructors){
-        return res.send(instructors)
+
+        return res.send({instructors:instructors.instructors,pages:instructors.pages})
        }
       } catch (error) {
         console.error(error)
@@ -21,12 +22,12 @@ export class AdminController{
 
     async fetchStudents(req:Request,res:Response,next:NextFunction){
         try {
-        const { search,sort } = req.query
-        console.log(sort,"cinj");
-        
-        const students = await this.adminUseCase.fetchStudents(search as string,sort as string,next)
+        const { search,sort,page } = req.query
+         console.log(req.query,"stude");
+         
+        const students = await this.adminUseCase.fetchStudents(search as string,sort as string,parseInt(page as string),next)
        if(students){
-        return res.send(students)
+        return res.send({students:students.students,pages:students.pages})
        }
           } catch (error) {
             console.error(error)

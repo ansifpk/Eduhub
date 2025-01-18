@@ -30,6 +30,7 @@ import { IUser } from "@/@types/chatUser";
 import { User } from "@/@types/userType";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/Components/ui/select";
 import { Input } from "@/Components/ui/input";
+import { Pagination, Stack } from "@mui/material";
 
 
 const AdminListInstructors = () => {
@@ -37,17 +38,21 @@ const AdminListInstructors = () => {
   const [requests, setRequests] = useState(0);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("");
-
+  const [page, setPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(0);
   const navigate = useNavigate();
   const userId = useSelector((state:User)=>state.id)
   useEffect(() => {
     const fetchAllinstructors = async () => {
-      const response = await instructors(search,sort);
+      const response = await instructors(search,sort,page);
       if (response) {
-        const arr = response.filter((value:IUser)=>value.status == "Approved" )
+        console.log(response);
+        
+        const arr = response.instructors.filter((value:IUser)=>value.status == "Approved" )
         setInstructors(arr)
+        setTotalPage(response.pages)
 
-        response.map((value: IUser) => {
+        response.instructors.map((value: IUser) => {
           if (value.status == "pending") {
             setRequests((prev) => {
               return prev + 1;
@@ -63,18 +68,18 @@ const AdminListInstructors = () => {
   const handleBlockInstructroctor = async (userId: string) => {
     const response = await blockUser(userId);
     if (response.success) {
-      console.log(response.data, "/////////////");
+
       if (response.data.isBlock) {
-        const res = await instructors();
+        const res = await instructors(search,sort,page);
         if (res) {
-          setInstructors(res);
+          setInstructors(res.instructors);
           toast.success("Successfully Block Instructroctor");
           return;
         }
       } else {
-        const res = await instructors();
+        const res = await instructors(search,sort,page);
         if (res) {
-          setInstructors(res);
+          setInstructors(res.instructors);
           toast.success("Successfully UnBlock Instructroctor");
           return;
         }
@@ -98,7 +103,9 @@ const AdminListInstructors = () => {
         console.error(error);
       }
     };
-
+    const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+      setPage(value);
+    };
   return (
     <div className="container-fluid ">
       <div className="row">
@@ -226,6 +233,11 @@ const AdminListInstructors = () => {
                   )}
                 </TableBody>
               </Table>
+              <Stack className="flex items-center justify-center" spacing={2}>
+                    <div>
+                        <Pagination count={totalPage} page={page} onChange={handleChange} />
+                    </div>
+              </Stack>
             </Card>
           </div>
         </div>

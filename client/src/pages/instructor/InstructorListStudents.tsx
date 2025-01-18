@@ -2,8 +2,15 @@ import {  Studentstable } from "@/Components/Studentstable";
 import InstructorAside from "@/Components/instructor/InstructorAside";
 import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
 import { Separator } from "@/Components/ui/separator";
+import { Pagination, Stack } from "@mui/material";
+import { useState } from "react";
 
 export default function InstructorHome() {
+    const [page, setPage] = useState(1);
+    const [totalPage, setTotalPage] = useState(0);
+    const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+      setPage(value);
+    };
   return (
     <div className="bg-black">
       <div className="md:hidden">
@@ -48,6 +55,7 @@ export default function InstructorHome() {
           <div className="flex-1 lg:max-w-full ">
             <div className="space-y-6">
               <Studentstable />
+              
             </div>
           </div>
         </div>

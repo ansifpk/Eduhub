@@ -1,7 +1,7 @@
 import AdminAside from "@/Components/admin/AdminAside";
 import { Card, CardContent, CardDescription } from "@/Components/ui/card";
 import { useEffect, useState } from "react";
-import { getCourses, getReports, students } from "@/Api/admin";
+import { delteLecture, getCourses, getReports, students } from "@/Api/admin";
 import toast from "react-hot-toast";
 import {
   Table,
@@ -47,6 +47,7 @@ import {
   DrawerContent,
   DrawerFooter,
   DrawerHeader,
+  
   useDisclosure,
 } from "@nextui-org/react";
 import { IUser } from "@/@types/chatUser";
@@ -54,6 +55,7 @@ import { IReport } from "@/@types/report";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/Components/ui/dialog";
 import { ISection } from "@/@types/sectionType";
 import { ILecture } from "@/@types/lectureType";
+import { Pagination, Stack, Typography } from "@mui/material";
 
 const AdminListCourses = () => {
   const [courses, setCourses] = useState([]);
@@ -61,6 +63,7 @@ const AdminListCourses = () => {
   const [search, setSearch] = useState("");
   const [video, setVideo] = useState("");
   const [sort, setSort] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const { isOpen:isStudentOpen , onOpen:onStudentOpen, onClose:onStudentClose } = useDisclosure();
   const {
     isOpen: isReportOpen,
@@ -70,18 +73,28 @@ const AdminListCourses = () => {
   const [reports, setReports] = useState<IReport[]>([]);
   const [id, setId] = useState("");
   const [open, setOpen] = useState(false)
+  const [page, setPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(0);
+  
+  const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    setPage(value);
+  };
   useEffect(() => {
     const fetchAllStudents = async () => {
-      const response = await getCourses(search, sort);
-      setCourses(response);
-      const repo = await getReports();
-      if (repo) {
-        setReports(repo);
+      const response = await getCourses(search,sort,page);
+      if(response){
+        setCourses(response.courses);
+        setTotalPage(response.pages)
+        const repo = await getReports();
+        if (repo) {
+          setReports(repo);
+        }
       }
+      
     };
 
     fetchAllStudents();
-  }, [search, sort]);
+  }, [search, sort,page]);
   const handleListeCourse = (id: string) => {
     console.log("hi", id);
   };
@@ -96,6 +109,20 @@ const AdminListCourses = () => {
   const handlePlay = (url: string,course:ICourse) => {
     setVideo(url)
   };
+  
+  const handleDelete = async (url: string) => {
+ 
+    const response  = await delteLecture(url)
+    if(response.success){
+      const repo = await getReports();
+        if (repo) {
+          setReports(repo);
+          toast.success("deleted successfully")
+        }
+    }
+    
+  };
+  console.log(page,totalPage);
   
   return (
     <div className="container-fluid ">
@@ -147,7 +174,7 @@ const AdminListCourses = () => {
                     <TableHead>Created At</TableHead>
                     <TableHead>Reports</TableHead>
                     <TableHead className="text-center">Students</TableHead>
-                    <TableHead className="text-center">Actions</TableHead>
+                    {/* <TableHead className="text-center">Actions</TableHead> */}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -253,6 +280,7 @@ const AdminListCourses = () => {
                                                    <div className="flex gap-3">
                                                    <Button  type="button" size={'sm'} className="rounded-full " onClick={()=>handlePlay(report.content,value)}>play</Button>
                                                    <Button
+                                                      onClick={()=>handleDelete(report.content)}
                                                       size={"sm"}
                                                       type="button"
                                                       className={`rounded-full ${
@@ -350,7 +378,7 @@ const AdminListCourses = () => {
                                               <TableCell>
                                                 {student.email}
                                               </TableCell>
-                                             
+        
                                             </TableRow>
                                           ))
                                         ) : (
@@ -366,7 +394,6 @@ const AdminListCourses = () => {
                                   <DrawerFooter>
                                     <Button
                                       color="danger"
-                                      // variant="light"
                                       onClick={onClose}
                                     >
                                       Close
@@ -380,7 +407,7 @@ const AdminListCourses = () => {
                             </DrawerContent>
                           </Drawer>
                         </TableCell>
-                        <TableCell align="center">
+                        {/* <TableCell align="center">
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
                               <Button
@@ -422,8 +449,9 @@ const AdminListCourses = () => {
                               </AlertDialogFooter>
                             </AlertDialogContent>
                           </AlertDialog>
-                        </TableCell>
+                        </TableCell> */}
                       </TableRow>
+                      
                     ))
                   ) : (
                     <TableRow>
@@ -438,6 +466,11 @@ const AdminListCourses = () => {
                   )}
                 </TableBody>
               </Table>
+              <Stack className="flex items-center justify-center" spacing={2}>
+                    <div>
+                        <Pagination count={totalPage} page={page} onChange={handleChange} />
+                    </div>
+              </Stack>
             </Card>
           </div>
         </div>

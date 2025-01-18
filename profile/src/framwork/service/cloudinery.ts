@@ -25,7 +25,7 @@ class CloudinaryV2 implements ICloudinary{
      try {
         const data =  await this.cloudinaryClient.uploader.upload(`data:${file.mimetype};base64,${file.buffer.toString('base64')}`,{
              folder:"courses",
-            resource_type: "auto"
+             resource_type: "auto"
         })
          if(data){
              return {public_id:data.public_id,secure_url:data.secure_url}
@@ -36,14 +36,25 @@ class CloudinaryV2 implements ICloudinary{
      }
      
     }
-    async deleteFile(): Promise<boolean|void> {
+    async updateFile(file: MulterFile, publicId: string): Promise<CLoudineryResult | void> {
         try {
-            throw new Error('Method not implemented.');
+          
+          const data = await this.cloudinaryClient.uploader.upload(
+            `data:${file.mimetype};base64,${file.buffer.toString('base64')}`,
+            {
+              folder: "courses",
+              resource_type: "auto",
+            }
+          );
+      
+          if (data) {
+            await this.cloudinaryClient.uploader.destroy(publicId);
+            return data;
+          }
         } catch (error) {
-            console.error(error)
+          console.error("Error updating file:", error);
         }
-        
-    }
+      }
 }
 
 export default CloudinaryV2

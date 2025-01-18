@@ -20,7 +20,7 @@ const Subscriptions = () => {
       }
       fetching();
     },[])
-
+   console.log("subs",subscriptions)
     const subscribe = async(method:string)=>{
          const stripe = await loadStripe(
             import.meta.env.VITE_PUBLISH_SECRET 

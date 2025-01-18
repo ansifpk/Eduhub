@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { userController } from "./injections/injections";
 import { isAuth } from "../middlewares/authCheck";
-
+import upload from '../middlewares/multer'
 export function UserRouter(router: Router) {
   router.get("/profile/:userId", isAuth, async (req, res, next) => {
     try {
@@ -67,6 +67,13 @@ export function UserRouter(router: Router) {
   router.get("/rating/:instructorId", isAuth, async (req, res, next) => {
     try {
       userController.ratings(req, res, next);
+    } catch (error) {
+      console.error(error);
+    }
+  });
+  router.patch("/profileImage/:userId",upload,isAuth, async (req, res, next) => {
+    try {
+      userController.profileImage(req, res, next);
     } catch (error) {
       console.error(error);
     }

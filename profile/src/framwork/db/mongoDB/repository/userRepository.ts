@@ -15,10 +15,20 @@ export class UserRepository implements IUserRepository {
     private courseModels: typeof courseModel,
     private ratingModels: typeof ratingModel
   ) {}
+  async uploadProfile(userId: string, avatar: { id: string; avatar_url: string; }): Promise<Iuser | void> {
+    try {
+      const user = await this.userModels.findByIdAndUpdate({_id:userId},{$set:{avatar:avatar}},{new:true});
+      if(user) {
+       return user;
+      }
+      
+    } catch (error) {
+     console.error(error)
+    }
+  }
 
   async findByIdAndUpdate(userId: string, name: string, thumbnail: string, aboutMe: string): Promise<Iuser | void> {
    try {
-     console.log(userId,name,thumbnail,aboutMe);
      const user = await this.userModels.findByIdAndUpdate({_id:userId},{$set:{name:name,thumbnail:thumbnail,about:aboutMe}},{new:true});
      if(user) {
       return user;

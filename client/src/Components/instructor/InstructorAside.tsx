@@ -20,9 +20,9 @@ export default function InstructorAside() {
     }
   }
   return (
-    <aside className="w-mx-4 lg:w-1/6 h-[65vh] sticky top-0">
+    <aside className="  w-mx-4 lg:w-1/6 h-[65vh] sticky top-0">
        
-       <nav className="flex space-x-2 lg:flex-col lg:space-x-0 lg:space-y-1 ">
+       <nav className="flex  space-x-2 lg:flex-col lg:space-x-0 lg:space-y-1 ">
       <NavLink
           to={"/instructor"}
           end

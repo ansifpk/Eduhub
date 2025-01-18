@@ -461,8 +461,6 @@ const PlayCourse: React.FC = () => {
                                               onChange={(event, newValue) => {
                                                 setValue(newValue);
                                                 setStars(newValue!);
-
-                                                // handleRating(newValue!)
                                               }}
                                               onChangeActive={(
                                                 event,

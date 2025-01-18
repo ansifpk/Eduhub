@@ -7,7 +7,7 @@ import { IReport } from "../../../entities/report";
 
 export  interface  IUserUseCase {
     //course
-    fetchCourses(category:string,topic:string,level:string,search:string, sort : string,):Promise<ICourse[]|void>
+    fetchCourses(category:string,topic:string,level:string,search:string, sort : string,page:number):Promise<{courses:ICourse[],pages:number}|void>
     getCourses(instructorId:string,next:NextFunction):Promise<ICourse[]|void>
     courseDetailes(courseId:string):Promise<ICourse|void>
     purchasedCourses(userId:string,next:NextFunction):Promise<ICourse[]|void>

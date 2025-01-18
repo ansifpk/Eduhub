@@ -2,21 +2,26 @@ import {  Link, NavLink, useNavigate } from 'react-router-dom'
 import './Header.css'
 import { useSelector } from 'react-redux'
 import { Avatar, AvatarImage } from '../ui/avatar';
+import { User } from '@/@types/userType';
+import { useEffect, useState } from 'react';
+import { getUserDetailes } from '@/Api/user';
 
 
 
 const Header = () => {
-   interface User{
-      id:string,
-      name:string,
-      email:string,
-      isVerified:boolean,
-      isBlock:boolean,
-      isAdmin:boolean,
-      isInstructor:boolean,
-   }
+   
    const id = useSelector((state:User)=>state.id);
-   const navigate = useNavigate()
+   const [image,setImage] = useState('')
+   useEffect(()=>{
+     const fetching = async () => {
+        const response = await getUserDetailes(id);
+        if(response.success){
+          setImage(response.userData.avatar.avatar_url)
+        }
+     }
+     fetching()
+   },[])
+
   return (
     <div>
        <div className='navbar'>
@@ -40,15 +45,10 @@ const Header = () => {
                   ? "text-black px-4 py-1 rounded-full bg-gray-100  no-underline" 
                   : "no-underline text-white"
               } to={'/users/cart'}>Cart</NavLink></li>
-                {/* <li ><NavLink  className={({ isActive }) =>
-                isActive 
-                  ? "text-black px-4 py-1 rounded-full bg-gray-100  no-underline" 
-                  : "no-underline text-white"
-              } to={'/users/wishlist'}>Wishlist</NavLink></li> */}
                {id?(
                  <li><Link to={'/profile'}>
                  <Avatar>
-                    <AvatarImage className='avatar' src="https://github.com/shadcn.png" />
+                    <AvatarImage className='avatar' src={image?image:"https://github.com/shadcn.png"} />
                  </Avatar>
                </Link>  
                </li>

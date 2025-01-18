@@ -26,6 +26,54 @@ export class UserRepository implements IUserRepository{
 
     }
 
+     async  getPages(search: string, category: string, level: string, topic: string): Promise<number | void> {
+        try {
+          let queryData:any = {isListed:true}
+       
+            
+            
+        
+        if(category){
+            if(category == "All"){
+                queryData.category = { $regex: "", $options: "i" };
+             }else{
+                 queryData.category = { $regex: category, $options: "i" };
+             }
+        }
+        if(topic ){
+            if(topic == "All"){
+                queryData.subCategory = { $regex: "", $options: "i" };
+             }else{
+                queryData.subCategory = { $regex: topic, $options: "i" };
+             }
+           
+        }
+        if(level ){
+            if(topic == "All"){
+                queryData.level = { $regex: "", $options: "i" };
+             }else{
+                queryData.level = { $regex: level, $options: "i" };
+             }
+           
+        }
+        if(search){
+            queryData.title = {$regex:search,$options: "i"}
+        }
+        const limit = 4
+        const pages = await this.courseModel.countDocuments(
+            queryData
+        )
+        
+        const  count = Math.ceil(pages / limit)
+         if(pages>=0){
+             return count;
+         }
+         
+        } catch (error) {
+          console.error(error)
+        }
+      }
+
     async checkReport(userId: string, content: string, courseId: string): Promise<IReport | void> {
       try {
         const report  = await this.reportModels.findOne({userId:userId,courseId:courseId,content})
@@ -227,7 +275,8 @@ export class UserRepository implements IUserRepository{
     async find(query:Query): Promise<ICourse[] | void> {
        try {
         const {page,search,category,level,topic,sort} = query
-
+        
+         
         let queryData:any = {isListed:true}
         let sortQuery:any = {}
             
@@ -278,11 +327,10 @@ export class UserRepository implements IUserRepository{
         if(search){
             queryData.title = {$regex:search,$options: "i"}
         }
-        let limit = 8
-        
+        const limit = 4;
         const courses = await this.courseModel.find(
             queryData
-        ).sort(sortQuery).populate("students").populate("instructorId")
+        ).sort(sortQuery).limit(limit * 1).skip((page! - 1) * limit).populate("students").populate("instructorId")
          
        if(courses){
         return courses;

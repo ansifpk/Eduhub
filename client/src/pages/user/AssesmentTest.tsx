@@ -16,7 +16,7 @@ import {
 import { Checkbox } from "@nextui-org/react";
 import { Button } from "@/Components/ui/button";
 import { useEffect, useState } from "react";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import {  useNavigate, useParams } from "react-router-dom";
 import { Label } from "@/Components/ui/label";
 import { useSelector } from "react-redux";
 import { User } from "@/@types/userType";
@@ -32,22 +32,29 @@ const AssesmentTest = () => {
     selecte4: "",
     selecte5: "",
   });
+  const navigate = useNavigate();
   useEffect(() => {
     const fetch = async () => {
       const response = await getTests(testId!);
+  console.log(response.test);
+  
       if (response.success) {
-        setTest(response.test.test);
+        if(response.test.students.some((user:{user:string})=>user.user)){
+          return navigate(-1)
+        }else{
+          setTest(response.test.test);
+        }
       }
     };
     fetch();
-  }, []);
+  }, [testId]);
 
   const [page, setPage] = useState(1);
   const [mark, setMark] = useState(0);
   const userId = useSelector((state:User)=>state.id);
   
   const handleSubmit = async () => {
-    let calculateMark = 0;
+     let calculateMark = 0;
      if(isSelected.selecte1 == test[0].answer) {
        calculateMark+=1
      }
@@ -73,7 +80,40 @@ const AssesmentTest = () => {
     }
     
   };
-  const navigate = useNavigate()
+  
+  const handleEndTest = async() =>{
+    for(let key  in isSelected){
+      let val = isSelected[key as keyof typeof isSelected];
+      if(val.length == 0){
+        isSelected[key as keyof typeof isSelected] = "Not Answered"
+      }
+    }
+    let calculateMark = 0;
+    if(isSelected.selecte1 == test[0].answer) {
+      calculateMark+=1
+    }
+    if(isSelected.selecte2 == test[1].answer) {
+     calculateMark+=1
+    }
+    if(isSelected.selecte3 == test[2].answer) {
+     calculateMark+=1
+    }
+    if(isSelected.selecte4 == test[3].answer) {
+     calculateMark+=1
+    }
+    if(isSelected.selecte5 == test[4].answer) {
+     calculateMark+=1
+    }
+
+    setMark(calculateMark);
+    const response = await submitTest(userId,testId!,calculateMark)
+    if(response.success){
+        setPage(6)
+    }else{
+       toast.error(response.response.data.message)
+    }
+   
+  }
   return (
     <div className="bg-blue-50">
       <Header />
@@ -182,7 +222,7 @@ const AssesmentTest = () => {
                   ))}
                 </div>
                 <div className="flex justify-between mt-6">
-                  <button className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600">
+                  <button onClick={handleEndTest} className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600">
                     End
                   </button>
                   <button
@@ -232,7 +272,7 @@ const AssesmentTest = () => {
                   ))}
                 </div>
                 <div className="flex justify-between mt-6">
-                  <button className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600">
+                  <button onClick={handleEndTest} className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600">
                     End
                   </button>
                   <button
@@ -282,7 +322,7 @@ const AssesmentTest = () => {
                   ))}
                 </div>
                 <div className="flex justify-between mt-6">
-                  <button className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600">
+                  <button onClick={handleEndTest} className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600">
                     End
                   </button>
                   <button
@@ -332,7 +372,7 @@ const AssesmentTest = () => {
                   ))}
                 </div>
                 <div className="flex justify-between mt-6">
-                  <button className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600">
+                  <button onClick={handleEndTest} className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600">
                     End
                   </button>
                   <button
@@ -382,7 +422,7 @@ const AssesmentTest = () => {
                   ))}
                 </div>
                 <div className="flex justify-between mt-6">
-                  <button className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600">
+                  <button onClick={handleEndTest} className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600">
                     End
                   </button>
                   {page == 5 ? (

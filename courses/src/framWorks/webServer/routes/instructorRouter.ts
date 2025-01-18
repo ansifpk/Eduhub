@@ -7,36 +7,23 @@ dotenv.config();
 
 
 export function InstructorRouter(router:Router){
+
     router.post("/createCourse",isInstructor,upload,async(req:Request,res:Response,next:NextFunction)=>{
         try {
-            console.log(req.body,req.files);
-            
            instructorController.createCourse(req,res,next)
         } catch (error) {
-        console.error(error)          
+           console.error(error)          
         }
     
     }) 
     router.get("/getCourses",isInstructor,async(req:Request,res:Response,next:NextFunction)=>{
         try { 
-            console.log("hi",req.query);
-            
            instructorController.getCourses(req,res,next)
         } catch (error) {
         console.error(error)          
         }
     
     }) 
-    // router.get("/getCourses/:instructorId/:filter",isInstructor,async(req:Request,res:Response,next:NextFunction)=>{
-    //     try { 
-    //         console.log("hi",req.params);
-            
-    //     //    instructorController.getCourses(req,res,next)
-    //     } catch (error) {
-    //     console.error(error)          
-    //     }
-    
-    // }) 
    
     router.get("/allCourses",isInstructor,async(req:Request,res:Response,next:NextFunction)=>{
         try { 
@@ -72,13 +59,25 @@ export function InstructorRouter(router:Router){
     }) 
 
     router.patch("/tests/:testId",isInstructor,upload,async(req:Request,res:Response,next:NextFunction)=>{
-        try {  
-            console.log(req.params,req.body);
-            
+        try {   
           instructorController.editTest(req,res,next)
         } catch (error) {
         console.error(error)          
         }
-    
     }) 
+    router.get("/course/:userId",isInstructor,upload,async(req:Request,res:Response,next:NextFunction)=>{
+        try {   
+          instructorController.top5Courses(req,res,next)
+        } catch (error) {
+        console.error(error)          
+        }
+    }) 
+    router.get("/topRated/:userId",isInstructor,upload,async(req:Request,res:Response,next:NextFunction)=>{
+        try {   
+          instructorController.topRated(req,res,next)
+        } catch (error) {
+        console.error(error)          
+        }
+    }) 
+   
 }

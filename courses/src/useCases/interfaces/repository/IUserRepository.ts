@@ -7,6 +7,11 @@ import { Query } from "../../../framWorks/webServer/types/type";
 
 export interface IUserRepository{
     find(query:Query):Promise<ICourse[]|void>
+    getPages(search:string,
+        category:string,
+        level:string,
+        topic:string,
+        sort:string):Promise<number|void>
     courses(instructorId:string):Promise<ICourse[]|void>
     findWithCondition(userId:string):Promise<ICourse[]|void>
     findById(courseId:string):Promise<ICourse|void>

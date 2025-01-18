@@ -110,5 +110,21 @@ export class UserController{
       }
     }
 
+    async profileImage(req:Request,res:Response,next:NextFunction){
+      try {
+         const {userId}  = req.params;
+         let files = req.files as {
+            profileImage: Express.Multer.File[];
+          };
+
+         const user =await this.userUseCase.profileImage(userId,files,next);
+          if(user){
+            return res.send({success:true,user})
+          }
+      } catch (error) {
+         console.error(error)
+      }
+    }
+
    
 }

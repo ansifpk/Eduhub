@@ -1,5 +1,4 @@
 import React, { useEffect,  useState } from "react";
-import imageCompression from 'browser-image-compression'
 import {
   Form,
   FormControl,
@@ -30,9 +29,7 @@ import {
   ChevronUp,
   Loader2,
   Plus,
-  
   Terminal,
-  
   Trash2,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -152,8 +149,6 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
     };
     topic();
     if (Object.keys(form.formState.errors).length > 0) {
-    
-      
       toast.error("Please provide all the details");
     }
   }, [category, categories, form.formState.errors]);
@@ -181,8 +176,7 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
     }
 
     const data = await createCourse(formData)
-    console.log(data);
-    
+   
     if(data.success){
       setLoading(false)
       toast.success("Successfully created Course")

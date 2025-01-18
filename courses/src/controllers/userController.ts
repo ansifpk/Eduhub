@@ -15,7 +15,7 @@ export class UserController {
   constructor(private userUseCase: IUserUseCase) {}
 
   async fetchCourses(req: Request, res: Response, next: NextFunction) {
-    const { category, level, topic, search,sort } = req.query;
+    const { category, level, topic, search,sort,page } = req.query;
     console.log(req.query,"queru");
     
     const courses = await this.userUseCase.fetchCourses(
@@ -24,9 +24,10 @@ export class UserController {
       level as string,
       search as string,
       sort as string,
+      parseInt(page as string)
     );
     if (courses) {
-      res.send({ success: true, courses: courses });
+      res.send({ success: true, courses: courses.courses , pages:courses.pages });
     }
   }
   async getCourses(req: Request, res: Response, next: NextFunction) {

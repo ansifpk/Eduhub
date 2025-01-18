@@ -59,8 +59,6 @@ const InstructorRegister = () => {
     e.preventDefault()    
        setLoading(true)
        const response = await register({name,email,qualification,experience,certificate,cv})
-     
-        
        if(response.success){
         setLoading(false)
         toast.success(`successfully applyed

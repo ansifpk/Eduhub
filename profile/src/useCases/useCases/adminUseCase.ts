@@ -11,45 +11,44 @@ export class AdminUseCase implements IAdminUseCase{
           try {
              const instructors = await this.adminRepository.findTop5Instructors()
              if(instructors){  
-              
-                // await this.adminRepository.findInstructorRatings(instructors[2]._id);
-                // await this.adminRepository.findInstructorRatings(instructors[3]._id);
-                
-                  for(let value of instructors){ 
-                    const reviews = await this.adminRepository.findInstructorRatings(value._id);
-                    value.reviewCount = reviews?.length;
-                    console.log("value",value.reviewCount);
-                  }
-                  console.log(instructors[0].reviewCount);
-                  
-                return instructors;
+                const data = instructors.filter((value)=>value.instructorReviews?.length!>0)
+                let users = data.filter((value)=>value.instructorReviews?.find((val)=>val.stars>=2.5))
+                if(users){
+                    return users.slice(0,5)
+                }
              }
           } catch (error) {
             console.error(error)
           }
        }
 
-   async fetchInstructors(search:string,sort:string,next: NextFunction): Promise<Iuser[] | void> {
+   async fetchInstructors(search:string,sort:string,page:number,next: NextFunction): Promise<{instructors:Iuser[],pages:number}|void> {
         try {
-            let instructors = await this.adminRepository.findInstructors(search,sort);
+            const count = await this.adminRepository.getInstructorPages(search,sort);
+            const pages = count as number 
+            let instructors = await this.adminRepository.findInstructors(search,sort,page);
         
         if(instructors){
             instructors = instructors.filter((user:Iuser)=>user.isInstructor == true || user.status == "pending")
+            return {instructors,pages}
         }
-
-        return instructors
+        
+       
         } catch (error) {
             console.error(error)
         }
     }
 
-    async fetchStudents(search:string,sort:string,next: NextFunction): Promise<Iuser[] | void> {
+    async fetchStudents(search:string,sort:string,page:number,next: NextFunction): Promise<{students:Iuser[],pages:number}|void> {
         try {
-           
-            const students = await this.adminRepository.find(search,sort)
+            const count = await this.adminRepository.getUserPages(search,sort);
+            const pages = count as number 
+            const students = await this.adminRepository.find(search,sort,page)
+            
+            console.log(pages,"pages");
+            
         if(students){
-        
-            return students;
+            return {students,pages};
         }
         } catch (error) {
             console.error(error)

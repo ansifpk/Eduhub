@@ -21,4 +21,12 @@ export class InstructorController {
       return res.send({ success: true });
     }
   }
+
+  async ratings(req: Request, res: Response, next: NextFunction) {
+     const {userId} = req.params;
+     const ratings = await this.instructorUseCases.ratings(userId,next)
+    if (ratings) {
+      return res.send({ success: true ,ratings});
+    }
+  }
 }
