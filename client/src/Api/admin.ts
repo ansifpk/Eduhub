@@ -175,6 +175,14 @@ export const getNotifications = async(recipientId:string)=>{
         return error 
     }
 }
+export const markAsReadNotification = async (senderId:string,userId:string)=>{
+    try {
+        const response = await ApiGatway.patch(`${adminRoutes.notification}/${userId}/${senderId}`);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
 export const AdminChats = async(userId:string)=>{
     try {
         const response = await ApiGatway.get(`${adminRoutes.chat}?userId=${userId}`);

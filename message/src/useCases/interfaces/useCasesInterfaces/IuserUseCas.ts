@@ -2,6 +2,7 @@ import { NextFunction } from "express";
 import { IChat } from "../../../entities/chat";
 import { IMessage } from "../../../entities/message";
 import { INotification } from "../../../entities/notifications";
+import { UpdateWriteOpResult } from "mongoose";
 
 export interface IUserUseCase{
     //*chat
@@ -15,5 +16,5 @@ export interface IUserUseCase{
     //*message
     getNotifications(recipientId:string,next:NextFunction):Promise<INotification[]|void>
     createNotifications(recipientId:string,senderId:string,next:NextFunction):Promise<INotification|void>
-    
+    markAsRead(userId:string,senterId:string,next:NextFunction):Promise<UpdateWriteOpResult|void>
 }

@@ -1,106 +1,3 @@
-// import { Card, CardContent, CardHeader } from '@/Components/ui/card';
-// import './InstructorHome.css';
-// import InstructorAside from '../../Components/instructor/InstructorAside'
-// import { useSelector } from 'react-redux';
-// import { useNavigate } from 'react-router-dom';
-// interface Course {
-//     name: string;
-//     registered: number;
-//   }
-//   interface User{
-//     id:string;
-//     name:string;
-//     email:string;
-//     isAdmin:boolean;
-//     isInstructor:boolean;
-//     isBlock:boolean;
-//   }
-//   interface Review {
-//     name: string;
-//     comment: string;
-//     avatar: string;
-//   }
-  
-// const InstructorHome = () => {
-//     const courses: Course[] = [
-//         { name: "HTML", registered: 80 },
-//         { name: "React", registered: 70 },
-//         { name: "Node.js", registered: 60 },
-//       ];
-//       const reviews: Review[] = [
-//         { name: "Lina", comment: "Very good class, cover every parts", avatar: "/api/placeholder/32/32" },
-//         { name: "John", comment: "Nice presentation", avatar: "/api/placeholder/32/32" },
-//         { name: "Rocky", comment: "Good work", avatar: "/api/placeholder/32/32" },
-//       ];
-//       const userr = useSelector((state)=>state)
-//     // console.log("user starte",userr);
-//     const user = useSelector((state:User)=>state.name);
-//     const navigate = useNavigate()
-//   return (
-//     <div className="container-fluid">
-//     <div className="row">
-//         <InstructorAside/>
-//         <div className="col-md-10">
-                  
-//             <div className="welcome mt-4 mb-4">
-//                 <h1>Welcome back, {user}</h1>
-//                 <img src="https://via.placeholder.com/50" alt="Profile Picture" onClick={()=>navigate("/instructor/profile")} className="profile-pic" />
-//             </div>
-
-           
-//             <div className="grid grid-cols-2 gap-8">
-       
-//             <Card>
-//               <CardHeader>
-//                 <h2 className="text-lg font-semibold">YOUR TOP 3 COURSES</h2>
-//               </CardHeader>
-//               <CardContent>
-//                 {courses.map((course, index) => (
-//                   <div key={index} className="mb-4 last:mb-0">
-//                     <div className="font-medium">{course.name}</div>
-//                     <div className="text-sm text-gray-500">{course.registered} Registed</div>
-//                   </div>
-//                 ))}
-//               </CardContent>
-//             </Card>
-
-      
-//             <Card>
-//               <CardHeader>
-//                 <h2 className="text-lg font-semibold">Reviews</h2>
-//               </CardHeader>
-//               <CardContent>
-//                 {reviews.map((review, index) => (
-//                   <div key={index} className="flex items-center gap-3 mb-4 last:mb-0">
-//                     <img 
-//                       src={review.avatar} 
-//                       alt={review.name} 
-//                       className="w-8 h-8 rounded-full"
-//                     />
-//                     <div>
-//                       <div className="font-medium">{review.name}</div>
-//                       <div className="text-sm text-gray-500">{review.comment}</div>
-//                     </div>
-//                   </div>
-//                 ))}
-//               </CardContent>
-//             </Card>
-//           </div>
-//         </div>
-//     </div>
-// </div>
-//   )
-// }
-
-// export default InstructorHome
-
-
-
-
-// import SettingsProfilePage from "./profileHead"
-// import { SidebarNav } from "./sideBar"
-// import { Separator } from "./ui/separator"
-
 import { IChat } from "@/@types/chatType"
 import { IMessage } from "@/@types/messageType"
 import { User } from "@/@types/userType"
@@ -115,12 +12,12 @@ import { MoreVertical, Send } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import InputEmoji from "react-input-emoji";
 import { useSelector } from "react-redux"
-import { useSearchParams } from "react-router-dom"
+import { useNavigate, useSearchParams } from "react-router-dom"
 import { io, Socket } from "socket.io-client"
 import {DefaultEventsMap} from '@socket.io/component-emitter';
 import moment from "moment"
 import toast from "react-hot-toast"
-import { getInstructorCurrentChat, getInstructorMessages, getNotifications, instructorChats, instructorSendMessage, sendNotification } from "@/Api/instructor"
+import { getInstructorCurrentChat, getInstructorMessages, getNotifications, instructorChats, instructorSendMessage, markAsReadNotification, sendNotification } from "@/Api/instructor"
 import { INotification } from "@/@types/notificationType"
 import {
   Popover,
@@ -128,6 +25,9 @@ import {
   PopoverTrigger,
 } from "@/Components/ui/popover";
 import MarkEmailUnreadIcon from "@mui/icons-material/MarkEmailUnread";
+import { logout } from "@/Api/user"
+import { useDispatch } from "react-redux"
+import { removeUser } from "@/redux/authSlice"
 
 
 
@@ -199,17 +99,18 @@ export default function InstructorMessage() {
       );
          if(chatUser?._id !== message.senderId) return;
          setMessages((prev)=>[...prev,message])
+         console.log("chatUser",chatUser,"getMessage",message);
+         
     })
 
     socket.on("getMessageNotification", (res) => {
-
       const isChatOpen = currentChat?.members.find(
         (value) => value._id !== res.recipientId
       );
-      
       toast.success(`You got a new message`)
       if (isChatOpen?._id == res.senderId) {
         setNotifications((prev) => [{ ...res, isRead: true }, ...prev]);
+        markAsRead(res.senderId)
       } else {
         setNotifications((prev) => [res, ...prev]);
       }
@@ -228,7 +129,7 @@ export default function InstructorMessage() {
   useEffect(() => {
     const getUserChats = async () => {
       const response = await instructorChats(userId);
-      console.log(response,"caht respos");
+      // console.log(response,"caht respos");
       if (response.success) {
         setChats(response.chats);
       }
@@ -264,7 +165,7 @@ export default function InstructorMessage() {
       }
       fetching ();
      },[])
-     console.log('notifications',notifications);
+    //  console.log('notifications',notifications);
      
   const handletext = async () => {  
     let reciever = '';
@@ -298,12 +199,24 @@ export default function InstructorMessage() {
       senderName:user
     }
    })
+  const dispatch = useDispatch();
+  const navigate  = useNavigate();
 
-   const markAsRead  = (sentId:string) => {
+   const markAsRead  = async(sentId:string) => {
       
       const mdNotifications = notifications.filter((value:INotification)=>value.senderId !== sentId);
       if(mdNotifications){
-        setNotifications(mdNotifications)
+        const response = await markAsReadNotification(sentId,userId);
+        if(response.success){
+          setNotifications(mdNotifications)
+        }else if(response.status == 403){
+          await logout();
+          dispatch(removeUser());
+          toast.error("You are blocked by Admin");
+          return navigate('/instructor/login') 
+        }else{
+          return toast.error(response.response.data.message);
+        }
       }
    }
 

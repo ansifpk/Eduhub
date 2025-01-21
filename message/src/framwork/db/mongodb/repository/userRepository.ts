@@ -1,3 +1,4 @@
+import { UpdateWriteOpResult } from "mongoose";
 import { IChat } from "../../../../entities/chat";
 import { IMessage } from "../../../../entities/message";
 import { INotification } from "../../../../entities/notifications";
@@ -8,24 +9,37 @@ import { messageModel } from "../models/messageModel";
 import { notificationModel } from "../models/notificationModel";
 import { userModel } from "../models/userModel";
 export class UserRepository implements IUserRepository{
+  
     constructor(
         private userModels:typeof userModel,
         private chatModels:typeof chatModel,
         private messageModels:typeof messageModel,
         private notificationModels:typeof notificationModel,
     ){}
+
+   async  updateNotification(userId: string, senterId: string): Promise<UpdateWriteOpResult | void> {
+      try {
+        const notifications = await this.notificationModels.updateMany({
+          recipientId:userId,
+          senderId:senterId,
+          isRead:true,
+        });
+        if(notifications) return notifications;
+      } catch (error) {
+        console.error(error)
+        }
+    }
+
     async createNotification(recipientId: string, senderId: string): Promise<INotification | void> {
       try {
-        console.log(recipientId,senderId,"repo");
-        
         const chats = await this.notificationModels.create({
           recipientId,
           senderId
         })
         if(chats) return chats;
-    } catch (error) {
-       console.error(error)
-      }
+      } catch (error) {
+        console.error(error)
+        }
     }
     async findAllNotification(recipientId: string): Promise<INotification[] | void> {
       try {

@@ -4,6 +4,8 @@ import {
   getCurrentChat,
   getMessages,
   getNotifications,
+  logout,
+  markAsReadNotification,
   sendMessage,
   sendNotification,
   userChats,
@@ -18,7 +20,7 @@ import { MoreVertical, Send } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import InputEmoji from "react-input-emoji";
 import moment from "moment";
 import { IMessage } from "@/@types/messageType";
@@ -44,6 +46,8 @@ import {
 } from "@/Components/ui/popover";
 import { Button } from "@/Components/ui/button";
 import { INotification } from "@/@types/notificationType";
+import { removeUser } from "@/redux/authSlice";
+import { useDispatch } from "react-redux";
 
 const Message = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -104,7 +108,8 @@ const Message = () => {
     socket.emit("sendMessage", {
       text: newMessage,
       recipientId: recipientId?._id,
-      senderId:userId
+      senderId:userId,
+      isRead:false
     });
   }, [newMessage]);
 
@@ -119,6 +124,13 @@ const Message = () => {
       );
          if(chatUser?._id !== message.senderId) return;
          setMessages((prev)=>[...prev,message])
+         console.log("chatUser",chatUser,"getMessage",message);
+         
+        //  if (isChatOpen?._id == res.senderId) {
+        //   setNotifications((prev) => [{ ...res, isRead: true }, ...prev]);
+        // } else {
+        //   setNotifications((prev) => [res, ...prev]);
+        // }
     })
 
     socket.on("getMessageNotification", (res) => {
@@ -194,14 +206,26 @@ const Message = () => {
       senderName:user
     }
    })
-
-   const markAsRead  = (sentId:string) => {
+   const navigate = useNavigate();
+   const dispatch = useDispatch();
+   
+   const markAsRead  = async(sentId:string) => {
       const mdNotifications = notifications.filter((value:INotification)=>value.senderId !== sentId);
       if(mdNotifications){
-        setNotifications(mdNotifications)
+        const response = await markAsReadNotification(sentId,userId);
+        if(response.success){
+          setNotifications(mdNotifications)
+        }else if(response.status == 403){
+          await logout();
+          dispatch(removeUser());
+          toast.error("You are blocked by Admin");
+          return navigate('/instructor/login') 
+        }else{
+          return toast.error(response.response.data.message);
+        }
       }
    }
-    console.log("modification",modification);
+ 
   const handletext = async () => {
     let reciever = '';
     currentChat?.members.map((user)=>{
@@ -231,10 +255,11 @@ const Message = () => {
         fetching ();
        },[])
   return (
-    <div className="bg-blue-100 ">
+    <div className="h-screen bg-blue-100">
       <Header />
-      <ProfileNavbar />
-      <div className="flex justify-center">
+       <ProfileNavbar />
+
+      {/* <div className="flex justify-center">
         <div className="bg-white mx-5 my-4 flex  w-[950px] rounded-2">
           <div className="border borer-danger bg-success-400  m-2  rounded-2">
             <div className="flex items-center justify-between w-[330px]">
@@ -388,7 +413,7 @@ const Message = () => {
                         </div>
                       </div>
                     ))}
-                    {/* Add invisible div for scrolling reference */}
+                    
                     <div ref={messagesEndRef} />
                   </>
                 ) : chatId ? (
@@ -420,8 +445,8 @@ const Message = () => {
             </div>
           </div>
         </div>
-      </div>
-      <Footer />
+      </div> */}
+       <Footer />
     </div>
   );
 };

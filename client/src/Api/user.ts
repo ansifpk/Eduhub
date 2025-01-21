@@ -436,6 +436,14 @@ export const getNotifications = async(recipientId:string)=>{
         return error 
     }
 }
+export const markAsReadNotification = async (senderId:string,userId:string)=>{
+    try {
+        const response = await ApiGatway.patch(`${userRoutes.notification}/${userId}/${senderId}`);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
 export const changeProfileImage = async(userId:string,formData:object)=>{
     try {
         const response = await ApiGatway.patch(`${userRoutes.profileImage}/${userId}`,formData,{

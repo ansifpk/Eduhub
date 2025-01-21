@@ -1,6 +1,6 @@
 import AdminAside from '@/Components/admin/AdminAside'
 import { useEffect, useRef, useState } from 'react';
-import {  useSearchParams } from 'react-router-dom';
+import {  useNavigate, useSearchParams } from 'react-router-dom';
 import { MoreVertical, Send } from 'lucide-react';
 import { ScrollArea } from '@/Components/ui/scroll-area';
 import { User } from '@/@types/userType';
@@ -15,10 +15,13 @@ import { Avatar, AvatarImage } from '@/Components/ui/avatar';
 import { Separator } from '@/Components/ui/separator';
 import InputEmoji from "react-input-emoji";
 import toast from 'react-hot-toast';
-import { AdminChats, AdminSendMessage, AdminSendNotification, getAdminCurrentChat, getAdminMessages, getNotifications } from '@/Api/admin';
+import { AdminChats, AdminSendMessage, AdminSendNotification, getAdminCurrentChat, getAdminMessages, getNotifications, markAsReadNotification } from '@/Api/admin';
 import { Popover, PopoverContent, PopoverTrigger } from '@/Components/ui/popover';
 import MarkEmailUnreadIcon from "@mui/icons-material/MarkEmailUnread";
 import { INotification } from '@/@types/notificationType';
+import { useDispatch } from 'react-redux';
+import { removeUser } from '@/redux/authSlice';
+import { logout } from '@/Api/user';
 
 const AdminMessage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -183,12 +186,25 @@ const AdminMessage = () => {
       ...notify,
       senderName:user
     }
-   })
+   });
 
-   const markAsRead  = (sentId:string) => {
+   const navigate = useNavigate();
+   const dispatch = useDispatch();
+   
+   const markAsRead  = async(sentId:string) => {
       const mdNotifications = notifications.filter((value:INotification)=>value.senderId !== sentId);
       if(mdNotifications){
-        setNotifications(mdNotifications)
+        const response = await markAsReadNotification(sentId,userId);
+        if(response.success){
+          setNotifications(mdNotifications)
+        }else if(response.status == 403){
+          await logout();
+          dispatch(removeUser());
+          toast.error("You are blocked by Admin");
+          return navigate('/instructor/login') 
+        }else{
+          return toast.error(response.response.data.message);
+        }
       }
    }
    console.log("notification",notifications);

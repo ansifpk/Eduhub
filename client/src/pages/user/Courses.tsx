@@ -9,11 +9,12 @@ import { ICategory } from "@/@types/categoryTpe";
 import { getCategoryies } from "@/Api/instructor";
 import { Button } from "@/Components/ui/button";
 import toast from "react-hot-toast";
-import { addToCart, userCart } from "@/Api/user";
+import { addToCart, userCart, userPlans } from "@/Api/user";
 import { useSelector } from "react-redux";
 import { User } from "@/@types/userType";
 import { ICart } from "@/@types/cartType";
 import { Pagination, Stack } from "@mui/material";
+import { IUserSubscribe } from "@/@types/userSubscribe";
 
 const Courses = () => {
   const [courses, setCourses] = useState<ICourse[]>([]);
@@ -22,16 +23,25 @@ const Courses = () => {
   const userId = useSelector((state: User) => state.id);
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(0);
-
+const [plans, setPlans] = useState<IUserSubscribe[]>([]);
   useEffect(() => {
     const category = async () => {
       const data = await getCategoryies();
       if (data) {
         setCategories(data);
       }
+      
+      const plan = await userPlans(userId);
+      if (plan.success) {
+        setPlans(plan.plans);
+      } else {
+        return toast.error(plan.response.data.message);
+      }
       const cart = await userCart(userId);
       if (cart.success) {
         setCart(cart.cart);
+      }else {
+        return toast.error(cart.response.data.message);
       }
     };
     category();
@@ -59,11 +69,13 @@ const Courses = () => {
       toast.error(data.response.data.message);
     }
   };
-console.log('totalPage',totalPage);
 
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
   };
+
+   console.log(plans,"cart",cart)
+
 
   return (
     <div>
@@ -125,7 +137,17 @@ console.log('totalPage',totalPage);
                         Go to class
                       </Button>
                     ) : (
-                      <Button
+                       <>
+                        {plans.some((subs)=>subs.subscriptionId.instructorId == course.instructorId._id)?(
+                          <Button
+                            type="button"
+                            onClick={() => navigate(`/user/playCourse/${course._id}`)}
+                            className="bg-[#49BBBD] text-sm  w-full text-white hover:bg-[#49BBBD]"
+                          >
+                            Go to class
+                          </Button>
+                        ):(
+                         <Button
                         type="button"
                         onClick={() =>
                           cart?.courses?.some(
@@ -140,6 +162,25 @@ console.log('totalPage',totalPage);
                           ? "Go to cart"
                           : "Add to cart"}
                       </Button>
+
+                        )}
+                       </>
+                      // <Button
+                      //   type="button"
+                      //   onClick={() =>
+                      //     cart?.courses?.some(
+                      //       (value) => value._id == course._id
+                      //     )
+                      //       ? navigate("/users/cart")
+                      //       : handleHart(course._id)
+                      //   }
+                      //   className="bg-[#49BBBD] text-sm  w-full text-white hover:bg-[#49BBBD]"
+                      // >
+                      //   {cart?.courses?.some((value) => value._id == course._id)
+                      //     ? "Go to cart"
+                      //     : "Add to cart"}
+                      // </Button>
+                     
                     )}
                   </div>
                 </div>

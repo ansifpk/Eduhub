@@ -5,6 +5,7 @@ export interface IMessage{
     chatId:IChat,
     senderId:IUser,
     text:string,
+    isRead:boolean,
     createdAt:Date,
 
 }

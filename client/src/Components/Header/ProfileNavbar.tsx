@@ -17,8 +17,7 @@ import {
 } from "../ui/alert-dialog";
 
 import toast from "react-hot-toast";
-import { Tab, Tabs } from "@nextui-org/tabs";
-import {  useState } from "react";
+
 
 const ProfileNavbar = () => {
   const dispatch = useDispatch();
@@ -38,7 +37,7 @@ const ProfileNavbar = () => {
   };
   
   return (
-    <div>
+    <div className="">
        <div className='profile-navbar'>
               <ul className="px-2">
                 <li ><NavLink end  className={({ isActive }) =>

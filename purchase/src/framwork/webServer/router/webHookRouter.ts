@@ -8,6 +8,7 @@ export function webHookRouter(router: Router) {
     "/webhook",
     express.raw({ type: 'application/json' }),
     async (req: Request, res: Response, next: NextFunction) => {
+      console.log("subscripion")
        userController.webhook(req, res, next);
     }
   );
@@ -16,6 +17,7 @@ export function webHookRouter(router: Router) {
     "/subscription/webhook",
     express.raw({ type: 'application/json' }),
     async (req: Request, res: Response, next: NextFunction) => {
+      console.log("subscripion")
        webhookController.webhook(req, res, next);
     }
   );

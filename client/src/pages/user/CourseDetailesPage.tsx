@@ -73,6 +73,7 @@ import {
   DrawerHeader,
   useDisclosure,
 } from "@nextui-org/react";
+
 const stripe = await loadStripe(import.meta.env.VITE_PUBLISH_SECRET);
 const CourseDetailesPage = () => {
   const [course, setCourse] = useState<ICourse>();
@@ -767,13 +768,22 @@ const CourseDetailesPage = () => {
                   alt={"review.name"}
                   className="w-auto h-auto"
                 />
-                {/* {plans.map((plan) => {
-                  const isSubscribed = subscriptions.some(
-                    (value) => value._id == plan?.subscriptionId._id
-                  );
-                  return (
-                    <div key={plan.subscriptionId._id}>
-                      {isSubscribed ? (
+                {course?.students?.some((user) => user._id === userId) ? (
+                  <Button
+                    type="button"
+                    onClick={() => navigate(`/user/playCourse/${course._id}`)}
+                    className="w-full"
+                  >
+                    Go to class
+                  </Button>
+                ) : subscriptions.length > 0 ? (
+                  
+                  (() => {
+                    const isSubscribed = subscriptions.some((sub) =>
+                      plans.some((plan) => sub._id === plan.subscriptionId._id)
+                    );
+                    return (
+                      isSubscribed ? (
                         <Button
                           type="button"
                           onClick={() =>
@@ -783,182 +793,116 @@ const CourseDetailesPage = () => {
                         >
                           Go to class
                         </Button>
-                      ) : (
-                        <div className="space-y-2">
-                          <RadioGroup
-                            onValueChange={(value) => {
-                              setPaymentMethord(value);
-                              setOption(false);
-                            }}
-                            defaultValue={paymentMethord}
-                          >
-                            <h6>Choose a payment option</h6>
-
-                            <div className="flex items-center space-x-2">
-                              <RadioGroupItem value="Stripe" id="option-two" />
-                              <Label htmlFor="Stripe">Stripe</Label>
-                            </div>
-                          </RadioGroup>
-                          <div>
-                            {course?.students?.some(
-                              (value) => value._id == userId
-                            ) ? (
-                              <Button
+                      ):(
+                        <>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button type="button" className="w-full">
+                              purchase
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                Are you absolutely sure?
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure to purchase this course?
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogAction type="button">
+                                Cancel
+                              </AlertDialogAction>
+                              <AlertDialogAction
+                                onClick={handleOrder}
                                 type="button"
-                                onClick={() =>
-                                  navigate(`/user/playCourse/${course._id}`)
-                                }
-                                className="w-full"
                               >
-                                Go to class
-                              </Button>
-                            ) : (
-                              <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                  <Button
-                                    disabled={option}
-                                    type="button"
-                                    className="w-full"
-                                  >
-                                    purchase
-                                  </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                  <AlertDialogHeader>
-                                    <AlertDialogTitle>
-                                      Are you absolutely sure?
-                                    </AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                      Are you sure to purchase this course?
-                                    </AlertDialogDescription>
-                                  </AlertDialogHeader>
-                                  <AlertDialogFooter>
-                                    <AlertDialogAction type="button">
-                                      Cancel
-                                    </AlertDialogAction>
-                                    <AlertDialogAction
-                                      onClick={handleOrder}
-                                      type="button"
-                                    >
-                                      Continue
-                                    </AlertDialogAction>
-                                  </AlertDialogFooter>
-                                </AlertDialogContent>
-                              </AlertDialog>
-                            )}
+                                Continue
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                        {subscriptions.length>0&&<div>
+                          <h4 className="text-xs">OR</h4>
+                          <div className="space-y-3">
+                            <div className="text-xs">
+                              get access to this course and also all the courses of
+                              this instructor
+                            </div>
+                            <Button className="w-full" onClick={() => onOpen()}>
+                              subscribe
+                            </Button>
                           </div>
-                          {subscriptions.length > 0 && (
-                            <>
-                              <div>
-                                <h4 className="text-xs">OR</h4>
-                                <div className="space-y-3">
-                                  <div className="text-xs">
-                                    get access to this course and also all the
-                                    courses of this instructor
-                                  </div>
-                                  <Button
-                                    className="w-full"
-                                    onClick={() => onOpen()}
-                                  >
-                                    subscribe
-                                  </Button>
-                                </div>
-                              </div>
-                              <Drawer
-                                isOpen={isOpen}
-                                size={"full"}
-                                onClose={onClose}
-                              >
-                                <DrawerContent>
-                                  {(onClose) => (
-                                    <>
-                                      <DrawerHeader className="flex flex-col gap-1">
-                                        Instructor subscriptions
-                                      </DrawerHeader>
-                                      <DrawerBody>
-                                        {subscriptions.map((value, index) => (
-                                          <div
-                                            key={index}
-                                            className="border w-25 h-[300px] rounded-1"
-                                          >
-                                            <h4 className=" underline">
-                                              Personal Plan
-                                            </h4>
-                                            <div className="  m-1">
-                                              <div className="flex flex-col items-center justify-center h-[210px]">
-                                                <div>
-                                                  {value.plan == "Monthly"
-                                                    ? `Rs : ${value.price}/- per Month`
-                                                    : `Rs : ${value.price}/- per Year`}
-                                                </div>
-                                                <div className="text-xs">
-                                                  {value.plan == "Monthly"
-                                                    ? `Billed monthly.`
-                                                    : `Billed annually.`}
-                                                </div>
-                                                <div className="space-y-3 m-3">
-                                                  {value.description.map(
-                                                    (val, index) => (
-                                                      <li
-                                                        className="text-xs"
-                                                        key={index}
-                                                      >
-                                                        {val}
-                                                      </li>
-                                                    )
-                                                  )}
-                                                </div>
-                                              </div>
-                                              <div className="flex items-end ">
-                                                <Button
-                                                  onClick={() =>
-                                                    subscribe(value._id)
-                                                  }
-                                                  type="button"
-                                                  className="w-full bg-teal-500 hover:bg-teal-500 text-white"
-                                                >
-                                                  Start Subscription
-                                                </Button>
-                                              </div>
-                                            </div>
+                        </div>}
+                        <Drawer isOpen={isOpen} size={"full"} onClose={onClose}>
+                          <DrawerContent>
+                            {(onClose) => (
+                              <>
+                                <DrawerHeader className="flex flex-col gap-1">
+                                  Instructor subscriptions
+                                </DrawerHeader>
+                                <DrawerBody>
+                                  {subscriptions.map((value, index) => (
+                                    <div
+                                      key={index}
+                                      className="border w-25 h-[300px] rounded-1"
+                                    >
+                                      <h4 className=" underline">Personal Plan</h4>
+                                      <div className="  m-1">
+                                        <div className="flex flex-col items-center justify-center h-[210px]">
+                                          <div>
+                                            {value.plan == "Monthly"
+                                              ? `Rs : ${value.price}/- per Month`
+                                              : `Rs : ${value.price}/- per Year`}
                                           </div>
-                                        ))}
-                                      </DrawerBody>
-                                      <DrawerFooter>
-                                        <Button
-                                          className="text-danger bg-light"
-                                          onClick={onClose}
-                                        >
-                                          Close
-                                        </Button>
-                                      </DrawerFooter>
-                                    </>
-                                  )}
-                                </DrawerContent>
-                              </Drawer>
-                            </>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })} */}
-                {course?.students?.some((user) => user._id == userId) ? (
-                  <Button
-                    type="button"
-                    onClick={() => navigate(`/user/playCourse/${course._id}`)}
-                    className="w-full"
-                  >
-                    Go to class
-                  </Button>
-                ) : subscriptions.length > 0 ? (
+                                          <div className="text-xs">
+                                            {value.plan == "Monthly"
+                                              ? `Billed monthly.`
+                                              : `Billed annually.`}
+                                          </div>
+                                          <div className="space-y-3 m-3">
+                                            {value.description.map((val, index) => (
+                                              <li className="text-xs" key={index}>
+                                                {val}
+                                              </li>
+                                            ))}
+                                          </div>
+                                        </div>
+                                        <div className="flex items-end ">
+                                          <Button
+                                            onClick={() => subscribe(value._id)}
+                                            type="button"
+                                            className="w-full bg-teal-500 hover:bg-teal-500 text-white"
+                                          >
+                                            Start Subscription
+                                          </Button>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </DrawerBody>
+                                <DrawerFooter>
+                                  <Button
+                                    className="text-danger bg-light"
+                                    onClick={onClose}
+                                  >
+                                    Close
+                                  </Button>
+                                </DrawerFooter>
+                              </>
+                            )}
+                          </DrawerContent>
+                        </Drawer>
+                      </>
+                      )
+                    );
+                  })()
+                ) : (
                   <>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button
-                          type="button"
-                          className="w-full"
-                        >
+                        <Button type="button" className="w-full">
                           purchase
                         </Button>
                       </AlertDialogTrigger>
@@ -984,7 +928,7 @@ const CourseDetailesPage = () => {
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>
-                    <div>
+                    {subscriptions.length>0&&<div>
                       <h4 className="text-xs">OR</h4>
                       <div className="space-y-3">
                         <div className="text-xs">
@@ -995,7 +939,7 @@ const CourseDetailesPage = () => {
                           subscribe
                         </Button>
                       </div>
-                    </div>
+                    </div>}
                     <Drawer isOpen={isOpen} size={"full"} onClose={onClose}>
                       <DrawerContent>
                         {(onClose) => (
@@ -1056,32 +1000,6 @@ const CourseDetailesPage = () => {
                       </DrawerContent>
                     </Drawer>
                   </>
-                ) : (
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button type="button" className="w-full">
-                        purchase
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>
-                          Are you absolutely sure?
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Are you sure to purchase this course?
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogAction type="button">
-                          Cancel
-                        </AlertDialogAction>
-                        <AlertDialogAction onClick={handleOrder} type="button">
-                          Continue
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
                 )}
               </div>
             </CardContent>

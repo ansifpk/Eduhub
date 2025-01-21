@@ -15,6 +15,10 @@ export function NotificationRoute(router:Router){
             console.log('re.body',req.body);
             notificationController.createNotifications(req,res,next)
         })
+        router.patch("/:userId/:senderId",async(req,res,next)=>{
+            console.log('re.body',req.params);
+            notificationController.markAsRead(req,res,next)
+        })
 
     } catch (error) {
         console.error(error)

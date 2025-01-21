@@ -3,6 +3,7 @@ import { IChat } from "../../../entities/chat";
 import { IMessage } from "../../../entities/message";
 import { IUser } from "../../../entities/user";
 import { INotification } from "../../../entities/notifications";
+import { UpdateWriteOpResult } from "mongoose";
 
 export interface IUserRepository{
     //TODO chat
@@ -18,4 +19,5 @@ export interface IUserRepository{
      //TODO notifications
      createNotification(recipientId:string,senderId:string): Promise<INotification|void>
      findAllNotification(recipientId:string): Promise<INotification[]|void>
+     updateNotification(userId:string,senterId:string): Promise<UpdateWriteOpResult|void>
 }

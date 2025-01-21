@@ -32,6 +32,18 @@ export class NotificationController{
              }
         }
 
+     async markAsRead(req:Request,res:Response,next:NextFunction){
+             try {
+                const {senderId,userId} = req.params;
+                const notifications = await this.userUseCase.markAsRead(userId,senderId,next)
+                if(notifications){
+                   return res.send({success:true,notifications:notifications});
+                }
+             } catch (error) {
+                console.error(error)
+             }
+        }
+
 
 
 }

@@ -16,6 +16,11 @@ const messageScheema = new Schema({
         type:String,
         required:true
     },
+    isRead:{
+        type:Boolean,
+        required:false,
+        default:false
+    },
 },{
 
       timestamps:true,

@@ -324,6 +324,14 @@ export const getRecentRatings = async(userId:string)=>{
         return error 
     }
 }
+export const markAsReadNotification = async (senderId:string,userId:string)=>{
+    try {
+        const response = await ApiGatway.patch(`${instructorRoutes.notification}/${userId}/${senderId}`);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
 
 
 

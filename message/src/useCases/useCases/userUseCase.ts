@@ -5,11 +5,24 @@ import { IUserUseCase } from "../interfaces/useCasesInterfaces/IuserUseCas"
 import ErrorHandler from "../middlewares/errorHandler"
 import { IMessage } from "../../entities/message"
 import { INotification } from "../../entities/notifications"
+import { UpdateWriteOpResult } from "mongoose"
 
 export class UseruseCase implements IUserUseCase{
     constructor(
         private userRepository:IUserRepository
     ){}
+
+    async markAsRead(userId: string, senterId: string, next: NextFunction): Promise<UpdateWriteOpResult | void> {
+        const user  = await this.userRepository.findUserById(senterId);
+
+        if(!user){
+         return next(new ErrorHandler(400,"User Not Found"))
+        }
+        const notifications = await this.userRepository.updateNotification(userId,senterId);
+        if(notifications){
+           return  notifications
+        }
+    }
    async  getNotifications(recipientId: string, next: NextFunction): Promise<INotification[] | void> {
     try {
         const user  = await this.userRepository.findUserById(recipientId);
