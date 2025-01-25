@@ -47,6 +47,13 @@ spec:
                 name: profile-srv
                 port:
                   number: 3004
+          - path: /message/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: message-srv
+                port:
+                  number: 3006
           - path: /?(.*)
             pathType: Prefix
             backend:

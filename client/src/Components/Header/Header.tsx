@@ -4,14 +4,12 @@ import { Avatar, AvatarImage } from '../ui/avatar';
 import { User } from '@/@types/userType';
 import { useEffect, useState } from 'react';
 import { getUserDetailes } from '@/Api/user';
-import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import { ToggleButtonGroup } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
 const Header = () => {
   const [open,setOpen]  = useState(false)
-   
    const id = useSelector((state:User)=>state.id);
    const [image,setImage] = useState('')
    useEffect(()=>{
@@ -23,9 +21,9 @@ const Header = () => {
      }
      fetching()
    },[])
-
+ 
   return (
-    <div className='shadow-md w-full fixed top-0 left-0'>
+    <div className='shadow-md w-full fixed top-0 left-0 z-50'>
       <div className='md:flex bg-teal-500 items-center  justify-between md:px-10 px-7'>
         <div className='font-bold text-2xl flex items-center font-[poppins] text-gray-800'>
            EduHub
@@ -41,9 +39,9 @@ const Header = () => {
           </ToggleButtonGroup>
           )}
         </div>
-        <ul className={`md:flex md:items-center  md:pb-0  pb-12 absolute md:static md:bg-teal-500 bg-teal-500   md:z-auto z-[-1] left-0 w-full md:w-auto md:pl-0 pl-9 transition-all durtion-500 ease-in ${open?'top-10':'top-[-490px]'} md:opasity-100 opasity-0`}>
+        <ul className={`md:flex md:items-center  md:pb-0  pb-12 absolute md:static md:bg-teal-500 bg-teal-500    left-0 w-full md:w-auto md:pl-0 pl-9 transition-all durtion-500 ease-in ${open?'top-10':'top-[-490px]'} md:opasity-100 opasity-0`}>
            {[{name:'Home',path:'/'},{name:'Courses',path:'/users/courses'},{name:"Cart",path:'/users/cart'}].map((value,index)=>(
-            <li key={index} className='md:ml-8  text-md  md:my-0 py-2 ' ><NavLink  className={({ isActive }) =>
+            <li key={index} className='md:ml-8  text-md  md:my-0 py-2.5 ' ><NavLink  className={({ isActive }) =>
               isActive 
                 ? "no-underline bg-white rounded-4 px-3 py-1 text-black" 
                 : "no-underline text-white"
@@ -51,7 +49,7 @@ const Header = () => {
            ))
            }
            {id?(
-                 <li className='md:ml-8  text-md  md:my-0 py-2 ' ><Link to={'/profile'}>
+                 <li className='md:ml-8  text-md  md:my-0 py-1 ' ><Link to={'/profile'}>
                  <Avatar>
                     <AvatarImage className='avatar' src={image?image:"https://github.com/shadcn.png"} />
                  </Avatar>
@@ -65,38 +63,6 @@ const Header = () => {
                )}
          </ul>
       </div>
-        
-              {/* 
-              <ul className='check'>
-                <li ><NavLink  className={({ isActive }) =>
-                isActive 
-                  ? "text-black px-4 py-1 rounded-full bg-gray-100  no-underline" 
-                  : "no-underline text-white"
-              } to={'/'}>Home</NavLink></li>
-                <li ><NavLink  className={({ isActive }) =>
-                isActive 
-                  ? "text-black px-4 py-1 rounded-full bg-gray-100  no-underline" 
-                  : "no-underline text-white"
-              } to={"/users/courses"}>Courses</NavLink></li>
-                <li><NavLink  className={({ isActive }) =>
-                isActive 
-                  ? "text-black px-4 py-1 rounded-full bg-gray-100  no-underline" 
-                  : "no-underline text-white"
-              } to={'/users/cart'}>Cart</NavLink></li>
-               {id?(
-                 <li><Link to={'/profile'}>
-                 <Avatar>
-                    <AvatarImage className='avatar' src={image?image:"https://github.com/shadcn.png"} />
-                 </Avatar>
-               </Link>  
-               </li>
-               ):(
-                <>
-                <li ><NavLink to={'/users/login'}>Login</NavLink></li>
-                <li ><NavLink to={'/users/register'}>SignUp</NavLink></li>
-                </>
-               )}
-              </ul> */}
     </div>
   )
 }

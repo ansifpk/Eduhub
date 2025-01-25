@@ -1,30 +1,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: profile-depl
+  name: message-depl
 spec: 
   replicas: 1
   selector:
     matchLabels:
-      app: profile
+      app: message
   template:
     metadata:
       labels:
-        app: profile
+        app: message
     spec:
       containers:
-        - name: profile
-          image: us.grc.io/eduhub-online/profile
+        - name: message
+          image: us.grc.io/eduhub-online/message
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: profile-srv
+  name: message-srv
 spec: 
   selector:
-    app: profile
+    app: message
   ports:
-    - name: profile
+    - name: message
       protocol: TCP
-      port: 3004
-      targetPort: 3004
+      port: 3006
+      targetPort: 3006

@@ -1,18 +1,17 @@
-import './Footer.css'
 const Footer = () => {
   return (
-    <div className="footer mt-5">
-       <div className="footer-headers">
-         <ul>
+    <div className="bg-blue-950 text-white mt-3  h-[200px] flex items-center justify-center w-full">
+       <div >
+         <ul className="flex items-center justify-center text-center gap-10" >
             <li>EduHub</li>
             <li>Virtual Class</li>
          </ul>
-       </div>
-         <ul>
+         <ul className="flex sm:text-xs text-xs md:text-medium  items-center justify-center text-center gap-1  lg:gap-10 md:gap-10">
             <li>Privecy Policies</li>
             <li>Terms & Conditions</li>
-            <p className="copy-cright">© 2024 Class Technologies Inc.</p>
+            <li className="">© 2024 Class Technologies Inc.</li>
          </ul>
+       </div>
     </div>
   )
 }

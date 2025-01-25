@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import AdminLogin from '../pages/admin/AdminLogin';
 import ErrorPage from '../pages/ErrorPage';
 import AdminHome from "../pages/admin/AdminHome";
@@ -36,24 +36,24 @@ const AdminRouter = () => {
   return (
     <>
        <Routes>
-         <Route path='/login' element={isAdmin?<AdminHome/>:<AdminLogin/>} />
-         <Route path='/home' element={isAdmin?<AdminHome/>:<AdminLogin/>} />
-         <Route path='/profile' element={isAdmin?<AdminProfile/>:<AdminLogin/>} />
-         <Route path='/editProfile' element={isAdmin?<AdminEditProfile/>:<AdminLogin/>} />
-         <Route path='/category' element={isAdmin?<AdminCategory/>:<AdminLogin/>} />
-         <Route path='/coupon' element={isAdmin?<AdminListCoupon/>:<AdminLogin/>} />
-         <Route path='/editCoupon' element={isAdmin?<EditCoupon/>:<AdminLogin/>} />
-         <Route path='/addCoupon' element={isAdmin?<AdminAddCoupon/>:<AdminLogin/>} />
-         <Route path='/addCategory' element={isAdmin?<AddCategory/>:<AdminLogin/>} />
-         <Route path='/editCategory/:id' element={isAdmin?<EditCategory/>:<AdminLogin/>} />
-         <Route path='/students' element={isAdmin?<AdminListStudents/>:<AdminLogin/>} />
-         <Route path='/messages' element={isAdmin?<AdminMessage/>:<AdminLogin/>} />
-         <Route path='/reports' element={isAdmin?<SalesReports/>:<AdminLogin/>} />
-         <Route path='/instructors' element={isAdmin?<AdminListInstructors/>:<AdminLogin/>} />
-         <Route path="/instructorRequests" element={isAdmin?<AdminInstructorRequests/>:<AdminLogin/>} />
-         <Route path='/courses' element={isAdmin?<AdminListCourses/>:<AdminLogin/>} />
-         <Route path='/subscriptions' element={isAdmin?<AdminSubscriptions/>:<AdminLogin/>} />
-         <Route path='/addSubscription' element={isAdmin?<AddSubscription/>:<AdminLogin/>} />
+         <Route path='/login' element={isAdmin?<AdminHome/>:<Navigate to="/admin/login" />} />
+         <Route path='/home' element={isAdmin?<AdminHome/>:<Navigate to="/admin/login" />} />
+         <Route path='/profile' element={isAdmin?<AdminProfile/>:<Navigate to="/admin/login" />} />
+         <Route path='/editProfile' element={isAdmin?<AdminEditProfile/>:<Navigate to="/admin/login" />} />
+         <Route path='/category' element={isAdmin?<AdminCategory/>:<Navigate to="/admin/login" />} />
+         <Route path='/coupon' element={isAdmin?<AdminListCoupon/>:<Navigate to="/admin/login" />} />
+         <Route path='/editCoupon' element={isAdmin?<EditCoupon/>:<Navigate to="/admin/login" />} />
+         <Route path='/addCoupon' element={isAdmin?<AdminAddCoupon/>:<Navigate to="/admin/login" />} />
+         <Route path='/addCategory' element={isAdmin?<AddCategory/>:<Navigate to="/admin/login" />} />
+         <Route path='/editCategory/:id' element={isAdmin?<EditCategory/>:<Navigate to="/admin/login" />} />
+         <Route path='/students' element={isAdmin?<AdminListStudents/>:<Navigate to="/admin/login" />} />
+         <Route path='/messages' element={isAdmin?<AdminMessage/>:<Navigate to="/admin/login" />} />
+         <Route path='/reports' element={isAdmin?<SalesReports/>:<Navigate to="/admin/login" />} />
+         <Route path='/instructors' element={isAdmin?<AdminListInstructors/>:<Navigate to="/admin/login" />} />
+         <Route path="/instructorRequests" element={isAdmin?<AdminInstructorRequests/>:<Navigate to="/admin/login" />} />
+         <Route path='/courses' element={isAdmin?<AdminListCourses/>:<Navigate to="/admin/login" />} />
+         <Route path='/subscriptions' element={isAdmin?<AdminSubscriptions/>:<Navigate to="/admin/login" />} />
+         <Route path='/addSubscription' element={isAdmin?<AddSubscription/>:<Navigate to="/admin/login" />} />
          <Route path='*' element={<ErrorPage/>} />
        </Routes>
     </>

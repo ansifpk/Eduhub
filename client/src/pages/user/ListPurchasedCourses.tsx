@@ -70,16 +70,15 @@ const ListPurchasedCourses: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="bg-blue-50">
+    <div className="bg-blue-50 h-screen">
       <Header />
       <ProfileNavbar />
       <main className="w-full mx-auto">
         {courses.length > 0 ? (
-          <div className="relative flex flex-col items-center justify-content-center ">
-            <div className="flex flex-wrap mx-5 mt-4 gap-3 m-auto  ">
+            <div className="grid md:grid-cols-4 grid-cols-2 md:mx-5 mx-2 md:mt-4 gap-2 md:gap-3 ">
               {courses.map((course: ICourse) => (
                 <div
-                  className={"w-[250px]  border shadow-lg overflow-hidden "}
+                  className={"md:w-[250px] w-[230px]  border shadow-lg overflow-hidden "}
                   key={course._id}
                 >
                   <div className=" overflow-hidden border rounded-md m-1 ">
@@ -95,7 +94,7 @@ const ListPurchasedCourses: React.FC = () => {
                   </div>
                   <div className=" text-sm m-2 ">
                     <div className="flex flex-wrap ">
-                      <h6 className="font-medium leading-none overflow-hidden break-words">
+                      <h6 className="font-medium leading-none  break-words md:text-sm text-xs">
                         {course.title}
                       </h6>
                     </div>
@@ -118,7 +117,6 @@ const ListPurchasedCourses: React.FC = () => {
                 </div>
               ))}
             </div>
-          </div>
         ) : (
           <>
             <div className=" h-full flex justify-center items-center">

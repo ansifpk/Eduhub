@@ -87,20 +87,20 @@ const Profile: React.FC = () => {
     return <ChangeEmail />;
   }
   return (
-    <div className="bg-blue-50">
+    <div className="bg-blue-50 w-full h-screen ">
       <Header />
       <ProfileNavbar />
-      <main className="w-full p-8">
+      <main className="w-full md:p-8 p-2">
          <Card className="flex gap-3">
             <div className=""> 
-                <div className="m-3 w-48 h-48 rounded-full overflow-hidden bg-gray-200">
+                <div className="m-3 md:w-48 md:h-48 w-24 h-24  rounded-full overflow-hidden bg-gray-200">
                   <img
                     src={image.avatar_url as string?image.avatar_url as string:"https://github.com/shadcn.png"}
                     alt="Profile"
-                    className=" w-full h-full object-cover"
+                    className="w-full h-full object-cover"
                   />
                 </div>
-                <div className="flex flex-col items-center justify-center gap-2 m-3">
+                <div className="flex flex-col items-center justify-center gap-2">
                     <Input
                     type="file"
                     accept="image/*"
@@ -115,26 +115,26 @@ const Profile: React.FC = () => {
                     className="hidden"
                     id="profilePicInput"
                   />
-                  <div className="cursor-pointer bg-teal-500 text-white text-sm px-3 py-1 rounded-2 ">change profile</div>
-                  <div className="cursor-pointer bg-teal-500 text-white text-sm px-3 py-1 rounded-2 ">change email</div>
+                  <div className="cursor-pointer bg-teal-500 text-white md:text-sm text-xs md:px-3 px-2 py-1 rounded-2 ">change profile</div>
+                  <div className="cursor-pointer bg-teal-500 text-white md:text-sm text-xs md:px-3 px-2 py-1 rounded-2 ">change email</div>
                 </div>
             </div>
-            <div className="border w-full p-3">
-             <div className="flex gap-5">
-                <div className="w-25 ">
+            <div className="border w-full md:p-3 p-1">
+             <div className="flex md:gap-5 gap-0.5 ">
+                <div >
                     <Label>Name</Label>
-                    <Input className="shadow-lg" readOnly value={name} />
+                    <Input className="shadow-lg md:w-full text-xs w-70 " readOnly value={name} />
                   </div>
-                  <div className="w-25 ">
+                  <div >
                     <Label>Email</Label>
-                    <Input className="shadow-lg" readOnly value={email} />
+                    <Input className="shadow-lg md:w-full text-xs w-70" readOnly value={email} />
                   </div>
              </div>
              <div>
                <Label>About Me</Label>
-               <Textarea className="h-[150px] shadow-lg" readOnly value={aboutMe} />
+               <Textarea className="h-[150px] shadow-lg md:text-sm text-xs" readOnly value={aboutMe} />
              </div>
-             <Button onClick={()=>navigate("/editUser")} className="m-2 bg-teal-500 hover:bg-teal-500">Edit</Button>
+             <Button onClick={()=>navigate("/editUser")} className="m-2 text-xs bg-teal-500 hover:bg-teal-500">Edit</Button>
             </div>
          </Card>
       </main>

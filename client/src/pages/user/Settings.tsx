@@ -110,7 +110,7 @@ const Settings = () => {
     }
   };
   return (
-    <div className="bg-blue-50">
+    <div className="bg-blue-50 h-screen">
       <Header />
       <ProfileNavbar />
       <main className="w-full flex justify-center  gap-10 py-8">

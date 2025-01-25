@@ -1,5 +1,5 @@
-import {  Link, NavLink,  useNavigate } from "react-router-dom";
-import "./ProfileNavbar.css";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+// import "./ProfileNavbar.css";
 // import { logout } from '@/Api/user';
 import { logout } from "../../Api/user";
 // import { removeUser } from '@/redux/authSlice';
@@ -18,12 +18,9 @@ import {
 
 import toast from "react-hot-toast";
 
-
 const ProfileNavbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-
 
   const handleLogout = async () => {
     const data = await logout();
@@ -35,116 +32,69 @@ const ProfileNavbar = () => {
       return navigate("/users/login");
     }
   };
-  
+  const navs = [
+    { name: "Profile", path: "/profile" },
+    { name: "Courses", path: "/profile/courses" },
+    { name: "Messages", path: "/profile/message" },
+    { name: "Coupons", path: "/profile/coupons" },
+    { name: "Plans", path: "/profile/Plans" },
+    { name: "Settings", path: "/user/settings" },
+  ];
   return (
-    <div className="">
-       <div className='profile-navbar'>
-              <ul className="px-2">
-                <li ><NavLink end  className={({ isActive }) =>
+    <div className="md:mt-16 mt-8 pt-2 sm:px-6 lg:px-8 mx-auto gap-5">
+      <div className="mx-auto mx:auto ">
+      <ul className=" flex rounded-pill bg-teal-500 px-2 py-2 items-center justify-center sm:space-x-6 md:space-x-6 w-full sm:w-full md:w-9/12 lg:w-7/12 space-x-3 mx-auto">
+        {navs.map((value, index) => (
+          <li key={index} className="flex-shrink">
+            <NavLink
+              end
+              className={({ isActive }) =>
                 isActive
-                  ? "text-black px-4 py-1 rounded-full bg-gray-100  no-underline"
-                  : "no-underline text-white"
-              } to={'/profile'}>Profile</NavLink></li>
-               
-                <li ><NavLink  end className={({ isActive }) =>
-                isActive
-
-                  ? "text-black px-4 py-1 rounded-full bg-gray-100  no-underline"
-                  : "no-underline text-white"
-              } to={'/profile/courses'}>Courses</NavLink></li>
-                <li><NavLink end  className={({ isActive }) =>
-                isActive
-                  ? "text-black px-4 py-1 rounded-full bg-gray-100  no-underline"
-                  : "no-underline text-white"
-              } to={'/profile/message'}>Messages</NavLink></li>
-                <li><NavLink end  className={({ isActive }) =>
-                isActive
-                  ? "text-black px-4 py-1 rounded-full bg-gray-100  no-underline"
-                  : "no-underline text-white"
-              } to={'/profile/coupons'}>Coupons</NavLink></li>
-                <li><NavLink end  className={({ isActive }) =>
-                isActive
-                  ? "text-black px-4 py-1 rounded-full bg-gray-100  no-underline"
-                  : "no-underline text-white"
-              } to={'/profile/Plans'}>Plans</NavLink></li>
-               <li ><NavLink end  className={({ isActive }) =>
-                isActive
-                  ? "text-black px-4 py-1 rounded-full bg-gray-100  no-underline"
-                  : "no-underline text-white"
-              } to={'/user/settings'}>settings</NavLink></li>
-                <li  ><AlertDialog>
-                    <AlertDialogTrigger asChild>
-                    <Link to={""} >Log Out</Link>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>
-                          Are you absolutely sure?
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Are you sure to log out from EduHub?
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogAction className='rounded-full bg-[#49BBBD]' type='button'  >Cancel</AlertDialogAction>
-                        <AlertDialogAction className='rounded-full bg-[#49BBBD]'  type='button' onClick={handleLogout} >Continue</AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog></li>
-                
-              </ul>
-
-       </div>
+                  ? "px-4  py-1  text-sm rounded-full text-black bg-gray-100  no-underline"
+                  : "no-underline text-sm  text-white"
+              }
+              to={value.path}
+            >
+              {value.name}
+            </NavLink>
+          </li>
+        ))}
+        <li className="flex-shrink-0">
+          <AlertDialog >
+            <AlertDialogTrigger asChild>
+              <Link className="text-sm text-white no-underline" to={""}>
+                Log Out
+              </Link>
+            </AlertDialogTrigger>
+            <AlertDialogContent className="md:w-full w-50">
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure to log out from EduHub?
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter className="flex md:flex-end flex-row justify-center gap-1" >
+                <AlertDialogAction
+                  className="rounded-full  bg-[#49BBBD]"
+                  type="button"
+                >
+                  Cancel
+                </AlertDialogAction>
+                <AlertDialogAction
+                  className="rounded-full bg-[#49BBBD] "
+                  type="button"
+                  onClick={handleLogout}
+                >
+                  Continue
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </li>
+      </ul>
+      </div>
+      
     </div>
-  //  <div className="flex justify-center mt-4" >
-  //    <div className="flex flex-col gap-2 bg-teal-500 rounded-full">
-  //     <Tabs
-  //       variant="light"
-  //       selectedKey={selected}
-  //       aria-label="Options"
-  //       radius="full"
-  //       onSelectionChange={(val) => setSelected(val.toString())}
-        
-  //     >
-  //       <Tab 
-  //         key={"profile"}
-  //         id="profile"
-  //         title={<NavLink end className={({ isActive }) =>
-  //           isActive
-  //             ? "no-underline text-black"
-  //             : "no-underline text-white"
-  //         } to="/profile">profile</NavLink>}
-  //         />
-  //       <Tab
-  //         id="courses"
-  //         key={"courses"}
-  //         title={<NavLink  className={({ isActive }) =>
-  //           isActive
-  //             ? "no-underline text-black"
-  //             : "no-underline text-white"
-  //         } to="/profile/courses">courses</NavLink>}
-  //       />
-  //       <Tab
-  //         id="message"
-  //         key={"message"}
-  //         title={<NavLink end className={({ isActive }) =>
-  //           isActive
-  //             ? "no-underline text-black"
-  //             : "no-underline text-white"
-  //         } to="/profile/message">message</NavLink>}
-  //       />
-  //       <Tab
-  //         id="coupons"
-  //         key={"coupons"}
-  //         title={<NavLink end className={({ isActive }) =>
-  //           isActive
-  //             ? "no-underline text-black"
-  //             : "no-underline text-white"
-  //         } to="/profile/coupons">coupons</NavLink>}
-  //       />
-  //     </Tabs>
-  //   </div>
-  //  </div>
   );
 };
 

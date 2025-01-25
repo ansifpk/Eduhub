@@ -16,6 +16,7 @@ import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { getCourses } from "@/Api/user";
 import { ICourse } from "@/@types/courseType";
+import { Input } from "../ui/input";
 interface Props {
   categories: ICategory[];
   onsendcourse: (courses: ICourse[]) => void;
@@ -62,27 +63,27 @@ const FilterHeader: React.FC<Props> = ({ categories, onsendcourse,onsendpages,pa
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
       }}
-      className="h-1/3  flex flex-wrap items-center justify-center gap-4 p-4 "
+      className="h-1/3  flex flex-wrap items-center justify-center gap-4 p-4 md:mt-16 mt-7"
     >
       <div className="w-75 md:w-1/2 flex bg-white border rounded">
-        <input
+        <Input
           type="text"
-          className="m-1"
+          className="m-1 md:text-sm lg:text-sm text-xs"
           placeholder="Search courses here..."
           aria-label="Search courses"
           onChange={(e) => setSearch(e.target.value)}
-        />
-        <Button type="button" className="bg-[#49BBBD] text-white m-1">
+          />
+        <Button type="button" className="bg-[#49BBBD] text-white m-1 md:text-sm text-xs">
           Search
         </Button>
       </div>
-      <div className="w-3/4 md:w-1/2  grid auto-rows-min gap-4 md:grid-cols-4">
+      <div className="w-3/4 md:w-1/2  grid auto-rows-min gap-4 md:grid-cols-4 grid-cols-2">
         <Select
           onValueChange={(value) => {
             setCategory(value);
           }}
         >
-          <SelectTrigger>
+          <SelectTrigger className="md:text-sm text-xs">
             <SelectValue placeholder="Select a Category" />
           </SelectTrigger>
           <SelectContent>
@@ -101,7 +102,7 @@ const FilterHeader: React.FC<Props> = ({ categories, onsendcourse,onsendpages,pa
           </SelectContent>
         </Select>
         <Select onValueChange={(value) => setTopic(value)}>
-          <SelectTrigger>
+          <SelectTrigger className="md:text-sm text-xs">
             <SelectValue placeholder="Select a Topic" />
           </SelectTrigger>
           <SelectContent>
@@ -126,7 +127,7 @@ const FilterHeader: React.FC<Props> = ({ categories, onsendcourse,onsendpages,pa
           </SelectContent>
         </Select>
         <Select onValueChange={(value) => setLevel(value)}>
-          <SelectTrigger>
+          <SelectTrigger className="md:text-sm text-xs">
             <SelectValue placeholder="Select Level" />
           </SelectTrigger>
           <SelectContent>
@@ -140,7 +141,7 @@ const FilterHeader: React.FC<Props> = ({ categories, onsendcourse,onsendpages,pa
           </SelectContent>
         </Select>
         <Select onValueChange={(value) => setSort(value)}>
-          <SelectTrigger>
+          <SelectTrigger className="md:text-sm text-xs">
             <SelectValue placeholder="Sort " />
           </SelectTrigger>
           <SelectContent>

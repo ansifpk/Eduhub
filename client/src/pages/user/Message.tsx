@@ -255,11 +255,10 @@ const Message = () => {
         fetching ();
        },[])
   return (
-    <div className="h-screen bg-blue-100">
+    <div className="h-screen  pt-1">
       <Header />
        <ProfileNavbar />
-
-      {/* <div className="flex justify-center">
+      <div className="flex justify-center">
         <div className="bg-white mx-5 my-4 flex  w-[950px] rounded-2">
           <div className="border borer-danger bg-success-400  m-2  rounded-2">
             <div className="flex items-center justify-between w-[330px]">
@@ -304,6 +303,7 @@ const Message = () => {
             </Popover>
           
             </div>
+
             <ScrollArea className="h-[450px] w-[330px] rounded-md border bg-white p-2">
               {chats.length > 0 ? (
                 chats
@@ -445,7 +445,7 @@ const Message = () => {
             </div>
           </div>
         </div>
-      </div> */}
+      </div>
        <Footer />
     </div>
   );
