@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: client
-          image: us.grc.io/eduhub-online/client
+          image: grc.io/eduhub-online/client
 ---
 apiVersion: v1
 kind: Service

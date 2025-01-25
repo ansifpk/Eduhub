@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: profile
-          image: us.grc.io/eduhub-online/profile
+          image: grc.io/eduhub-online/profile
 ---
 apiVersion: v1
 kind: Service

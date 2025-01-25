@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: purchase
-          image: us.grc.io/eduhub-online/purchase
+          image: grc.io/eduhub-online/purchase
 ---
 apiVersion: v1
 kind: Service
