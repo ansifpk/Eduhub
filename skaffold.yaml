@@ -5,7 +5,7 @@ build:
   #   push: false
   googleCloudBuild:
     projectId: eduhub-online
-    timeout: 600s 
+    timeout: 1200s 
   artifacts:
     - image: us.grc.io/eduhub-online/auth
       context: auth
