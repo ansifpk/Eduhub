@@ -10,7 +10,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: eduhub.dev
+    - host: ansifpk.dev
       http:
         paths:
           - path: /auth
@@ -41,7 +41,7 @@ spec:
                 name: purchase-srv
                 port:
                   number: 3003
-          - path: /profile/?(.*)
+          - path: /profile
             pathType: Prefix
             backend:
               service:

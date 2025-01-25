@@ -82,8 +82,8 @@ const AssesmentTest = () => {
   };
   
   const handleEndTest = async() =>{
-    for(let key  in isSelected){
-      let val = isSelected[key as keyof typeof isSelected];
+    for(const key  in isSelected){
+      const val = isSelected[key as keyof typeof isSelected];
       if(val.length == 0){
         isSelected[key as keyof typeof isSelected] = "Not Answered"
       }

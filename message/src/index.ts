@@ -35,7 +35,7 @@ ChatRoute(chatRouter);
 NotificationRoute(notificationRouter)
 
 
-app.use(cors({credentials:true,origin:["http://localhost:5173",'http://eduhub.dev']}));
+app.use(cors({credentials:true,origin:["http://message-srv:5173",'http://ansifpk.dev']}));
 
 
 app.use(cookieSession({
@@ -95,23 +95,23 @@ const start = async () => {
     try {
         await connectDB();
 
-        // await kafkaWrapper.connect();
-        // const userCreatedConsumer = await kafkaWrapper.createConsumer('message-user-created-group')
-        // const consumser = await kafkaWrapper.createConsumer('message-instructor-approved-group')
-        // const consumser2 = await kafkaWrapper.createConsumer('message-user-blocked-group')
-        // const consumser3 = await kafkaWrapper.createConsumer('message-profile-updated-group')
-        // userCreatedConsumer.connect();
-        // consumser.connect();
-        // consumser2.connect();
-        // consumser3.connect();
-        // const listener1 = new UserProfileCreatedConsumer(userCreatedConsumer)
-        // const listener2 = new InstructorAprovalConsumer(consumser)
-        // const listener3 = new UserBlockedConsumer(consumser2)
-        // const listener4 = new UserProfileUpdatedConsumer(consumser3)
-        // await listener1.listen();
-        // await listener2.listen();
-        // await listener3.listen();
-        // await listener4.listen();
+        await kafkaWrapper.connect();
+        const userCreatedConsumer = await kafkaWrapper.createConsumer('message-user-created-group')
+        const consumser = await kafkaWrapper.createConsumer('message-instructor-approved-group')
+        const consumser2 = await kafkaWrapper.createConsumer('message-user-blocked-group')
+        const consumser3 = await kafkaWrapper.createConsumer('message-profile-updated-group')
+        userCreatedConsumer.connect();
+        consumser.connect();
+        consumser2.connect();
+        consumser3.connect();
+        const listener1 = new UserProfileCreatedConsumer(userCreatedConsumer)
+        const listener2 = new InstructorAprovalConsumer(consumser)
+        const listener3 = new UserBlockedConsumer(consumser2)
+        const listener4 = new UserProfileUpdatedConsumer(consumser3)
+        await listener1.listen();
+        await listener2.listen();
+        await listener3.listen();
+        await listener4.listen();
         
         app.listen(PORT, () => console.log(`the Message server is running in http://localhost:${PORT} for message!!!!!!!!`))
     } catch (error) {
