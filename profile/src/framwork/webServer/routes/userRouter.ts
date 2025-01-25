@@ -5,9 +5,7 @@ import upload from '../middlewares/multer'
 export function UserRouter(router: Router) {
   router.get("/profile/:userId", isAuth, async (req, res, next) => {
     try {
-      console.log("hi guys");
-      res.send("hello words")
-      // userController.userProfile(req, res, next);
+      userController.userProfile(req, res, next);
     } catch (error) {
       console.error(error);
     }

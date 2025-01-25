@@ -1,13 +1,10 @@
 apiVersion: skaffold/v2beta1
 kind: Config
 build:
-  # local:
-  #   push: false
-  googleCloudBuild:
-    projectId: eduhub-online
-    timeout: 1200s 
+  local:
+    push: true
   artifacts:
-    - image: us.grc.io/eduhub-online/auth
+    - image: pkansif/eduhub-auth
       context: auth
       docker:
         dockerfile: Dockerfile
@@ -15,7 +12,7 @@ build:
         manual:
           - src: "src/**/*.ts"
             dest: .
-    - image: us.grc.io/eduhub-online/course
+    - image: pkansif/eduhub-course
       context: courses
       docker:
         dockerfile: Dockerfile
@@ -23,7 +20,7 @@ build:
         manual:
           - src: "src/**/*.ts"
             dest: .
-    - image: us.grc.io/eduhub-online/category
+    - image: pkansif/eduhub-category
       context: category
       docker:
         dockerfile: Dockerfile
@@ -31,7 +28,7 @@ build:
         manual:
           - src: "src/**/*.ts"
             dest: .
-    - image: us.grc.io/eduhub-online/profile
+    - image: pkansif/eduhub-profile
       context: profile
       docker:
         dockerfile: Dockerfile
@@ -39,7 +36,7 @@ build:
         manual:
           - src: "src/**/*.ts"
             dest: .
-    - image: us.grc.io/eduhub-online/purchase
+    - image: pkansif/eduhub-purchase
       context: purchase
       docker:
         dockerfile: Dockerfile
@@ -47,7 +44,7 @@ build:
         manual:
           - src: "src/**/*.ts"
             dest: .
-    - image: us.grc.io/eduhub-online/message
+    - image: pkansif/eduhub-message
       context: message
       docker:
         dockerfile: Dockerfile
@@ -55,7 +52,7 @@ build:
         manual:
           - src: "src/**/*.ts"
             dest: .
-    - image: us.grc.io/eduhub-online/client
+    - image: pkansif/eduhub-client
       context: client
       docker:
         dockerfile: Dockerfile

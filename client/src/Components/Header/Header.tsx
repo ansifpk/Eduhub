@@ -15,13 +15,13 @@ const Header = () => {
    const [image,setImage] = useState('')
    useEffect(()=>{
      const fetching = async () => {
-        // const response = await getUserDetailes(id);
-        try {
-          const data = await axios.get(`https://ansifpk.dev/profile/user/profile/${id}`);
-          console.log(data.data, "data");
-        } catch (error : any) {
-          console.error(error.response?.data || error.message, "error");
-        }
+        const response = await getUserDetailes(id);
+        // try {
+        //   const data = await axios.get(`https://ansifpk.dev/profile/user/profile/${id}`);
+          console.log(response, "data");
+        // } catch (error : any) {
+        //   console.error(error.response?.data || error.message, "error");
+        // }
         
         // if(response.success){
         //   setImage(response.userData.avatar.avatar_url)
