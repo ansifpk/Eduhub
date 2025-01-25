@@ -13,50 +13,50 @@ spec:
     - host: ansifpk.dev
       http:
         paths:
-          - path: /auth
-            pathType: Prefix
+          - path: /auth/(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: auth-srv
                 port:
                   number: 3000
-          - path: /category
-            pathType: Prefix
+          - path: /category/(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: category-srv
                 port:
                   number: 3001
-          - path: /course
-            pathType: Prefix
+          - path: /course/(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: course-srv
                 port:
                   number: 3002
-          - path: /purchase
-            pathType: Prefix
+          - path: /purchase/(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: purchase-srv
                 port:
                   number: 3003
-          - path: /profile
-            pathType: Prefix
+          - path: /profile/(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: profile-srv
                 port:
                   number: 3004
-          - path: /message
-            pathType: Prefix
+          - path: /message/(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: message-srv
                 port:
                   number: 3006
           - path: /
-            pathType: Prefix
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: client-srv

@@ -10,10 +10,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import { useEffect, useState } from "react";
-import { getCategoryies } from "@/Api/instructor";
 import { ICategory } from "@/@types/categoryTpe";
-import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
-import axios from "axios";
 import { getCourses } from "@/Api/user";
 import { ICourse } from "@/@types/courseType";
 import { Input } from "../ui/input";
@@ -34,6 +31,7 @@ const FilterHeader: React.FC<Props> = ({ categories, onsendcourse,onsendpages,pa
   useEffect(() => {
     const courses = async () => {
       const data = await getCourses(category,topic,level,search,sort,page);
+      console.log("course",data);
       if (data.success) {
         onsendcourse(data.courses);
         onsendpages(data.pages);

@@ -3,10 +3,11 @@ import { useSelector } from 'react-redux'
 import { Avatar, AvatarImage } from '../ui/avatar';
 import { User } from '@/@types/userType';
 import { useEffect, useState } from 'react';
-import { getUserDetailes } from '@/Api/user';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import { ToggleButtonGroup } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import axios from 'axios';
+import { getUserDetailes } from '@/Api/user';
 
 const Header = () => {
   const [open,setOpen]  = useState(false)
@@ -14,10 +15,17 @@ const Header = () => {
    const [image,setImage] = useState('')
    useEffect(()=>{
      const fetching = async () => {
-        const response = await getUserDetailes(id);
-        if(response.success){
-          setImage(response.userData.avatar.avatar_url)
+        // const response = await getUserDetailes(id);
+        try {
+          const data = await axios.get(`https://ansifpk.dev/profile/user/profile/${id}`);
+          console.log(data.data, "data");
+        } catch (error : any) {
+          console.error(error.response?.data || error.message, "error");
         }
+        
+        // if(response.success){
+        //   setImage(response.userData.avatar.avatar_url)
+        // }
      }
      fetching()
    },[])

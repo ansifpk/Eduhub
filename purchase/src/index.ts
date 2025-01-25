@@ -67,7 +67,7 @@ app.use(cookieSession({
 }))
 
 // app.use(cors({credentials:true,origin:["http://localhost:5173",'http://eduhub.dev']}))
-app.use(cors({credentials:true,origin:["http://purchase-srv:5173",'http://ansifpk.dev']}))
+app.use(cors({credentials:true,origin:["http://client-srv:5173",'https://ansifpk.dev']}))
 const webHook = express.Router();
 
 //! its placed here other wise the express.raw will not works for webHook 
