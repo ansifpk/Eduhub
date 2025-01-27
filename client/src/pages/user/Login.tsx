@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { NavLink, useNavigate } from "react-router-dom"
+import {  useNavigate } from "react-router-dom"
 import { googleLogin, userLogin } from "../../Api/user"
 import std from '../../assets/home-page/studnet.jpg'
 import '../Register.css'
@@ -14,7 +14,6 @@ import { Button } from "@/Components/ui/button"
 import { Icons } from "@/Components/icons"
 import axios from "axios"
 import { useGoogleLogin } from "@react-oauth/google"
-import Api from "@/service/axios"
 const Login:React.FC = () => {
   interface User{
     id:string,
@@ -73,10 +72,7 @@ const Login:React.FC = () => {
     const handleSubmit = async (e:React.FormEvent<HTMLFormElement>) =>{
        e.preventDefault();
       const data = await userLogin({email,password})
-      // const {data} = await axios.post("http://localhost:3000/auth/user/login",{email,password})
-
-      
-      
+      // const {data} = await axios.post("https://34.55.36.217/auth/user/login",{email,password})
       if(data.user){
         localStorage.setItem("accessToken",data.token.accessToken)
         localStorage.setItem("refreshToken",data.token.refreshToken)

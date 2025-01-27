@@ -67,12 +67,12 @@ import { IUserSubscribe } from "@/@types/userSubscribe";
 import { ISubcription } from "@/@types/subscriptionType";
 import {
   Drawer,
-  DrawerBody,
   DrawerContent,
-  DrawerFooter,
   DrawerHeader,
+  DrawerBody,
+  DrawerFooter,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 
 const stripe = await loadStripe(import.meta.env.VITE_PUBLISH_SECRET);
 const CourseDetailesPage = () => {

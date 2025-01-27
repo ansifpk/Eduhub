@@ -1,7 +1,7 @@
 import AdminAside from "@/Components/admin/AdminAside";
-import { Card, CardContent, CardDescription } from "@/Components/ui/card";
+import { Card } from "@/Components/ui/card";
 import { useEffect, useState } from "react";
-import { delteLecture, getCourses, getReports, students } from "@/Api/admin";
+import { delteLecture, getCourses, getReports, } from "@/Api/admin";
 import toast from "react-hot-toast";
 import {
   Table,
@@ -12,23 +12,7 @@ import {
   TableRow,
 } from "@/Components/ui/table";
 import { Button } from "@/Components/ui/button";
-import { Badge } from "@/Components/ui/badge";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/Components/ui/dropdown-menu";
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/Components/ui/alert-dialog";
+
 import { ICourse } from "@/@types/courseType";
 import moment from "moment";
 import {
@@ -41,21 +25,12 @@ import {
   SelectValue,
 } from "@/Components/ui/select";
 import { Input } from "@/Components/ui/input";
-import {
-  Drawer,
-  DrawerBody,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-  
-  useDisclosure,
-} from "@nextui-org/react";
+import { Drawer,DrawerBody,DrawerContent,DrawerFooter,DrawerHeader,useDisclosure } from "@heroui/react";
+
 import { IUser } from "@/@types/chatUser";
 import { IReport } from "@/@types/report";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/Components/ui/dialog";
-import { ISection } from "@/@types/sectionType";
-import { ILecture } from "@/@types/lectureType";
-import { Pagination, Stack, Typography } from "@mui/material";
+
+import { Pagination, Stack } from "@mui/material";
 
 const AdminListCourses = () => {
   const [courses, setCourses] = useState([]);
@@ -63,7 +38,7 @@ const AdminListCourses = () => {
   const [search, setSearch] = useState("");
   const [video, setVideo] = useState("");
   const [sort, setSort] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
+
   const { isOpen:isStudentOpen , onOpen:onStudentOpen, onClose:onStudentClose } = useDisclosure();
   const {
     isOpen: isReportOpen,
@@ -72,7 +47,6 @@ const AdminListCourses = () => {
   } = useDisclosure();
   const [reports, setReports] = useState<IReport[]>([]);
   const [id, setId] = useState("");
-  const [open, setOpen] = useState(false)
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(0);
   
@@ -95,10 +69,6 @@ const AdminListCourses = () => {
 
     fetchAllStudents();
   }, [search, sort,page]);
-  const handleListeCourse = (id: string) => {
-    console.log("hi", id);
-  };
-  // console.log("courses", courses);
 
   const viewReports = (course: ICourse) => {
     console.log("courseId", course);

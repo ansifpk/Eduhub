@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: auth
-          image: us.grc.io/eduhub-online/auth
+          image: pkansif/eduhub-auth
 ---
 apiVersion: v1
 kind: Service

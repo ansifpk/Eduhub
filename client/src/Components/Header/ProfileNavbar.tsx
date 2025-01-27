@@ -1,8 +1,5 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
-// import "./ProfileNavbar.css";
-// import { logout } from '@/Api/user';
 import { logout } from "../../Api/user";
-// import { removeUser } from '@/redux/authSlice';
 import { removeUser } from "../../redux/authSlice";
 import { useDispatch } from "react-redux";
 import {

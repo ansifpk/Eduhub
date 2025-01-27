@@ -11,7 +11,6 @@ export function UserRoute(router: Router) {
     userController.createUser(req, res, next);
   });
   router.post("/login",async (req, res, next) => {
-    
     userController.userLogin(req, res, next);
   });
   router.post("/googleLogin", async (req, res, next) => {

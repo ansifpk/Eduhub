@@ -4,11 +4,9 @@ import {  useNavigate } from "react-router-dom";
 import { signup } from "@/Api/user";
 import { toast } from "react-hot-toast";
 import { useSelector } from "react-redux";
-import { ArrowRight, EyeOff, Loader2 } from "lucide-react";
+import { ArrowRight,  Loader2 } from "lucide-react";
 import { Input } from "../Components/ui/input";
 import UserAuthHeader from "../Components/user/UserAuthHeader";
-import { CardDescription, CardHeader } from "../Components/ui/card";
-// import { Button } from "@/Components/ui/button";
 import {Button} from '../Components/ui/button'
 
 const Register:React.FC = () => {

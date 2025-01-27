@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/Components/ui/table";
-import { FormEvent, HTMLAttributes, useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { ISubcription } from "@/@types/subscriptionType";
 import { deleteSubscription, editSubscription, getSubscriptions } from "@/Api/admin";
 import { MoreHorizontal } from "lucide-react";
@@ -32,27 +32,9 @@ import {
   DropdownMenuTrigger,
 } from "@/Components/ui/dropdown-menu";
 import toast from "react-hot-toast";
-import {
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  useDisclosure,
-} from "@nextui-org/react";
+import { Modal,ModalBody,ModalContent ,ModalFooter,ModalHeader,useDisclosure} from "@heroui/react";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/Components/ui/alert-dialog";
 
 const AdminSubscriptions = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();

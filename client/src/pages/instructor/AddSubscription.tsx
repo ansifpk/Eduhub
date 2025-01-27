@@ -9,7 +9,7 @@ import { Input } from '@/Components/ui/input';
 import { Label } from '@/Components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/Components/ui/radio-group';
 import { Separator } from '@/Components/ui/separator';
-import { Checkbox } from '@nextui-org/react';
+import { Checkbox } from '@heroui/react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useSelector } from 'react-redux';

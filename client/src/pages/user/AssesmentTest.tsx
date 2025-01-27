@@ -13,7 +13,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/Components/ui/alert-dialog";
-import { Checkbox } from "@nextui-org/react";
+import { Checkbox } from "@heroui/react";
 import { Button } from "@/Components/ui/button";
 import { useEffect, useState } from "react";
 import {  useNavigate, useParams } from "react-router-dom";

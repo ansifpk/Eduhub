@@ -28,15 +28,17 @@ const Courses = () => {
   useEffect(() => {
     const category = async () => {
       const data = await getCategoryies();
+      console.log("cate",data);
       if (data) {
         setCategories(data);
       }
-
       const plan = await userPlans(userId);
+      console.log("plans",plan);
       if (plan.success) {
         setPlans(plan.plans);
       } 
       const cart = await userCart(userId);
+      console.log("cart",cart);
       if (cart.success) {
         setCart(cart.cart);
       } 

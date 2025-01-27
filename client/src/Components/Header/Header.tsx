@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import { ToggleButtonGroup } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import axios from 'axios';
 import { getUserDetailes } from '@/Api/user';
 
 const Header = () => {
@@ -15,23 +14,16 @@ const Header = () => {
    const [image,setImage] = useState('')
    useEffect(()=>{
      const fetching = async () => {
-        const response = await getUserDetailes(id);
-        // try {
-        //   const data = await axios.get(`https://ansifpk.dev/profile/user/profile/${id}`);
-          console.log(response, "data");
-        // } catch (error : any) {
-        //   console.error(error.response?.data || error.message, "error");
-        // }
-        
-        // if(response.success){
-        //   setImage(response.userData.avatar.avatar_url)
-        // }
+        const response = await getUserDetailes(id);   
+        if(response.success){
+          setImage(response.userData.avatar.avatar_url)
+        }
      }
      fetching()
    },[])
  
   return (
-    <div className='shadow-md w-full fixed top-0 left-0 z-50'>
+    <div className='shadow-md  w-full fixed top-0 left-0 z-50'>
       <div className='md:flex bg-teal-500 items-center  justify-between md:px-10 px-7'>
         <div className='font-bold text-2xl flex items-center font-[poppins] text-gray-800'>
            EduHub

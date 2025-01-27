@@ -1,12 +1,13 @@
 /** @type {import('tailwindcss').Config} */
-const { nextui } = require("@nextui-org/react");
+// const { nextui } = require("@nextui-org/react");
+const { heroui } = require("@heroui/react");
 
 export default {
     darkMode: ["class"],
     content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
-	"./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx,cjs,mjs,cts,mts}"
+	"./node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx,cjs,mjs,cts,mts}"
   ],
   theme: {
   	extend: {
@@ -91,6 +92,6 @@ export default {
   		}
   	}
   },
-  plugins: [require("tailwindcss-animate"),nextui()],
+  plugins: [require("tailwindcss-animate"),heroui()],
 }
 

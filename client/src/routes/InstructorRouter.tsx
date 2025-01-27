@@ -38,7 +38,7 @@ const InstructorRoter = () => {
     <>
        <Routes>
          <Route path='/register' element={id ? <InstructorRegister/> : <Navigate to="/users/login" /> }  />
-         <Route path='/login' element={isInstructor?<InstructorHome/>:<Navigate to="/users/login" />} />
+         <Route path='/login' element={isInstructor?<Navigate to="/instructor/" />:< InstructorLogin/>} />
          <Route path='/' element={isInstructor?<InstructorHome/>:<Navigate to="/users/login" />} />
          <Route path='/profile' element={isInstructor?<InstructorProfile/>:<Navigate to="/users/login" />} />
          <Route path='/editProfile' element={isInstructor?<InstructorEditProfile/>:<Navigate to="/users/login" />} />

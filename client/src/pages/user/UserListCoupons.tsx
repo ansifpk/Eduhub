@@ -6,7 +6,7 @@ import Header from "@/Components/Header/Header";
 import ProfileNavbar from "@/Components/Header/ProfileNavbar";
 import { Button } from "@/Components/ui/button";
 import { Card, CardContent, CardDescription } from "@/Components/ui/card";
-import { Code } from "@nextui-org/code";
+import { Code } from "@heroui/react";
 import { Copy } from "lucide-react";
 import { timeStamp } from "node:console";
 import { useEffect, useState } from "react";

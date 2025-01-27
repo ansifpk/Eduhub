@@ -1,5 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom"
-import Home from "../pages/Home"
+import { lazy, Suspense } from "react"
+const Home = lazy(()=>import('../pages/Home'))
+// import Home from "../pages/Home"
 import Login from '../pages/user/Login.tsx'
 import Register from "../pages/Register"
 import Otp from "../Components/user/Otp.tsx"
@@ -25,6 +27,7 @@ import UserListCoupons from "@/pages/user/UserListCoupons.tsx"
 import AssesmentTest from "@/pages/user/AssesmentTest.tsx"
 import Settings from "@/pages/user/Settings.tsx"
 import Plans from "@/pages/user/Plans.tsx"
+import BrickLoader from "@/Components/user/BrickLoader.tsx"
 
 interface User{
   id:string,
@@ -40,6 +43,7 @@ const UserRoter = () => {
   const id = useSelector((state:User)=>state.id);
   return (
     <>
+       <Suspense fallback={<BrickLoader />}>
        <Routes>
          <Route path='/' element={<Home/>} />
          <Route path='/users/login' element={<Login/>} />
@@ -65,6 +69,7 @@ const UserRoter = () => {
          <Route path="/profile/Plans" element={id?<Plans/>:<Navigate to="/users/login" />} /> 
          <Route path="*" element={id?<ErrorPage/>:<Navigate to="/users/login" />}/>
        </Routes>
+       </Suspense>
     </>
   )
 }

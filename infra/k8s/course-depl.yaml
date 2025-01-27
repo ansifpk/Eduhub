@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: course
-          image: us.grc.io/eduhub-online/course
+          image: pkansif/eduhub-course
 ---
 apiVersion: v1
 kind: Service

@@ -15,7 +15,7 @@ import {
   DropdownMenuSeparator,
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
-import { Badge } from "../ui/badge";
+
 import { useSelector } from "react-redux";
 import { FormEvent, useEffect, useState } from "react";
 import { User } from "@/@types/userType";
@@ -31,16 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { ICourse } from "@/@types/courseType";
 
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "../ui/sheet";
 
 import {
   Dialog,
@@ -53,43 +44,9 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 
-import {
-  Drawer,
-  DrawerBody,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  useDisclosure,
-} from "@nextui-org/react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "../ui/alert-dialog";
-import { Textarea } from "../ui/textarea";
-// import { Label } from "./ui/label";
+import { Modal ,ModalBody,ModalContent,ModalFooter,ModalHeader,useDisclosure} from "@heroui/react";
+
 import { Label } from "../ui/label";
-import {
-  Carousel,
-  CarouselApi,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "../ui/carousel";
-import { Card, CardContent } from "../ui/card";
-import { ITest } from "@/@types/testType";
-import { IUser } from "@/@types/chatUser";
 import { ISubcription } from "@/@types/subscriptionType";
 import { MoreHorizontal } from "lucide-react";
 
@@ -120,7 +77,6 @@ export function SubscriptionTable() {
     res();
   }, [sort]);
   
-  console.log(subscriptions,"subss")
   
   const handleEdit = async (e:FormEvent<HTMLFormElement>) => {
     e.preventDefault();

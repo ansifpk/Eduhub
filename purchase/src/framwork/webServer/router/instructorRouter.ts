@@ -33,8 +33,7 @@ export function InstructorRouter(router:Router){
         instructorController.getOrders(req,res,next);
     })
     router.get("/order/:userId",async(req,res,next)=>{
-        console.log(req.params);
-        
+    
         instructorController.instructorOrders(req,res,next);
     })
     router.get("/salesReports",async(req,res,next)=>{

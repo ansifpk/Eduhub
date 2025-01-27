@@ -10,7 +10,7 @@ import {Toaster} from 'react-hot-toast';
 import 'react-toastify/dist/ReactToastify.css';
 import { PersistGate } from 'redux-persist/integration/react'
 import {GoogleOAuthProvider} from '@react-oauth/google';
-import {NextUIProvider} from '@nextui-org/react'
+import {HeroUIProvider} from '@heroui/react'
 
 createRoot(document.getElementById('root')!).render(
   // <StrictMode>
@@ -19,11 +19,9 @@ createRoot(document.getElementById('root')!).render(
     <Toaster position="top-center" reverseOrder={false} />
             <Provider store={store}>
               <PersistGate persistor={persist}>
-
-            <NextUIProvider>
-                   <App/>                   
-            </NextUIProvider>
-            
+                 <HeroUIProvider>
+                    <App/>                   
+                 </HeroUIProvider>
               </PersistGate>
             </Provider>
     </GoogleOAuthProvider>

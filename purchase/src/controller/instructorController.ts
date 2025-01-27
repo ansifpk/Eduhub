@@ -113,8 +113,6 @@ export class InstructorController{
     async instructorOrders(req:Request,res:Response,next:NextFunction){
         try {
            const {userId}  = req.params 
-         
-           
            const orders = await this.instructorUseCase.instructorOrders(userId,next)
            if(orders){
            

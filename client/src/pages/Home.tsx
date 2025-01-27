@@ -5,7 +5,6 @@ import Forteachers from "../../src/assets/home-page/teacher-home.jpg";
 import { useNavigate } from "react-router-dom";
 import Footer from "../Components/Footer/Footer";
 import { Button } from "@/Components/ui/button";
-import { Image } from "@nextui-org/react";
 
 const Home: React.FC = () => {
   const navigate = useNavigate();

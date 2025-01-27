@@ -20,7 +20,7 @@ const userRoutes = {
  getCourses:"/course/user/courses",
  fetchCourses:"/course/user/getCourses",
  puchasedCourses:"/course/user/puchasedCourses",
- stripePurchase:"/course/user/create-checkout-session",
+ stripePurchase:"/user/create-checkout-session",
  courseDeatiles:"/course/user/courseDetailes",
  ratingCourse:"/course/user/rating",
  report:"/course/user/report",
@@ -45,7 +45,7 @@ const userRoutes = {
 
  //chat
  message:"/message/message",
- notification:"/message/notification",
+ notification:"/message/message/notification",
 
  //*subscriptions
  subscriptions:"/purchase/user/subscription",

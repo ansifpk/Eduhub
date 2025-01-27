@@ -31,7 +31,6 @@ const FilterHeader: React.FC<Props> = ({ categories, onsendcourse,onsendpages,pa
   useEffect(() => {
     const courses = async () => {
       const data = await getCourses(category,topic,level,search,sort,page);
-      console.log("course",data);
       if (data.success) {
         onsendcourse(data.courses);
         onsendpages(data.pages);

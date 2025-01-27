@@ -28,8 +28,8 @@ app.use(cookieSession({
 // app.use()
 app.use(urlencoded({ extended: true }))
 
-app.use(cors({credentials:true,origin:["http://client-srv:5173",'https://ansifpk.dev']}))
-// app.use(cors({credentials:true,origin:["http://localhost:5173",'http://eduhub.dev']}))
+// app.use(cors({credentials:true,origin:["http://client-srv:5173",'https://ansifpk.dev']}))
+app.use(cors({credentials:true,origin:["http://localhost:5173",'http://eduhub.dev']}))
 
 app.use("/category/admin",categoryRouter)
 app.use("/category/instructor",instructorRoute)

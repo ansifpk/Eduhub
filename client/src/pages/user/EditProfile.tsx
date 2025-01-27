@@ -1,15 +1,13 @@
 import ProfileNavbar from "@/Components/Header/ProfileNavbar";
 import Header from "../../Components/Header/Header";
 import { useNavigate } from "react-router-dom";
-import React, { FormEvent, useEffect, useState } from "react";
+import React, {  useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { User } from "@/@types/userType";
-import { Card } from "@/Components/ui/card";
 import { Button } from "@/Components/ui/button";
 import { Label } from "@/Components/ui/label";
 import { Input } from "@/Components/ui/input";
 import Footer from "@/Components/Footer/Footer";
-import { MoveLeftIcon } from "lucide-react";
 import { editUser, getUserDetailes, logout } from "@/Api/user";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
@@ -17,7 +15,6 @@ import { removeUser, profileUpdated } from "@/redux/authSlice";
 import {
   AlertDialog,
   AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,

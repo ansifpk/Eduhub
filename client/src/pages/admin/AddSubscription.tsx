@@ -15,8 +15,8 @@ import {
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/Components/ui/radio-group";
-import { Checkbox } from "@nextui-org/react";
-import React, { FormEvent, useState } from "react";
+import { Checkbox } from "@heroui/react";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 

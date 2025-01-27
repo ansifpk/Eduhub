@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import  { useState } from 'react'
 import Header from './Header/Header'
 import ProfileNavbar from './Header/ProfileNavbar'
 import { Label } from './ui/label'
@@ -9,7 +9,6 @@ import Footer from './Footer/Footer'
 import { ArrowRight, Loader2 } from 'lucide-react'
 import { logout, settingEmail, veryfyNewEmail } from '@/Api/user'
 import { useSelector } from 'react-redux'
-import { IUser } from '@/@types/chatUser'
 import { User } from '@/@types/userType'
 import toast from 'react-hot-toast'
 import { changeEmail, removeUser } from '@/redux/authSlice'
@@ -23,7 +22,7 @@ const ChangeEmail = () => {
     const [comingOtp,setComingOtp] = useState("");
     const [page,setPage] = useState(1);
 
-    const [success,setSuccess] = useState(true);
+ 
     const [isLoading, setIsLoading] = useState(false);
     const [errors,setErrors] = useState({
         email:false,

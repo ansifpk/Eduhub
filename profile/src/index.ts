@@ -26,8 +26,8 @@ UserRouter(userRouter);
 AdminRouter(adminRouter);
 InstructorRouter(instructorRouter);
 
-// app.use(cors({credentials:true,origin:["http://localhost:5173",'http://eduhub.dev']}));
-app.use(cors({credentials:true,origin:["http://client-srv:5173",'https://ansifpk.dev']}));
+app.use(cors({credentials:true,origin:["http://localhost:5173",'http://eduhub.dev']}));
+// app.use(cors({credentials:true,origin:["http://client-srv:5173",'https://ansifpk.dev']}));
 
 
 // app.use(fileUpload({ limits: { fileSize: 50 * 1024 * 1024 } }));

@@ -5,6 +5,7 @@ import { IRating } from "@/@types/ratingType";
 import { User } from "@/@types/userType";
 import { getCourses, getOrders, getRecentRatings, getTop5Courses, getTop5RatedCourses } from "@/Api/instructor";
 import { logout } from "@/Api/user";
+import  Chart  from "@/Components/instructor/Chart";
 import InstructorAside from "@/Components/instructor/InstructorAside";
 import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
 import {
@@ -36,7 +37,7 @@ export default function InstructorHome() {
     4.5: "Excellent",
     5: "Excellent+",
   };
-
+  const [orders,setOrders] = useState<IOrder[]>([])
   const [courses, setCourses] = useState<ICourse[]>([]);
   const [topCourses, setTopCourses] = useState<ICourse[]>([]);
   const [ratings, setRatings] = useState<IRating[]>([]);
@@ -52,7 +53,7 @@ export default function InstructorHome() {
          await logout();
          dispatch(removeUser());
          toast.error('You are blocked by Admin');
-          return navigate('/instructor/login');
+         return navigate('/instructor/login');
       }else{
          return toast.error(response.response.data.message);
       }
@@ -64,6 +65,7 @@ export default function InstructorHome() {
       if (res.success) {
         setRatings(res.ratings);
       }
+     
     };
 
     fetching();
@@ -85,62 +87,12 @@ export default function InstructorHome() {
         <Separator className="my-6" />
         <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0 md:flex-row md:space-x-12 md:space-y-0 sm:flex-row sm:space-x-12 sm:space-y-0">
           <InstructorAside />
-
-          <div className='flex flex-wrap gap-3 justify-center h-[410px]' >
-            <div className="w-[300px] h-[410px]">
-            <Card className='h-full'>
-              <CardHeader>
-                <h2 className="text-lg font-semibold">TOP 5 COURSES</h2>
-              </CardHeader>
-              <CardContent>
-                {
-                courses.length>0?(
-                  courses.map((course, index) => (
-                    <div key={index} className="mb-4 last:mb-0 flex justify-between" >
-                     <div >
-                      <div className="font-medium text-sm">{course.title}</div>
-                      <div className="text-xs text-gray-500">students : {course.students?.length}</div>
-                     </div>
-                     <div  className="font-medium text-xs">
-                       Price {course.price}
-                     </div>
-                   </div>
-                 ))
-                ):(
-                  <p>No Courses Available</p>
-                )
-                }
-              </CardContent>
-            </Card>
-            </div>
-            <div className="w-[300px] h-[410px]">
-            <Card className='h-full'>
-              <CardHeader>
-                <h2 className="text-lg font-semibold">TOP RATED 5 COURSES</h2>
-              </CardHeader>
-              <CardContent>
-                {
-                topCourses.length>0?(
-                  topCourses.map((course, index) => (
-                    <div key={index} className="mb-4 last:mb-0 flex justify-between" >
-                     <div >
-                      <div className="font-medium text-sm">{course.title}</div>
-                      <div className="text-xs text-gray-500">Reviews : {course.courseReviews?.length}</div>
-                     </div>
-                     <div  className="font-medium text-xs">
-                       Price {course.price}
-                     </div>
-                   </div>
-                 ))
-                ):(
-                  <p>No Courses Available</p>
-                )
-                }
-              </CardContent>
-            </Card>
-            </div>
-            <div className="w-[300px] h-[410px]">
-            <Card className='h-full'>
+          <div className="grid grid-cols-2 w-full  gap-x-96 gap-y-4">
+             <div className="w-[650px]">
+                <Chart />
+             </div>
+             <div className=" text-white w-[250px]">
+             <Card className='h-full'>
               <CardHeader>
                 <h2 className="text-lg font-semibold">RECIENT REVIEWS</h2>
               </CardHeader>
@@ -161,7 +113,7 @@ export default function InstructorHome() {
                             <div>
                               <div className="text-xs ">
                                 <div className="text-xs">
-                                  {" "}
+                               
                                   <Rating
                                     name="customized-10"
                                     defaultValue={1}
@@ -184,8 +136,62 @@ export default function InstructorHome() {
                 }
               </CardContent>
             </Card>
+             </div>
+             <div className="grid grid-cols-2 gap-x-80">
+              <div className="w-[300px] h-[410px]">
+                <Card className='h-full'>
+                  <CardHeader>
+                    <h2 className="text-lg font-semibold">TOP 5 COURSES</h2>
+                  </CardHeader>
+                  <CardContent>
+                    {
+                    courses.length>0?(
+                      courses.map((course, index) => (
+                        <div key={index} className="mb-4 last:mb-0 flex justify-between" >
+                        <div >
+                          <div className="font-medium text-sm">{course.title}</div>
+                          <div className="text-xs text-gray-500">students : {course.students?.length}</div>
+                        </div>
+                        <div  className="font-medium text-xs">
+                          Price {course.price}
+                        </div>
+                      </div>
+                    ))
+                    ):(
+                      <p>No Courses Available</p>
+                    )
+                    }
+                  </CardContent>
+                </Card>
+              </div>
+              <div className="w-[300px] h-[410px]">
+                <Card className='h-full'>
+                  <CardHeader>
+                    <h2 className="text-lg font-semibold">TOP RATED 5 COURSES</h2>
+                  </CardHeader>
+                  <CardContent>
+                    {
+                    topCourses.length>0?(
+                      topCourses.map((course, index) => (
+                        <div key={index} className="mb-4 last:mb-0 flex justify-between" >
+                        <div >
+                          <div className="font-medium text-sm">{course.title}</div>
+                          <div className="text-xs text-gray-500">Reviews : {course.courseReviews?.length}</div>
+                        </div>
+                        <div  className="font-medium text-xs">
+                          Price {course.price}
+                        </div>
+                      </div>
+                    ))
+                    ):(
+                      <p>No Courses Available</p>
+                    )
+                    }
+                  </CardContent>
+                </Card>
             </div>
-            </div>
+          </div>
+          </div>
         </div>
       </div>
     </div>

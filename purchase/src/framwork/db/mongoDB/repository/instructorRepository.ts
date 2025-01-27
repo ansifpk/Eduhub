@@ -212,13 +212,27 @@ export class InstructorRepository implements IInstructorRepository {
   }
   async instrutcorOrders(userId:string): Promise<IOrder[] | void> {
     try {
-      const orders = await OrderModel.find({
-        'course.instructorId': new mongoose.Types.ObjectId(userId),
-      }).populate('user').sort({createdAt:-1});
-     
-      
+      // const orders = await OrderModel.find({
+      //   'course.instructorId': new mongoose.Types.ObjectId(userId),
+      // }).populate('user').sort({createdAt:-1});
+      const orders = await OrderModel.aggregate([
+        {
+          $match:{'course.instructorId':new mongoose.Types.ObjectId(userId)},
+        },
+        {
+          $group: {
+            _id: { $year: "$createdAt" }, 
+            Courses: { $sum: 1 } 
+          }
+        },
+        {
+          $sort: { _id: 1 }, 
+        },
+      ])
+   
       if(orders){
-        return orders      }
+        return orders
+       }
     } catch (error) {
       console.error(error);
     }
