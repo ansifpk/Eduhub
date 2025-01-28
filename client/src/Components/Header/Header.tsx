@@ -14,10 +14,10 @@ const Header = () => {
    const [image,setImage] = useState('')
    useEffect(()=>{
      const fetching = async () => {
-        const response = await getUserDetailes(id);   
-        if(response.success){
-          setImage(response.userData.avatar.avatar_url)
-        }
+        // const response = await getUserDetailes(id);   
+        // if(response.success){
+        //   setImage(response.userData.avatar.avatar_url)
+        // }
      }
      fetching()
    },[])

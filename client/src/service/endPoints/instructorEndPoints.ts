@@ -1,37 +1,37 @@
 const instructorRoutes = { 
     //* course
-    getCourses:"/course/course/instructor/getCourses", 
-    uploadVideo:"/course/course/instructor/uploadVideo", 
-    createCourse:"/course/course/instructor/createCourse", 
-    allCourses:"/course/course/instructor/allCourses", 
-    editCourse:"/course/course/instructor/editCourse", 
-    listCourses:"/course/course/instructor/listCourses", 
-    coursesDetailes:"/course/course/instructor/coursesDetailes", 
-    tests:"/course/course/instructor/tests", 
-    top5Courses:"/course/course/instructor/course",
-    top5RatedCourses:"/course/course/instructor/topRated",
-    login:'/auth/auth/instructor/login',
+    getCourses:"/course/instructor/getCourses", 
+    uploadVideo:"/course/instructor/uploadVideo", 
+    createCourse:"/course/instructor/createCourse", 
+    allCourses:"/course/instructor/allCourses", 
+    editCourse:"/course/instructor/editCourse", 
+    listCourses:"/course/instructor/listCourses", 
+    coursesDetailes:"/course/instructor/coursesDetailes", 
+    tests:"/course/instructor/tests", 
+    top5Courses:"/course/instructor/course",
+    top5RatedCourses:"/course/instructor/topRated",
+    login:'/auth/instructor/login',
     editProfile:"/instructor/editProfile", 
     currentUser:"/instructor/currentUser", 
     googleLogin:"/instructor/googleLogin", 
-    register:"/profile/profile/instructor/register", 
-    getCategoryies:"/category/category/instructor/category", 
-    ratings:"/profile/profile/instructor/ratings", 
+    register:"/profile/instructor/register", 
+    getCategoryies:"/category/instructor/category", 
+    ratings:"/profile/instructor/ratings", 
    
 
     //!message
-    message:"/message/message/message",
-    notification:"/message/message/notification",
+    message:"/message/message",
+    notification:"/message/notification",
      //chat
-    chat:"/message/message/chat",
-    privetChat:"/message/message/chat/privetChat",
+    chat:"/message/chat",
+    privetChat:"/message/chat/privetChat",
     //*subscription
-    subscription:"/purchase/purchase/instructor/subscription",
-    subscribe:"/purchase/purchase/instructor/subscribe",
-    customer:"/purchase/purchase/instructor/customer",
+    subscription:"/purchase/instructor/subscription",
+    subscribe:"/purchase/instructor/subscribe",
+    customer:"/purchase/instructor/customer",
     //*salesReports
-    salesReports:"/purchase/purchase/instructor/salesReports",
-    order:"/purchase/purchase/instructor/order",
+    salesReports:"/purchase/instructor/salesReports",
+    order:"/purchase/instructor/order",
 }  
 
 export default instructorRoutes

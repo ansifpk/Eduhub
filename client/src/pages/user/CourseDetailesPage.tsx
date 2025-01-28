@@ -17,7 +17,6 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
 } from "@/Components/ui/card";
 
 import { useEffect, useState } from "react";
@@ -35,7 +34,6 @@ import {
 import {
   AlertDialog,
   AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
@@ -43,21 +41,18 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/Components/ui/alert-dialog";
-import { RadioGroup, RadioGroupItem } from "@/Components/ui/radio-group";
 import { Label } from "@/Components/ui/label";
 import { useSelector } from "react-redux";
 import { User } from "@/@types/userType";
 import { Avatar, AvatarImage } from "@/Components/ui/avatar";
 import { IRating } from "@/@types/ratingType";
 import moment from "moment";
-import { DialogTitle, Rating } from "@mui/material";
+import { Rating } from "@mui/material";
 import { Edit, StarIcon, Trash } from "lucide-react";
 import { Textarea } from "@/Components/ui/textarea";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogHeader,
   DialogTrigger,
 } from "@/Components/ui/dialog";
 import { ScrollArea } from "@/Components/ui/scroll-area";
@@ -77,11 +72,7 @@ import {
 const stripe = await loadStripe(import.meta.env.VITE_PUBLISH_SECRET);
 const CourseDetailesPage = () => {
   const [course, setCourse] = useState<ICourse>();
-  const [totellStudents, setStudents] = useState(0);
-  const [option, setOption] = useState(true);
-  const [totellCourses, setTotellCourses] = useState(0);
   const [ratings, setRatings] = useState<IRating[]>([]);
-  const [paymentMethord, setPaymentMethord] = useState("Wallet");
   const { courseId } = useParams();
   const userId = useSelector((state: User) => state.id);
   const [val, setVal] = useState<number | null>(1);
@@ -147,8 +138,7 @@ const CourseDetailesPage = () => {
     };
     call();
   }, [courseId]);
-  console.log("plans", plans);
-
+ 
   const handleOrder = async () => {
     try {
       const data = await stripePurchase([course!], userId);
@@ -172,8 +162,6 @@ const CourseDetailesPage = () => {
   };
   let wr =
     "Hi everyone, I’m Ansif, a student on Udemy, and I’m excited to be here! This website has been incredibly helpful in my learning journey, and I’m looking forward to making the most of it. Can’t wait to dive into more knowledge and improve my skills!  and ibelieve also everyone feels this same Hi everyone, I’m Ansif, a student on Udemy, and I’m excited to be here! This website has been incredibly helpful in my learning journey, and I’m looking forward to making the most of it. Can’t wait dive into";
-
-  console.log(subscriptions, "subscriptions");
 
   const handleEditRatings = async (ratingId: string) => {
     const response = await editRating(ratingId, review, stars);
@@ -234,12 +222,11 @@ const CourseDetailesPage = () => {
       return toast.error(response.response.data.message);
     }
   };
-  console.log("cour", course);
-
+ 
   const subscribe = async (subscriptionId: string) => {
-    console.log(subscriptionId);
+   
     const response = await purchaseSubscription(subscriptionId, userId);
-    console.log(response);
+
     if (response.success) {
       await stripe?.redirectToCheckout({
         sessionId: response.sessionId,
@@ -251,7 +238,7 @@ const CourseDetailesPage = () => {
   return (
     <div className="bg-blue-200">
       <Header />
-      <div className="flex bg-gray-900 w-full h-[250px] ">
+      <div className="flex bg-gray-900 w-full mt-16 h-[250px] ">
         <img
           src={course?.image.image_url}
           className="h-[220px] w-[350px] object-fill m-3"

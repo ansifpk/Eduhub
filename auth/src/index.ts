@@ -17,13 +17,21 @@ dotenv.config();
 
 const app = express()
 
-// app.use(cors({credentials:true,origin:["http://client-srv:5173",'https://ansifpk.dev']}));
-app.use(cors({credentials:true,origin:["http://localhost:5173",'https://www.eduhublearning.online']}));
+app.use(cors({credentials:true,
+    origin: process.env.NODE_ENV === 'production'
+      ? 'https://www.eduhublearning.online'
+      : ['http://client-srv:5173', 'http://localhost:5173']
+    ,methods: ['GET', 'POST'],}));
+// app.use(cors({credentials:true,origin:["http://localhost:5173",'https://www.eduhublearning.online']}));
 
-app.use(cookieSession({
-    signed:false,
-    secure:false,
-}))
+app.use(
+    cookieSession({
+        signed: false, 
+        httpOnly: true, 
+        sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax', 
+        secure: process.env.NODE_ENV === 'production', 
+      })
+)
 app.use(json())
 app.use(urlencoded({ extended: true }))
 

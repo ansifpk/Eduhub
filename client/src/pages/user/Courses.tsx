@@ -16,6 +16,7 @@ import { ICart } from "@/@types/cartType";
 import { Pagination, Stack } from "@mui/material";
 import { IUserSubscribe } from "@/@types/userSubscribe";
 
+
 const Courses = () => {
   const [courses, setCourses] = useState<ICourse[]>([]);
   const [cart, setCart] = useState<ICart>();
@@ -28,17 +29,16 @@ const Courses = () => {
   useEffect(() => {
     const category = async () => {
       const data = await getCategoryies();
-      console.log("cate",data);
       if (data) {
         setCategories(data);
       }
       const plan = await userPlans(userId);
-      console.log("plans",plan);
+      
       if (plan.success) {
         setPlans(plan.plans);
       } 
       const cart = await userCart(userId);
-      console.log("cart",cart);
+      // console.log(cart,"carts")
       if (cart.success) {
         setCart(cart.cart);
       } 

@@ -35,15 +35,24 @@ ChatRoute(chatRouter);
 NotificationRoute(notificationRouter)
 
 
-app.use(cors({credentials:true,origin:["http://localhost:5173",'https://ansifpk.dev']}));
-// app.use(cors({credentials:true,origin:["http://client-srv:5173",'https://ansifpk.dev']}));
+// app.use(cors({credentials:true,origin:["http://localhost:5173",'https://ansifpk.dev']}));
 
 
-app.use(cookieSession({
-    signed:false,
-    secure:false,
-}))
+app.use(cors({credentials:true,
+    origin: process.env.NODE_ENV === 'production'
+      ? 'https://www.eduhublearning.online'
+      : ['http://client-srv:5173', 'http://localhost:5173']
+    ,methods: ['GET', 'POST'],}));
+// app.use(cors({credentials:true,origin:["http://localhost:5173",'https://www.eduhublearning.online']}));
 
+app.use(
+    cookieSession({
+        signed: false, 
+        httpOnly: true, 
+        sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax', 
+        secure: process.env.NODE_ENV === 'production', 
+      })
+)
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 
