@@ -14,13 +14,15 @@ const Header = () => {
    const [image,setImage] = useState('')
    useEffect(()=>{
      const fetching = async () => {
-        const response = await getUserDetailes(id);   
-        if(response.success){
-          setImage(response.userData.avatar.avatar_url)
-        }
+        if(id){
+          const response = await getUserDetailes(id);   
+          if(response.success){
+            setImage(response.userData.avatar.avatar_url)
+          }
+        } 
      }
      fetching()
-   },[])
+   },[id])
  
   return (
     <div className='shadow-md  w-full fixed top-0 left-0 z-50'>

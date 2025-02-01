@@ -15,8 +15,8 @@ export class UserController{
        const user = await this.userUseCase.createProfile(req.body,next)
     }
     async userProfile(req:Request,res:Response,next:NextFunction){
-        const {userId} = req.params
-         const userProfile =  await this.userUseCase.userProfile(userId,next)
+        const {userId} = req.query
+         const userProfile =  await this.userUseCase.userProfile(userId as string,next)
          if(userProfile){
             res.send({success:true,userData:userProfile})
          }

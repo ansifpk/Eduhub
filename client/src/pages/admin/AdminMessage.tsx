@@ -49,8 +49,10 @@ const AdminMessage = () => {
    //!websocket
   //* initialise socket
   useEffect(()=>{
-    // const newSocket = io("http://client-srv:4000")
-    const newSocket = io("https://www.eduhublearning.online")
+    // const newSocket = io("https://client-srv:4000")
+    const newSocket = io(import.meta.env.VITE_APIGATEWAY,{
+     path: '/message/socket.io'
+    })
     setSocket(newSocket!)
     return ()=>{
       newSocket.disconnect();
@@ -63,6 +65,7 @@ const AdminMessage = () => {
     if(!socket) return;
     socket.emit("addNewUser",userId)
     socket.on("getOnlineUsers",(res)=>{
+      console.log("online users",res)
       setOnlineUsers(res)
     })
   },[socket])

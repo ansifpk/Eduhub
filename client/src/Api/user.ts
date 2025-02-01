@@ -235,7 +235,7 @@ export const submitTest = async (userId:string,testId:string,mark:number) =>{
 export const getUserDetailes = async (userId:string) =>{
     try {
         
-        const response = await ApiGatway.get(`${userRoutes.profile}/${userId}`)
+        const response = await ApiGatway.get(`${userRoutes.profile}?userId=${userId}`)
         return response.data
     } catch (error) {
 

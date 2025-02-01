@@ -4,7 +4,7 @@ build:
   local:
     push: true
   artifacts:
-    - image: pkansif/eduhub-auth:latest
+    - image: pkansif/eduhub-auth
       context: auth
       docker:
         dockerfile: Dockerfile
@@ -12,7 +12,7 @@ build:
         manual:
           - src: "src/**/*.ts"
             dest: .
-    - image: pkansif/eduhub-course:latest
+    - image: pkansif/eduhub-course
       context: courses
       docker:
         dockerfile: Dockerfile
@@ -20,7 +20,7 @@ build:
         manual:
           - src: "src/**/*.ts"
             dest: .
-    - image: pkansif/eduhub-category:latest
+    - image: pkansif/eduhub-category
       context: category
       docker:
         dockerfile: Dockerfile
@@ -28,7 +28,7 @@ build:
         manual:
           - src: "src/**/*.ts"
             dest: .
-    - image: pkansif/eduhub-profile:latest
+    - image: pkansif/eduhub-profile
       context: profile
       docker:
         dockerfile: Dockerfile
@@ -36,7 +36,7 @@ build:
         manual:
           - src: "src/**/*.ts"
             dest: .
-    - image: pkansif/eduhub-purchase:latest
+    - image: pkansif/eduhub-purchase
       context: purchase
       docker:
         dockerfile: Dockerfile
@@ -44,7 +44,7 @@ build:
         manual:
           - src: "src/**/*.ts"
             dest: .
-    - image: pkansif/eduhub-message:latest
+    - image: pkansif/eduhub-message
       context: message
       docker:
         dockerfile: Dockerfile
@@ -52,7 +52,7 @@ build:
         manual:
           - src: "src/**/*.ts"
             dest: .
-    - image: pkansif/eduhub-client:latest
+    - image: pkansif/eduhub-client
       context: client
       docker:
         dockerfile: Dockerfile

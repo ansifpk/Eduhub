@@ -55,7 +55,10 @@ export default function InstructorMessage() {
    //!websocket
   //* initialise socket
   useEffect(()=>{
-    const newSocket = io("https://www.eduhublearning.online")
+    // const newSocket = io("https://www.eduhublearning.online")
+    const newSocket = io(import.meta.env.VITE_APIGATEWAY,{
+      path: '/message/socket.io'
+     })
     setSocket(newSocket!)
     return ()=>{
       newSocket.disconnect();
@@ -68,6 +71,7 @@ export default function InstructorMessage() {
     if(!socket) return;
     socket.emit("addNewUser",userId)
     socket.on("getOnlineUsers",(res)=>{
+      console.log("online users",res)
       setOnlineUsers(res)
     })
   },[socket])

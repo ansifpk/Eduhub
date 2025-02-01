@@ -45,7 +45,7 @@ const userRoutes = {
 
  //chat
  message:"/message/message",
- notification:"/message/message/notification",
+ notification:"/message/notification",
 
  //*subscriptions
  subscriptions:"/purchase/user/subscription",

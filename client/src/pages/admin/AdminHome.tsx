@@ -48,7 +48,7 @@ const AdminHome = () => {
                      <AvatarImage onClick={()=>navigate("/admin/profile")} className='avatar' src="https://github.com/shadcn.png" />
                 </Avatar>
             </div>
-            <div className="grid grid-cols-2 w-full  gap-x-96 gap-y-4">
+            <div className="grid grid-cols-2 w-full  gap-x-96 gap-y-4 mb-3">
              <div className="w-[650px]">
                 <AdminChart />
              </div>

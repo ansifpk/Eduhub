@@ -3,6 +3,7 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import cookieSession from 'cookie-session';
 import dotenv from 'dotenv';
+import {createServer} from 'http';
 // import { UserRouter } from './framwork/webServer/routes/userRouter';
 import { connectDB } from './framwork/webServer/config/mongoDB/db';
 import kafkaWrapper from './framwork/webServer/config/kafka/kafkaWrapper';
@@ -22,7 +23,7 @@ const  {Server} =  require('socket.io')
 dotenv.config();
 const PORT = process.env.PORT
 const app = express()
-
+const httpServer = createServer(app);
 // Separate routers for user and admin
 const messageRouter = express.Router()
 const chatRouter = express.Router()
@@ -64,7 +65,12 @@ app.use(errMiddleware);
 
 //! web socket configurations
 let onlineUsers:{userId:string,socketId:string}[] = [];
-const io = new Server({cors:"http://client-srv:5173",Credential:true})
+const io = new Server(httpServer,{cors:{
+     path: '/message/socket.io',
+    origin:"http://client-srv:5173",
+    Credential:true
+}
+})
 io.on("connect",(socket:Socket)=>{
     console.log("new connection",socket.id);
     
@@ -99,7 +105,6 @@ io.on("connect",(socket:Socket)=>{
         io.emit("getOnlineUsers",onlineUsers)
     })
 })
-io.listen(4000)
 
 const start = async () => {
     try {

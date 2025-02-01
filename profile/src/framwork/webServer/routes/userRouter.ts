@@ -3,7 +3,7 @@ import { userController } from "./injections/injections";
 import { isAuth } from "../middlewares/authCheck";
 import upload from '../middlewares/multer'
 export function UserRouter(router: Router) {
-  router.get("/profile/:userId", isAuth, async (req, res, next) => {
+  router.get("/profile", isAuth, async (req, res, next) => {
     try {
       userController.userProfile(req, res, next);
     } catch (error) {

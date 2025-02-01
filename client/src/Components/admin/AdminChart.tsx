@@ -66,7 +66,7 @@ const AdminChart = () => {
         const res = await getOrders()
         console.log(res,"res");
         if (res.success) {
-          // setOrders(res.orders);
+          setOrders(res.orders);
         }
       }
       fetching()
@@ -79,7 +79,7 @@ const AdminChart = () => {
         <div className="grid flex-1 gap-1 text-center sm:text-left">
           <CardTitle>Totel sales</CardTitle>
           <CardDescription>
-            Showing total sales  in admin side.
+            Showing total sales  in admin side2.
           </CardDescription>
         </div>
         <Select value={timeRange} onValueChange={setTimeRange}>
