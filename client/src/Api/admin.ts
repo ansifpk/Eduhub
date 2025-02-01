@@ -78,6 +78,14 @@ export const instructors = async (search:string="",sort:string="",page:number) =
         return error 
     }
 }
+export const getOrders = async () =>{
+    try {
+        const response = await ApiGatway.get(adminRoutes.getOrders);       
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
 
 
 export const editProfile = async (instructorData:object) =>{

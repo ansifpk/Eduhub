@@ -1,6 +1,5 @@
 import { IOrder } from "../../../../entities/order";
 import { ISubcription } from "../../../../entities/subscription";
-import { Iuser } from "../../../../entities/user";
 import { IAdminRepository } from "../../../../useCases/interfaces/repository/IAdminrepository";
 import { OrderModel } from "../models/orderModel";
 import { subscriptionModel } from "../models/subscriptionModel";
@@ -106,6 +105,28 @@ export class AdminRepository implements IAdminRepository{
         if(subscription){
             return subscription;
         }
+       } catch (error) {
+        console.error(error)
+       }
+    }
+    async findChartOrders(): Promise<IOrder[] | void> {
+       try {
+
+       const orders = await OrderModel.aggregate([
+               {
+                 $group: {
+                   _id: { $year: "$createdAt" }, 
+                   Courses: { $sum: 1 } 
+                 }
+               },
+               {
+                 $sort: { _id: 1 }, 
+               },
+             ])
+          
+             if(orders){
+               return orders
+              }
        } catch (error) {
         console.error(error)
        }

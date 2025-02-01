@@ -22,10 +22,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/Components/ui/select"
-import { getOrders } from "@/Api/instructor"
 import { useSelector } from "react-redux"
 import { User } from "@/@types/userType"
 import { useEffect, useState } from "react"
+import { getOrders, top5Courses } from "@/Api/admin"
 
 
 const months = [
@@ -62,13 +62,14 @@ const AdminChart = () => {
     const userId = useSelector((state:User)=>state.id);
     const [timeRange, setTimeRange] = useState('Yearly')
     useEffect(()=>{
-    //   const fetching = async() => {
-    //     const res1 = await getOrders(userId);
-    //     if (res1.success) {
-    //       setOrders(res1.orders);
-    //     }
-    //   }
-    //   fetching()
+      const fetching = async() => {
+        const res = await getOrders()
+        console.log(res,"res");
+        if (res.success) {
+          // setOrders(res.orders);
+        }
+      }
+      fetching()
     },[userId])
   
 

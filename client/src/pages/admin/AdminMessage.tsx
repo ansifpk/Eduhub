@@ -10,7 +10,6 @@ import { io, Socket } from "socket.io-client"
 import { useSelector } from 'react-redux';
 import {DefaultEventsMap} from '@socket.io/component-emitter';
 import moment from "moment"
-import { Input } from '@/Components/ui/input';
 import { Avatar, AvatarImage } from '@/Components/ui/avatar';
 import { Separator } from '@/Components/ui/separator';
 import InputEmoji from "react-input-emoji";
@@ -34,7 +33,6 @@ const AdminMessage = () => {
     const [newMessage, setNewMessage] = useState("");
     const [onlineUsers, setOnlineUsers] = useState<{userId:string,socketId:string}[]>([]);
     const [socket, setSocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | undefined>();
-    const [search, setSearch] = useState("");
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const [notifications, setNotifications] = useState<INotification[]>([]);
 
@@ -51,7 +49,8 @@ const AdminMessage = () => {
    //!websocket
   //* initialise socket
   useEffect(()=>{
-    const newSocket = io("http://localhost:4000")
+    // const newSocket = io("http://client-srv:4000")
+    const newSocket = io("https://www.eduhublearning.online")
     setSocket(newSocket!)
     return ()=>{
       newSocket.disconnect();

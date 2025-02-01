@@ -11,5 +11,6 @@ export interface IAdminRepository{
     subscriptionEditById(subscriptionId:string,price:number,priceId:string):Promise<ISubcription|void>
     setProductId(subscriptionId:string,productId:string,priceId:string):Promise<ISubcription|void>
     findOrders():Promise<IOrder[]|void>
+    findChartOrders():Promise<IOrder[]|void>
     
 }

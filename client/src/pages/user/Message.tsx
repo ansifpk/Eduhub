@@ -26,25 +26,12 @@ import moment from "moment";
 import { IMessage } from "@/@types/messageType";
 import { io, Socket } from "socket.io-client";
 import { DefaultEventsMap } from "@socket.io/component-emitter";
-import { IUser } from "@/@types/chatUser";
-import { Input } from "@/Components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/Components/ui/select";
 import MarkEmailUnreadIcon from "@mui/icons-material/MarkEmailUnread";
-import { Label } from "@/Components/ui/label";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/Components/ui/popover";
-import { Button } from "@/Components/ui/button";
 import { INotification } from "@/@types/notificationType";
 import { removeUser } from "@/redux/authSlice";
 import { useDispatch } from "react-redux";
@@ -81,7 +68,7 @@ const Message = () => {
   //!websocket
   //* initialise socket
   useEffect(() => {
-    const newSocket = io("http://localhost:4000");
+    const newSocket = io("https://www.eduhublearning.online");
     setSocket(newSocket!);
     return () => {
       newSocket.disconnect();

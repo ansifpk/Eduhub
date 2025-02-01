@@ -28,6 +28,7 @@ const adminRoutes = {
      salesReports:"/purchase/admin/salesReports",
      //*order
      order:"/purchase/admin/order",
+     getOrders:"/purchase/admin/getOrders",
      //*top5Instructors
      top5Instructors:"/profile/admin/top5Instructors",
 

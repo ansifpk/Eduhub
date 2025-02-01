@@ -57,6 +57,17 @@ export class AdminController{
         console.error(error)
        }
     }
+    async getOrdersForChart(req:Request,res:Response,next:NextFunction){
+       try {
+       
+         const orders = await this.adminUseCase.getOrdersForChart()
+         if(orders){
+             return res.send({success:true,orders});
+         }
+       } catch (error) {
+        console.error(error)
+       }
+    }
     async salesReports(req:Request,res:Response,next:NextFunction){
        try {
           const {report,year,month}  = req.query 

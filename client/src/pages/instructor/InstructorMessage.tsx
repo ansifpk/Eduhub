@@ -2,12 +2,9 @@ import { IChat } from "@/@types/chatType"
 import { IMessage } from "@/@types/messageType"
 import { User } from "@/@types/userType"
 import InstructorAside from "@/Components/instructor/InstructorAside"
-import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Components/ui/card"
-import { Input } from "@/Components/ui/input"
+import { Avatar,  AvatarImage } from "@/Components/ui/avatar"
 import { ScrollArea } from "@/Components/ui/scroll-area"
 import { Separator } from "@/Components/ui/separator"
-import { SidebarProvider, SidebarTrigger } from "@/Components/ui/sidebar"
 import { MoreVertical, Send } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import InputEmoji from "react-input-emoji";
@@ -42,9 +39,7 @@ export default function InstructorMessage() {
   const [newMessage, setNewMessage] = useState("");
   const [onlineUsers, setOnlineUsers] = useState<{userId:string,socketId:string}[]>([]);
   const [socket, setSocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | undefined>();
-  const [search, setSearch] = useState("");
   const [notifications, setNotifications] = useState<INotification[]>([]);
-  const [isOpen,setIsOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
     // Function to scroll to bottom
@@ -60,7 +55,7 @@ export default function InstructorMessage() {
    //!websocket
   //* initialise socket
   useEffect(()=>{
-    const newSocket = io("http://localhost:4000")
+    const newSocket = io("https://www.eduhublearning.online")
     setSocket(newSocket!)
     return ()=>{
       newSocket.disconnect();

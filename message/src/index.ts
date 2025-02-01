@@ -64,7 +64,7 @@ app.use(errMiddleware);
 
 //! web socket configurations
 let onlineUsers:{userId:string,socketId:string}[] = [];
-const io = new Server({cors:"http://localhost:5173",Credential:true})
+const io = new Server({cors:"http://client-srv:5173",Credential:true})
 io.on("connect",(socket:Socket)=>{
     console.log("new connection",socket.id);
     

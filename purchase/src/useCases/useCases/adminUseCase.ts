@@ -232,6 +232,15 @@ export class AdminUseCase implements IAdminUseCase{
       }
     }
 
-   
+   async getOrdersForChart():Promise<IOrder[]|void>{
+     try {
+        const orders = await this.adminRepository.findChartOrders();
+        if(orders){
+          return orders
+        }
+     } catch (error) {
+      console.error(error)
+     }
+   }
     
 }
