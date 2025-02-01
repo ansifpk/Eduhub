@@ -59,7 +59,9 @@ export class AdminController{
     }
     async getOrdersForChart(req:Request,res:Response,next:NextFunction){
        try {
-       
+         const {timeRange} = req.params
+         console.log(req.params);
+         
          const orders = await this.adminUseCase.getOrdersForChart()
          if(orders){
              return res.send({success:true,orders});

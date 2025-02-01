@@ -25,7 +25,6 @@ export function InstructorRouter(router:Router){
     })
 
     router.patch("/subscription/:subscriptionId",async(req,res,next)=>{
- 
         instructorController.editSubscription(req,res,next);
     })
 
@@ -33,7 +32,6 @@ export function InstructorRouter(router:Router){
         instructorController.getOrders(req,res,next);
     })
     router.get("/order/:userId",async(req,res,next)=>{
-    
         instructorController.instructorOrders(req,res,next);
     })
     router.get("/salesReports",async(req,res,next)=>{

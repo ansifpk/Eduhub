@@ -160,7 +160,7 @@ export class InstructorUseCase implements IInstructorUseCase {
        if(section){
         const course = await this.instructorRepository.addSecton(sectionData.courseId,section._id!)
        if(course){
-         console.log(course,"success");
+        
        }
         
       }
@@ -213,7 +213,7 @@ export class InstructorUseCase implements IInstructorUseCase {
   async topRated(userId: string, next: NextFunction): Promise<ICourse[] | void> {
     try {
       const datas = await this.instructorRepository.findTopRated(userId)
-      console.log(datas);
+     
       if(datas){
         const courses =  datas.filter((value)=>value.courseReviews?.length!>0)
          .filter((val)=>val.courseReviews?.find((review)=>review.stars>=2.5))

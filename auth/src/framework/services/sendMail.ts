@@ -16,7 +16,7 @@ export class SentEmail implements ISentEmail{
                 try {
             const mailOptions = {
                from: 'pkansif39@gmail.com',
-               to: 'pkansif39@gmail.com',
+               to: toEmail,
                subject: "Verify Your email",
                html: `Your OTP is: ${otp}`
            };

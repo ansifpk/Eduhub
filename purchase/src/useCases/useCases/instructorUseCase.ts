@@ -42,14 +42,12 @@ export class InstructorUseCase implements IInstructorUseCase{
           return next(new ErrorHandler(400,"Subscription Not found")) 
       }
       const subscriptions = await stripe.subscriptions.list();
-        const productSubscriptions = subscriptions.data.filter(subscription => {
-           subscription.items.data.find(item => console.log('item.price.product',item.price.product));
-      });
-        console.log(subscriptions.data[0].items.data[0].price.product,"hi",subscriptions.data.length)
+      
+     
       // const subscriptions  = await this.instructorRepository.userSubscriptionFindByAndUpdate(subscriptionId,price)
       // if(subscriptions){
         const productPrices = await stripe.prices.list({ product: Subscription.productId });
-        console.log(productPrices.data[0],productPrices.data[0].id,productPrices.data[0].product,Subscription);
+       
         
       //   if(productPrices){
          

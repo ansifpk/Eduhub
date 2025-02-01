@@ -61,6 +61,7 @@ const Cart = () => {
     const [orders,setOrders] = React.useState<data[]>([])
     const userId = useSelector((state:User)=>state.id);
     const [timeRange, setTimeRange] = React.useState('Yearly')
+    
     React.useEffect(()=>{
       const fetching = async() => {
         const res1 = await getOrders(userId);

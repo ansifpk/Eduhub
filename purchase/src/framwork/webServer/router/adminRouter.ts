@@ -22,7 +22,7 @@ export function AdminRouter(router:Router){
         adminController.getOrders(req,res,next);
     })
     router.get("/getOrders",async(req,res,next)=>{
-       
+
         adminController.getOrdersForChart(req,res,next);
     })
    
