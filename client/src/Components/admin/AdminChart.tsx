@@ -1,4 +1,3 @@
-import * as React from "react"
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
 
 import {
@@ -26,6 +25,7 @@ import {
 import { getOrders } from "@/Api/instructor"
 import { useSelector } from "react-redux"
 import { User } from "@/@types/userType"
+import { useEffect, useState } from "react"
 
 
 const months = [
@@ -58,10 +58,10 @@ interface data {
   Courses:number
 }
 const AdminChart = () => {
-    const [orders,setOrders] = React.useState<data[]>([])
+    const [orders,setOrders] = useState<data[]>([])
     const userId = useSelector((state:User)=>state.id);
-    const [timeRange, setTimeRange] = React.useState('Yearly')
-    // React.useEffect(()=>{
+    const [timeRange, setTimeRange] = useState('Yearly')
+    useEffect(()=>{
     //   const fetching = async() => {
     //     const res1 = await getOrders(userId);
     //     if (res1.success) {
@@ -69,7 +69,7 @@ const AdminChart = () => {
     //     }
     //   }
     //   fetching()
-    // },[userId])
+    },[userId])
   
 
   return (
