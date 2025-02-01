@@ -9,15 +9,15 @@ import CloseIcon from '@mui/icons-material/Close';
 import { getUserDetailes } from '@/Api/user';
 
 const Header = () => {
-  const [open,setOpen]  = useState(false)
+   const [open,setOpen]  = useState(false)
    const id = useSelector((state:User)=>state.id);
    const [image,setImage] = useState('')
    useEffect(()=>{
      const fetching = async () => {
-        // const response = await getUserDetailes(id);   
-        // if(response.success){
-        //   setImage(response.userData.avatar.avatar_url)
-        // }
+        const response = await getUserDetailes(id);   
+        if(response.success){
+          setImage(response.userData.avatar.avatar_url)
+        }
      }
      fetching()
    },[])

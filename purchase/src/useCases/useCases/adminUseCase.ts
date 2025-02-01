@@ -8,7 +8,7 @@ import Stripe from 'stripe';
 import { IOrder } from "../../entities/order";
 import { Iuser } from "../../entities/user";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET!, { apiVersion: '2024-12-18.acacia' });
+const stripe = new Stripe(process.env.STRIPE_SECRET!, { apiVersion: "2025-01-27.acacia" });
 
 export class AdminUseCase implements IAdminUseCase{
     constructor(

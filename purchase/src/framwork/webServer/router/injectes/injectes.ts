@@ -34,7 +34,7 @@ const adminUseCase = new AdminUseCase(adminRepository)
 const adminController = new AdminController(adminUseCase)
 
 //* webhook
-const webhookRepository = new WebhookRepository(userSubscriptionModel,subscriptionModel,UserModel,instructotSubscribeModel,userSubscribeModel)
+const webhookRepository = new WebhookRepository(userSubscriptionModel,subscriptionModel,UserModel,instructotSubscribeModel,userSubscribeModel,OrderModel,courseModel)
 const webhookUseCase = new WebhookUseCase(webhookRepository)
 const webhookController = new WebhookController(webhookUseCase)
 

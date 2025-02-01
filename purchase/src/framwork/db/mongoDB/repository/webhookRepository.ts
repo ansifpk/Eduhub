@@ -1,7 +1,10 @@
+import { ICourse } from "../../../../entities/course";
 import { IInstructorSubscribe } from "../../../../entities/instructorSubscribe";
 import { IUserSubscribe } from "../../../../entities/userSubscribe";
 import { IWebhookRepository } from "../../../../useCases/interfaces/repository/IwebhookRepository";
+import { courseModel } from "../models/courseMode";
 import { instructotSubscribeModel } from "../models/instructorSubscribe";
+import { OrderModel } from "../models/orderModel";
 import { subscriptionModel } from "../models/subscriptionModel";
 import { UserModel } from "../models/userMode";
 import { userSubscribeModel } from "../models/userSubscribe";
@@ -14,6 +17,8 @@ export class WebhookRepository implements IWebhookRepository{
       private userModels: typeof UserModel,
       private subscribeModel: typeof instructotSubscribeModel,
       private subscribeUserModel: typeof userSubscribeModel,
+      private orderMedels: typeof OrderModel,
+      private courseModels: typeof courseModel,
     ){}
   async createUserSubscribe(userId: string, subscriptionId: string, customerId: string, subscription: string): Promise<IUserSubscribe | void> {
     try {
@@ -98,5 +103,35 @@ export class WebhookRepository implements IWebhookRepository{
            console.error(error)
           }
     }
+
+    async create(userId:string,course: ICourse): Promise<ICourse | void> {
+      try {
+        const order = await this.orderMedels.create({user:userId,course:course})
+        if(order){
+          let check = await this.courseModels.findByIdAndUpdate(
+              { _id: course._id! }, 
+              { $addToSet: { students: userId } },
+              { new: true } 
+            )
+          if(check){
+            return check
+          }
+        }
+    
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    async findById(courseId: string): Promise<ICourse | void> {
+      try {
+       const course = await this.courseModels.findById({_id:courseId}).populate("instructorId");
+       if (course) {
+         return course 
+       }
+      } catch (error) {
+       console.error(error)
+      }
+   }
     
 }

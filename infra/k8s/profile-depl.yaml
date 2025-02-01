@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
         - name: profile
-          image: pkansif/eduhub-profile
+          image: pkansif/eduhub-profile:latest
+          imagePullPolicy: Always
 ---
 apiVersion: v1
 kind: Service

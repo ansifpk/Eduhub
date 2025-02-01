@@ -14,7 +14,12 @@ spec:
     spec:
       containers:
         - name: purchase
-          image: pkansif/eduhub-purchase
+          image: pkansif/eduhub-purchase:latest
+          imagePullPolicy: Always
+          env:
+           - name: "name"
+             value: "john"
+           
 ---
 apiVersion: v1
 kind: Service

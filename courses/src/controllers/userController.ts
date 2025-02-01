@@ -125,8 +125,8 @@ export class UserController {
         couponOffer:offer,
         couponId:JSON.stringify(coupon._id)
       },
-      success_url: "http://localhost:5173/user/success",
-      cancel_url: "https://localhost:5173/user/faile",
+      success_url: "https://www.eduhublearning.online/user/success",
+      cancel_url: "https://www.eduhublearning.online/user/faile",
     });
 
     if (session) {

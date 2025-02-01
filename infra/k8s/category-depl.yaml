@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
         - name: category
-          image: pkansif/eduhub-category
+          image: pkansif/eduhub-category:latest
+          imagePullPolicy: Always
 ---
 apiVersion: v1
 kind: Service

@@ -1,7 +1,6 @@
 import { connectDB } from "./framwork/webServer/config/config";
 import express, { json, urlencoded } from 'express';
 import cors from 'cors'
-import cookieParser from "cookie-parser";
 import cookieSession from 'cookie-session'
 import { UserRouter } from "./framwork/webServer/router/userRouter";
 import { InstructorRouter } from "./framwork/webServer/router/instructorRouter";

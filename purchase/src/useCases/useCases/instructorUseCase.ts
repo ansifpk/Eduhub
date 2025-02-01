@@ -10,7 +10,7 @@ import { IInstructorSubscribe } from "../../entities/instructorSubscribe";
 import exceljs from 'exceljs';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET!, {
-    apiVersion: "2024-12-18.acacia",
+    apiVersion: "2025-01-27.acacia",
   });
 
 

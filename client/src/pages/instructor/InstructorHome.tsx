@@ -130,7 +130,7 @@ export default function InstructorHome() {
                       </div>
                     ))
                   ):(
-                  <p>No Instructors Available</p>
+                  <p>No Reviews Available</p>
                   )
                 
                 }
@@ -158,7 +158,7 @@ export default function InstructorHome() {
                       </div>
                     ))
                     ):(
-                      <p>No Courses Available</p>
+                      <p>No Courses Uploaded</p>
                     )
                     }
                   </CardContent>
@@ -184,7 +184,7 @@ export default function InstructorHome() {
                       </div>
                     ))
                     ):(
-                      <p>No Courses Available</p>
+                      <p>No Courses Uploaded</p>
                     )
                     }
                   </CardContent>

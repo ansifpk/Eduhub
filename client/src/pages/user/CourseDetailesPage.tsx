@@ -881,7 +881,7 @@ const CourseDetailesPage = () => {
                             )}
                           </DrawerContent>
                         </Drawer>
-                      </>
+                       </>
                       )
                     );
                   })()

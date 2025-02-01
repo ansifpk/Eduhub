@@ -4,20 +4,11 @@ import { adminController, instructorController, userController, webhookControlle
 
 
 export function webHookRouter(router: Router) {
-  router.post(
-    "/webhook",
-    express.raw({ type: 'application/json' }),
-    async (req: Request, res: Response, next: NextFunction) => {
-      console.log("subscripion")
-       userController.webhook(req, res, next);
-    }
-  );
 
   router.post(
     "/subscription/webhook",
     express.raw({ type: 'application/json' }),
     async (req: Request, res: Response, next: NextFunction) => {
-      console.log("subscripion")
        webhookController.webhook(req, res, next);
     }
   );

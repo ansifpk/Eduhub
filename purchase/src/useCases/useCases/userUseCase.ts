@@ -15,7 +15,7 @@ import { IUserSubcription } from "../../entities/userSubscription";
 import { IUserSubscribe } from "../../entities/userSubscribe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET!, {
-   apiVersion: "2024-12-18.acacia",
+   apiVersion: "2025-01-27.acacia",
  });
 
 
@@ -80,9 +80,8 @@ export class UserUseCase implements IUserUseCase{
                 subscriptionId:JSON.stringify(subscription._id),
                 edited:''
             },
-            success_url: "http://localhost:5173/user/success",
-            cancel_url: "https://localhost:5173/user/faile",
-            
+            success_url: "https://www.eduhublearning.online/user/success",
+            cancel_url: "https://www.eduhublearning.online/user/faile",
         })
    
         return session.id;
@@ -152,7 +151,8 @@ export class UserUseCase implements IUserUseCase{
            try {
               const portalSession = await stripe.billingPortal.sessions.create({
                 customer:customerId,
-                return_url:`http://localhost:5173/users/courses`
+                
+                return_url:`https://www.eduhublearning.online/users/courses`
               })
              
               if(portalSession){
@@ -162,58 +162,4 @@ export class UserUseCase implements IUserUseCase{
             console.error(error)
            }
       }
-      
-    async webHook(event: Stripe.Event,next:NextFunction): Promise<void> {
-   
-        const session = event.data.object as Stripe.Checkout.Session;
-        const {metadata} = session;
-        let {userId,courseIds,couponOffer,couponId,} = metadata as any
-        if(userId&&courseIds){
-           const courses:ICourse[] = []
-           courseIds = JSON.parse(courseIds as string)
-          
-           for(let i=0;i<courseIds.length;i++){
-              const course = await this.userRepository.findById(courseIds[i])
-              if(course){
-                 courses.push(course)
-              }
-           }
-         
-         
-           switch (event.type){
-              case 'checkout.session.completed':
-               
-                 
-                 for(let value of courses){
-
-                     value.price =  Math.floor(value.price - (value.price*parseInt(couponOffer))/100)
-                     const order = await this.userRepository.create(userId,value);
-                     if(order){
-
-                        await new OrderCreatedPublisher(kafkaWrapper.producer as Producer).produce({
-                            _id: value._id!,
-                            userId: userId
-                        }
-                        
-                        )
-                     }
-                 }
-           
-                 if(couponId){
-                    console.log(couponOffer,'couponId',couponId);
-                    await new CouponUsedPublisher(kafkaWrapper.producer as Producer).produce({
-                       couponId: couponId,
-                       userId: userId
-                    })
-                 }
-                  break;
-              case 'payment_intent.payment_failed':
-                 console.log("failed");
-                  break;
-                  
-           }
-       
-        }
-        
-   }
 }

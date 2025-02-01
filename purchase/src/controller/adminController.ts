@@ -1,11 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { IAdminUseCase } from "../useCases/interfaces/useCases/IAdminUseCase";
-import ErrorHandler from "../useCases/middlewares/errorHandler";
-import Stripe from "stripe";
-import exceljs from 'exceljs';
-const stripe = new Stripe(process.env.STRIPE_SECRET!, {
-    apiVersion: "2024-12-18.acacia",
-  });
+
 
 export class AdminController{
     constructor(

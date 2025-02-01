@@ -37,23 +37,23 @@ const InstructorRoter = () => {
   return (
     <>
        <Routes>
-         <Route path='/register' element={id ? <InstructorRegister/> : <Navigate to="/users/login" /> }  />
-         <Route path='/login' element={isInstructor?<Navigate to="/instructor/" />:< InstructorLogin/>} />
-         <Route path='/' element={isInstructor?<InstructorHome/>:<Navigate to="/users/login" />} />
-         <Route path='/profile' element={isInstructor?<InstructorProfile/>:<Navigate to="/users/login" />} />
-         <Route path='/editProfile' element={isInstructor?<InstructorEditProfile/>:<Navigate to="/users/login" />} />
-         <Route path='/students' element={isInstructor?<InstructorListStudents/>:<Navigate to="/users/login" />} />
-         <Route path='/message' element={isInstructor?<InstructorMessage/>:<Navigate to="/users/login" />} />
-         <Route path='/courses' element={isInstructor?<InstructorListCourses/>:<Navigate to="/users/login" />} />
-         <Route path='/createCourse' element={isInstructor?<InstructorCreteCourse/>:<Navigate to="/users/login" />} />
-         <Route path='/editCourse/:courseId' element={isInstructor?<InstructorEditcourse/>:<Navigate to="/users/login" />} />
-         <Route path='/subscriptions' element={isInstructor?<InstructorSubscriptions/>:<Navigate to="/users/login" />} />
-         <Route path='/purchaseSubscription' element={isInstructor?<Subscriptions/>:<Navigate to="/users/login" />} />
-         <Route path='/createSubscription' element={isInstructor?<AddSubscription/>:<Navigate to="/users/login" />} />
-         <Route path='/success' element={isInstructor?<Success/>:<Navigate to="/users/login" />} />
-         {/* <Route path='/faile' element={isInstructor?<Faile/>:<Navigate to="/users/login" />} /> */}
-         <Route path='/plans' element={isInstructor?<InstructorPlans/>:<Navigate to="/users/login" />} />
-         <Route path='/reports' element={isInstructor?<SalesReports/>:<Navigate to="/users/login" />} />
+         <Route path='/register' element={id ? <InstructorRegister/> : <InstructorLogin /> }  />
+         <Route path='/login' element={isInstructor?<InstructorHome />:< InstructorLogin/>} />
+         <Route path='/' element={isInstructor?<InstructorHome/>:<InstructorLogin />} />
+         <Route path='/profile' element={isInstructor?<InstructorProfile/>:<InstructorLogin />} />
+         <Route path='/editProfile' element={isInstructor?<InstructorEditProfile/>:<InstructorLogin />} />
+         <Route path='/students' element={isInstructor?<InstructorListStudents/>:<InstructorLogin />} />
+         <Route path='/message' element={isInstructor?<InstructorMessage/>:<InstructorLogin />} />
+         <Route path='/courses' element={isInstructor?<InstructorListCourses/>:<InstructorLogin />} />
+         <Route path='/createCourse' element={isInstructor?<InstructorCreteCourse/>:<InstructorLogin />} />
+         <Route path='/editCourse/:courseId' element={isInstructor?<InstructorEditcourse/>:<InstructorLogin />} />
+         <Route path='/subscriptions' element={isInstructor?<InstructorSubscriptions/>:<InstructorLogin />} />
+         <Route path='/purchaseSubscription' element={isInstructor?<Subscriptions/>:<InstructorLogin />} />
+         <Route path='/createSubscription' element={isInstructor?<AddSubscription/>:<InstructorLogin />} />
+         <Route path='/success' element={isInstructor?<Success/>:<InstructorLogin />} />
+         {/* <Route path='/faile' element={isInstructor?<Faile/>:<InstructorLogin />} /> */}
+         <Route path='/plans' element={isInstructor?<InstructorPlans/>:<InstructorLogin />} />
+         <Route path='/reports' element={isInstructor?<SalesReports/>:<InstructorLogin />} />
          <Route path='*' element={<ErrorPage/>} />  
        </Routes>
     </>

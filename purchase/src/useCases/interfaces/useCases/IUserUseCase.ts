@@ -11,7 +11,6 @@ import { IUserSubscribe } from "../../../entities/userSubscribe";
 export interface IUserUseCase{
     createOrder(data:{courseId:string,user:Iuser,order:IOrder},next:NextFunction):Promise<ICourse|void>
     fetchOrders(userId:string,next:NextFunction):Promise<ICourse[]|void>
-    webHook(event:Stripe.Event,next:NextFunction):Promise<void>
     getSubscriptions(instructorId:string,next:NextFunction):Promise<IUserSubcription[]|void>
     purchaseSubscriptions(userId:string,subscriptionId:string,next:NextFunction):Promise<string|void>
     purchasedSubscriptions(userId:string,next:NextFunction):Promise<IUserSubscribe[]|void>

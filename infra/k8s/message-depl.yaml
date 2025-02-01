@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
         - name: message
-          image: pkansif/eduhub-message
+          image: pkansif/eduhub-message:latest
+          imagePullPolicy: Always
 ---
 apiVersion: v1
 kind: Service

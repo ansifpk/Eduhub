@@ -57,19 +57,19 @@ interface data {
   _id:string,
   Courses:number
 }
-const Cart = () => {
+const AdminChart = () => {
     const [orders,setOrders] = React.useState<data[]>([])
     const userId = useSelector((state:User)=>state.id);
     const [timeRange, setTimeRange] = React.useState('Yearly')
-    React.useEffect(()=>{
-      const fetching = async() => {
-        const res1 = await getOrders(userId);
-        if (res1.success) {
-          setOrders(res1.orders);
-        }
-      }
-      fetching()
-    },[userId])
+    // React.useEffect(()=>{
+    //   const fetching = async() => {
+    //     const res1 = await getOrders(userId);
+    //     if (res1.success) {
+    //       setOrders(res1.orders);
+    //     }
+    //   }
+    //   fetching()
+    // },[userId])
   
 
   return (
@@ -78,7 +78,7 @@ const Cart = () => {
         <div className="grid flex-1 gap-1 text-center sm:text-left">
           <CardTitle>Totel sales</CardTitle>
           <CardDescription>
-            Showing total sales 
+            Showing total sales  in admin side.
           </CardDescription>
         </div>
         <Select value={timeRange} onValueChange={setTimeRange}>
@@ -151,4 +151,4 @@ const Cart = () => {
   )
 }
 
-export default Cart
+export default AdminChart
