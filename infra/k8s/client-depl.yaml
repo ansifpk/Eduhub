@@ -20,6 +20,8 @@ spec:
           env:
            - name: "veed"
              value: "bye"
+           - name: "kudyuu"
+             value: "hii"
 ---
 apiVersion: v1
 kind: Service

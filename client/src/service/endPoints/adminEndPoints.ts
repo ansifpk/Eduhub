@@ -5,7 +5,7 @@ const adminRoutes = {
     editCategory:'/category/admin/editCategory',
     listCategory:'/category/admin/listCategory',
     students:'/profile/admin/students',
-    blockUse:'/auth/admin/blockUser',
+    blockUser:'/auth/admin/blockUser',
     instructors:'/profile/admin/instructors',
     instructorAprovel:'/profile/admin/instructorAprovel',
     blockInstructor:'/auth/admin/blockinstructor',

@@ -29,7 +29,7 @@ const AdminLogin = () => {
     const handleSubmit = async(e:React.FormEvent<HTMLFormElement>) =>{
         e.preventDefault();
         const response = await adminLogin({email,password});
-       
+        console.log(response);
         if(response.admin){
           toast.success("Adming Login Successfull")
           dispatch(setAdmin(response.admin))
