@@ -21,7 +21,7 @@ const AdminHome = () => {
        useEffect(()=>{
          const fetching = async() => {
             const response = await top5Courses() ;
-            console.log(response)
+            
             if(response){
              setCourses(response)
             }
