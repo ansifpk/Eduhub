@@ -61,10 +61,11 @@ const Cart = () => {
     const [orders,setOrders] = React.useState<data[]>([])
     const userId = useSelector((state:User)=>state.id);
     const [timeRange, setTimeRange] = React.useState('Yearly')
-    
+
     React.useEffect(()=>{
       const fetching = async() => {
         const res1 = await getOrders(userId);
+
         if (res1.success) {
           setOrders(res1.orders);
         }
@@ -82,22 +83,7 @@ const Cart = () => {
             Showing total sales 
           </CardDescription>
         </div>
-        <Select value={timeRange} onValueChange={setTimeRange}>
-          <SelectTrigger
-            className="w-[160px] rounded-lg sm:ml-auto"
-            aria-label="Select a value"
-          >
-            <SelectValue placeholder="Last 3 months" />
-          </SelectTrigger>
-          <SelectContent className="rounded-xl">
-            <SelectItem value="Yearly" className="rounded-lg">
-              Yearly
-            </SelectItem>
-            <SelectItem value="Monthly" className="rounded-lg">
-              Monthly
-            </SelectItem>
-          </SelectContent>
-        </Select>
+       
       </CardHeader>
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
         <ChartContainer

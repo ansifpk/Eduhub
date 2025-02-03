@@ -68,8 +68,9 @@ const Message = () => {
   //!websocket
   //* initialise socket
   useEffect(() => {
-    // const newSocket = io("https://www.eduhublearning.online");
-    const newSocket = io(import.meta.env.VITE_APIGATEWAY,{
+    // https://www.eduhublearning.online
+    
+    const newSocket = io("https://www.eduhublearning.online",{
       path: '/message/socket.io'
      })
      setSocket(newSocket!);
@@ -145,7 +146,7 @@ const Message = () => {
   useEffect(() => {
     const getUserChats = async () => {
       const response = await userChats(userId);
-      console.log(response, "caht respos");
+      // console.log(response, "caht respos");
 
       if (response.success) {
         setChats(response.chats);

@@ -52,7 +52,7 @@ const EditCategory: React.FC = () => {
     };
     fetchAllCategories();
   }, []);
-  //   console.log("idh",Category)
+
   const handleSubCategory = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (subCategory.length == 0) {

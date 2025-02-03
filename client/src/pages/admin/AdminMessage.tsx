@@ -49,7 +49,7 @@ const AdminMessage = () => {
    //!websocket
   //* initialise socket
   useEffect(()=>{
-    // const newSocket = io("https://client-srv:4000")
+   
     const newSocket = io(import.meta.env.VITE_APIGATEWAY,{
      path: '/message/socket.io'
     })
@@ -65,7 +65,7 @@ const AdminMessage = () => {
     if(!socket) return;
     socket.emit("addNewUser",userId)
     socket.on("getOnlineUsers",(res)=>{
-      console.log("online users",res)
+
       setOnlineUsers(res)
     })
   },[socket])
@@ -87,10 +87,10 @@ const AdminMessage = () => {
     if(!socket) return;
 
     socket.on("getMessage",(message)=>{
-      console.log(message,"ivade");
+      
       
          if(userId !== message.recipientId) return;
-         console.log("hi");
+       
          setMessages((prev)=>[...prev,message])
     });
 
@@ -120,7 +120,7 @@ const AdminMessage = () => {
   useEffect(() => {
     const getUserChats = async () => {
       const response = await AdminChats(userId);
-      console.log(response,"caht respos");
+  
       if (response.success) {
         setChats(response.chats);
       }
@@ -162,8 +162,7 @@ const AdminMessage = () => {
                  reciever = user._id
             }
            })
-           console.log(currentChat?.members,reciever,'userId',userId);
-           
+       
         const response = await AdminSendMessage(currentChat?._id!, userId, text);
         if(response.success){
            setNewMessage(response.message.text)
@@ -209,7 +208,7 @@ const AdminMessage = () => {
         }
       }
    }
-   console.log("notification",notifications);
+  
   return (
     <div className="container-fluid ">
     <div className="row">

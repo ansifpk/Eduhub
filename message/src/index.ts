@@ -17,7 +17,7 @@ import { Socket } from 'socket.io';
 import { errMiddleware } from './useCases/middlewares/errorMiddleware';
 import { UserProfileUpdatedConsumer } from './framwork/webServer/config/kafka/consumer/user-profile-updated-consumer';
 import { NotificationRoute } from './framwork/webServer/routers/notificationRouter';
-const  {Server} =  require('socket.io') 
+import {Server} from 'socket.io' 
 // import { errMiddleware } from './useCases/middlewares/errorMiddleware';
 // import { AdminRouter } from './framwork/webServer/routes/adminRouter';
 dotenv.config();
@@ -65,11 +65,15 @@ app.use(errMiddleware);
 
 //! web socket configurations
 let onlineUsers:{userId:string,socketId:string}[] = [];
-const io = new Server(httpServer,{cors:{
-     path: '/message/socket.io',
-    origin:"http://client-srv:5173",
-    Credential:true
-}
+const io = new Server(httpServer,{
+cors:{
+    // path: '/message/socket.io',
+    origin: ['http://client-srv:5173', 'http://localhost:5173',"https://www.eduhublearning.online"],
+    // origin:process.env.CLIENT_URL,
+    methods: ["*"],
+    credentials:true
+},
+  path: '/message/socket.io',
 })
 io.on("connect",(socket:Socket)=>{
     console.log("new connection",socket.id);
@@ -128,7 +132,7 @@ const start = async () => {
         await listener3.listen();
         await listener4.listen();
         
-        app.listen(PORT, () => console.log(`the Message server is running in http://localhost:${PORT} for message!!!!!!!!`))
+        httpServer.listen(PORT, () => console.log(`the Message server is running in http://localhost:${PORT} for message!!!!!!!!`))
     } catch (error) {
         console.error(error);
     }

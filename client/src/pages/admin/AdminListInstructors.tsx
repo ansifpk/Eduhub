@@ -46,8 +46,7 @@ const AdminListInstructors = () => {
     const fetchAllinstructors = async () => {
       const response = await instructors(search,sort,page);
       if (response) {
-        console.log(response);
-        
+       
         const arr = response.instructors.filter((value:IUser)=>value.status == "Approved" )
         setInstructors(arr)
         setTotalPage(response.pages)

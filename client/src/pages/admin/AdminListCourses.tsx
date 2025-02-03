@@ -71,7 +71,7 @@ const AdminListCourses = () => {
   }, [search, sort,page]);
 
   const viewReports = (course: ICourse) => {
-    console.log("courseId", course);
+
     setId(course._id);
     onReportOpen();
   };
@@ -92,8 +92,7 @@ const AdminListCourses = () => {
     }
     
   };
-  console.log(page,totalPage);
-  
+ 
   return (
     <div className="container-fluid ">
       <div className="row">

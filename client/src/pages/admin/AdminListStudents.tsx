@@ -53,7 +53,7 @@ const AdminListStudents = () => {
     };
     fetchAllStudents();
   }, [search,sort,page]);
-  // console.log(sort);
+
 
   const handleBlockStudents = async (userId: string) => {
     const response = await blockUser(userId);

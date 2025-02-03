@@ -159,7 +159,7 @@ const AdminListCoupon = () => {
       }));
       return
     }
-   console.log(startingDate,expiryDate);
+
    
     const response = await editCoupon(
       couponId,
@@ -186,7 +186,7 @@ const AdminListCoupon = () => {
           couponCode:false,
         }))
         const respo = await getCoupons();
-        console.log(respo);
+   
         if (respo.success) {
            setCoupons(respo.coupon);
            onClose();

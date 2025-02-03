@@ -55,8 +55,8 @@ export default function InstructorMessage() {
    //!websocket
   //* initialise socket
   useEffect(()=>{
-    // const newSocket = io("https://www.eduhublearning.online")
-    const newSocket = io(import.meta.env.VITE_APIGATEWAY,{
+ 
+    const newSocket = io(  "https://www.eduhublearning.online" ,{
       path: '/message/socket.io'
      })
     setSocket(newSocket!)

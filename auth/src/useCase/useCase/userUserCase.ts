@@ -68,9 +68,9 @@ export class UserUseCase implements IuserUseCase {
     if (currentUser) {
       const checkUser = await this.userRepository.findByEmail(email);
       if (checkUser) {
-        // console.log(checkUser._id,currentUser._id,checkUser._id === currentUser._id)
+        
         if (checkUser.email === currentUser.email) {
-          // console.log(checkUser.email === currentUser.email)
+         
           const updatedUser = await this.userRepository.update(
             userId,
             name,
@@ -230,8 +230,7 @@ export class UserUseCase implements IuserUseCase {
     next: NextFunction
   ): Promise<any | void> {
     try {
-      console.log("verify ot");
-      
+     
       const user = await this.otpRepository.findOtp(email);
       if (user) {
         if (user.otp == otp) {
@@ -286,7 +285,7 @@ export class UserUseCase implements IuserUseCase {
         
         const Password = await this.encrypt.createHash(newPassword);
         // user.password = newPassword;
-        console.log(Password);
+       
         
         const updatedUser = await this.userRepository.updatePassword(userId,Password)
         if(updatedUser){
@@ -304,7 +303,7 @@ export class UserUseCase implements IuserUseCase {
 
   async verifyNewEmail(userId: string, email: string, next: NextFunction): Promise<string | void> {
     try {
-      console.log("usecase start");
+     
        const checkuser = await this.userRepository.findById(userId);
        const checkEmail = await this.userRepository.findByEmail(email);
        if(!checkuser){

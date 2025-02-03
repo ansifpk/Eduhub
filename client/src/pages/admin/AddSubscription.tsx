@@ -36,7 +36,6 @@ const AddSubscription: React.FC = () => {
 
   const handleSubmit = async () => {
 
-    console.log(price, plan, features);
 
     if (parseInt(price) < 50 || parseInt(price) > 5000 || price.length == 0) {
       setErrors((prev) => ({
@@ -50,7 +49,7 @@ const AddSubscription: React.FC = () => {
       plan,
       features
     );
-    console.log(response);
+    
     if (response.success) {
       toast.success("Succesfully created");
       return navigate(-1);
