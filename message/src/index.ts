@@ -18,11 +18,10 @@ import { errMiddleware } from './useCases/middlewares/errorMiddleware';
 import { UserProfileUpdatedConsumer } from './framwork/webServer/config/kafka/consumer/user-profile-updated-consumer';
 import { NotificationRoute } from './framwork/webServer/routers/notificationRouter';
 import {Server} from 'socket.io' 
-// import { errMiddleware } from './useCases/middlewares/errorMiddleware';
-// import { AdminRouter } from './framwork/webServer/routes/adminRouter';
+
 dotenv.config();
 const PORT = process.env.PORT
-const app = express()
+const app = express();
 const httpServer = createServer(app);
 // Separate routers for user and admin
 const messageRouter = express.Router()
@@ -36,7 +35,6 @@ ChatRoute(chatRouter);
 NotificationRoute(notificationRouter)
 
 
-// app.use(cors({credentials:true,origin:["http://localhost:5173",'https://ansifpk.dev']}));
 
 
 app.use(cors({credentials:true,
@@ -44,7 +42,6 @@ app.use(cors({credentials:true,
       ? 'https://www.eduhublearning.online'
       : ['http://client-srv:5173', 'http://localhost:5173']
     ,methods: ['GET', 'POST'],}));
-// app.use(cors({credentials:true,origin:["http://localhost:5173",'https://www.eduhublearning.online']}));
 
 app.use(
     cookieSession({
@@ -65,16 +62,16 @@ app.use(errMiddleware);
 
 //! web socket configurations
 let onlineUsers:{userId:string,socketId:string}[] = [];
+
 const io = new Server(httpServer,{
 cors:{
-    // path: '/message/socket.io',
     origin: ['http://client-srv:5173', 'http://localhost:5173',"https://www.eduhublearning.online"],
-    // origin:process.env.CLIENT_URL,
     methods: ["*"],
     credentials:true
 },
   path: '/message/socket.io',
 })
+
 io.on("connect",(socket:Socket)=>{
     console.log("new connection",socket.id);
     

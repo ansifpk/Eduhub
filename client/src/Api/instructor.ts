@@ -332,6 +332,14 @@ export const markAsReadNotification = async (senderId:string,userId:string)=>{
         return error 
     }
 }
+export const setLastSeen = async (userId:string)=>{
+    try {
+        const response = await ApiGatway.patch(`${instructorRoutes.chat}/${userId}`);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
 
 
 

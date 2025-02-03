@@ -11,10 +11,15 @@ export function ChatRoute(router:Router){
         router.get("/",async(req,res,next)=>{
             chatController.findUserChats(req,res,next)
         })
+        router.patch("/:userId",async(req,res,next)=>{
+               console.log(req.params);
+               
+            // chatController.findUserChats(req,res,next)
+        })
         router.get("/privetChat/:chatId",async(req,res,next)=>{
-           
             chatController.findChate(req,res,next)
         })
+      
     } catch (error) {
         console.error(error)
     }

@@ -146,7 +146,7 @@ const Message = () => {
   useEffect(() => {
     const getUserChats = async () => {
       const response = await userChats(userId);
-      // console.log(response, "caht respos");
+      console.log(response, "caht respos");
 
       if (response.success) {
         setChats(response.chats);
@@ -173,7 +173,7 @@ const Message = () => {
     }
   }, [chatId]);
 
-  console.log("c", chats);
+  // console.log("c", chats);
   // console.log("current chat", currentChat);
   // console.log("current chat User", currentChat);
   // console.log("userId", userId);
@@ -182,7 +182,7 @@ const Message = () => {
   // console.log("new messages", newMessage);
   // console.log("socket", socket);
   // console.log("onlineUsers", onlineUsers);
-  console.log("notifications", notifications);
+  // console.log("notifications", notifications);
   let  user = ''
   const modification = notifications.map((notify:INotification)=>{
      chats.map((chat:IChat)=>{
