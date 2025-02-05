@@ -1,10 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { IInstructorUseCase } from "../useCases/interfaces/useCases/IInstructorUseCase";
-import { CourseCreatedPublisher } from "../framWorks/webServer/config/kafka/producer/course-created-publisher";
 import { Producer } from "kafkajs";
 import kafkaWrapper from "../framWorks/webServer/config/kafka/kafkaWrapper";
-import { CourseUpdatedPublisher } from "../framWorks/webServer/config/kafka/producer/course-updated-event";
-import { CourseListedPublisher } from "../framWorks/webServer/config/kafka/producer/course-Listed-producer";
+import { CourseCreatedPublisher, CourseListedPublisher, CourseUpdatedPublisher } from "@eduhublearning/common";
 
 export class InstructorController{
    

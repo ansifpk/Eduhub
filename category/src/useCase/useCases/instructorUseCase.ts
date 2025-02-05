@@ -1,6 +1,5 @@
 
 import { ICategory } from "../../entities/category";
-
 import { IInstructorUserCase } from "../interfaces/useCasesInterfaces/IinstructorUseCase";
 import { IInstructorRepository } from "../interfaces/repositoryInterfaces/IinstructorRepository";
 

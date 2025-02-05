@@ -2,7 +2,8 @@ import { NextFunction } from "express";
 import { ICategory } from "../../entities/category";
 import { ICategoryRepository } from "../interfaces/repositoryInterfaces/IcategoryRepository";
 import { ICategoryUserCase } from "../interfaces/useCasesInterfaces/IcategoryUseCases";
-import ErrorHandler from "../middlewares/errorHandler";
+import { ErrorHandler } from "@eduhublearning/common";
+
 
 export class CategoryUseCase implements ICategoryUserCase {
   constructor(private categoryRepository: ICategoryRepository) {}

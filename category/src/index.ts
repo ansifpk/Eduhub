@@ -1,13 +1,12 @@
 import express from 'express';
 import { json,urlencoded } from 'express';
 import cors from 'cors';
-import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv'
 import { connectDB } from './framework/webServer/config/db';
 import { CategoryRoute } from './framework/webServer/routes/categoryRoute';
-import { errMiddleware } from './useCase/middlewares/errorMiddleware';
 import { InstructorRouter } from './framework/webServer/routes/instructorRoute';
 import cookieSession from 'cookie-session';
+import { errMiddleware } from '@eduhublearning/common';
 dotenv.config()
 connectDB()
 const app = express();
