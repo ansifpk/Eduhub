@@ -4,10 +4,10 @@ import { IInstructorUseCase } from "../interfaces/useCases/IInstrctorUseCase";
 import { IUserSubcription } from "../../entities/userSubscription";
 import { IInstructorRepository } from "../interfaces/repository/IInstructorRepository";
 import { ISubcription } from "../../entities/subscription";
-import ErrorHandler from "../middlewares/errorHandler";
 import Stripe from "stripe";
 import { IInstructorSubscribe } from "../../entities/instructorSubscribe";
 import exceljs from 'exceljs';
+import { ErrorHandler } from "@eduhublearning/common";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET!, {
     apiVersion: "2025-01-27.acacia",

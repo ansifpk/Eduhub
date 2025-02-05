@@ -1,10 +1,7 @@
 
 import { Consumer } from "kafkajs";
-import { KafkaConsumer } from "../base-listener";
-import { Topics } from "../topics/topics";
-import { OrderCreateEvent } from "../events/order-created-event";
 import { cartModel } from "../../../../db/mongoDB/models/cart";
-
+import { Topics,KafkaConsumer,CourseCreateEvent, OrderCreateEvent } from "@eduhublearning/common";
 
 
 export class OrderCreatedCreateConsumer extends KafkaConsumer<OrderCreateEvent>{

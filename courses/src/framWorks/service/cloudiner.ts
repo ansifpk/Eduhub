@@ -1,6 +1,5 @@
 import {v2 as cloudinary} from 'cloudinary'
 import dotenv from 'dotenv';
-import sharp from 'sharp';
 import { ICloudinary } from '../../useCases/interfaces/service/Icloudinery';
 import { CLoudineryResult, MulterFile } from '../webServer/types/type';
 dotenv.config();

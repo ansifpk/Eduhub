@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { IAdminUseCase } from "../useCases/interfaces/useCasesInterfaces/IadminUseCase";
-import { InstructorAprovalPublisher } from "../framwork/webServer/config/kafka/producers/instructor-aprovel-publisher";
 import kafkaWrapper from "../framwork/webServer/config/kafka/kafkaWrapper";
 import { Producer } from "kafkajs";
+import { InstructorAprovalPublisher } from "@eduhublearning/common";
 
 export class AdminController{
     constructor(private adminUseCase:IAdminUseCase){}

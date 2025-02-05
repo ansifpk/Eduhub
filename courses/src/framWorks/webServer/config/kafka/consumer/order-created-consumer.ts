@@ -1,8 +1,6 @@
 
 import { Consumer } from "kafkajs";
-import { KafkaConsumer } from "../base-listener";
-import { Topics } from "../topics/topics";
-import { OrderCreateEvent } from "../events/order-created-event";
+import { Topics,OrderCreateEvent,KafkaConsumer } from "@eduhublearning/common";
 import { Course } from "../../../../db/mongodb/models/courseModel";
 
 

@@ -7,7 +7,6 @@ import dotenv from 'dotenv';
 import { AdminRoute } from './framework/webServer/routes/adminRoute';
 import { InstructorRouter } from './framework/webServer/routes/instructorRouter';
 import kafkaWrapper from './framework/webServer/config/kafka/kafkaWrapper';
-// import cookieParser from 'cookie-parser';
 import { InstructorAprovedConsumer } from './framework/webServer/config/kafka/consumer/instructor-approved-consumer';
 import cookieSession from 'cookie-session';
 import { EmailChangedConsumer } from './framework/webServer/config/kafka/consumer/email-changed-consumer';

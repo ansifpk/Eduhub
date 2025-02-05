@@ -2,9 +2,9 @@ import { NextFunction, Request, Response } from "express";
 import { IUserUseCase } from "../useCases/interfaces/useCases/IUserUseCase";
 import Stripe from "stripe";
 import dotenv from "dotenv";
-import ErrorHandler from "../useCases/middlewares/errorHandler";
 import { ICourse } from "../entities/course";
 import { ICoupon } from "../entities/coupon";
+import { ErrorHandler } from "@eduhublearning/common";
 dotenv.config();
 
 const stripe = new Stripe(process.env.STRIPE_SECRET!, {
@@ -16,8 +16,7 @@ export class UserController {
 
   async fetchCourses(req: Request, res: Response, next: NextFunction) {
     const { category, level, topic, search,sort,page } = req.query;
-    console.log(req.query,"queru");
-    
+  
     const courses = await this.userUseCase.fetchCourses(
       category as string,
       topic as string,
@@ -173,7 +172,7 @@ export class UserController {
 
   async deleteRating(req: Request, res: Response, next: NextFunction) {
     const { ratingId } = req.params;
-    console.log(ratingId);
+   
 
     const ratings = await this.userUseCase.deleteRating(ratingId, next);
     if (ratings) {

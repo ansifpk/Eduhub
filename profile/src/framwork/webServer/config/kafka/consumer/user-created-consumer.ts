@@ -1,14 +1,9 @@
 
 import { Consumer, Producer } from "kafkajs";
-import { KafkaConsumer } from "../base-listener";
-import { UserCreateEvent } from "../events/user-created-event";
-import { Topics } from "../topics/topics";
 import { userModel } from "../../../../db/mongoDB/models/userModel";
-import { IUserUseCase } from "../../../../../useCases/interfaces/useCasesInterfaces/IuserUseCases";
-import { UserProfileCreatedPublisher } from "../producers/user-profile-created-publisher";
 import kafkaWrapper from "../kafkaWrapper";
 import { cartModel } from "../../../../db/mongoDB/models/cart";
-
+import { Topics,KafkaConsumer, UserCreateEvent, UserProfileCreatedPublisher } from "@eduhublearning/common";
 
 
 export class UserCreatedConsumer extends KafkaConsumer<UserCreateEvent>{

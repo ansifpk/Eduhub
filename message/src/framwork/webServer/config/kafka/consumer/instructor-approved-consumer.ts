@@ -1,9 +1,7 @@
 
 import { Consumer } from "kafkajs";
-import { KafkaConsumer } from "../base-listener";
-import { Topics } from "../topics/topics";
 import { userModel } from "../../../../db/mongodb/models/userModel";
-import { InstructorAprovedEvent } from "../events/instructor-approved-event";
+import { Topics,KafkaConsumer,InstructorAprovedEvent } from "@eduhublearning/common";
 
 
 export class InstructorAprovalConsumer extends KafkaConsumer<InstructorAprovedEvent>{

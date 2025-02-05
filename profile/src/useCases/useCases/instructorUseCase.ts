@@ -1,11 +1,11 @@
 import { NextFunction } from "express";
 import { Iuser } from "../../entities/user";
-// import { Req } from "../framwork/webServer/types/type";
 import {  IInstructorRepository } from "../interfaces/repositoryInterfaces/IinstructorInterface";
 import { ICloudinary } from "../interfaces/serviceInterfaces/ICloudinery";
 import { IInstructorUseCase } from "../interfaces/useCasesInterfaces/IinstructorUsecase";
-import ErrorHandler from "../middlewares/errorHandler";
+
 import { IRating } from "../../entities/ratings";
+import { ErrorHandler } from "@eduhublearning/common";
 
   interface Req {
   bodyData:{

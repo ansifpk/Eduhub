@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import { IUserUseCase } from "../useCases/interfaces/useCases/IUserUseCase";
-import ErrorHandler from "../useCases/middlewares/errorHandler";
 import Stripe from "stripe";
 import dotenv from "dotenv";
 dotenv.config();

@@ -65,9 +65,9 @@ const ProfileNavbar = () => {
             </AlertDialogTrigger>
             <AlertDialogContent className="md:w-full w-50">
               <AlertDialogHeader>
-                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogTitle>Are you absolutely sure ?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Are you sure to log out from EduHub?
+                  Are you sure to log out from EduHub ?
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter className="flex md:flex-end flex-row justify-center gap-1" >

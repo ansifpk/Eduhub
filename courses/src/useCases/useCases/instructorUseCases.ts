@@ -1,15 +1,13 @@
 
 import { ICourse } from "../../entities/course";
 import { IInstructorrepository } from "../interfaces/repository/IInstructorRepository";
-import { IRandomName } from "../interfaces/service/IrandomName";
-import { IS3bucket } from "../interfaces/service/Is3bucket";
 import { IInstructorUseCase } from "../interfaces/useCases/IInstructorUseCase";
 import { NextFunction } from "express";
-import ErrorHandler from "../middlewares/errorHandler";
 import { ICloudinary } from "../interfaces/service/Icloudinery";
 import { ISection } from "../../entities/section";
 import { ISentEmail } from "../interfaces/service/ISentMail";
 import { ITest } from "../../entities/test";
+import { ErrorHandler } from "@eduhublearning/common";
 interface FileData {
   fieldname: string;
   originalname: string;

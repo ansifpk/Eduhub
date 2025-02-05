@@ -1,9 +1,7 @@
 
 import { Consumer } from "kafkajs";
-import { KafkaConsumer } from "../base-listener";
-import { Topics } from "../topics/topics";
-import { CouponUsedEvent } from "../events/coupon-used-event";
 import { couponModel } from "../../../../db/mongodb/models/couponsModel";
+import { Topics,CouponUsedEvent ,KafkaConsumer} from "@eduhublearning/common";
 
 
 export class CouponUsedConsumer extends KafkaConsumer<CouponUsedEvent>{

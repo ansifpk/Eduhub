@@ -3,9 +3,9 @@ import { ICoupon } from "../../entities/coupon";
 import { ICourse } from "../../entities/course";
 import { IAdminRepository } from "../interfaces/repository/IAdminRepository";
 import { IAdminUseCase } from "../interfaces/useCases/IadminUseCase";
-import ErrorHandler from "../middlewares/errorHandler";
 import { IReport } from "../../entities/report";
 import { ISection } from "../../entities/section";
+import { ErrorHandler } from "@eduhublearning/common";
 
 export class AdminUseCase implements IAdminUseCase{
     constructor(private adminRepository:IAdminRepository,){}

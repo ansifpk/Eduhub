@@ -1,9 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-import { userUseCase } from "../framwork/webServer/routes/injections/injections";
 import { IUserUseCase } from "../useCases/interfaces/useCasesInterfaces/IuserUseCases";
-import { UserProfileUpdatedPublisher } from "../framwork/webServer/config/kafka/producers/user-profile-updated-producer";
 import kafkaWrapper from "../framwork/webServer/config/kafka/kafkaWrapper";
 import { Producer } from "kafkajs";
+import { UserProfileUpdatedPublisher } from "@eduhublearning/common";
 
 
 export class UserController{

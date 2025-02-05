@@ -1,4 +1,4 @@
-import { Consumer, Kafka, logLevel, Partitioners, Producer } from 'kafkajs'
+import { Consumer, Kafka, Partitioners, Producer } from 'kafkajs'
 
 
 class KafkaWrapper {
@@ -9,7 +9,6 @@ class KafkaWrapper {
         this._kafka = new Kafka({
             clientId: 'auth-service',
             brokers: ['kafka-srv:9092'],
-            // logLevel:logLevel.INFO
         })
     }
 

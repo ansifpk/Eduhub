@@ -5,7 +5,6 @@ import { connectDB } from './framwork/webServer/config/mongoDB/db';
 import kafkaWrapper from './framwork/webServer/config/kafka/kafkaWrapper';
 import { UserCreatedConsumer } from './framwork/webServer/config/kafka/consumer/user-created-consumer';
 import { InstructorRouter } from './framwork/webServer/routes/instructorRouter';
-import { errMiddleware } from './useCases/middlewares/errorMiddleware';
 import { AdminRouter } from './framwork/webServer/routes/adminRouter';
 import bodyParser from 'body-parser';
 import { UserBlockedConsumer } from './framwork/webServer/config/kafka/consumer/user-block-consumer';
@@ -14,6 +13,7 @@ import { CourseCreatedConsumer } from './framwork/webServer/config/kafka/consume
 import { CourseListedConsumer } from './framwork/webServer/config/kafka/consumer/course-listed-consumer';
 import { CourseUpdatedConsumer } from './framwork/webServer/config/kafka/consumer/course-updated-consumer';
 import { OrderCreatedCreateConsumer } from './framwork/webServer/config/kafka/consumer/order-created-consumer';
+import { errMiddleware } from '@eduhublearning/common';
 const app = express()
 
 // Separate routers for user and admin

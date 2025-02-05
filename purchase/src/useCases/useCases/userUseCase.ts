@@ -3,16 +3,11 @@ import { IOrder } from "../../entities/order";
 import { ICourse } from "../../entities/course";
 import { IUserUseCase } from "../interfaces/useCases/IUserUseCase";
 import { IUserRepository } from "../interfaces/repository/IUserRepositoru";
-import ErrorHandler from "../middlewares/errorHandler";
 import { Iuser } from "../../entities/user";
 import Stripe from "stripe";
-import { OrderCreatedPublisher } from "../../framwork/webServer/config/kafka/producer/order-created-publisher";
-import kafkaWrapper from "../../framwork/webServer/config/kafka/kafkaWrapper";
-import { Producer } from "kafkajs";
-import { CouponUsedPublisher } from "../../framwork/webServer/config/kafka/producer/coupon-used-producer";
-import { ISubcription } from "../../entities/subscription";
 import { IUserSubcription } from "../../entities/userSubscription";
 import { IUserSubscribe } from "../../entities/userSubscribe";
+import { ErrorHandler } from "@eduhublearning/common";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET!, {
    apiVersion: "2025-01-27.acacia",

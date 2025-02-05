@@ -1,5 +1,4 @@
 import { ICategory } from "../../../../entities/category";
-import { ICategoryRepository } from "../../../../useCase/interfaces/repositoryInterfaces/IcategoryRepository";
 import { IInstructorRepository } from "../../../../useCase/interfaces/repositoryInterfaces/IinstructorRepository";
 import { categoryModel } from "../models/categoryModel";
 

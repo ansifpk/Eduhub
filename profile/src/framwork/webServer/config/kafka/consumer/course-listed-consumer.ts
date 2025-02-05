@@ -1,10 +1,7 @@
 
 import { Consumer } from "kafkajs";
-import { KafkaConsumer } from "../base-listener";
-import { Topics } from "../topics/topics";
 import { courseModel } from "../../../../db/mongoDB/models/courseModel";
-import { CourseListedEvent } from "../events/course-listed-event";
-
+import { Topics,KafkaConsumer,CourseListedEvent } from "@eduhublearning/common";
 
 
 

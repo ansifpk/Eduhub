@@ -1,10 +1,7 @@
 
 import { Consumer } from "kafkajs";
-import { KafkaConsumer } from "../base-listener";
-import { Topics } from "../topics/topics";
+import { Topics,UserBlockedEvent,KafkaConsumer } from "@eduhublearning/common";
 import { UserModel } from "../../../../db/mongodb/models/userModel";
-import { Course } from "../../../../db/mongodb/models/courseModel";
-import { UserBlockedEvent } from "../events/user-block-event";
 
 
 export class UserBlockedConsumer extends KafkaConsumer<UserBlockedEvent>{

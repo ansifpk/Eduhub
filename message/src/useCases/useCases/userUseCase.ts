@@ -2,10 +2,10 @@ import { NextFunction } from "express"
 import { IChat } from "../../entities/chat"
 import { IUserRepository } from "../interfaces/repositoryInterfaces/IUserRepository"
 import { IUserUseCase } from "../interfaces/useCasesInterfaces/IuserUseCas"
-import ErrorHandler from "../middlewares/errorHandler"
 import { IMessage } from "../../entities/message"
 import { INotification } from "../../entities/notifications"
 import { UpdateWriteOpResult } from "mongoose"
+import { ErrorHandler } from "@eduhublearning/common"
 
 export class UseruseCase implements IUserUseCase{
     constructor(

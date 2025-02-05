@@ -3,7 +3,6 @@ import { ISection } from "../../../entities/section";
 import { ITest } from "../../../entities/test";
 import { IInstructorrepository } from "../../../useCases/interfaces/repository/IInstructorRepository";
 import { Course } from "../mongodb/models/courseModel";
-import { ratingModel } from "../mongodb/models/ratingModel";
 import { SectionModel } from "../mongodb/models/sectionModel";
 import { testModel } from "../mongodb/models/testModel";
 

@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from'jsonwebtoken';
 import { userModel } from "../../db/mongoDB/models/userModel";
-import ErrorHandler from "../../../useCase/middlewares/errorHandler";
 import dotenv from 'dotenv';
+import { ErrorHandler } from "@eduhublearning/common";
 dotenv.config();
 
 interface User{

@@ -4,9 +4,9 @@ import { Iuser } from "../../entities/user";
 import { IUserRepository } from "../interfaces/repositoryInterfaces/IuserRepository";
 import { ICourse } from "../../entities/course";
 import { ICart } from "../../entities/cart";
-import ErrorHandler from "../middlewares/errorHandler";
 import { IRating } from "../../entities/ratings";
 import { ICloudinary } from "../interfaces/serviceInterfaces/ICloudinery";
+import { ErrorHandler } from "@eduhublearning/common";
 
 export class UserUseCases implements IUserUseCase {
   constructor(

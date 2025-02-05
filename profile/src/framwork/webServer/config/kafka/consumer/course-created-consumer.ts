@@ -1,9 +1,7 @@
 
 import { Consumer } from "kafkajs";
-import { KafkaConsumer } from "../base-listener";
-import { Topics } from "../topics/topics";
-import { CourseCreateEvent } from "../events/course-created-event";
 import { courseModel } from "../../../../db/mongoDB/models/courseModel";
+import { Topics,KafkaConsumer,CourseCreateEvent } from "@eduhublearning/common";
 
 
 
@@ -15,7 +13,7 @@ export class CourseCreatedConsumer extends KafkaConsumer<CourseCreateEvent>{
         super(consumer)
     }
     
-    async  onMessage(data: { _id: string; title: string; price: string; isListed: boolean; instructorId: string; category: string; subCategory: string; level: string; image: { _id: string; image_url: string; }; subscription: boolean; }): Promise<void> {
+    async  onMessage(data: { _id: string; title: string; price: number; isListed: boolean; instructorId: string; category: string; subCategory: string; level: string; image: { _id: string; image_url: string; }; subscription: boolean; }): Promise<void> {
         try {
             console.log('Consumer received message course :', data);
             // Adding userDta to db in course Service

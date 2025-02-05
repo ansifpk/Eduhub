@@ -2,7 +2,8 @@ import { NextFunction } from "express";
 import { Iuser } from "../../entities/user";
 import { IAdminRepository } from "../interfaces/repositoryInterfaces/IadminRepository";
 import { IAdminUseCase } from "../interfaces/useCasesInterfaces/IadminUseCase";
-import ErrorHandler from "../middlewares/errorHandler";
+import { ErrorHandler } from "@eduhublearning/common";
+
 
 export class AdminUseCase implements IAdminUseCase{
        constructor(private adminRepository:IAdminRepository){}

@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { userController } from "./injectionss/injections";
-import express from 'express';
 import { isAuth } from "../midllewares/isAuth";
 
 export function UserRouter(router: Router) {

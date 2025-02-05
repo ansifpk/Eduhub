@@ -1,13 +1,9 @@
 import express from 'express';
 import { connectDB } from './framWorks/webServer/config/config';
 import cors from 'cors';
-import { json } from 'express';
-import { urlencoded } from 'express';
-import cookieParser from 'cookie-parser';
 import { AdminRouter } from './framWorks/webServer/routes/adminRouter';
 import { InstructorRouter } from './framWorks/webServer/routes/instructorRouter';
 import { UserRouter } from './framWorks/webServer/routes/userRouter';
-import { errMiddleware } from './useCases/middlewares/errorMiddleware';
 import kafkaWrapper from './framWorks/webServer/config/kafka/kafkaWrapper';
 import cookieSession from 'cookie-session';
 import dotenv from 'dotenv';
@@ -18,6 +14,7 @@ import { InstructorAprovedConsumer } from './framWorks/webServer/config/kafka/co
 import { EmailChangedConsumer } from './framWorks/webServer/config/kafka/consumer/email-changed-consumer';
 import { CouponUsedConsumer } from './framWorks/webServer/config/kafka/consumer/coupon-used-consumer';
 import { UserProfileUpdatedConsumer } from './framWorks/webServer/config/kafka/consumer/user-profile-updated-consumer';
+import { errMiddleware } from '@eduhublearning/common';
 dotenv.config();
 
 async function start(){

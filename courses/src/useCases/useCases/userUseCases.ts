@@ -5,11 +5,10 @@ import { IS3bucket } from "../interfaces/service/Is3bucket";
 import { IStripe } from "../interfaces/service/stripe";
 import { IUserUseCase } from "../interfaces/useCases/IUserUseCase";
 import { IRating } from "../../entities/ratings";
-import ErrorHandler from "../middlewares/errorHandler";
 import { ICoupon } from "../../entities/coupon";
-import Stripe from "stripe";
 import { ITest } from "../../entities/test";
 import { IReport } from "../../entities/report";
+import { ErrorHandler } from "@eduhublearning/common";
 
 
 export class UserUseCase implements IUserUseCase{

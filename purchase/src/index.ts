@@ -13,9 +13,9 @@ import { CourseListedConsumer } from "./framwork/webServer/config/kafka/consumer
 import { InstructorAprovedConsumer } from "./framwork/webServer/config/kafka/consumer/instructor-approved-consumer";
 import { EmailChangedConsumer } from "./framwork/webServer/config/kafka/consumer/email-changed-consumer";
 import { webHookRouter } from "./framwork/webServer/router/webHookRouter";
-import { errMiddleware } from "./useCases/middlewares/errorMiddleware";
 import { UserProfileUpdatedConsumer } from "./framwork/webServer/config/kafka/consumer/user-profile-updated-consumer";
 import { AdminRouter } from "./framwork/webServer/router/adminRouter";
+import { errMiddleware } from "@eduhublearning/common";
 
 async function start(){
     try {

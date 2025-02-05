@@ -3,10 +3,9 @@ import Stripe from "stripe";
 import { IWebhookUseCase } from "../interfaces/useCases/IWebhookUseCase";
 import { IWebhookRepository } from "../interfaces/repository/IwebhookRepository";
 import { ICourse } from "../../entities/course";
-import { OrderCreatedPublisher } from "../../framwork/webServer/config/kafka/producer/order-created-publisher";
 import { Producer } from "kafkajs";
 import kafkaWrapper from "../../framwork/webServer/config/kafka/kafkaWrapper";
-import { CouponUsedPublisher } from "../../framwork/webServer/config/kafka/producer/coupon-used-producer";
+import { CouponUsedPublisher, OrderCreatedPublisher } from "@eduhublearning/common";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET!, {
   apiVersion: "2025-01-27.acacia",

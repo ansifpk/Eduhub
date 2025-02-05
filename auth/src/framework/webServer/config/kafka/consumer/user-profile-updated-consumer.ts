@@ -1,9 +1,7 @@
 
 import { Consumer } from "kafkajs";
-import { KafkaConsumer } from "../base-listener";
-import { Topics } from "../topics/topics";
+import { Topics ,KafkaConsumer,UserProfileUpdatedEvent} from "@eduhublearning/common";
 import { userModel } from "../../../../db/mongoDB/models/userModel";
-import { UserProfileUpdatedEvent } from "../events/user-profile-updated-event";
 
 
 

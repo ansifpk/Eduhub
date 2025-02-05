@@ -1,8 +1,6 @@
 
 import { Consumer } from "kafkajs";
-import { KafkaConsumer } from "../base-listener";
-import { Topics } from "../topics/topics";
-import { InstructorAprovedEvent } from "../events/instructor-approved-event";
+import { KafkaConsumer, Topics ,InstructorAprovedEvent} from "@eduhublearning/common";
 import { UserModel } from "../../../../db/mongoDB/models/userMode";
 
 
