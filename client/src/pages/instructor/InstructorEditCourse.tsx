@@ -1,4 +1,4 @@
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import mongoose from "mongoose";
 import {
   Card,
@@ -33,7 +33,6 @@ import {
 } from "@/Components/ui/select";
 import toast from "react-hot-toast";
 import {
-  createCourse,
   editCourse,
   getCategoryies,
   getCourses,
@@ -41,11 +40,9 @@ import {
 import { useSelector } from "react-redux";
 import { ChevronDown, ChevronUp, Loader2, Plus, Trash2 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
-import { url } from "inspector";
 import { Separator } from "@/Components/ui/separator";
 import InstructorAside from "@/Components/instructor/InstructorAside";
 import { ICourse } from "@/@types/courseType";
-import axios from "axios";
 import { ISection } from "@/@types/sectionType";
 import {
   AlertDialog,
@@ -120,8 +117,6 @@ const InstructorEditcourse: React.FC = () => {
 
   useEffect(() => {
     const cours = async () => {
-      // const {data} = await axios.get(`http://localhost:3002/course/instructor/getCourses/${instructorId}`);
-      // const cate = await  axios.get(`http://localhost:3001/category/instructor/category`);
       const cate = await getCategoryies();
       const data = await getCourses(instructorId);
       setCategories(cate);
@@ -271,16 +266,9 @@ const InstructorEditcourse: React.FC = () => {
         }
       }
     }
-    // console.log("sections",sections);
-    //  const {data} = await axios.patch("http://localhost:3002/course/instructor/editCourse",formData,{
-    //   headers: {
-    //     'Content-Type': 'multipart/form-data',
-    //   }
-    //  })
-    //  console.log(data,"data");
-
+  
     const data = await editCourse(formData);
-    // console.log(data,"succ");
+    
 
     if (data.success) {
       setLoading(false);

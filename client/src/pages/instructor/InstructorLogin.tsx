@@ -9,7 +9,7 @@ import { CardDescription, CardHeader } from "@/Components/ui/card";
 import { Input } from "@/Components/ui/input";
 import InstructorAuthHead from "../../Components/instructor/instructorAuthHead";
 import { useSelector } from "react-redux";
-import axios from "axios";
+
 
 const InstructorLogin = () => {
     const [email,setEmail] = useState("")
@@ -21,12 +21,11 @@ const InstructorLogin = () => {
       e.preventDefault();
         const data = await userLogin({email,password})
        
-        console.log(data,"res");
-        
+       
         if(data.user){
              if(data.user.isInstructor){
          
-              
+           
               dispatch(setInstructor(data.user))
               navigate("/instructor")
               

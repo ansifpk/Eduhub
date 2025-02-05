@@ -7,9 +7,9 @@ import { IOtpGenerator } from "../interface/serviceInterface/IOtpagenerator";
 import { IOtpRepository } from "../interface/repositoryInterface/IOtpRepository";
 import { ISentEmail } from "../interface/serviceInterface/ISentEmail";
 import { IJwt, IToken } from "../interface/serviceInterface/IJwt";
-import ErrorHandler from "../middlewares/errorHandler";
-import { catchError } from "../middlewares/catchError";
-import { Iotp } from "../../entities/otp";
+import { ErrorHandler } from "@eduhublearning/common";
+import { catchError } from "@eduhublearning/common";
+
 
 export class UserUseCase implements IuserUseCase {
   constructor(

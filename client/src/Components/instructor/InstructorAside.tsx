@@ -22,7 +22,7 @@ export default function InstructorAside() {
     // }
   };
   return (
-    <aside className="h-sceen sticky top-0 left-0">
+    <aside className="lg:block md:block sm:hidden hidden h-sceen sticky top-0 left-0">
       <ul className="list-none">
         <li>
           <NavLink

@@ -13,10 +13,10 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/Components/ui/alert-dialog";
-import { Checkbox } from "@heroui/react";
+import { Checkbox } from "@/Components/ui/checkbox";
 import { Button } from "@/Components/ui/button";
 import { useEffect, useState } from "react";
-import {  useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Label } from "@/Components/ui/label";
 import { useSelector } from "react-redux";
 import { User } from "@/@types/userType";
@@ -36,12 +36,14 @@ const AssesmentTest = () => {
   useEffect(() => {
     const fetch = async () => {
       const response = await getTests(testId!);
-  console.log(response.test);
-  
+      console.log(response.test);
+
       if (response.success) {
-        if(response.test.students.some((user:{user:string})=>user.user)){
-          return navigate(-1)
-        }else{
+        if (
+          response.test.students.some((user: { user: string }) => user.user)
+        ) {
+          return navigate(-1);
+        } else {
           setTest(response.test.test);
         }
       }
@@ -51,69 +53,67 @@ const AssesmentTest = () => {
 
   const [page, setPage] = useState(1);
   const [mark, setMark] = useState(0);
-  const userId = useSelector((state:User)=>state.id);
-  
+  const userId = useSelector((state: User) => state.id);
+
   const handleSubmit = async () => {
-     let calculateMark = 0;
-     if(isSelected.selecte1 == test[0].answer) {
-       calculateMark+=1
-     }
-     if(isSelected.selecte2 == test[1].answer) {
-      calculateMark+=1
-     }
-     if(isSelected.selecte3 == test[2].answer) {
-      calculateMark+=1
-     }
-     if(isSelected.selecte4 == test[3].answer) {
-      calculateMark+=1
-     }
-     if(isSelected.selecte5 == test[4].answer) {
-      calculateMark+=1
-     }
- 
-    setMark(calculateMark);
-    const response = await submitTest(userId,testId!,calculateMark)
-    if(response.success){
-        setPage((prev)=>prev+=1)
-    }else{
-       toast.error(response.response.data.message)
-    }
-    
-  };
-  
-  const handleEndTest = async() =>{
-    for(const key  in isSelected){
-      const val = isSelected[key as keyof typeof isSelected];
-      if(val.length == 0){
-        isSelected[key as keyof typeof isSelected] = "Not Answered"
-      }
-    }
     let calculateMark = 0;
-    if(isSelected.selecte1 == test[0].answer) {
-      calculateMark+=1
+    if (isSelected.selecte1 == test[0].answer) {
+      calculateMark += 1;
     }
-    if(isSelected.selecte2 == test[1].answer) {
-     calculateMark+=1
+    if (isSelected.selecte2 == test[1].answer) {
+      calculateMark += 1;
     }
-    if(isSelected.selecte3 == test[2].answer) {
-     calculateMark+=1
+    if (isSelected.selecte3 == test[2].answer) {
+      calculateMark += 1;
     }
-    if(isSelected.selecte4 == test[3].answer) {
-     calculateMark+=1
+    if (isSelected.selecte4 == test[3].answer) {
+      calculateMark += 1;
     }
-    if(isSelected.selecte5 == test[4].answer) {
-     calculateMark+=1
+    if (isSelected.selecte5 == test[4].answer) {
+      calculateMark += 1;
     }
 
     setMark(calculateMark);
-    const response = await submitTest(userId,testId!,calculateMark)
-    if(response.success){
-        setPage(6)
-    }else{
-       toast.error(response.response.data.message)
+    const response = await submitTest(userId, testId!, calculateMark);
+    if (response.success) {
+      setPage((prev) => (prev += 1));
+    } else {
+      toast.error(response.response.data.message);
     }
-   
-  }
+  };
+
+  const handleEndTest = async () => {
+    for (const key in isSelected) {
+      const val = isSelected[key as keyof typeof isSelected];
+      if (val.length == 0) {
+        isSelected[key as keyof typeof isSelected] = "Not Answered";
+      }
+    }
+    let calculateMark = 0;
+    if (isSelected.selecte1 == test[0].answer) {
+      calculateMark += 1;
+    }
+    if (isSelected.selecte2 == test[1].answer) {
+      calculateMark += 1;
+    }
+    if (isSelected.selecte3 == test[2].answer) {
+      calculateMark += 1;
+    }
+    if (isSelected.selecte4 == test[3].answer) {
+      calculateMark += 1;
+    }
+    if (isSelected.selecte5 == test[4].answer) {
+      calculateMark += 1;
+    }
+
+    setMark(calculateMark);
+    const response = await submitTest(userId, testId!, calculateMark);
+    if (response.success) {
+      setPage(6);
+    } else {
+      toast.error(response.response.data.message);
+    }
+  };
   return (
     <div className="bg-blue-50">
       <Header />
@@ -124,60 +124,114 @@ const AssesmentTest = () => {
             <h4>YOU GOT</h4>
             <h4>{mark}/5</h4>
             <div className="flex gap-2 m-2">
-            <div className="p-1 w-[250px] h-[180px] border">
+              <div className="p-1 w-[250px] h-[180px] border">
                 <Label>Your Answer</Label>
-                <div className={`w-full flex  items-center gap-3 p-2 py-3 text-left  rounded-lg border ${isSelected.selecte1==test[0]?.answer?"bg-green-100 border-green-500":"bg-danger-200 border-danger-500"}`}>
-                  <Checkbox defaultSelected={true}>{isSelected.selecte1}</Checkbox>
+                <div
+                  className={`w-full flex  items-center gap-3 p-2 py-3 text-left  rounded-lg border ${
+                    isSelected.selecte1 == test[0]?.answer
+                      ? "bg-green-100 border-green-500"
+                      : "bg-danger-200 border-danger-500"
+                  }`}
+                >
+                  <Checkbox checked={true} id="terms2" disabled />
+                  <Label>{isSelected.selecte1}</Label>
                 </div>
                 <Label>Currect Answer</Label>
-                <div className={`w-full flex  items-center gap-3 px-2 py-3 text-left  rounded-lg border bg-green-100 border-green-500`}>
-                  <Checkbox >{test[4]?.answer}</Checkbox>
+                <div
+                  className={`w-full flex  items-center gap-3 px-2 py-3 text-left  rounded-lg border bg-green-100 border-green-500`}
+                >
+                  <Checkbox checked={true} id="terms2" disabled />
+                  <Label>{test[0]?.answer}</Label>
                 </div>
               </div>
               <div className="p-1 w-[250px] h-[180px] border">
                 <Label>Your Answer</Label>
-                <div className={`w-full flex  items-center gap-3 p-2 py-3 text-left  rounded-lg border ${isSelected.selecte2==test[1]?.answer?"bg-green-100 border-green-500":"bg-danger-200 border-danger-500"}`}>
-                  <Checkbox defaultSelected={true}>{isSelected.selecte2}</Checkbox>
+                <div
+                  className={`w-full flex  items-center gap-3 p-2 py-3 text-left  rounded-lg border ${
+                    isSelected.selecte2 == test[1]?.answer
+                      ? "bg-green-100 border-green-500"
+                      : "bg-danger-200 border-danger-500"
+                  }`}
+                >
+                  <Checkbox checked={true} id="terms2" disabled />
+                  <Label>{isSelected.selecte2}</Label>
                 </div>
                 <Label>Currect Answer</Label>
-                <div className={`w-full flex  items-center gap-3 px-2 py-3 text-left  rounded-lg border bg-green-100 border-green-500`}>
-                  <Checkbox >{test[1]?.answer}</Checkbox>
+                <div
+                  className={`w-full flex  items-center gap-3 px-2 py-3 text-left  rounded-lg border bg-green-100 border-green-500`}
+                >
+                  <Checkbox checked={true} id="terms2" disabled />
+                  <Label>{test[1]?.answer}</Label>
                 </div>
               </div>
               <div className="p-1 w-[250px] h-[180px] border">
                 <Label>Your Answer</Label>
-                <div className={`w-full flex  items-center gap-3 p-2 py-3 text-left  rounded-lg border ${isSelected.selecte3==test[2]?.answer?"bg-green-100 border-green-500":"bg-danger-200 border-danger-500"}`}>
-                  <Checkbox defaultSelected={true}>{isSelected.selecte3}</Checkbox>
+                <div
+                  className={`w-full flex  items-center gap-3 p-2 py-3 text-left  rounded-lg border ${
+                    isSelected.selecte3 == test[2]?.answer
+                      ? "bg-green-100 border-green-500"
+                      : "bg-danger-200 border-danger-500"
+                  }`}
+                >
+                  <Checkbox checked={true} id="terms2" disabled />
+                  <Label>{isSelected.selecte3}</Label>
                 </div>
                 <Label>Currect Answer</Label>
-                <div className={`w-full flex  items-center gap-3 px-2 py-3 text-left  rounded-lg border bg-green-100 border-green-500`}>
-                  <Checkbox >{test[2]?.answer}</Checkbox>
+                <div
+                  className={`w-full flex  items-center gap-3 px-2 py-3 text-left  rounded-lg border bg-green-100 border-green-500`}
+                >
+                  <Checkbox checked={true} id="terms2" disabled />
+                  <Label>{test[2]?.answer}</Label>
                 </div>
               </div>
               <div className="p-1 w-[250px] h-[180px] border">
                 <Label>Your Answer</Label>
-                <div className={`w-full flex  items-center gap-3 p-2 py-3 text-left  rounded-lg border ${isSelected.selecte4==test[3]?.answer?"bg-green-100 border-green-500":"bg-danger-200 border-danger-500"}`}>
-                  <Checkbox defaultSelected={true}>{isSelected.selecte4}</Checkbox>
+                <div
+                  className={`w-full flex  items-center gap-3 p-2 py-3 text-left  rounded-lg border ${
+                    isSelected.selecte4 == test[3]?.answer
+                      ? "bg-green-100 border-green-500"
+                      : "bg-danger-200 border-danger-500"
+                  }`}
+                >
+                  <Checkbox checked={true} id="terms2" disabled />
+                  <Label>{isSelected.selecte4}</Label>
                 </div>
                 <Label>Currect Answer</Label>
-                <div className={`w-full flex  items-center gap-3 px-2 py-3 text-left  rounded-lg border bg-green-100 border-green-500`}>
-                  <Checkbox >{test[3]?.answer}</Checkbox>
+                <div
+                  className={`w-full flex  items-center gap-3 px-2 py-3 text-left  rounded-lg border bg-green-100 border-green-500`}
+                >
+                  <Checkbox checked={true} id="terms2" disabled />
+                  <Label>{test[3]?.answer}</Label>
                 </div>
               </div>
               <div className="p-1 w-[250px] h-[180px] border">
                 <Label>Your Answer</Label>
-                <div className={`w-full flex  items-center gap-3 p-2 py-3 text-left  rounded-lg border ${isSelected.selecte5==test[4]?.answer?"bg-green-100 border-green-500":"bg-danger-200 border-danger-500"}`}>
-                  <Checkbox defaultSelected={true}>{isSelected.selecte5}</Checkbox>
+                <div
+                  className={`w-full flex  items-center gap-3 p-2 py-3 text-left  rounded-lg border ${
+                    isSelected.selecte5 == test[4]?.answer
+                      ? "bg-green-100 border-green-500"
+                      : "bg-danger-200 border-danger-500"
+                  }`}
+                >
+                  <Checkbox checked={true} id="terms2" disabled />
+                  <Label>{isSelected.selecte5}</Label>
                 </div>
                 <Label>Currect Answer</Label>
-                <div className={`w-full flex  items-center gap-3 px-2 py-3 text-left  rounded-lg border bg-green-100 border-green-500`}>
-                  <Checkbox >{test[4]?.answer}</Checkbox>
+                <div
+                  className={`w-full flex  items-center gap-3 px-2 py-3 text-left  rounded-lg border bg-green-100 border-green-500`}
+                >
+                  <Checkbox checked={true} id="terms2" disabled />
+                  <Label>{test[4]?.answer}</Label>
                 </div>
               </div>
-
             </div>
             <div className="flex justify-center">
-            <Button  onClick={()=>navigate(-1)} className="bg-teal-400 hover:bg-teal-400">back to class</Button>
+              <Button
+                onClick={() => navigate(-1)}
+                className="bg-teal-400 hover:bg-teal-400"
+              >
+                back to class
+              </Button>
             </div>
           </div>
         ) : (
@@ -203,26 +257,26 @@ const AssesmentTest = () => {
                   ].map((valu: string, index) => (
                     <div
                       key={index}
-                    
                       className={`w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg border`}
                     >
                       <Checkbox
-                        isSelected={isSelected.selecte1 == valu}
-                        onValueChange={() => {
+                        checked={isSelected.selecte1 == valu}
+                        onCheckedChange={() =>
                           setIsSelected((prev) => ({
                             ...prev,
                             selecte1: valu,
-                          }));
-                          
-                        }}
-                      >
-                        {valu}
-                      </Checkbox>
+                          }))
+                        }
+                      />
+                      <Label>{valu}</Label>
                     </div>
                   ))}
                 </div>
                 <div className="flex justify-between mt-6">
-                  <button onClick={handleEndTest} className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600">
+                  <button
+                    onClick={handleEndTest}
+                    className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600"
+                  >
                     End
                   </button>
                   <button
@@ -258,21 +312,23 @@ const AssesmentTest = () => {
                       className={`w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg border`}
                     >
                       <Checkbox
-                        isSelected={isSelected.selecte2 == valu}
-                        onValueChange={() => {
+                        checked={isSelected.selecte2 == valu}
+                        onCheckedChange={() =>
                           setIsSelected((prev) => ({
                             ...prev,
                             selecte2: valu,
-                          }));
-                        }}
-                      >
-                        {valu}
-                      </Checkbox>
+                          }))
+                        }
+                      />
+                      <Label>{valu}</Label>
                     </div>
                   ))}
                 </div>
                 <div className="flex justify-between mt-6">
-                  <button onClick={handleEndTest} className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600">
+                  <button
+                    onClick={handleEndTest}
+                    className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600"
+                  >
                     End
                   </button>
                   <button
@@ -308,21 +364,23 @@ const AssesmentTest = () => {
                       className={`w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg border`}
                     >
                       <Checkbox
-                        isSelected={isSelected.selecte3 == valu}
-                        onValueChange={() => {
+                        checked={isSelected.selecte3 == valu}
+                        onCheckedChange={() =>
                           setIsSelected((prev) => ({
                             ...prev,
                             selecte3: valu,
-                          }));
-                        }}
-                      >
-                        {valu}
-                      </Checkbox>
+                          }))
+                        }
+                      />
+                      <Label>{valu}</Label>
                     </div>
                   ))}
                 </div>
                 <div className="flex justify-between mt-6">
-                  <button onClick={handleEndTest} className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600">
+                  <button
+                    onClick={handleEndTest}
+                    className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600"
+                  >
                     End
                   </button>
                   <button
@@ -358,21 +416,23 @@ const AssesmentTest = () => {
                       className={`w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg border`}
                     >
                       <Checkbox
-                        isSelected={isSelected.selecte4 == valu}
-                        onValueChange={() => {
+                        checked={isSelected.selecte4 == valu}
+                        onCheckedChange={() =>
                           setIsSelected((prev) => ({
                             ...prev,
                             selecte4: valu,
-                          }));
-                        }}
-                      >
-                        {valu}
-                      </Checkbox>
+                          }))
+                        }
+                      />
+                      <Label>{valu}</Label>
                     </div>
                   ))}
                 </div>
                 <div className="flex justify-between mt-6">
-                  <button onClick={handleEndTest} className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600">
+                  <button
+                    onClick={handleEndTest}
+                    className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600"
+                  >
                     End
                   </button>
                   <button
@@ -408,21 +468,23 @@ const AssesmentTest = () => {
                       className={`w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg border`}
                     >
                       <Checkbox
-                        isSelected={isSelected.selecte5 == valu}
-                        onValueChange={() => {
+                        checked={isSelected.selecte5 == valu}
+                        onCheckedChange={() =>
                           setIsSelected((prev) => ({
                             ...prev,
                             selecte5: valu,
-                          }));
-                        }}
-                      >
-                        {valu}
-                      </Checkbox>
+                          }))
+                        }
+                      />
+                      <Label>{valu}</Label>
                     </div>
                   ))}
                 </div>
                 <div className="flex justify-between mt-6">
-                  <button onClick={handleEndTest} className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600">
+                  <button
+                    onClick={handleEndTest}
+                    className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600"
+                  >
                     End
                   </button>
                   {page == 5 ? (

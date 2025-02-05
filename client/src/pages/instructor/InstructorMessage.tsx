@@ -9,7 +9,7 @@ import { MoreVertical, Send } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import InputEmoji from "react-input-emoji";
 import { useSelector } from "react-redux";
-import { NavLink, useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { io, Socket } from "socket.io-client";
 import { DefaultEventsMap } from "@socket.io/component-emitter";
 import moment from "moment";
@@ -33,6 +33,28 @@ import MarkEmailUnreadIcon from "@mui/icons-material/MarkEmailUnread";
 import { logout } from "@/Api/user";
 import { useDispatch } from "react-redux";
 import { removeUser } from "@/redux/authSlice";
+import connectSocket from "@/config/socketConnect";
+import { ToggleButtonGroup } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/Components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/Components/ui/alert-dialog";
 
 export default function InstructorMessage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -40,6 +62,7 @@ export default function InstructorMessage() {
   const userId = useSelector((state: User) => state.id);
   const [chats, setChats] = useState([]);
   const [text, setText] = useState("");
+  const [open, setOpen] = useState(false);
   const [currentChat, setCurrentChat] = useState<IChat>();
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
@@ -65,12 +88,10 @@ export default function InstructorMessage() {
   //!websocket
   //* initialise socket
   useEffect(() => {
-    const newSocket = io("https://www.eduhublearning.online", {
-      path: "/message/socket.io",
-    });
+    const newSocket = connectSocket();
     setSocket(newSocket!);
     return () => {
-      newSocket.disconnect();
+      newSocket!.disconnect();
     };
   }, [userId]);
 
@@ -80,7 +101,6 @@ export default function InstructorMessage() {
     if (!socket) return;
     socket.emit("addNewUser", userId);
     socket.on("getOnlineUsers", (res) => {
-      
       setOnlineUsers(res);
     });
   }, [socket]);
@@ -137,7 +157,7 @@ export default function InstructorMessage() {
   useEffect(() => {
     const getUserChats = async () => {
       const response = await instructorChats(userId);
-   
+
       if (response.success) {
         setChats(response.chats);
       }
@@ -172,7 +192,6 @@ export default function InstructorMessage() {
     };
     fetching();
   }, []);
- 
 
   const handletext = async () => {
     let reciever = "";
@@ -234,23 +253,44 @@ export default function InstructorMessage() {
 
   return (
     <div className="bg-black ">
-      <div className="hidden space-y-6 p-10 pb-16 md:block">
-        <div className="space-y-0.5">
-          <h2 className="text-white text-2xl font-bold tracking-tight">
-            Edu Hub
-          </h2>
-          <p className="text-muted-foreground">
-            Manage your instructor account students and courses.
-          </p>
+      <div className="space-y-6 md:p-10 p-2 pb-16">
+        <div className="flex justify-between">
+          <div className="space-y-0.5">
+            <h2 className="text-white text-2xl font-bold tracking-tight">
+              Edu Hub
+            </h2>
+            <p className="md:text-sm lg:text-sm text-xs text-muted-foreground">
+              Manage your instructor account students and courses.
+            </p>
+          </div>
+          <div className="block md:hidden lg:hidden">
+            {open ? (
+              <ToggleButtonGroup
+                onClick={() => setOpen(!open)}
+                size="large"
+                aria-label="Large sizes"
+              >
+                <CloseIcon htmlColor={"white"} fontSize="large" />
+              </ToggleButtonGroup>
+            ) : (
+              <ToggleButtonGroup
+                onClick={() => setOpen(!open)}
+                size="large"
+                aria-label="Large sizes"
+              >
+                <MenuRoundedIcon htmlColor={"white"} fontSize="large" />
+              </ToggleButtonGroup>
+            )}
+          </div>
         </div>
         <Separator className="my-6" />
         <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-5 lg:space-y-0">
           <InstructorAside />
           <div className="flex justify-center">
-            <div className="bg-white mx-5  flex lg:w-[900px] md:w-[900px] rounded-2">
-              <div className="border borer-danger  m-2  rounded-2 md:w-[330px] lg:w-[330px]">
-                <div className="flex items-center bg-success-400  justify-between p-3">
-                  <h3 className=" text-sm font-medium text-white leading-none">
+            <div className="bg-white md:mx-5 lg:mx:-5  flex lg:w-[900px] md:w-[900px] w-full rounded-2">
+              <div className="border borer-danger  m-2   rounded-2 md:w-[330px] lg:w-[330px] w-50">
+                <div className="flex items-center bg-success-400  justify-between md:p-3 p-2">
+                  <h3 className=" md:text-sm text-xs font-medium text-white leading-none">
                     Messages
                   </h3>
 
@@ -261,7 +301,7 @@ export default function InstructorMessage() {
                     </PopoverTrigger>
                     <PopoverContent>
                       <div className="flex justify-between gap-3">
-                        <h5>Notifications</h5>
+                        <h5 className="text-xs">Notifications</h5>
                       </div>
 
                       {modification.length > 0 ? (
@@ -292,7 +332,7 @@ export default function InstructorMessage() {
                           </div>
                         ))
                       ) : (
-                        <p>No New Notifications...</p>
+                        <p className="text-xs">No New Notifications...</p>
                       )}
                     </PopoverContent>
                   </Popover>
@@ -306,15 +346,17 @@ export default function InstructorMessage() {
                       .map((chat: IChat, index: number) => (
                         <div key={index}>
                           <div className="flex space-x-3 m-2">
-                            <Avatar className={`border-3 ${
-                            onlineUsers.some(
-                              (value) =>
-                                value.userId ==
-                                chat.members.find(
-                                  (member) => member._id !== userId
-                                )?._id
-                            ) && "border-3 border-success-400"
-                          }  cursor-pointer`}>
+                            <Avatar
+                              className={`border-3 ${
+                                onlineUsers.some(
+                                  (value) =>
+                                    value.userId ==
+                                    chat.members.find(
+                                      (member) => member._id !== userId
+                                    )?._id
+                                ) && "border-3 border-success-400"
+                              }  cursor-pointer`}
+                            >
                               <AvatarImage
                                 src={
                                   chat.members.find(
@@ -336,7 +378,7 @@ export default function InstructorMessage() {
                               }}
                               className="grid flex-1 text-left text-sm leading-tight cursor-pointer"
                             >
-                              <span className="truncate font-semibold">
+                              <span className="text-xs md:text-sm font-semibold">
                                 {
                                   chat.members.find(
                                     (member) => member._id !== userId
@@ -361,7 +403,7 @@ export default function InstructorMessage() {
                   {currentChat && (
                     <div className="flex w-full items-center justify-between mx-3">
                       <div className="flex items-center space-x-3 m-2">
-                        <Avatar className="cursor-pointer">
+                        <Avatar className={` cursor-pointer`}>
                           <AvatarImage
                             src={
                               currentChat.members.find(
@@ -382,7 +424,37 @@ export default function InstructorMessage() {
                           </span>
                         </div>
                       </div>
-                      <MoreVertical className="cursor-pointer" />
+                      <AlertDialog>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <MoreVertical className="cursor-pointer" />
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent className="w-56">
+                            <AlertDialogTrigger asChild>
+                              <DropdownMenuItem>block</DropdownMenuItem>
+                            </AlertDialogTrigger>
+
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem>bye</DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+
+                        <AlertDialogContent className="bg-black">
+                          <AlertDialogHeader>
+                            <AlertDialogTitle className="text-white">
+                              Are you absolutely sure?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription className="text-white">
+                               If you block this user you cannot send message to this user. you can unblock this user any time you want.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel  className="text-black bg-white" >Cancel</AlertDialogCancel>
+                            <AlertDialogCancel  className="text-black bg-white">Continue</AlertDialogCancel>
+                          
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
                   )}
                 </header>
@@ -395,18 +467,18 @@ export default function InstructorMessage() {
                           {messages.map((msg, index) => (
                             <div
                               key={index}
-                              className={`flex p-[0.75rem] w-[250px] border rounded shadow-md ${
+                              className={`flex p-[0.75rem] md:w-[250px] w-[200px] border rounded shadow-md  ${
                                 msg.senderId == userId
                                   ? "bg-success-200 ml-auto"
                                   : "bg-white items-start"
                               }`}
                             >
                               <div className="leading-none overflow-hidden break-words w-full">
-                                <span className="flex justify-start">
+                                <span className="flex justify-start md:text-sm text-xs font-semibold">
                                   {msg.text}
                                 </span>
                                 <div
-                                  className={`flex text-xs text-gray-500 justify-end`}
+                                  className={`flex text-xs  text-gray-500 justify-end`}
                                 >
                                   {moment(msg.createdAt).calendar()}
                                 </div>

@@ -4,7 +4,6 @@ import { connectDB } from './framework/webServer/config/mongoDB/db';
 import { UserRoute } from './framework/webServer/routes/userRoute';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { errMiddleware } from './useCase/middlewares/errorMiddleware';
 import { AdminRoute } from './framework/webServer/routes/adminRoute';
 import { InstructorRouter } from './framework/webServer/routes/instructorRouter';
 import kafkaWrapper from './framework/webServer/config/kafka/kafkaWrapper';
@@ -13,8 +12,8 @@ import { InstructorAprovedConsumer } from './framework/webServer/config/kafka/co
 import cookieSession from 'cookie-session';
 import { EmailChangedConsumer } from './framework/webServer/config/kafka/consumer/email-changed-consumer';
 import { UserProfileUpdatedConsumer } from './framework/webServer/config/kafka/consumer/user-profile-updated-consumer';
+import { errMiddleware } from '@eduhublearning/common';
 dotenv.config();
-
 const app = express()
 
 app.use(cors({credentials:true,

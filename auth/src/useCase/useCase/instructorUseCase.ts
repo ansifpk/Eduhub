@@ -1,9 +1,9 @@
 import { NextFunction } from "express";
 import { Iuser } from "../../entities/user";
 import { IJwt, IToken } from "../interface/serviceInterface/IJwt";
-import { IInstructor, IInstructorInterface } from "../interface/useCsesInterface/IinstructorInterface";
+import {  IInstructorInterface } from "../interface/useCsesInterface/IinstructorInterface";
 import { IInstructorRepository } from "../interface/repositoryInterface/IInstructorInterface";
-import ErrorHandler from "../middlewares/errorHandler";
+import { ErrorHandler } from "@eduhublearning/common";
 import { Icloudinary } from "../../framework/services/cloudinary";
 
 

@@ -2,7 +2,7 @@ import { NextFunction } from "express";
 import { IAdmin } from "../../entities/admin";
 import { IJwt, IToken } from "../interface/serviceInterface/IJwt";
 import { IadminUsecase } from "../interface/useCsesInterface/IadminUseCase";
-import ErrorHandler from "../middlewares/errorHandler";
+import { ErrorHandler } from "@eduhublearning/common";
 import { IHashPassword } from "../interface/serviceInterface/IHashPassword";
 import { IAdminRepository } from "../interface/repositoryInterface/IAdminRepository";
 import { Iuser } from "../../entities/user";
