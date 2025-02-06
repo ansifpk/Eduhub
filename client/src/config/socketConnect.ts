@@ -2,7 +2,7 @@ import { io } from "socket.io-client";
 
 const connectSocket = ()=>{
    try {
-       const socket =  io("https://www.eduhublearning.online", {
+       const socket =  io(import.meta.env.VITE_APIGATEWAY, {
          path: "/message/socket.io",
        });
        return socket

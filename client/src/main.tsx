@@ -1,4 +1,3 @@
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './main.css';
@@ -11,18 +10,21 @@ import 'react-toastify/dist/ReactToastify.css';
 import { PersistGate } from 'redux-persist/integration/react'
 import {GoogleOAuthProvider} from '@react-oauth/google';
 import {HeroUIProvider} from '@heroui/react'
+import { SocketProvider } from './context/socketContext.tsx';
 
 createRoot(document.getElementById('root')!).render(
   // <StrictMode>
     <BrowserRouter>
-     <GoogleOAuthProvider clientId="40855809641-qlka8kc3qhg0kdu19ag1k0uoomnf5r55.apps.googleusercontent.com">
-    <Toaster position="top-center" reverseOrder={false} />
-            <Provider store={store}>
-              <PersistGate persistor={persist}>
-                 <HeroUIProvider>
-                    <App/>                   
-                 </HeroUIProvider>
-              </PersistGate>
+     <GoogleOAuthProvider clientId={import.meta.env.GOOGLE_CLIENTID}>
+         <Toaster position="top-center" reverseOrder={false} />
+            <Provider store={store}> 
+              <SocketProvider>
+                <PersistGate persistor={persist}>
+                  <HeroUIProvider>
+                      <App/>                   
+                  </HeroUIProvider>
+                </PersistGate>
+              </SocketProvider>
             </Provider>
     </GoogleOAuthProvider>
     </BrowserRouter>

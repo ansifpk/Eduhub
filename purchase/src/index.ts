@@ -60,12 +60,13 @@ async function start(){
 
 
 const app = express();
+app.set('trust proxy',true);
+
 app.use(cors({credentials:true,
     origin: process.env.NODE_ENV === 'production'
       ? 'https://www.eduhublearning.online'
       : ['http://client-srv:5173', 'http://localhost:5173']
     ,methods: ['GET', 'POST'],}));
-// app.use(cors({credentials:true,origin:["http://localhost:5173",'https://www.eduhublearning.online']}));
 
 app.use(
     cookieSession({
@@ -83,7 +84,6 @@ app.use("/purchase/webHook",webHook)
 
 app.use(json())
 app.use(urlencoded({extended:true}))
-// app.use(cookieParser())
 
 const userRouter = express.Router();
 const instructorRouter = express.Router();

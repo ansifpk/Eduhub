@@ -12,16 +12,20 @@ import cookieSession from 'cookie-session';
 import { EmailChangedConsumer } from './framework/webServer/config/kafka/consumer/email-changed-consumer';
 import { UserProfileUpdatedConsumer } from './framework/webServer/config/kafka/consumer/user-profile-updated-consumer';
 import { errMiddleware } from '@eduhublearning/common';
+import { Server, Socket } from 'socket.io';
+import {createServer} from 'http';
+
 dotenv.config();
 const app = express()
-
+const httpServer = createServer(app);
+app.set('trust proxy',true);
 app.use(cors({credentials:true,
     origin: process.env.NODE_ENV === 'production'
       ? 'https://www.eduhublearning.online'
       : ['http://client-srv:5173', 'http://localhost:5173']
     ,methods: ['GET', 'POST'],}));
-// app.use(cors({credentials:true,origin:["http://localhost:5173",'https://www.eduhublearning.online']}));
-
+app.use(json())
+app.use(urlencoded({ extended: true }))
 app.use(
     cookieSession({
         signed: false, 
@@ -30,8 +34,6 @@ app.use(
         secure: process.env.NODE_ENV === 'production', 
       })
 )
-app.use(json())
-app.use(urlencoded({ extended: true }))
 
 // Separate routers for user and admin
 const userRouter = express.Router()
@@ -51,6 +53,38 @@ app.use('/auth/instructor',instructorRouter);
 
 app.use(errMiddleware);
 
+let onlineUsers:{userId:string,socketId:string}[] = [];
+
+const io = new Server(httpServer,{
+    cors:{
+        origin: ['http://client-srv:5173', 'http://localhost:5173',"https://www.eduhublearning.online"],
+        methods: ["*"],
+        credentials:true
+    },
+      path: '/message/socket.io',
+    })
+    
+    io.on("connect",(socket:Socket)=>{
+        console.log("new connection in auth srv",socket.id);
+        
+        //TODO listen connection
+        socket.on("addNewUser",(userId:string)=>{
+            console.log("auth srv", userId)
+        // onlineUsers.some((user)=>user.userId == userId)&&
+        //   onlineUsers.push({
+        //     userId,
+        //     socketId:socket.id
+        //   })
+        //   io.emit("getOnlineUsers",onlineUsers)
+        })
+    
+        //*disconnect user when
+        socket.on("disconnect",()=>{
+            onlineUsers = onlineUsers.filter((user)=>user.socketId !== socket.id)
+            io.emit("getOnlineUsers",onlineUsers)
+        })
+    })
+    
 const start = async () => {
     try {
         

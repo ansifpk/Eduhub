@@ -10,7 +10,7 @@ import { errMiddleware } from '@eduhublearning/common';
 dotenv.config()
 connectDB()
 const app = express();
-
+app.set('trust proxy',true);
 const categoryRouter = express.Router()
 const instructorRoute = express.Router()
 
@@ -19,14 +19,12 @@ InstructorRouter(instructorRoute)
 
 
 app.use(json())
-// app.use(cookieParser())
+app.use(urlencoded({ extended: true }))
 app.use(cors({credentials:true,
   origin: process.env.NODE_ENV === 'production'
     ? 'https://www.eduhublearning.online'
     : ['http://client-srv:5173', 'http://localhost:5173']
   ,methods: ['GET', 'POST'],}));
-// app.use(cors({credentials:true,origin:["http://localhost:5173",'https://www.eduhublearning.online']}));
-
 app.use(
   cookieSession({
       signed: false, 
@@ -35,9 +33,6 @@ app.use(
       secure: process.env.NODE_ENV === 'production', 
     })
 )
-// app.use()
-app.use(urlencoded({ extended: true }))
-// app.use(cors({credentials:true,origin:["http://localhost:5173",'http://eduhub.dev']}))
 
 app.use("/category/admin",categoryRouter)
 app.use("/category/instructor",instructorRoute)

@@ -68,9 +68,8 @@ const Message = () => {
   //!websocket
   //* initialise socket
   useEffect(() => {
-    // https://www.eduhublearning.online
-    
-    const newSocket = io("https://www.eduhublearning.online",{
+
+    const newSocket = io(import.meta.env.VITE_APIGATEWAY,{
       path: '/message/socket.io'
      })
      setSocket(newSocket!);

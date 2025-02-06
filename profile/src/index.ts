@@ -14,8 +14,9 @@ import { CourseListedConsumer } from './framwork/webServer/config/kafka/consumer
 import { CourseUpdatedConsumer } from './framwork/webServer/config/kafka/consumer/course-updated-consumer';
 import { OrderCreatedCreateConsumer } from './framwork/webServer/config/kafka/consumer/order-created-consumer';
 import { errMiddleware } from '@eduhublearning/common';
-const app = express()
 
+const app = express()
+app.set('trust proxy',true);
 // Separate routers for user and admin
 const userRouter = express.Router()
 const adminRouter = express.Router()
@@ -26,26 +27,22 @@ UserRouter(userRouter);
 AdminRouter(adminRouter);
 InstructorRouter(instructorRouter);
 
-// app.use(cors({credentials:true,origin:["http://localhost:5173",'http://eduhub.dev']}));
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+
 app.use(cors({credentials:true,
     origin: process.env.NODE_ENV === 'production'
       ? 'https://www.eduhublearning.online'
       : ['http://client-srv:5173', 'http://localhost:5173']
     ,methods: ['GET', 'POST'],}));
-// app.use(cors({credentials:true,origin:["http://localhost:5173",'https://www.eduhublearning.online']}));
-
 app.use(
     cookieSession({
         signed: false, 
         httpOnly: true, 
         sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax', 
         secure: process.env.NODE_ENV === 'production', 
-      })
+    })
 )
-
-app.use(bodyParser.json({limit: '50mb'}));
-app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
-
 // Apply the separate routers to different paths
 app.use('/profile/user',userRouter);
 app.use('/profile/admin',adminRouter);

@@ -52,23 +52,15 @@ async function start(){
 
 
 const app = express();
-
-// app.use(cors());
-
-// app.use(cors({credentials:true,origin:["http://localhost:5173",'http://eduhub.dev']}));
-
-
+app.set('trust proxy',true)
 
 app.use(express.json({ limit: "50mb"})); 
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
-// app.use(cookieParser())
 app.use(cors({credentials:true,
     origin: process.env.NODE_ENV === 'production'
       ? 'https://www.eduhublearning.online'
       : ['http://client-srv:5173', 'http://localhost:5173']
     ,methods: ['GET', 'POST'],}));
-// app.use(cors({credentials:true,origin:["http://localhost:5173",'https://www.eduhublearning.online']}));
-
 app.use(
     cookieSession({
         signed: false, 

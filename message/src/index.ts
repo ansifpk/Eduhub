@@ -4,24 +4,22 @@ import bodyParser from 'body-parser';
 import cookieSession from 'cookie-session';
 import dotenv from 'dotenv';
 import {createServer} from 'http';
-// import { UserRouter } from './framwork/webServer/routes/userRouter';
 import { connectDB } from './framwork/webServer/config/mongoDB/db';
 import kafkaWrapper from './framwork/webServer/config/kafka/kafkaWrapper';
 import { UserProfileCreatedConsumer } from './framwork/webServer/config/kafka/consumer/user-profile-created-consumer';
-import { Producer } from 'kafkajs';
 import { InstructorAprovalConsumer } from './framwork/webServer/config/kafka/consumer/instructor-approved-consumer';
 import { UserBlockedConsumer } from './framwork/webServer/config/kafka/consumer/user-block-consumer';
 import { MessageRoute } from './framwork/webServer/routers/messageRouter';
 import { ChatRoute } from './framwork/webServer/routers/chatRoute';
-import { Socket } from 'socket.io';
-import { errMiddleware } from './useCases/middlewares/errorMiddleware';
+import { Socket,Server } from 'socket.io';
 import { UserProfileUpdatedConsumer } from './framwork/webServer/config/kafka/consumer/user-profile-updated-consumer';
 import { NotificationRoute } from './framwork/webServer/routers/notificationRouter';
-import {Server} from 'socket.io' 
+import { errMiddleware } from '@eduhublearning/common';
 
 dotenv.config();
 const PORT = process.env.PORT
 const app = express();
+app.set('trust proxy',true);
 const httpServer = createServer(app);
 // Separate routers for user and admin
 const messageRouter = express.Router()
@@ -43,17 +41,17 @@ app.use(cors({credentials:true,
       : ['http://client-srv:5173', 'http://localhost:5173']
     ,methods: ['GET', 'POST'],}));
 
-app.use(
-    cookieSession({
-        signed: false, 
-        httpOnly: true, 
-        sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax', 
-        secure: process.env.NODE_ENV === 'production', 
-      })
-)
+
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
-
+app.use(
+  cookieSession({
+      signed: false, 
+      httpOnly: true, 
+      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax', 
+      secure: process.env.NODE_ENV === 'production', 
+    })
+)
 // Apply the separate routers to different paths
 app.use('/message/chat',chatRouter);
 app.use('/message/message',messageRouter);
@@ -73,10 +71,11 @@ cors:{
 })
 
 io.on("connect",(socket:Socket)=>{
-    console.log("new connection",socket.id);
+    console.log("new connection in message srv",socket.id);
     
     //TODO listen connection
     socket.on("addNewUser",(userId:string)=>{
+      console.log("message srv", userId)
     !onlineUsers.some((user)=>user.userId == userId)&&
       onlineUsers.push({
         userId,

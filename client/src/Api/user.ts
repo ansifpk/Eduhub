@@ -4,7 +4,6 @@ import { loginType } from "../@types/loginType"
 import { registerType } from "../@types/registerType"
 import ApiGatway from "@/service/axios"
 import { ICourse } from "@/@types/courseType"
-// const ApiGatway = "http://34.55.36.217"
 
 export const signup = async (registerData: registerType) => {
     try {

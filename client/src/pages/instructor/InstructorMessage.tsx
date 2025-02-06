@@ -88,7 +88,9 @@ export default function InstructorMessage() {
   //!websocket
   //* initialise socket
   useEffect(() => {
-    const newSocket = connectSocket();
+    const newSocket = io(import.meta.env.VITE_APIGATEWAY, {
+      path: "/message/socket.io",
+    });
     setSocket(newSocket!);
     return () => {
       newSocket!.disconnect();
