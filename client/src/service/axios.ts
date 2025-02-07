@@ -8,4 +8,6 @@ const ApiGatway = axios.create({
 })
 
 
+
+// ApiGatway.interceptors.response=
 export default ApiGatway;

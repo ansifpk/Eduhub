@@ -19,9 +19,7 @@ export const SocketProvider: React.FC<{children: React.ReactNode}> = ({children}
             })
             console.log(newSocket,"hii",userEmail)
             setSocket(newSocket);
-            newSocket.on(`blockUser:${userEmail}`,()=>{
-                toast.error("Access blocked by Admin")
-            })
+            
             return ()=>{
                 newSocket.disconnect();
             }

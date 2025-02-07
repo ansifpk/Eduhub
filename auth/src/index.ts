@@ -66,6 +66,10 @@ const io = new Server(httpServer,{
     
     io.on("connect",(socket:Socket)=>{
         console.log("new connection in auth srv",socket.id);
+
+        socket.on("blockUser",(email)=>{
+            console.log("blockUser",email);
+        })
         //*disconnect user when
         socket.on("disconnect",()=>{
             onlineUsers = onlineUsers.filter((user)=>user.socketId !== socket.id)

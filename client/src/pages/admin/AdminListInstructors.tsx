@@ -42,7 +42,7 @@ const AdminListInstructors = () => {
   const [totalPage, setTotalPage] = useState(0);
   const navigate = useNavigate();
   const userId = useSelector((state:User)=>state.id)
-  console.log('useSocket',useSocket)
+  const socket = useSocket()
   useEffect(() => {
     const fetchAllinstructors = async () => {
       const response = await instructors(search,sort,page);
@@ -73,6 +73,9 @@ const AdminListInstructors = () => {
         const res = await instructors(search,sort,page);
         if (res) {
           setInstructors(res.instructors);
+          console.log(response.data);
+          
+          socket?.emit(`blockUser`,response.data.email)
           toast.success("Successfully Block Instructroctor");
           return;
         }
