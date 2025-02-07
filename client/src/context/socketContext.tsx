@@ -15,9 +15,12 @@ export const SocketProvider: React.FC<{children: React.ReactNode}> = ({children}
     useEffect(()=>{
         if(userId){
             const newSocket = io(import.meta.env.VITE_APIGATEWAY,{
-                path: '/auth/socket.io'
+                path: '/auth/socket.io',
+                query:{
+                    userId
+                }
             })
-            console.log("hii",userId,`block:${userId}`)
+            console.log("hii",userId,newSocket)
             setSocket(newSocket);
             newSocket.on(`block:${userId}`,(userId)=>{
               console.log("you are blocked",userId)

@@ -65,13 +65,21 @@ const io = new Server(httpServer,{
     })
     
     io.on("connect",(socket:Socket)=>{
-        console.log("new connection in auth srv",socket.id);
-
+        const userId = socket.handshake.query.userId;
+        console.log("new connection in auth srv",socket.id,userId);
+        
         socket.on("blockUser",(userId)=>{
+            !onlineUsers.some((user)=>user.userId == userId)&&
+            onlineUsers.push({
+                userId,
+                socketId:socket.id
+            })
             const user = onlineUsers.find((user)=>user.userId == userId);
             if(user){
                 console.log("blockUser",userId,'user.socketId5',user.socketId);
                 socket.emit(`block:${userId}`,userId)
+            }else{
+                console.log("illa");
             }
             
         })
