@@ -75,7 +75,7 @@ const io = new Server(httpServer,{
         console.log("new connection in auth srv",socket.id,onlineUsers,'onlineUsers');
         socket.on("blockUser",(userId)=>{
             const user = onlineUsers.find((user)=>user.userId == userId);
-            console.log("blockUser",userId,onlineUsers,'onlineUsers',"user,",user);
+            console.log("blockUser",userId,onlineUsers,'onlineUsers',onlineUsers[0].userId==userId,"user,",user);
             if(user){
                 console.log("blockUser",user.userId,'user.socketId5',user.socketId);
                 io.to(user.socketId).emit(`block:${userId}`,userId)
