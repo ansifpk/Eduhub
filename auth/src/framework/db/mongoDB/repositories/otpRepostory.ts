@@ -26,8 +26,7 @@ export class OtpRepository implements IOtpRepository{
          
     }
     async findOtp(email: string): Promise<any | null> {
-        // console.log("email",email);
-        
+    
         const data = await otpModel.findOne({email:email})
         return data;
     }

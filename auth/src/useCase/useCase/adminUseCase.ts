@@ -71,7 +71,10 @@ export class AdminUsecase implements IadminUsecase{
        const check = await this.adminRepository.findById(userId)
        if(check){
          const data = await this.adminRepository.block(check)
-         return data;
+         if(data){
+           
+           return data;
+         }
        }else{
         return next(new ErrorHandler(400,"User Not Found"))
        }

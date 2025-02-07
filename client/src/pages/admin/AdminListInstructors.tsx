@@ -24,13 +24,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/Components/ui/alert-dialog";
-import { log } from "node:console";
 import { useSelector } from "react-redux";
 import { IUser } from "@/@types/chatUser";
 import { User } from "@/@types/userType";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/Components/ui/select";
 import { Input } from "@/Components/ui/input";
 import { Pagination, Stack } from "@mui/material";
+import { useSocket } from "@/context/socketContext";
 
 
 const AdminListInstructors = () => {
@@ -42,6 +42,7 @@ const AdminListInstructors = () => {
   const [totalPage, setTotalPage] = useState(0);
   const navigate = useNavigate();
   const userId = useSelector((state:User)=>state.id)
+  console.log('useSocket',useSocket)
   useEffect(() => {
     const fetchAllinstructors = async () => {
       const response = await instructors(search,sort,page);

@@ -15,7 +15,7 @@ import { SocketProvider } from './context/socketContext.tsx';
 createRoot(document.getElementById('root')!).render(
   // <StrictMode>
     <BrowserRouter>
-     <GoogleOAuthProvider clientId={import.meta.env.GOOGLE_CLIENTID}>
+     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENTID}>
          <Toaster position="top-center" reverseOrder={false} />
             <Provider store={store}> 
               <SocketProvider>

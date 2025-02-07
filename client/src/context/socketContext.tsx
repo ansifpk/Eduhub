@@ -17,12 +17,11 @@ export const SocketProvider: React.FC<{children: React.ReactNode}> = ({children}
             const newSocket = io(import.meta.env.VITE_APIGATEWAY,{
                 path: '/auth/socket.io'
             })
-           
-            newSocket.on(`user:${userEmail}`,()=>{
-                toast.error("Access Blocked by Admin")
-            });
+            console.log(newSocket,"hii",userEmail)
             setSocket(newSocket);
-
+            newSocket.on(`blockUser:${userEmail}`,()=>{
+                toast.error("Access blocked by Admin")
+            })
             return ()=>{
                 newSocket.disconnect();
             }
@@ -37,3 +36,4 @@ export const SocketProvider: React.FC<{children: React.ReactNode}> = ({children}
 export const useSocket = () =>{
     return useContext(SocketContext);
 }
+

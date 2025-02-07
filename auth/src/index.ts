@@ -61,23 +61,11 @@ const io = new Server(httpServer,{
         methods: ["*"],
         credentials:true
     },
-      path: '/message/socket.io',
+      path: '/auth/socket.io',
     })
     
     io.on("connect",(socket:Socket)=>{
         console.log("new connection in auth srv",socket.id);
-        
-        //TODO listen connection
-        socket.on("addNewUser",(userId:string)=>{
-            console.log("auth srv", userId)
-        // onlineUsers.some((user)=>user.userId == userId)&&
-        //   onlineUsers.push({
-        //     userId,
-        //     socketId:socket.id
-        //   })
-        //   io.emit("getOnlineUsers",onlineUsers)
-        })
-    
         //*disconnect user when
         socket.on("disconnect",()=>{
             onlineUsers = onlineUsers.filter((user)=>user.socketId !== socket.id)
@@ -101,7 +89,7 @@ const start = async () => {
         await new EmailChangedConsumer(consumer3).listen()
 
         await connectDB();
-        app.listen(process.env.PORT, () => console.log(`the server is running in http://localhost:${process.env.PORT}/auth for auth`))
+        httpServer.listen(process.env.PORT, () => console.log(`the server is running in http://localhost:${process.env.PORT}/auth for auth`))
     } catch (error) {
         console.error(error);
     }
