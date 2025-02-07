@@ -67,8 +67,13 @@ const io = new Server(httpServer,{
     io.on("connect",(socket:Socket)=>{
         console.log("new connection in auth srv",socket.id);
 
-        socket.on("blockUser",(email)=>{
-            console.log("blockUser",email);
+        socket.on("blockUser",(userId)=>{
+            const user = onlineUsers.find((user)=>user.userId == userId);
+            if(user){
+                console.log("blockUser",userId,'user.socketId5',user.socketId);
+                socket.emit(`block:${userId}`,userId)
+            }
+            
         })
         //*disconnect user when
         socket.on("disconnect",()=>{

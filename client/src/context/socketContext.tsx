@@ -11,21 +11,24 @@ const SocketContext = createContext<Socket|null>(null);
 
 export const SocketProvider: React.FC<{children: React.ReactNode}> = ({children}) =>{
     const [socket,setSocket] = useState<Socket|null>(null);
-    const userEmail = useSelector((state:User)=>state.email);
+    const userId = useSelector((state:User)=>state.id);
     useEffect(()=>{
-        if(userEmail){
+        if(userId){
             const newSocket = io(import.meta.env.VITE_APIGATEWAY,{
                 path: '/auth/socket.io'
             })
-            console.log(newSocket,"hii",userEmail)
+            console.log("hii",userId,`block:${userId}`)
             setSocket(newSocket);
-            
+            newSocket.on(`block:${userId}`,(userId)=>{
+              console.log("you are blocked",userId)
+              toast.error("you are blocked")
+            })
             return ()=>{
                 newSocket.disconnect();
             }
         }
-    },[userEmail]);
-
+    },[userId]);
+    
     return (
         <SocketContext.Provider value={socket} >{children}</SocketContext.Provider>
     )
