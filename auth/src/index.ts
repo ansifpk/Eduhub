@@ -65,23 +65,24 @@ const io = new Server(httpServer,{
     })
     
     io.on("connect",(socket:Socket)=>{
-        const userId = socket.handshake.query.userId;
-        console.log("new connection in auth srv",socket.id,userId);
+        const userId = socket.handshake.query.userId as string;
         
+        !onlineUsers.some((user)=>user.userId == userId)&&
+        onlineUsers.push({
+            userId,
+            socketId:socket.id
+        })
+        console.log("new connection in auth srv",socket.id,onlineUsers,'onlineUsers');
         socket.on("blockUser",(userId)=>{
-            !onlineUsers.some((user)=>user.userId == userId)&&
-            onlineUsers.push({
-                userId,
-                socketId:socket.id
-            })
             const user = onlineUsers.find((user)=>user.userId == userId);
+            console.log("blockUser",userId,onlineUsers,'onlineUsers',"user,",user);
             if(user){
-                console.log("blockUser",userId,'user.socketId5',user.socketId);
-                socket.emit(`block:${userId}`,userId)
+                console.log("blockUser",user.userId,'user.socketId5',user.socketId);
+                io.to(user.socketId).emit(`block:${userId}`,userId)
             }else{
-                console.log("illa");
+                console.log("illa user in online users");
+                
             }
-            
         })
         //*disconnect user when
         socket.on("disconnect",()=>{

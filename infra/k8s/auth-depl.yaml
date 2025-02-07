@@ -16,6 +16,9 @@ spec:
         - name: auth
           image: pkansif/eduhub-auth
           imagePullPolicy: Always
+          env:
+           - name: "image"
+             value: "ji"
 ---
 apiVersion: v1
 kind: Service
