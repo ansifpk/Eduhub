@@ -11,13 +11,14 @@ const instructorRoutes = {
     top5Courses:"/course/instructor/course",
     top5RatedCourses:"/course/instructor/topRated",
     login:'/auth/instructor/login',
+    logout:'/auth/instructor/logout',
     editProfile:"/instructor/editProfile", 
     currentUser:"/instructor/currentUser", 
     googleLogin:"/instructor/googleLogin", 
     register:"/profile/instructor/register", 
     getCategoryies:"/category/instructor/category", 
     ratings:"/profile/instructor/ratings", 
-   
+    tocken:"/auth/instructor/refresh-token",
 
     //!message
     message:"/message/message",

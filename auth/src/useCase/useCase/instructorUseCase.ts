@@ -5,6 +5,7 @@ import {  IInstructorInterface } from "../interface/useCsesInterface/Iinstructor
 import { IInstructorRepository } from "../interface/repositoryInterface/IInstructorInterface";
 import { ErrorHandler } from "@eduhublearning/common";
 import { Icloudinary } from "../../framework/services/cloudinary";
+import { IHashPassword } from "../interface/serviceInterface/IHashPassword";
 
 
 
@@ -14,6 +15,7 @@ export class InstructorUseCase implements IInstructorInterface{
         private instructorRepository:IInstructorRepository,
         private cloudinary:Icloudinary,
         private jwt:IJwt,
+         private encrypt: IHashPassword,
     ){}
     async instructorRegister(email: string, name: string,qualification: string, expirience: string, certificate: string, cv: string, next: NextFunction): Promise<{ user: Iuser; token: IToken; } | void> {
        
@@ -25,7 +27,7 @@ export class InstructorUseCase implements IInstructorInterface{
                 const token = await this.jwt.createAccessAndRefreashToken(user._id!) as IToken
                 if(token){
                     if(user.isBlock){
-                        return next(new ErrorHandler(400,"You are blocked by Admin"))
+                        return next(new ErrorHandler(403,"You are blocked by Admin"))
                     }
                    
                     return {user,token}
@@ -64,12 +66,47 @@ export class InstructorUseCase implements IInstructorInterface{
        }
     }
 
-    instructorLogin(email: string, password: string, next: NextFunction): Promise<{ user: Iuser; token: IToken; } | void> {
-        throw new Error("Method not implemented.");
+    async instructorLogin(email: string, password: string, next: NextFunction): Promise<{ instructor: Iuser; token: IToken; } | void> {
+       try {
+        const instructor = await this.instructorRepository.findByEmail(email);
+        if(instructor){
+           const hashPassword = await this.encrypt.comparePassword(password,instructor.password)
+           if(hashPassword){
+              if(instructor.isInstructor){
+                const token = await this.jwt.createAccessAndRefreashToken(instructor._id!) as IToken
+                return {instructor,token}
+              }else{
+                return next(new ErrorHandler(400,"You Are Not Instructor"))
+              }
+           }else{
+            return next(new ErrorHandler(400,"Incorrect Password"))
+           }
+       }else{
+        return next(new ErrorHandler(400,"Instructor Not Found"))
+       }
+     } catch (error) {
+        console.error(error)
     }
+   }
     async fetchStudents(): Promise<Iuser[]| void> {
         const users = await this.instructorRepository.find();
         return users;
     }
+
+    async checkTockens(tocken:string,next: NextFunction): Promise<IToken | void> {
+        try {
+          const decoded = await this.jwt.verifyRefreshJwt(tocken)
+          
+          if(decoded){
+           const tockens =  await this.jwt.createAccessAndRefreashToken(decoded.id);
+           if(tockens){
+            return tockens
+           }
+          }
+          
+        } catch (error) {
+          console.error(error)
+        }
+      }
 
 }

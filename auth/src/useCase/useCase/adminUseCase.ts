@@ -79,4 +79,20 @@ export class AdminUsecase implements IadminUsecase{
         return next(new ErrorHandler(400,"User Not Found"))
        }
     }
+
+    async checkTockens(tocken:string,next: NextFunction): Promise<IToken | void> {
+      try {
+        const decoded = await this.jwt.verifyRefreshJwt(tocken)
+        
+        if(decoded){
+         const tockens =  await this.jwt.createAccessAndRefreashToken(decoded.id);
+         if(tockens){
+          return tockens
+         }
+        }
+        
+      } catch (error) {
+        console.error(error)
+      }
+    }
 }

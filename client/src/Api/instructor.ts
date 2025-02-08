@@ -113,6 +113,25 @@ export const uploadVideo = async(data:object)=>{
         return error;
     }
 }
+
+export const loginInstructor = async (password:string,email:string) =>{
+    try {
+        const response = await ApiGatway.post(instructorRoutes.login,{password,email});       
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
+export const logoutInstructor = async () =>{
+    try {
+        const response = await ApiGatway.post(instructorRoutes.logout);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
 export const allCourses = async()=>{
     try {
         const response = await ApiGatway.get(`${instructorRoutes.allCourses}`);
@@ -145,6 +164,15 @@ export const editTestToCourse = async(testData:object,testId:string)=>{
         return response.data;
     } catch (error) {
         return error;
+    }
+}
+
+export const tockenInstructor = async () => {
+    try {
+        const response = await ApiGatway.post(instructorRoutes.tocken);
+        return response.data
+    } catch (error) {
+        return error 
     }
 }
 

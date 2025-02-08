@@ -12,7 +12,7 @@ const adminRoutes = {
     editProfile:"/admin/editProfile",
     getCourses:"/course/admin/getCourses",
     course:"/course/admin/course",
-    logout:'/admin/logout',
+    logout:'/auth/admin/logout',
     coupon:'/course/admin/coupon',
     report:'/course/admin/report',
     top5RatedCourse:'/course/admin/top5Course',
@@ -31,7 +31,7 @@ const adminRoutes = {
      getOrders:"/purchase/admin/getOrders",
      //*top5Instructors
      top5Instructors:"/profile/admin/top5Instructors",
-
+     tocken:"/auth/admin/refresh-token",
    }
 
    

@@ -261,10 +261,26 @@ export class UserController {
 
   async checkTockens(req: Request, res: Response, next: NextFunction) {
     try {      
+      if(!req.cookies.refreshToken){
+        return next(new ErrorHandler(401,"Invalid token")) 
+      }
       const tocken = req.cookies.refreshToken;
 
       const tockens  = await this.userUseCase.checkTockens(tocken,next)
       if(tockens){
+       
+        res.cookie('accessToken',tockens.accessToken,{
+          httpOnly:true,
+          secure:process.env.NODE_ENV !== 'development',
+          sameSite:'strict',
+          maxAge: 15 * 60 * 1000
+       });
+        res.cookie('refreshToken',tockens.refreshToken,{
+          httpOnly:true,
+          secure:process.env.NODE_ENV !== 'development',
+          sameSite:'strict',
+          maxAge:30 * 24 * 60 * 60 * 1000
+       });
         return res.send({success:true,tockens});
       }
     } catch (error) {

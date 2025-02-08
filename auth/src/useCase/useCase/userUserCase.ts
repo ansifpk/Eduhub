@@ -33,7 +33,7 @@ export class UserUseCase implements IuserUseCase {
       const user = await this.userRepository.create({ email, name, password });
       if (user) {
         if (user.isBlock) {
-          return next(new ErrorHandler(400, "You re Blocked By Admin"));
+          return next(new ErrorHandler(403, "You re Blocked By Admin"));
         } else {
           const token: any = await this.jwtToken.createAccessAndRefreashToken(
             user._id as string
@@ -45,7 +45,7 @@ export class UserUseCase implements IuserUseCase {
       }
     } else {
       if (checkUser.isBlock) {
-        return next(new ErrorHandler(400, "You re Blocked By Admin"));
+        return next(new ErrorHandler(403, "You re Blocked By Admin"));
       } else {
         const token: any = await this.jwtToken.createAccessAndRefreashToken(
           checkUser._id as string
@@ -182,7 +182,7 @@ export class UserUseCase implements IuserUseCase {
         return next(new ErrorHandler(400, "Email Not Registerd"));
       }
       if (user.isBlock == true) {
-        return next(new ErrorHandler(400, "You are Blocked"));
+        return next(new ErrorHandler(403, "You are Blocked"));
       }
 
       const checkPassword = await this.encrypt.comparePassword(
@@ -358,7 +358,7 @@ export class UserUseCase implements IuserUseCase {
   async checkTockens(tocken:string,next: NextFunction): Promise<IToken | void> {
     try {
       const decoded = await this.jwtToken.verifyRefreshJwt(tocken)
-      console.log(decoded,"///iuu");
+      
       if(decoded){
        const tockens =  await this.jwtToken.createAccessAndRefreashToken(decoded.id);
        if(tockens){

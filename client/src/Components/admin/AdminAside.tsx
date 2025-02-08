@@ -1,18 +1,16 @@
-import { logout } from "@/Api/user"
 import { removeUser } from "@/redux/authSlice"
 import toast from "react-hot-toast"
 import { useDispatch } from "react-redux"
 import { NavLink } from "react-router-dom"
 import CardMembershipIcon from '@mui/icons-material/CardMembership';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+import { logoutAdmin } from "@/Api/admin"
 
 const AdminAside =  () => {
   const dispatch = useDispatch()
   const handleLogout = async () => {
-    const response = await logout()
+    const response = await logoutAdmin()
     if(response.succuss){
-        localStorage.setItem("accessToken","")
-        localStorage.setItem("refreshToken","")
         dispatch(removeUser())
         return toast.success(response.message)
     }

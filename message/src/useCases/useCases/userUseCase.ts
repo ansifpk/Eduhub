@@ -66,7 +66,7 @@ export class UseruseCase implements IUserUseCase{
            }
 
            if(checkRecipientUser.isBlock){
-            return next(new ErrorHandler(400,"This User Blocked By Admin"))
+            return next(new ErrorHandler(403,"This User Blocked By Admin"))
            }
            const checkChatExists = await this.userRepository.findChat(userId,recipientId);
            if(checkChatExists){
@@ -106,7 +106,7 @@ export class UseruseCase implements IUserUseCase{
             return next(new ErrorHandler(400,"Chat Not Found"))
            }
            if(chat.members[1].isBlock){
-            return next(new ErrorHandler(400,"This User Blocked By Admin"))
+            return next(new ErrorHandler(403,"This User Blocked By Admin"))
            }
            return chat;
     
@@ -137,7 +137,7 @@ export class UseruseCase implements IUserUseCase{
                 return next(new ErrorHandler(400,"Chat Not Found"))
             }
             if(checkChat.members[1].isBlock){
-                return next(new ErrorHandler(400,"This user blocked by admin"))
+                return next(new ErrorHandler(403,"This user blocked by admin"))
             }
             
             const checkUser = await this.userRepository.findUserById(senderId);
@@ -146,7 +146,7 @@ export class UseruseCase implements IUserUseCase{
                 return next(new ErrorHandler(400,"User not found"))
             }
             if(checkUser.isBlock){
-                return next(new ErrorHandler(400,"Access denied by admin"))
+                return next(new ErrorHandler(403,"Access denied by admin"))
             }
             
             const message = await this.userRepository.createMessage(chatId,senderId,text)

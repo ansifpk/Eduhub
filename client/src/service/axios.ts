@@ -1,5 +1,11 @@
 import axios from 'axios'
 import { tocken } from '@/Api/user';
+import { tockenInstructor } from '@/Api/instructor';
+import { tockenAdmin } from '@/Api/admin';
+import { removeUser } from '@/redux/authSlice';
+import { store } from '@/redux/store';
+
+
 const ApiGatway = axios.create({ 
     baseURL: import.meta.env.VITE_APIGATEWAY, 
     headers:{
@@ -17,14 +23,25 @@ ApiGatway.interceptors.response.use(
       if (error.response && error.response.status === 401 && !originalRequest._retry) {
           originalRequest._retry = true;
           try {
-              console.log("machu am here on intercpetre")
-              await tocken()
+              let undPoints = originalRequest.url.split("/")
+              
+              if(undPoints[2].startsWith("admin")){
+                await tockenAdmin()
+                
+              }else if(undPoints[2].startsWith("user")){
+                await tocken()
+              }else{
+                await tockenInstructor()
+                
+              }
+              
               return ApiGatway(originalRequest);
           } catch (err) {
-              console.log(err, "from interptor")
+            store.dispatch(removeUser());
               return Promise.reject(err);
           }
       }
+      store.dispatch(removeUser());
       return Promise.reject(error);
   }
 );

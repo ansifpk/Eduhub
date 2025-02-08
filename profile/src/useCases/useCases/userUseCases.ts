@@ -130,7 +130,7 @@ export class UserUseCases implements IUserUseCase {
         return next(new ErrorHandler(400, "User Not Fount"));
       }
       if (user.isBlock) {
-        return next(new ErrorHandler(400, "Access Denied by Admin"));
+        return next(new ErrorHandler(403, "Access Denied by Admin"));
       }
       const cart = await this.userRepository.findCart(userId);
       if (cart) {
@@ -152,7 +152,7 @@ export class UserUseCases implements IUserUseCase {
         return next(new ErrorHandler(400, "User Not Fount"));
       }
       if (checkUser.isBlock) {
-        return next(new ErrorHandler(400, "Access Denied by admin"));
+        return next(new ErrorHandler(403, "Access Denied by admin"));
       }
 
       const course = await this.userRepository.findCourse(courseId);
@@ -214,7 +214,7 @@ export class UserUseCases implements IUserUseCase {
         return next(new ErrorHandler(400, "User Not Fount"));
       }
       if (checkUser.isBlock) {
-        return next(new ErrorHandler(400, "Access Denied by admin"));
+        return next(new ErrorHandler(403, "Access Denied by admin"));
       }
       const course = await this.userRepository.findCourse(courseId);
       if (!course) {

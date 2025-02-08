@@ -36,6 +36,6 @@ const adminusecase = new AdminUsecase(adminRepository,bcryptService,jwtTocken)
 const adminControleer = new AdminController(adminusecase)
 // instructor 
 const instructorRepository = new InstructorRepository(userModel)
-const instructorusecase = new InstructorUseCase(instructorRepository,cloudinary,jwtTocken)
+const instructorusecase = new InstructorUseCase(instructorRepository,cloudinary,jwtTocken,bcryptService)
 const instructorController = new InstructorController(instructorusecase)
 export {userRepository,userController,userusecase,adminControleer,adminusecase,adminRepository,instructorController,instructorusecase,instructorRepository}

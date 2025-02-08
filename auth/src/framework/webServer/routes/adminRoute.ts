@@ -23,6 +23,12 @@ export function AdminRoute(router:Router){
         router.patch("/editProfile",isAdmin,async(req,res,next)=>{
             adminControleer.editProfile(req,res,next)
         })
+        router.post("/refresh-token", async (req, res, next) => {
+            adminControleer.checkTockens(req, res, next);
+        });
+        router.post("/logout", async (req, res, next) => {
+            adminControleer.logout(req, res, next);
+          });
     } catch (error) {
         console.error(error)
     }

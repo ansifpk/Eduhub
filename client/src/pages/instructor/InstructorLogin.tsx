@@ -1,14 +1,13 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { userLogin } from "../../Api/user";
 import toast from "react-hot-toast";
 import std from '../../assets/home-page/teacher-home.jpg'
-import { setInstructor, setUser } from "@/redux/authSlice";
+import {  setUser } from "@/redux/authSlice";
 import { useDispatch } from "react-redux";
 import { CardDescription, CardHeader } from "@/Components/ui/card";
 import { Input } from "@/Components/ui/input";
 import InstructorAuthHead from "../../Components/instructor/instructorAuthHead";
-import { useSelector } from "react-redux";
+import { loginInstructor } from "@/Api/instructor";
 
 
 const InstructorLogin = () => {
@@ -19,14 +18,14 @@ const InstructorLogin = () => {
     
     const handleSubmit = async (e:React.FormEvent<HTMLFormElement>) =>{
       e.preventDefault();
-        const data = await userLogin({email,password})
-       
-       
-        if(data.user){
-             if(data.user.isInstructor){
+
+        const data = await loginInstructor(password,email)
+     
+        if(data.instructor){
+             if(data.instructor.isInstructor){
          
            
-              dispatch(setInstructor(data.user))
+              dispatch(setUser(data.instructor))
               navigate("/instructor")
               
               

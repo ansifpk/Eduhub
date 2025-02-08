@@ -44,10 +44,10 @@ export const isAdmin = async (req:Request,res:Response,next:NextFunction)=>{
       if(!req.cookies){
         return next(new ErrorHandler(401,"Tocken Expired"))
        } 
-      if(!req.cookies.accessToken){
+      if(!req.cookies.accessAdminToken){
         return next(new ErrorHandler(401,"Tocken Expired"))
        } 
-      const check = jwt.verify(req.cookies.accessToken,process.env.JWT_ACCESSKEY!) as User;
+      const check = jwt.verify(req.cookies.accessAdminToken,process.env.JWT_ACCESSKEY!) as User;
       if(!check){
         return next(new ErrorHandler(401,"Tocken Expired"))
       }
@@ -73,10 +73,10 @@ export const isInstructor = async (req:Request,res:Response,next:NextFunction)=>
           if(!req.cookies){
             return next(new ErrorHandler(401,"Tocken Expired"))
            } 
-          if(!req.cookies.accessToken){
+          if(!req.cookies.accessInstructorToken){
             return next(new ErrorHandler(401,"Tocken Expired"))
            } 
-          const check = jwt.verify(req.cookies.accessToken,process.env.JWT_ACCESSKEY!) as User;
+          const check = jwt.verify(req.cookies.accessInstructorToken,process.env.JWT_ACCESSKEY!) as User;
           if(!check){
             return next(new ErrorHandler(401,"Tocken Expired"))
           }

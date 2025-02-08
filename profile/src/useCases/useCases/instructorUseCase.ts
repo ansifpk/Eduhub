@@ -55,7 +55,7 @@ export class InstructorUseCase implements IInstructorUseCase{
              return next(new ErrorHandler(400, "user not registered"))
         }
          if(user.isBlock){
-            return next(new ErrorHandler(400,"user are blocked by admin"))
+            return next(new ErrorHandler(403,"user are blocked by admin"))
          }
          if(user.isInstructor){
             return next(new ErrorHandler(400,"you are already registered as instructor"))

@@ -21,6 +21,15 @@ export const adminLogin = async (loginData:loginType) =>{
     }
 }
 
+export const logoutAdmin = async () =>{
+    try {
+        const response = await ApiGatway.post(adminRoutes.logout);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
 export const category = async () =>{
     try {
         const response = await ApiGatway.get(adminRoutes.category);       
@@ -29,6 +38,16 @@ export const category = async () =>{
         return error 
     }
 }
+
+export const tockenAdmin = async () => {
+    try {
+        const response = await ApiGatway.post(adminRoutes.tocken);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
 export const addCategory = async (data:ICategory) =>{
     try {
         const response = await ApiGatway.post(adminRoutes.addCategory,data);       

@@ -9,4 +9,5 @@ export interface IadminUsecase{
     fetchInstructors():Promise<Iuser[]|void>
     blockUser(userId:string,next:NextFunction):Promise<Iuser|void>
     editProfile(instructorId:string,name:string,email:string,next:NextFunction):Promise<Iuser|void>
+    checkTockens(tocken:string,next:NextFunction):Promise <IToken|void>
 }

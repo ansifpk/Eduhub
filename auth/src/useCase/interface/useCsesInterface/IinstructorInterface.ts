@@ -12,10 +12,10 @@ export interface IInstructor{
     cv:string;
 }
 export interface IInstructorInterface{
-    instructorLogin(email:string,password:string,next:NextFunction):Promise <{user:Iuser,token:IToken}|void>
     instructorRegister(email:string,name:string,qualification:string,expirience:string,certificate:string,cv:string,next:NextFunction):Promise <{user:Iuser,token:IToken}|void>
     editProfile(instructorId:string,email:string,name:string,next:NextFunction):Promise <Iuser|void>
-    instructorLogin(email:string,password:string,next:NextFunction):Promise <{user:Iuser,token:IToken}|void>
+    instructorLogin(email:string,password:string,next:NextFunction):Promise <{instructor:Iuser,token:IToken}|void>
     fetchStudents():Promise <Iuser[]|void>
     editProfile(instructorId:string,email:string,name:string,next:NextFunction):Promise <Iuser|void>
+    checkTockens(tocken:string,next:NextFunction):Promise <IToken|void>
 }
