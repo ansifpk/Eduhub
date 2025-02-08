@@ -27,7 +27,7 @@ import {
   CardDescription,
   
 } from "@/Components/ui/card";
-import { Pagination, Stack } from "@mui/material";
+
 
 const Cart = () => {
   const [cart, setCart] = useState<ICart>();
@@ -69,7 +69,6 @@ const Cart = () => {
   const handleCart = async (courseId: string) => {
     const data = await removeFromcart(courseId, userId);
     if (data.success) {
-      console.log(data.cart);
       setCart(data.cart);
       setSubTotal(0);
       setTotal(0);
@@ -119,7 +118,6 @@ const Cart = () => {
   };
 
   const applyCoupon = async () => {
-    console.log("apply coupon", couponCode);
     const response = await couponDetailes(couponCode);
     if (response.success) {
       if (response.coupons.users.includes(userId)) {
@@ -136,7 +134,6 @@ const Cart = () => {
   };
 
   const removeCoupon = () => {
-    console.log("remove coupon");
     setSubTotal((prev) => prev + discount);
     setTotal((prev) => prev + discount);
     SetDiscount(0);

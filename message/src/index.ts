@@ -1,7 +1,6 @@
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import cookieSession from 'cookie-session';
 import dotenv from 'dotenv';
 import {createServer} from 'http';
 import { connectDB } from './framwork/webServer/config/mongoDB/db';
@@ -15,6 +14,7 @@ import { Socket,Server } from 'socket.io';
 import { UserProfileUpdatedConsumer } from './framwork/webServer/config/kafka/consumer/user-profile-updated-consumer';
 import { NotificationRoute } from './framwork/webServer/routers/notificationRouter';
 import { errMiddleware } from '@eduhublearning/common';
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
 const PORT = process.env.PORT
@@ -44,14 +44,15 @@ app.use(cors({credentials:true,
 
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
-app.use(
-  cookieSession({
-      signed: false, 
-      httpOnly: true, 
-      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax', 
-      secure: process.env.NODE_ENV === 'production', 
-    })
-)
+// app.use(
+//     cookieSession({
+//         signed: false, 
+//         httpOnly: true, 
+//         sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax', 
+//         secure: process.env.NODE_ENV === 'production', 
+//       })
+// )
+app.use(cookieParser())
 // Apply the separate routers to different paths
 app.use('/message/chat',chatRouter);
 app.use('/message/message',messageRouter);
@@ -134,3 +135,5 @@ const start = async () => {
     }
 }
 start()
+
+

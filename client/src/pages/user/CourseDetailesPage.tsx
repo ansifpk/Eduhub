@@ -4,7 +4,6 @@ import {
   editRating,
   getRatings,
   instructorSubscriptions,
-  logout,
   purchaseSubscription,
   stripePurchase,
   userPlans,
@@ -112,15 +111,6 @@ const CourseDetailesPage = () => {
           data.course.instructorId._id
         );
         setSubscriptions(subscriptions.subscriptions);
-      } else if (data.status == 403) {
-        const response = await logout();
-        if (response.succuss) {
-          localStorage.setItem("accessToken", "");
-          localStorage.setItem("refreshToken", "");
-          dispatch(removeUser());
-          toast.error(data.response.data.message);
-          return navigate("/users/login");
-        }
       }
       const ratings = await getRatings(courseId!);
       if (ratings.success) {
@@ -146,16 +136,7 @@ const CourseDetailesPage = () => {
         await stripe?.redirectToCheckout({
           sessionId: data.id,
         });
-      } else if (data.status == 403) {
-        const response = await logout();
-        if (response.succuss) {
-          localStorage.setItem("accessToken", "");
-          localStorage.setItem("refreshToken", "");
-          dispatch(removeUser());
-          toast.error(data.response.data.message);
-          return navigate("/users/login");
-        }
-      }
+      } 
     } catch (error) {
       console.error(error);
     }
@@ -176,16 +157,7 @@ const CourseDetailesPage = () => {
       } else {
         return toast.error(ratings.response.data.message);
       }
-    } else if (response.status == 403) {
-      const resp = await logout();
-      if (resp.succuss) {
-        localStorage.setItem("accessToken", "");
-        localStorage.setItem("refreshToken", "");
-        dispatch(removeUser());
-        toast.error(response.response.data.message);
-        return navigate("/users/login");
-      }
-    } else {
+    }else {
       return toast.error(response.response.data.message);
     }
   };
@@ -197,26 +169,8 @@ const CourseDetailesPage = () => {
       if (ratings.success) {
         setRatings(ratings.rating);
         toast.success("Review deleted successfully..");
-      } else if (response.status == 403) {
-        const resp = await logout();
-        if (resp.succuss) {
-          localStorage.setItem("accessToken", "");
-          localStorage.setItem("refreshToken", "");
-          dispatch(removeUser());
-          toast.error(response.response.data.message);
-          return navigate("/users/login");
-        }
-      } else {
+      }else {
         return toast.error(ratings.response.data.message);
-      }
-    } else if (response.status == 403) {
-      const resp = await logout();
-      if (resp.succuss) {
-        localStorage.setItem("accessToken", "");
-        localStorage.setItem("refreshToken", "");
-        dispatch(removeUser());
-        toast.error(response.response.data.message);
-        return navigate("/users/login");
       }
     } else {
       return toast.error(response.response.data.message);

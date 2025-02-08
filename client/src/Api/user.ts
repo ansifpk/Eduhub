@@ -66,6 +66,15 @@ export const editInstructorRating = async (ratingId:string,review:string,stars:n
         return error 
     }
 }
+export const tocken = async () => {
+    try {
+        const response = await ApiGatway.post(userRoutes.tocken);
+        return response.data
+    } catch (error) {
+        return error 
+    }
+}
+
 export const deleteInstructorRating = async (instructorId:string) => {
     try {
         const response = await ApiGatway.delete(`${userRoutes.instructorRating}/${instructorId}`);

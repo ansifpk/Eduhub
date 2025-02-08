@@ -30,7 +30,7 @@ const UserListCoupons: React.FC = () => {
     fetching();
   }, []);
 
-  console.log(coupons);
+
 
   return (
     <div className="w-full h-screen">

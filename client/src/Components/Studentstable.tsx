@@ -56,7 +56,7 @@ export function Studentstable() {
     };
     stude();
   }, [userId,search,sort]);
-  console.log(students, "students");
+ 
 
   return (
     <>

@@ -2,8 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { ErrorHandler } from "@eduhublearning/common";
-import { UserModel } from "../../db/mongoDB/models/userMode";
-
+import { userModel } from "../../db/mongodb/models/userModel";
 
 
 
@@ -24,7 +23,7 @@ export const isAuth = async (req:Request,res:Response,next:NextFunction)=>{
    } 
     const check = jwt.verify(req.cookies.accessToken,process.env.JWT_ACCESSKEY!) as User;
     if(check){
-      const user = await UserModel.findOne({_id:check.id});
+      const user = await userModel.findOne({_id:check.id});
       if(user){
          if(user.isBlock){
           return next(new ErrorHandler(403,"You are blocked by Admin"))
@@ -52,7 +51,7 @@ export const isAdmin = async (req:Request,res:Response,next:NextFunction)=>{
       if(!check){
         return next(new ErrorHandler(401,"Tocken Expired"))
       }
-      const user = await UserModel.findOne({_id:check.id});
+      const user = await userModel.findOne({_id:check.id});
         if(!user){
           return next(new ErrorHandler(401,"Tocken Expired"))
         }
@@ -81,7 +80,7 @@ export const isInstructor = async (req:Request,res:Response,next:NextFunction)=>
           if(!check){
             return next(new ErrorHandler(401,"Tocken Expired"))
           }
-          const user = await UserModel.findOne({_id:check.id});
+          const user = await userModel.findOne({_id:check.id});
             if(!user){
               return next(new ErrorHandler(401,"Tocken Expired"))
             }

@@ -67,7 +67,7 @@ const Otp = () => {
        }
      }
      } catch (error) {
-      console.log("err",error)
+      console.error(error)
      }
   }
 

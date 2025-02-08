@@ -14,6 +14,7 @@ import { CourseListedConsumer } from './framwork/webServer/config/kafka/consumer
 import { CourseUpdatedConsumer } from './framwork/webServer/config/kafka/consumer/course-updated-consumer';
 import { OrderCreatedCreateConsumer } from './framwork/webServer/config/kafka/consumer/order-created-consumer';
 import { errMiddleware } from '@eduhublearning/common';
+import cookieParser from 'cookie-parser';
 
 const app = express()
 app.set('trust proxy',true);
@@ -35,14 +36,15 @@ app.use(cors({credentials:true,
       ? 'https://www.eduhublearning.online'
       : ['http://client-srv:5173', 'http://localhost:5173']
     ,methods: ['GET', 'POST'],}));
-app.use(
-    cookieSession({
-        signed: false, 
-        httpOnly: true, 
-        sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax', 
-        secure: process.env.NODE_ENV === 'production', 
-    })
-)
+// app.use(
+//     cookieSession({
+//         signed: false, 
+//         httpOnly: true, 
+//         sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax', 
+//         secure: process.env.NODE_ENV === 'production', 
+//       })
+// )
+app.use(cookieParser())
 // Apply the separate routers to different paths
 app.use('/profile/user',userRouter);
 app.use('/profile/admin',adminRouter);

@@ -73,7 +73,6 @@ const AdminListInstructors = () => {
         const res = await instructors(search,sort,page);
         if (res) {
           setInstructors(res.instructors);
-          console.log(userId);
           socket?.emit(`blockUser`,userId)
           toast.success("Successfully Block Instructroctor");
           return;

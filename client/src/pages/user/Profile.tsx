@@ -7,7 +7,7 @@ import { User } from "@/@types/userType";
 import { Card } from "@/Components/ui/card";
 import { Button } from "@/Components/ui/button";
 import Footer from "@/Components/Footer/Footer";
-import { changeProfileImage, getUserDetailes, logout } from "@/Api/user";
+import { changeProfileImage, getUserDetailes } from "@/Api/user";
 import { removeUser } from "@/redux/authSlice";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
@@ -40,16 +40,7 @@ const Profile: React.FC = () => {
           id:response.userData.avatar.id,
           avatar_url:response.userData.avatar.avatar_url,
         })
-      } else if (response.status == 403) {
-        const resp = await logout();
-        if (resp.succuss) {
-          localStorage.setItem("accessToken", "");
-          localStorage.setItem("refreshToken", "");
-          dispatch(removeUser());
-          toast.error(response.response.data.message);
-          return navigate("/users/login");
-        }
-      } else {
+      }  else {
         return toast.error(response.response.data.message);
       }
     };

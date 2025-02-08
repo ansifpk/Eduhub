@@ -16,6 +16,7 @@ import { webHookRouter } from "./framwork/webServer/router/webHookRouter";
 import { UserProfileUpdatedConsumer } from "./framwork/webServer/config/kafka/consumer/user-profile-updated-consumer";
 import { AdminRouter } from "./framwork/webServer/router/adminRouter";
 import { errMiddleware } from "@eduhublearning/common";
+import cookieParser from "cookie-parser";
 
 async function start(){
     try {
@@ -68,14 +69,15 @@ app.use(cors({credentials:true,
       : ['http://client-srv:5173', 'http://localhost:5173']
     ,methods: ['GET', 'POST'],}));
 
-app.use(
-    cookieSession({
-        signed: false, 
-        httpOnly: true, 
-        sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax', 
-        secure: process.env.NODE_ENV === 'production', 
-      })
-)
+// app.use(
+//     cookieSession({
+//         signed: false, 
+//         httpOnly: true, 
+//         sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax', 
+//         secure: process.env.NODE_ENV === 'production', 
+//       })
+// )
+app.use(cookieParser())
 const webHook = express.Router();
 
 //! its placed here other wise the express.raw will not works for webHook 

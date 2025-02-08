@@ -15,6 +15,7 @@ import { EmailChangedConsumer } from './framWorks/webServer/config/kafka/consume
 import { CouponUsedConsumer } from './framWorks/webServer/config/kafka/consumer/coupon-used-consumer';
 import { UserProfileUpdatedConsumer } from './framWorks/webServer/config/kafka/consumer/user-profile-updated-consumer';
 import { errMiddleware } from '@eduhublearning/common';
+import cookieParser from 'cookie-parser';
 dotenv.config();
 
 async function start(){
@@ -61,14 +62,15 @@ app.use(cors({credentials:true,
       ? 'https://www.eduhublearning.online'
       : ['http://client-srv:5173', 'http://localhost:5173']
     ,methods: ['GET', 'POST'],}));
-app.use(
-    cookieSession({
-        signed: false, 
-        httpOnly: true, 
-        sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax', 
-        secure: process.env.NODE_ENV === 'production', 
-      })
-)
+// app.use(
+//     cookieSession({
+//         signed: false, 
+//         httpOnly: true, 
+//         sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax', 
+//         secure: process.env.NODE_ENV === 'production', 
+//       })
+// )
+app.use(cookieParser())
 const adminRoute = express.Router();
 const instructorRoute = express.Router();
 const userRouter = express.Router();

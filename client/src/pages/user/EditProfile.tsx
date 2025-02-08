@@ -8,7 +8,7 @@ import { Button } from "@/Components/ui/button";
 import { Label } from "@/Components/ui/label";
 import { Input } from "@/Components/ui/input";
 import Footer from "@/Components/Footer/Footer";
-import { editUser, getUserDetailes, logout } from "@/Api/user";
+import { editUser, getUserDetailes } from "@/Api/user";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { removeUser, profileUpdated } from "@/redux/authSlice";
@@ -55,15 +55,6 @@ const EditProfile: React.FC = () => {
           setAboutMe(response.userData.about);
         }
         setUser(response.userData);
-      } else if (response.status == 403) {
-        const resp = await logout();
-        if (resp.succuss) {
-          localStorage.setItem("accessToken", "");
-          localStorage.setItem("refreshToken", "");
-          dispatch(removeUser());
-          toast.error(response.response.data.message);
-          return navigate("/users/login");
-        }
       } else {
         return toast.error(response.response.data.message);
       }
@@ -72,7 +63,7 @@ const EditProfile: React.FC = () => {
   }, [user]);
 
   const handleUpdate = async () => {
-    console.log(title.length, name, aboutMe.length);
+
     if (title.length < 5 || title.length > 20) {
       setErrors((prev) => ({
         ...prev,
@@ -102,15 +93,6 @@ const EditProfile: React.FC = () => {
         toast.success("Profile updated succesffuly");
         dispatch(profileUpdated(response.user.name));
         return navigate(-1);
-      } else if (response.status == 403) {
-        const resp = await logout();
-        if (resp.succuss) {
-          localStorage.setItem("accessToken", "");
-          localStorage.setItem("refreshToken", "");
-          dispatch(removeUser());
-          toast.error(response.response.data.message);
-          return navigate("/users/login");
-        }
       } else {
         return toast.error(response.response.data.message);
       }

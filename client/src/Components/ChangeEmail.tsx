@@ -40,9 +40,9 @@ const ChangeEmail = () => {
     const handleEmail = async ()=>{
         try {
             setIsLoading(true)
-             console.log(userId,email);
+            
             const response = await veryfyNewEmail(userId,email);
-            console.log(response,"hu");
+
             if(response.success){
                 setIsLoading(false)
                 setPage(2)

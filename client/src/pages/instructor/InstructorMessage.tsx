@@ -30,10 +30,7 @@ import {
   PopoverTrigger,
 } from "@/Components/ui/popover";
 import MarkEmailUnreadIcon from "@mui/icons-material/MarkEmailUnread";
-import { logout } from "@/Api/user";
 import { useDispatch } from "react-redux";
-import { removeUser } from "@/redux/authSlice";
-import connectSocket from "@/config/socketConnect";
 import { ToggleButtonGroup } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
@@ -46,7 +43,6 @@ import {
 } from "@/Components/ui/dropdown-menu";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -132,7 +128,7 @@ export default function InstructorMessage() {
       );
       if (chatUser?._id !== message.senderId) return;
       setMessages((prev) => [...prev, message]);
-      console.log("chatUser", chatUser, "getMessage", message);
+     
     });
 
     socket.on("getMessageNotification", (res) => {
@@ -231,8 +227,6 @@ export default function InstructorMessage() {
       senderName: user,
     };
   });
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const markAsRead = async (sentId: string) => {
     const mdNotifications = notifications.filter(
@@ -242,11 +236,6 @@ export default function InstructorMessage() {
       const response = await markAsReadNotification(sentId, userId);
       if (response.success) {
         setNotifications(mdNotifications);
-      } else if (response.status == 403) {
-        await logout();
-        dispatch(removeUser());
-        toast.error("You are blocked by Admin");
-        return navigate("/instructor/login");
       } else {
         return toast.error(response.response.data.message);
       }

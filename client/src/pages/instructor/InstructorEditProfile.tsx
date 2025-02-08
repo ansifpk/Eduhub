@@ -1,10 +1,10 @@
-import { Card, CardContent, CardHeader } from '@/Components/ui/card';
+import { Card } from '@/Components/ui/card';
 import './InstructorHome.css';
 import InstructorAside from '../../Components/instructor/InstructorAside'
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/Components/ui/button';
-import React, { useEffect, useState } from 'react';
+import React, {  useState } from 'react';
 import { Label } from '@/Components/ui/label';
 import { Input } from '@/Components/ui/input';
 import { MoveLeftIcon } from 'lucide-react';

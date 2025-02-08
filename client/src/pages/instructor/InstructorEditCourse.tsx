@@ -6,7 +6,6 @@ import {
   CardDescription,
   CardHeader,
 } from "@/Components/ui/card";
-import InstructorAsside from "@/Components/instructor/InstructorAside";
 import { Label } from "@/Components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/Components/ui/radio-group";
 import {
@@ -38,7 +37,7 @@ import {
   getCourses,
 } from "@/Api/instructor";
 import { useSelector } from "react-redux";
-import { ChevronDown, ChevronUp, Loader2, Plus, Trash2 } from "lucide-react";
+import {  Plus, Trash2 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Separator } from "@/Components/ui/separator";
 import InstructorAside from "@/Components/instructor/InstructorAside";
@@ -87,10 +86,7 @@ const InstructorEditcourse: React.FC = () => {
     image_url: {} as File,
   });
 
-  const [video, setVideo] = useState<File[]>([]);
-  const [videoUrls, setVideoUrls] = useState<string[]>([]);
   const [previewImg, setPreviewImg] = useState("");
-  const [addVideo, setAddVideo] = useState<File[]>([]);
   const [isLoading, setLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -102,7 +98,7 @@ const InstructorEditcourse: React.FC = () => {
   });
 
   const [sections, setSections] = useState<ISection[]>([]);
-  // console.log(sections,'hhgg');
+  
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -174,8 +170,7 @@ const InstructorEditcourse: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    // e.preventDefault();
-    console.log("hwlloo giuys");
+    
 
     const formData = new FormData();
 
@@ -237,10 +232,10 @@ const InstructorEditcourse: React.FC = () => {
     formData.append("sections", JSON.stringify(sections));
     for (let i = 0; i < sections.length; i++) {
       for (let j = 0; j < sections[i].lectures.length; j++) {
-        console.log(sections[i].lectures[j].content.video_url, "ij");
+        
 
         if (typeof sections[i].lectures[j].content.video_url == "string") {
-          console.log("string snn");
+
 
           const fileVid: File = new File(
             [sections[i].lectures[j].content.video_url as string],
@@ -249,14 +244,14 @@ const InstructorEditcourse: React.FC = () => {
               type: "video/mp4",
             }
           );
-          // sections[i].lectures[j].content.video_url = fileVid
+          
           formData.append(
             "courseVideo",
             fileVid,
             `section${i}_lecture${j}_${fileVid.name}`
           );
         } else {
-          console.log("string alla");
+       
           let data = sections[i].lectures[j].content.video_url as File;
           formData.append(
             "courseVideo",
@@ -279,7 +274,7 @@ const InstructorEditcourse: React.FC = () => {
       toast.error(data.response.data.message);
     }
   };
-  // console.log(sections);
+  
   const updateSectionTitle = (sectionId: number, newTitle: string) => {
     setSections((prev) => {
       const update = [...prev];
@@ -310,9 +305,6 @@ const InstructorEditcourse: React.FC = () => {
   const deleteLecture = (sectionId: number, lectureId: number) => {
     setSections((prev) => {
       const update = [...prev];
-      let a = update[sectionId].lectures.splice(lectureId, 1);
-      console.log(update[sectionId].lectures, "ki");
-
       return update;
     });
   };
@@ -339,7 +331,7 @@ const InstructorEditcourse: React.FC = () => {
     if (sections.length == 1) {
       return toast.error("Please upload atleast one section for yur course");
     }
-    setSections(sections.filter((section, index) => index !== sectionId));
+    setSections(sections.filter((_section, index) => index !== sectionId));
   };
 
   const addSection = () => {
@@ -368,7 +360,7 @@ const InstructorEditcourse: React.FC = () => {
       },
     ]);
   };
-  console.log(course, "new");
+
 
   return (
     <div className="bg-black ">
@@ -652,7 +644,7 @@ const InstructorEditcourse: React.FC = () => {
                                         <button
                                           type="button"
                                           onClick={() => addLecture(index)}
-                                          className="mt-2 bg-white text-black flex items-center gap-2 text-blue-600 hover:bg-blue-50 p-2 rounded"
+                                          className="mt-2 bg-white text-black flex items-center gap-2 hover:bg-blue-50 p-2 rounded"
                                         >
                                           <Plus size={20} /> Add Lecture
                                         </button>

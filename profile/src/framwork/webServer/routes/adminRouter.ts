@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { adminController } from "./injections/injections";
-import { isAdmin } from "../middlewares/authCheck";
+import { isAdmin } from "../middlewares/auth";
+
+
 
 export function AdminRouter(router:Router){
 

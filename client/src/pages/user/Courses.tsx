@@ -38,7 +38,7 @@ const Courses = () => {
         setPlans(plan.plans);
       } 
       const cart = await userCart(userId);
-      // console.log(cart,"carts")
+     
       if (cart.success) {
         setCart(cart.cart);
       } 

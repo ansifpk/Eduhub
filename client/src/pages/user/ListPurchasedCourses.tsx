@@ -2,7 +2,7 @@ import { ICategory } from "@/@types/categoryTpe";
 import { ICourse } from "@/@types/courseType";
 import { User } from "@/@types/userType";
 import { getCategoryies } from "@/Api/instructor";
-import { logout, puchasedCourses } from "@/Api/user";
+import {  puchasedCourses } from "@/Api/user";
 import Footer from "@/Components/Footer/Footer";
 import Header from "@/Components/Header/Header";
 import ProfileNavbar from "@/Components/Header/ProfileNavbar";
@@ -42,18 +42,9 @@ const ListPurchasedCourses: React.FC = () => {
     const courses = async () => {
       const data = await puchasedCourses(userId);
       if (data.success) {
-        console.log(data);
+      
         
         setCourses(data.course);
-      }else if(data.status == 403){
-        const resp = await logout();
-        if (resp.succuss) {
-          localStorage.setItem("accessToken", "");
-          localStorage.setItem("refreshToken", "");
-          dispatch(removeUser());
-          toast.error(data.response.data.message);
-          return navigate("/users/login");
-        }
       }else{
         return toast.error(data.response.data.message);
       }

@@ -5,8 +5,9 @@ import dotenv from 'dotenv'
 import { connectDB } from './framework/webServer/config/db';
 import { CategoryRoute } from './framework/webServer/routes/categoryRoute';
 import { InstructorRouter } from './framework/webServer/routes/instructorRoute';
-import cookieSession from 'cookie-session';
 import { errMiddleware } from '@eduhublearning/common';
+import cookieParser from 'cookie-parser';
+
 dotenv.config()
 connectDB()
 const app = express();
@@ -25,14 +26,15 @@ app.use(cors({credentials:true,
     ? 'https://www.eduhublearning.online'
     : ['http://client-srv:5173', 'http://localhost:5173']
   ,methods: ['GET', 'POST'],}));
-app.use(
-  cookieSession({
-      signed: false, 
-      httpOnly: true, 
-      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax', 
-      secure: process.env.NODE_ENV === 'production', 
-    })
-)
+// app.use(
+//     cookieSession({
+//         signed: false, 
+//         httpOnly: true, 
+//         sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax', 
+//         secure: process.env.NODE_ENV === 'production', 
+//       })
+// )
+app.use(cookieParser())
 
 app.use("/category/admin",categoryRouter)
 app.use("/category/instructor",instructorRoute)

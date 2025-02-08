@@ -22,8 +22,7 @@ export class UserRepository implements IUserRepository{
         const notifications = await this.notificationModels.updateMany({
           recipientId:userId,
           senderId:senterId,
-          isRead:true,
-        });
+        },{$set:{isRead:true}});
         if(notifications) return notifications;
       } catch (error) {
         console.error(error)

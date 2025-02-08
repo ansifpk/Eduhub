@@ -20,7 +20,6 @@ export class UserUseCase implements IuserUseCase {
     private sentEmail: ISentEmail,
     private jwtToken: IJwt
   ) {}
-  
 
   async googleLogin(
     email: string,
@@ -198,7 +197,7 @@ export class UserUseCase implements IuserUseCase {
       const token: any = await this.jwtToken.createAccessAndRefreashToken(
         user._id as string
       );
-
+  
       return { token, user };
     } catch (err) {
       console.error(err);
@@ -292,7 +291,7 @@ export class UserUseCase implements IuserUseCase {
           return updatedUser;
         }
       
-        // return user;
+       
       } else {
         return next(new ErrorHandler(400, "User Not Found"));
       }
@@ -355,5 +354,21 @@ export class UserUseCase implements IuserUseCase {
      console.error(error)
     }
    }
+
+  async checkTockens(tocken:string,next: NextFunction): Promise<IToken | void> {
+    try {
+      const decoded = await this.jwtToken.verifyRefreshJwt(tocken)
+      console.log(decoded,"///iuu");
+      if(decoded){
+       const tockens =  await this.jwtToken.createAccessAndRefreashToken(decoded.id);
+       if(tockens){
+        return tockens
+       }
+      }
+      
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
 }

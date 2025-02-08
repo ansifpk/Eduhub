@@ -49,8 +49,7 @@ export default function SalesReports() {
           };
           fetching();
         }, [report, year, month]);
-console.log(orders);
-console.log(report, year, month);
+
 
 
     const handleReport = async () => {

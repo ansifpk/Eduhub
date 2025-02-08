@@ -112,7 +112,6 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
   const [thumbnail, setThumbnail] = useState("");
   const [topics, setTopics] = useState([]);
   const [price, setPrice] = useState(0);
-  const [video, setVideo] = useState<File[]>([]);
   const [image, setImage] = useState({
     _id:"" as string,
     image_url:"" as string | File
@@ -151,14 +150,13 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
     };
     topic();
     if (Object.keys(form.formState.errors).length > 0) {
-      console.log(form.formState.errors);
-      
+     
       toast.error("Please provide all the details");
     }
   }, [category, categories, form.formState.errors]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    // console.log(sections,"hi");
+    
 
     // setLoading(true);
     const response = await createCourse({
@@ -174,7 +172,7 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
       instructorId,
     });
     if (response.success) {
-      console.log(response.course);
+  
       
       toast.success("Course Created SuccessFully..");
       setLoading(false);
@@ -276,7 +274,7 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
     field: string,
     value: string|File
   ) => {
-    // console.log(field,value);
+ 
     
     setSections(
       sections.map((section) => {
@@ -644,7 +642,7 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
                                             onClick={() =>
                                               addLecture(section.id)
                                             }
-                                            className="mt-2 bg-white text-black flex items-center gap-2 text-blue-600 hover:bg-blue-50 p-2 rounded"
+                                            className="mt-2 bg-white text-black flex items-center gap-2 hover:bg-blue-50 p-2 rounded"
                                           >
                                             <Plus size={20} /> Add Lecture
                                           </button>

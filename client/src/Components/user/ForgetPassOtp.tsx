@@ -62,7 +62,7 @@ const ForgetPassOtp:React.FC<ForgetPassOtpProps> = ({sucessCheckOTP,email}) => {
       const resentOTP = async() => {
 
         const response:any = await resentOtp(email.toString())
-        console.log(response)
+       
         if(response.success){
           return  toast.success("Resnt OTP Sent to Your Mail")
         }else{

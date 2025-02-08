@@ -83,7 +83,7 @@ const Settings = () => {
 
       if (errors.success) {
         const response = await resetPassword(userId, password, newPassword);
-        console.log(response);
+      
         if (response.success) {
           setPassword("");
           setNewPassword("");

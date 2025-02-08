@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { adminController } from "./injectionss/injections";
-import { isAdmin } from "../midllewares/isAuth";
+import { isAdmin } from "../midllewares/auth";
+
 
 export function AdminRouter(router:Router){
      router.get("/getCourses",isAdmin,(req,res,next)=>{

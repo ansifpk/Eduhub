@@ -114,7 +114,7 @@ const InstructorProfile = () => {
   }
 
   const handleEditRatings = async (ratingId: string) => {
-    console.log("edit", ratingId);
+    
     const response = await editInstructorRating(ratingId, review, stars);
 
     if (response.success) {
@@ -134,8 +134,7 @@ const InstructorProfile = () => {
   };
 
   const handleDeleteRating = async (ratingId: string) => {
-    console.log("delete", ratingId);
-
+  
     const response = await deleteInstructorRating(ratingId);
 
     if (response.success) {
@@ -181,7 +180,6 @@ const InstructorProfile = () => {
 
   let wr =
     "Hi everyone, I’m Ansif, a student on EduHub, and I’m thrilled to be here! This platform has been incredibly helpful in my learning journey. The variety of courses available, taught by expert instructors, has allowed me to dive deep into new areas and build valuable skills. What I love most about EduHub is the supportive community of like-minded learners who share the same passion for growth. With flexible learning options and expert guidance, EduHub makes it easy for anyone to improve their skills. I’m excited to continue learning and growing here, and I hope you are too!";
-  console.log(plans, "planse", subscriptions, "subscriptions");
   const subscribe = async (subscriptionId: string) => {
    
     const response = await purchaseSubscription(subscriptionId, userId);

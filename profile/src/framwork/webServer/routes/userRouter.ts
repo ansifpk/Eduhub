@@ -1,7 +1,9 @@
 import { Router } from "express";
 import { userController } from "./injections/injections";
-import { isAuth } from "../middlewares/authCheck";
+
 import upload from '../middlewares/multer'
+import { isAuth } from "../middlewares/auth";
+
 export function UserRouter(router: Router) {
   router.get("/profile", isAuth, async (req, res, next) => {
     try {

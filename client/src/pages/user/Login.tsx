@@ -39,7 +39,7 @@ const Login:React.FC = () => {
     const login = useGoogleLogin({
       onSuccess: async credentialResponse =>{
         try {
-          const res = await axios.get("https://www.googleapis.com/oauth2/v3/userinfo",{
+          const res = await axios.get(import.meta.env.VITE_GOOGLE_LOGIN_URL,{
             headers:{
               Authorization:`Bearer ${credentialResponse.access_token}`,
             },
@@ -48,8 +48,6 @@ const Login:React.FC = () => {
         const response = await googleLogin({email:res.data.email,name:res.data.name,password:res.data.sub})
        
         if(response.success){
-          localStorage.setItem("accessToken",response.user.token.accessToken)
-          localStorage.setItem("refreshToken",response.user.token.refreshToken)
           dispatch(setUser(response.user.user))
           toast.success("Login Successfully")
           return navigate("/")
@@ -72,10 +70,7 @@ const Login:React.FC = () => {
     const handleSubmit = async (e:React.FormEvent<HTMLFormElement>) =>{
        e.preventDefault();
       const data = await userLogin({email,password})
-      // const {data} = await axios.post("https://34.55.36.217/auth/user/login",{email,password})
       if(data.user){
-        localStorage.setItem("accessToken",data.token.accessToken)
-        localStorage.setItem("refreshToken",data.token.refreshToken)
          dispatch(setUser(data.user))
         return navigate("/")
       }else{

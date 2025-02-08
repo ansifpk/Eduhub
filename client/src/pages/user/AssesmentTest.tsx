@@ -36,7 +36,7 @@ const AssesmentTest = () => {
   useEffect(() => {
     const fetch = async () => {
       const response = await getTests(testId!);
-      console.log(response.test);
+     
 
       if (response.success) {
         if (

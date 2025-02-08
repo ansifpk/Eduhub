@@ -37,6 +37,7 @@ import {
   SelectValue,
 } from "@/Components/ui/select";
 import { Pagination, Stack } from "@mui/material";
+import { useSocket } from "@/context/socketContext";
 
 const AdminListStudents = () => {
   const [student, setStudents] = useState([]);
@@ -44,7 +45,8 @@ const AdminListStudents = () => {
   const [sort, setSort] = useState("");
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(0);
-
+  const socket = useSocket()
+  
   useEffect(() => {
     const fetchAllStudents = async () => {
       const response = await students(search,sort,page);
@@ -62,6 +64,7 @@ const AdminListStudents = () => {
         const res = await students(search,sort,page);
         setStudents(res.students);
         setTotalPage(res.pages);
+        socket?.emit(`blockUser`,userId)
         toast.success("Successfully Block User");
         return;
       } else {

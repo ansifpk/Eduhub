@@ -16,5 +16,6 @@ export interface IuserUseCase{
     editUser(userId:string,name:string,email:string,next:NextFunction):Promise <Iuser|void>
     verifyNewEmail(userId:string,email:string,next:NextFunction):Promise <string|void>
     changeEmail(userId:string,email:string,otp:string,next:NextFunction):Promise <Iuser|void>
+    checkTockens(tocken:string,next:NextFunction):Promise <IToken|void>
 
 }

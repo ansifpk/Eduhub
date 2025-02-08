@@ -1,28 +1,21 @@
-import { IUser } from "@/@types/chatUser";
 import { ICourse } from "@/@types/courseType";
-import { IOrder } from "@/@types/orderTypes";
 import { IRating } from "@/@types/ratingType";
 import { User } from "@/@types/userType";
-import { getCourses, getOrders, getRecentRatings, getTop5Courses, getTop5RatedCourses } from "@/Api/instructor";
-import { logout } from "@/Api/user";
+import { getRecentRatings, getTop5Courses, getTop5RatedCourses } from "@/Api/instructor";
 import  Chart  from "@/Components/instructor/Chart";
 import InstructorAside from "@/Components/instructor/InstructorAside";
-import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
 import {
   Card,
   CardContent,
-  
   CardHeader,
   
 } from "@/Components/ui/card";
 import { Separator } from "@/Components/ui/separator";
-import { removeUser } from "@/redux/authSlice";
 import { Rating } from "@mui/material";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+
 export default function InstructorHome() {
 
   const labels: { [index: string]: string } = {
@@ -37,23 +30,17 @@ export default function InstructorHome() {
     4.5: "Excellent",
     5: "Excellent+",
   };
-  const [orders,setOrders] = useState<IOrder[]>([])
+
   const [courses, setCourses] = useState<ICourse[]>([]);
   const [topCourses, setTopCourses] = useState<ICourse[]>([]);
   const [ratings, setRatings] = useState<IRating[]>([]);
   const userId = useSelector((state: User) => state.id);
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
+
   useEffect(() => {
     const fetching = async () => {
       const response = await getTop5Courses(userId);
       if(response.success){
         setCourses(response.courses)
-      }else if(response.status == 403){
-         await logout();
-         dispatch(removeUser());
-         toast.error('You are blocked by Admin');
-         return navigate('/instructor/login');
       }else{
          return toast.error(response.response.data.message);
       }

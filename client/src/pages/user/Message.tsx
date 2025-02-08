@@ -4,7 +4,6 @@ import {
   getCurrentChat,
   getMessages,
   getNotifications,
-  logout,
   markAsReadNotification,
   sendMessage,
   sendNotification,
@@ -114,8 +113,6 @@ const Message = () => {
       );
          if(chatUser?._id !== message.senderId) return;
          setMessages((prev)=>[...prev,message])
-         console.log("chatUser",chatUser,"getMessage",message);
-         
         //  if (isChatOpen?._id == res.senderId) {
         //   setNotifications((prev) => [{ ...res, isRead: true }, ...prev]);
         // } else {
@@ -145,7 +142,7 @@ const Message = () => {
   useEffect(() => {
     const getUserChats = async () => {
       const response = await userChats(userId);
-      console.log(response, "caht respos");
+
 
       if (response.success) {
         setChats(response.chats);
@@ -172,16 +169,7 @@ const Message = () => {
     }
   }, [chatId]);
 
-  // console.log("c", chats);
-  // console.log("current chat", currentChat);
-  // console.log("current chat User", currentChat);
-  // console.log("userId", userId);
-  // console.log("chatId", chatId);
-  // console.log("messages", messages);
-  // console.log("new messages", newMessage);
-  // console.log("socket", socket);
-  // console.log("onlineUsers", onlineUsers);
-  // console.log("notifications", notifications);
+ 
   let  user = ''
   const modification = notifications.map((notify:INotification)=>{
      chats.map((chat:IChat)=>{
@@ -205,11 +193,6 @@ const Message = () => {
         const response = await markAsReadNotification(sentId,userId);
         if(response.success){
           setNotifications(mdNotifications)
-        }else if(response.status == 403){
-          await logout();
-          dispatch(removeUser());
-          toast.error("You are blocked by Admin");
-          return navigate('/instructor/login') 
         }else{
           return toast.error(response.response.data.message);
         }

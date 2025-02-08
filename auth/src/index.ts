@@ -9,6 +9,7 @@ import { InstructorRouter } from './framework/webServer/routes/instructorRouter'
 import kafkaWrapper from './framework/webServer/config/kafka/kafkaWrapper';
 import { InstructorAprovedConsumer } from './framework/webServer/config/kafka/consumer/instructor-approved-consumer';
 import cookieSession from 'cookie-session';
+import cookieParser from 'cookie-parser';
 import { EmailChangedConsumer } from './framework/webServer/config/kafka/consumer/email-changed-consumer';
 import { UserProfileUpdatedConsumer } from './framework/webServer/config/kafka/consumer/user-profile-updated-consumer';
 import { errMiddleware } from '@eduhublearning/common';
@@ -26,14 +27,15 @@ app.use(cors({credentials:true,
     ,methods: ['GET', 'POST'],}));
 app.use(json())
 app.use(urlencoded({ extended: true }))
-app.use(
-    cookieSession({
-        signed: false, 
-        httpOnly: true, 
-        sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax', 
-        secure: process.env.NODE_ENV === 'production', 
-      })
-)
+// app.use(
+//     cookieSession({
+//         signed: false, 
+//         httpOnly: true, 
+//         sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax', 
+//         secure: process.env.NODE_ENV === 'production', 
+//       })
+// )
+app.use(cookieParser())
 
 // Separate routers for user and admin
 const userRouter = express.Router()
@@ -72,13 +74,10 @@ const io = new Server(httpServer,{
             userId,
             socketId:socket.id
         })
-        console.log("new connection in auth srv",socket.id,onlineUsers,'onlineUsers');
         socket.on("blockUser",(userId)=>{
             const user = onlineUsers.find((user)=>user.userId == userId);
-            console.log("blockUser",userId,onlineUsers,'onlineUsers',onlineUsers[0].userId==userId,"user,",user);
             if(user){
-                console.log("blockUser",user.userId,'user.socketId5',user.socketId);
-                io.to(user.socketId).emit(`block:${userId}`,userId)
+                io.to(user.socketId).emit(`block:${userId}`)
             }else{
                 console.log("illa user in online users");
                 

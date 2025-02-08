@@ -2,7 +2,7 @@ import { Response, Request, NextFunction } from "express";
 import { IuserUseCase } from "../useCase/interface/useCsesInterface/IuserUseCase";
 import kafkaWrapper from "../framework/webServer/config/kafka/kafkaWrapper";
 import { Producer } from "kafkajs";
-import { catchError, ErrorHandler,UserCreatedPublisher } from "@eduhublearning/common";
+import { ErrorHandler,UserCreatedPublisher } from "@eduhublearning/common";
 
 export class UserController {
   private userUseCase: IuserUseCase;
@@ -12,13 +12,13 @@ export class UserController {
   async signUp(req: Request, res: Response, next: NextFunction) {
     try {
       const token = await this.userUseCase.userSignUp(req.body, next);
-      
-       
       if (token) {
-        req.session = {
-          verificationToken:token
-      }
-        
+        res.cookie('verificationToken',token,{
+          httpOnly:true,
+          secure:process.env.NODE_ENV !== 'development',
+          sameSite:'strict',
+          maxAge:30 * 24 * 60 * 60 * 1000
+         });
         res.status(200).json({
           succes: true,
           message: "verification otp has been send to the Email",
@@ -26,44 +26,38 @@ export class UserController {
         });
       }
     } catch (err) {
-      console.log("user sign up err", err);
-      catchError(err, next);
+      console.error(err);
     }
   }
   async resentOtp(req: Request, res: Response, next: NextFunction) {
     try {
       const data = await this.userUseCase.sentOtp(req.body.email, next);
-
       res.status(200).send({
         success: true,
         data: data,
       });
     } catch (err) {
-      console.log("resnt otp err", err);
-      catchError(err, next);
+      console.error(err);;
     }
   }
   async createUser(req: Request, res: Response, next: NextFunction) {
     try {
       if(!req.session){
-        return next(new ErrorHandler(400,"Invalid token"))
+        return next(new ErrorHandler(401,"Invalid token"))
       }
       if(!req.session.verificationToken){
-        return next(new ErrorHandler(400,"Invalid token"))
+        return next(new ErrorHandler(401,"Invalid token"))
       }
       const token = req.session.verificationToken
-      
-
       if (typeof token !== "string") {
-        return next(new ErrorHandler(400,"Invalid token"))
+        return next(new ErrorHandler(401,"Invalid token"))
       }
       const user = await this.userUseCase.insertUser(
         token as string,
         req.body.otp,
         next
       );
-   
-      
+ 
       if (user) {
        await new UserCreatedPublisher(kafkaWrapper.producer as Producer).produce({
          _id: user.user._id! as string,
@@ -74,21 +68,29 @@ export class UserController {
          createdAt: user.user.createdAt!,
        })
   
-      res.cookie('verificationToken','',{
+       res.cookie('verificationToken','',{
         httpOnly:true,
         expires:new Date(0)
        });
-       req.session = {};
-       
-       req.session = {
-        accessToken:user.tokens.accessToken,
-        refreshToken:user.tokens.refreshToken
-       }
+
+       res.cookie('accessToken',user.tokens.accessToken,{
+        httpOnly:true,
+        secure:process.env.NODE_ENV !== 'development',
+        sameSite:'strict',
+        maxAge:30 * 24 * 60 * 60 * 1000
+       });
+
+      res.cookie('refreshToken',user.tokens.refreshToken,{
+        httpOnly:true,
+        secure:process.env.NODE_ENV !== 'development',
+        sameSite:'strict',
+        maxAge:30 * 24 * 60 * 60 * 1000
+     });
       
       res.send({ succusse: true, user: user });
       }
     } catch (err) {
-      catchError(err, next);
+      console.error(err);
     }
   }
   async userLogin(req: Request, res: Response, next: NextFunction) {
@@ -97,21 +99,25 @@ export class UserController {
         req.body.email,
         req.body.password,
         next
-      );
-
-      
-      if (userAndTokens) {
-      
-        req.session = {
-          accessToken:userAndTokens.token.accessToken,
-          refreshToken:userAndTokens.token.refreshToken
-         }
-
+      ); 
+      if (userAndTokens) { 
+        res.cookie('accessToken',userAndTokens.token.accessToken,{
+          httpOnly:true,
+          secure:process.env.NODE_ENV !== 'development',
+          sameSite:'strict',
+          maxAge:30 * 24 * 60 * 60 * 1000
+       });
+        res.cookie('refreshToken',userAndTokens.token.refreshToken,{
+          httpOnly:true,
+          secure:process.env.NODE_ENV !== 'development',
+          sameSite:'strict',
+          maxAge:30 * 24 * 60 * 60 * 1000
+       });
+        
         res.send(userAndTokens);
-
       }
     } catch (err) {
-      catchError(err, next);
+      console.error(err);
     }
   }
   async googleLogin(req: Request, res: Response, next: NextFunction) {
@@ -123,15 +129,23 @@ export class UserController {
         next
       );
       if (userAndToken) {
-       
-        req.session = {
-          accessToken:userAndToken.token.accessToken,
-          refreshToken:userAndToken.token.refreshToken
-         }
+        res.cookie('accessToken',userAndToken.token.accessToken,{
+          httpOnly:true,
+          secure:process.env.NODE_ENV !== 'development',
+          sameSite:'strict',
+          maxAge: 15 * 60 * 1000
+       });
+        res.cookie('refreshToken',userAndToken.token.refreshToken,{
+          httpOnly:true,
+          secure:process.env.NODE_ENV !== 'development',
+          sameSite:'strict',
+          maxAge:30 * 24 * 60 * 60 * 1000
+       });
+
           res.send({ success: true, user: userAndToken });
       }
     } catch (err) {
-      catchError(err, next);
+      console.error(err);
     }
   }
   async forgetPassword(req: Request, res: Response, next: NextFunction) {
@@ -141,7 +155,7 @@ export class UserController {
        return res.send({ sucess: true });
      }
    } catch (error) {
-    catchError(error, next);
+    console.error(error);
    }
   }
   async resetPassword(req: Request, res: Response, next: NextFunction) {
@@ -153,7 +167,7 @@ export class UserController {
        return res.send({ success: true });
      }
    } catch (error) {
-    catchError(error, next);
+    console.error(error);
    }
   }
   async verifyOtp(req: Request, res: Response, next: NextFunction) {
@@ -165,11 +179,10 @@ export class UserController {
         next
       );
       if (data) {
-       
         return res.send({ sucess: true });
       }
     } catch (error) {
-      catchError(error, next);
+      console.error(error);
     }
 
   }
@@ -185,13 +198,12 @@ export class UserController {
         return res.send({ sucess: true });
       }
     } catch (error) {
-      catchError(error, next);
+      console.error(error);
     }
 
   }
 
   async editUser(req: Request, res: Response, next: NextFunction) {
-   
    try {
     const { userId, name, email } = req.body;
     const user = await this.userUseCase.editUser(userId, name, email, next);
@@ -199,18 +211,24 @@ export class UserController {
       return res.send({ success: true, user: user });
     }
    } catch (error) {
-    catchError(error, next);
+    console.error(error);
    }
 
   }
 
   async logout(req: Request, res: Response, next: NextFunction) {
     try {      
-      req.session = null;
+      res.cookie('accessToken','',{
+        httpOnly:true,
+        expires:new Date(0)
+       });
+      res.cookie('refreshToken','',{
+        httpOnly:true,
+        expires:new Date(0)
+       });
       res.send({ succuss: true, message: "logout success" });
-    } catch (error: any) {
-      console.log("userlogout err", error);
-      catchError(error, next);
+    } catch (error) {
+      console.error(error);
     }
   }
 
@@ -222,9 +240,8 @@ export class UserController {
       if(otp){
         return res.send({success:true,otp:otp});
       }
-    } catch (error: any) {
-      console.log("userlogout err", error);
-      catchError(error, next);
+    } catch (error) {
+      console.error(error);
     }
   }
 
@@ -236,9 +253,22 @@ export class UserController {
       if(user){
         return res.send({success:true,user:user});
       }
-    } catch (error: any) {
-      console.log("userlogout err", error);
-      catchError(error, next);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+
+  async checkTockens(req: Request, res: Response, next: NextFunction) {
+    try {      
+      const tocken = req.cookies.refreshToken;
+
+      const tockens  = await this.userUseCase.checkTockens(tocken,next)
+      if(tockens){
+        return res.send({success:true,tockens});
+      }
+    } catch (error) {
+      console.error(error);
     }
   }
 

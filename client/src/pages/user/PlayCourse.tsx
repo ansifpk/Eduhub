@@ -137,7 +137,6 @@ const PlayCourse: React.FC = () => {
     setNavbar(navbar);
   };
 
-  console.log("reports", reports);
 
   const labels: { [index: string]: string } = {
     0.5: "Useless",

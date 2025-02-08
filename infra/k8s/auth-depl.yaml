@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: auth
-          image: pkansif/eduhub-auth
+          image: pkansif/eduhub-auth:latest
           imagePullPolicy: Always
           env:
            - name: "image"

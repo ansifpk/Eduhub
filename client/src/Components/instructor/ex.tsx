@@ -22,7 +22,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import toast from "react-hot-toast";
-import { createCourse, uploadVideo } from "@/Api/instructor";
+import { createCourse } from "@/Api/instructor";
 import { useSelector } from "react-redux";
 import {
   ChevronDown,
@@ -38,7 +38,6 @@ import InstructorAside from "./InstructorAside";
 import { Card, CardContent, CardDescription, CardHeader } from "../ui/card";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Label } from "../ui/label";
-import axios from "axios";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 
 
@@ -650,7 +649,7 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
                                             onClick={() =>
                                               addLecture(section.id)
                                             }
-                                            className="mt-2 bg-white text-black flex items-center gap-2 text-blue-600 hover:bg-blue-50 p-2 rounded"
+                                            className="mt-2 bg-white text-black flex items-center gap-2  hover:bg-blue-50 p-2 rounded"
                                           >
                                             <Plus size={20} /> Add Lecture
                                           </button>

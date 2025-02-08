@@ -25,7 +25,7 @@ const Plans = () => {
       }
       fetching();
     },[])
-    console.log(plans);
+    
     const navigate = useNavigate();
 
     const goToDetailes = async(plan:IUserSubscribe)=>{

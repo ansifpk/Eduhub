@@ -2,7 +2,8 @@ import { NextFunction, Request, Response, Router } from "express";
 import dotenv from 'dotenv'
 import upload from '../../webServer/midllewares/multer';
 import { instructorController } from "./injectionss/injections";
-import { isAuth, isInstructor } from "../midllewares/isAuth";
+import { isInstructor } from "../midllewares/auth";
+
 dotenv.config();
 
 

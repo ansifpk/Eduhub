@@ -22,8 +22,6 @@ const ProfileNavbar = () => {
   const handleLogout = async () => {
     const data = await logout();
     if (data.succuss) {
-      localStorage.setItem("accessToken", "");
-      localStorage.setItem("refreshToken", "");
       dispatch(removeUser());
       toast.success("logout");
       return navigate("/users/login");

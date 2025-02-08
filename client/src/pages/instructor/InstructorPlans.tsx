@@ -1,16 +1,14 @@
 import { IInstructorSubscribe } from '@/@types/instructorSubscribe'
-import { ISubcription } from '@/@types/subscriptionType'
 import { User } from '@/@types/userType'
 import { instructorPlans, viewDetailes,  } from '@/Api/instructor'
 import InstructorAside from '@/Components/instructor/InstructorAside'
 import { Avatar, AvatarFallback, AvatarImage } from '@/Components/ui/avatar'
 import { Button } from '@/Components/ui/button'
 import { Separator } from '@/Components/ui/separator'
-import { Value } from '@radix-ui/react-select'
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useSelector } from 'react-redux'
-import { Navigate, useNavigate } from 'react-router-dom'
+import {  useNavigate } from 'react-router-dom'
 
 const InstructorPlans = () => {
   const [plans,setPlans] = useState<IInstructorSubscribe[]>([]);
@@ -19,7 +17,7 @@ const navigate = useNavigate()
   useEffect(()=>{
     const fetching = async () => {
        const response = await instructorPlans(instructorId)
-       console.log(response);
+      
        
        if(response.success){
         setPlans(response.plans);

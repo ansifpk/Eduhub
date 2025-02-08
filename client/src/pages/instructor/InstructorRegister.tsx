@@ -8,13 +8,11 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import {  useNavigate } from 'react-router-dom';
 import InstructorAuthHead from '@/Components/instructor/instructorAuthHead';
 import { Button } from '@/Components/ui/button';
-import { currentUser, register } from '@/Api/instructor';
-import { setInstructor } from '@/redux/authSlice';
+import {  register } from '@/Api/instructor';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { User } from '@/@types/userType';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/Components/ui/alert-dialog';
-import { ArrowRight, Loader2 } from 'lucide-react';
+import {  Loader2 } from 'lucide-react';
 const InstructorRegister = () => {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
@@ -36,13 +34,11 @@ const InstructorRegister = () => {
   const [loading, setLoading] = useState(false);
   const [page,setPage] = useState(1);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const userId = useSelector((state:User)=>state.id)
   const userName = useSelector((state:User)=>state.name)
   const userEmail = useSelector((state:User)=>state.email)
 
-  // console.log(email.length,next);
 
   useEffect( () =>{
     if(userId){

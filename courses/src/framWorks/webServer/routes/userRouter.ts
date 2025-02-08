@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { userController } from "./injectionss/injections";
-import { isAuth } from "../midllewares/isAuth";
+import { isAuth } from "../midllewares/auth";
+
+
 
 export function UserRouter(router: Router) {
   router.get(

@@ -1,5 +1,4 @@
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
-
 import {
   Card,
   CardContent,
@@ -15,34 +14,11 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/Components/ui/chart"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/Components/ui/select"
 import { useSelector } from "react-redux"
 import { User } from "@/@types/userType"
 import { useEffect, useState } from "react"
-import { getOrders, top5Courses } from "@/Api/admin"
+import { getOrders } from "@/Api/admin"
 
-
-const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-  
 
 const chartConfig = {
   visitors: {
@@ -60,11 +36,10 @@ interface data {
 const AdminChart = () => {
     const [orders,setOrders] = useState<data[]>([])
     const userId = useSelector((state:User)=>state.id);
-    const [timeRange, setTimeRange] = useState('Yearly')
+   
     useEffect(()=>{
       const fetching = async() => {
         const res = await getOrders()
-        console.log(res,"res");
         if (res.success) {
           setOrders(res.orders);
         }
