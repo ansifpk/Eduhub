@@ -4,7 +4,7 @@ import Stripe from "stripe";
 import dotenv from "dotenv";
 import { ICourse } from "../entities/course";
 import { ICoupon } from "../entities/coupon";
-import { ErrorHandler } from "@eduhublearning/common";
+import { ErrorHandler, StatusCodes } from "@eduhublearning/common";
 dotenv.config();
 
 const stripe = new Stripe(process.env.STRIPE_SECRET!, {
@@ -74,7 +74,7 @@ export class UserController {
     let offer = 0;
     if(couponCode){
        coupon = await this.userUseCase.findCouponByCode(couponCode, next) as ICoupon;
-       if (!coupon) return next(new ErrorHandler(400, "Invalid coupon code"));
+       if (!coupon) return next(new ErrorHandler(StatusCodes.NOT_FOUND, "Invalid coupon code"));
       
       offer = coupon.offer
       await this.userUseCase.addUserToCoupon(coupon._id,userId,next)

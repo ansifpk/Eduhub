@@ -3,7 +3,7 @@ import { Iuser } from "../../entities/user";
 import { IJwt, IToken } from "../interface/serviceInterface/IJwt";
 import {  IInstructorInterface } from "../interface/useCsesInterface/IinstructorInterface";
 import { IInstructorRepository } from "../interface/repositoryInterface/IInstructorInterface";
-import { ErrorHandler } from "@eduhublearning/common";
+import { ErrorHandler, StatusCodes } from "@eduhublearning/common";
 import { Icloudinary } from "../../framework/services/cloudinary";
 import { IHashPassword } from "../interface/serviceInterface/IHashPassword";
 
@@ -27,21 +27,16 @@ export class InstructorUseCase implements IInstructorInterface{
                 const token = await this.jwt.createAccessAndRefreashToken(user._id!) as IToken
                 if(token){
                     if(user.isBlock){
-                        return next(new ErrorHandler(403,"You are blocked by Admin"))
+                        return next(new ErrorHandler(StatusCodes.FORBIDDEN,"You are blocked by Admin"))
                     }
                    
                     return {user,token}
                 }
             }else{
-                return next(new ErrorHandler(400,"Not fount user"))
+                return next(new ErrorHandler(StatusCodes.NOT_FOUND,"Not fount user"))
             }
            
             
-       }else{
-    //     const user = await this.instructorRepository.create({email,name,qualification,expirience,certificate,cv}) as Iuser
-    //     const token = await this.jwt.createAccessAndRefreashToken(email) as IToken
-    //     return {user,token}
-
        }
     }
    
@@ -55,14 +50,14 @@ export class InstructorUseCase implements IInstructorInterface{
                  const updatedUser = await this.instructorRepository.update(instructorId,email,name)
                  return updatedUser;
               }else{
-                return next(new ErrorHandler(400,"Email Already Registered"))
+                return next(new ErrorHandler(StatusCodes.CONFLICT,"Email Already Registered"))
               }
           }else{
             const updatedUser = await this.instructorRepository.update(instructorId,email,name)
             return updatedUser;
         }
        }else{
-        return next(new ErrorHandler(400,"User Not Fount"))
+        return next(new ErrorHandler(StatusCodes.NOT_FOUND,"User Not Fount"))
        }
     }
 
@@ -76,13 +71,13 @@ export class InstructorUseCase implements IInstructorInterface{
                 const token = await this.jwt.createAccessAndRefreashToken(instructor._id!) as IToken
                 return {instructor,token}
               }else{
-                return next(new ErrorHandler(400,"You Are Not Instructor"))
+                return next(new ErrorHandler(StatusCodes.BAD_REQUEST,"You Are Not Instructor"))
               }
            }else{
-            return next(new ErrorHandler(400,"Incorrect Password"))
+            return next(new ErrorHandler(StatusCodes.BAD_REQUEST,"Incorrect Password"))
            }
        }else{
-        return next(new ErrorHandler(400,"Instructor Not Found"))
+        return next(new ErrorHandler(StatusCodes.BAD_REQUEST,"Instructor Not Found"))
        }
      } catch (error) {
         console.error(error)

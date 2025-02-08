@@ -7,7 +7,7 @@ import { IOtpGenerator } from "../interface/serviceInterface/IOtpagenerator";
 import { IOtpRepository } from "../interface/repositoryInterface/IOtpRepository";
 import { ISentEmail } from "../interface/serviceInterface/ISentEmail";
 import { IJwt, IToken } from "../interface/serviceInterface/IJwt";
-import { ErrorHandler } from "@eduhublearning/common";
+import { ErrorHandler, StatusCodes } from "@eduhublearning/common";
 import { catchError } from "@eduhublearning/common";
 
 
@@ -33,7 +33,7 @@ export class UserUseCase implements IuserUseCase {
       const user = await this.userRepository.create({ email, name, password });
       if (user) {
         if (user.isBlock) {
-          return next(new ErrorHandler(403, "You re Blocked By Admin"));
+          return next(new ErrorHandler(StatusCodes.FORBIDDEN, "You re Blocked By Admin"));
         } else {
           const token: any = await this.jwtToken.createAccessAndRefreashToken(
             user._id as string
@@ -45,7 +45,7 @@ export class UserUseCase implements IuserUseCase {
       }
     } else {
       if (checkUser.isBlock) {
-        return next(new ErrorHandler(403, "You re Blocked By Admin"));
+        return next(new ErrorHandler(StatusCodes.FORBIDDEN, "You re Blocked By Admin"));
       } else {
         const token: any = await this.jwtToken.createAccessAndRefreashToken(
           checkUser._id as string
@@ -79,7 +79,7 @@ export class UserUseCase implements IuserUseCase {
             return updatedUser;
           }
         } else {
-          return next(new ErrorHandler(400, "User ALready Fount"));
+          return next(new ErrorHandler(StatusCodes.CONFLICT, "User ALready Fount"));
         }
       } else {
         const updatedUser = await this.userRepository.update(
@@ -92,14 +92,14 @@ export class UserUseCase implements IuserUseCase {
         }
       }
     } else {
-      return next(new ErrorHandler(400, "User Not Fount"));
+      return next(new ErrorHandler(StatusCodes.NOT_FOUND, "User Not Fount"));
     }
   }
   async userSignUp(user: Iuser, next: NextFunction): Promise<string | void> {
     try {
       let checkuser = await this.userRepository.findByEmail(user.email);
       if (checkuser) {
-        return next(new ErrorHandler(400, "Email Already Registerd"));
+        return next(new ErrorHandler(StatusCodes.CONFLICT, "Email Already Registerd"));
       }
 
       // hashing password
@@ -134,7 +134,7 @@ export class UserUseCase implements IuserUseCase {
         await this.otpRepository.createOtp(email, otp);
         return data;
       } else {
-        return next(new ErrorHandler(400, "Somthing went Wrong"));
+        return next(new ErrorHandler(StatusCodes.BAD_REQUEST, "Somthing went Wrong"));
       }
     } catch (error) {
       catchError(error, next);
@@ -150,11 +150,11 @@ export class UserUseCase implements IuserUseCase {
       const decoded = (await this.jwtToken.verifyJwt(token)) as Iuser;
       const result = await this.otpRepository.findOtp(decoded.email);
       if (!result) {
-        return next(new ErrorHandler(400, "OTP Expired"));
+        return next(new ErrorHandler(StatusCodes.BAD_REQUEST, "OTP Expired"));
       }
 
       if (Number(result.otp) !== Number(otp)) {
-        return next(new ErrorHandler(400, "invalid otp"));
+        return next(new ErrorHandler(StatusCodes.BAD_REQUEST, "invalid otp"));
       }
 
       const user = (await this.userRepository.create(decoded)) as Iuser;
@@ -179,10 +179,10 @@ export class UserUseCase implements IuserUseCase {
       const user = await this.userRepository.findByEmail(email);
 
       if (!user) {
-        return next(new ErrorHandler(400, "Email Not Registerd"));
+        return next(new ErrorHandler(StatusCodes.NOT_FOUND, "Email Not Registerd"));
       }
       if (user.isBlock == true) {
-        return next(new ErrorHandler(403, "You are Blocked"));
+        return next(new ErrorHandler(StatusCodes.FORBIDDEN, "You are Blocked"));
       }
 
       const checkPassword = await this.encrypt.comparePassword(
@@ -191,7 +191,7 @@ export class UserUseCase implements IuserUseCase {
       );
 
       if (!checkPassword) {
-        return next(new ErrorHandler(400, "incorrect password"));
+        return next(new ErrorHandler(StatusCodes.BAD_REQUEST, "incorrect password"));
       }
 
       const token: any = await this.jwtToken.createAccessAndRefreashToken(
@@ -217,7 +217,7 @@ export class UserUseCase implements IuserUseCase {
         );
         return checkuser;
       } else {
-        return next(new ErrorHandler(400, "Email Not Registerd"));
+        return next(new ErrorHandler(StatusCodes.NOT_FOUND, "Email Not Registerd"));
       }
     } catch (err) {
       console.error(err);
@@ -235,10 +235,10 @@ export class UserUseCase implements IuserUseCase {
         if (user.otp == otp) {
           return user;
         } else {
-          return next(new ErrorHandler(400, "Invalid OTP"));
+          return next(new ErrorHandler(StatusCodes.BAD_REQUEST, "Invalid OTP"));
         }
       } else {
-        return next(new ErrorHandler(400, "OTP Expired"));
+        return next(new ErrorHandler(StatusCodes.BAD_REQUEST, "OTP Expired"));
       }
     } catch (err) {
       console.error(err);
@@ -258,7 +258,7 @@ export class UserUseCase implements IuserUseCase {
         await this.otpRepository.deleteOtp(email);
         return user;
       } else {
-        return next(new ErrorHandler(400, "User Not Found"));
+        return next(new ErrorHandler(StatusCodes.NOT_FOUND, "User Not Found"));
       }
     } catch (err) {
       console.error(err);
@@ -279,7 +279,7 @@ export class UserUseCase implements IuserUseCase {
           user.password
         );
         if(!checkPassword){
-          return next(new ErrorHandler(400, "Current password is not matching"));
+          return next(new ErrorHandler(StatusCodes.BAD_REQUEST, "Current password is not matching"));
         }
         
         const Password = await this.encrypt.createHash(newPassword);
@@ -293,7 +293,7 @@ export class UserUseCase implements IuserUseCase {
       
        
       } else {
-        return next(new ErrorHandler(400, "User Not Found"));
+        return next(new ErrorHandler(StatusCodes.NOT_FOUND, "User Not Found"));
       }
     } catch (err) {
       console.error(err);
@@ -306,15 +306,15 @@ export class UserUseCase implements IuserUseCase {
        const checkuser = await this.userRepository.findById(userId);
        const checkEmail = await this.userRepository.findByEmail(email);
        if(!checkuser){
-        return next(new ErrorHandler(400, "User Not Found"));
+        return next(new ErrorHandler(StatusCodes.NOT_FOUND, "User Not Found"));
        }
        
        if(checkuser.email == email){
-        return next(new ErrorHandler(400, "You cannot set the old email again"));
+        return next(new ErrorHandler(StatusCodes.BAD_REQUEST, "You cannot set the old email again"));
        }
 
        if(checkEmail){
-        return next(new ErrorHandler(400, "Email Already exists"));
+        return next(new ErrorHandler(StatusCodes.CONFLICT, "Email Already exists"));
        }
 
        const OTP = await this.otpGenerate.createOtp();
@@ -335,14 +335,14 @@ export class UserUseCase implements IuserUseCase {
    
        const checkUser = await this.userRepository.findById(userId);
        if(!checkUser){
-        return next(new ErrorHandler(400, "User Not Found"));
+        return next(new ErrorHandler(StatusCodes.NOT_FOUND, "User Not Found"));
        }
        const findOTP=  await this.otpRepository.findOtp(checkUser.email);
        if(!findOTP){
-        return next(new ErrorHandler(400, "OTP expired"));
+        return next(new ErrorHandler(StatusCodes.BAD_REQUEST, "OTP expired"));
        }
        if(findOTP.otp !== otp ){
-        return next(new ErrorHandler(400, "Invalid OTP"));
+        return next(new ErrorHandler(StatusCodes.BAD_REQUEST, "Invalid OTP"));
        }
       
        const user  = await this.userRepository.changeEmail(userId,email);

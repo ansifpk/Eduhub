@@ -265,8 +265,13 @@ const AdminMessage = () => {
             <ScrollArea className="h-[450px] w-[330px] rounded-md border bg-white p-2">
               {chats.length > 0 ? (
                 chats.filter((value:IChat)=>value.role == "userToInstructor")
-                .map((chat: IChat, index:number) => (
-                  <div key={index}>
+                .map((chat: IChat, index:number) => {
+                  const chatMember = chat.members.find((member) => member._id !== userId);
+                        const unreadCount = notifications.filter(
+                          (notif) => !notif.isRead && notif.senderId === chatMember?._id
+                        ).length;
+                  return (
+                    <div key={index}>
                     <div className="flex space-x-3 m-2">
                       <Avatar className={`border-3 ${ onlineUsers.some((value) => value.userId == chat.members.find((member) => member._id !== userId)?._id)&&"border-3 border-success-400"}  cursor-pointer`}>
                         <AvatarImage
@@ -291,9 +296,13 @@ const AdminMessage = () => {
                         </span>
                       </div>
                     </div>
-                    <Separator />
+                    {unreadCount>0&&<div className="bg-success text-xs px-2 text-white rounded-full">
+                           {unreadCount}
+                        </div>}
+                   
                   </div>
-                ))
+                  )
+                })
               ) : (
                 <div className="flex items-center justify-center">
                   <p>No chats started...</p>

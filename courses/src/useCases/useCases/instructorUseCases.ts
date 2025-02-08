@@ -7,7 +7,7 @@ import { ICloudinary } from "../interfaces/service/Icloudinery";
 import { ISection } from "../../entities/section";
 import { ISentEmail } from "../interfaces/service/ISentMail";
 import { ITest } from "../../entities/test";
-import { ErrorHandler } from "@eduhublearning/common";
+import { ErrorHandler, StatusCodes } from "@eduhublearning/common";
 interface FileData {
   fieldname: string;
   originalname: string;
@@ -47,7 +47,7 @@ export class InstructorUseCase implements IInstructorUseCase {
     try {
          const checkTest = await this.instructorRepository.findTest(testId);
          if(!checkTest){
-          return next(new ErrorHandler(400,"Test not Found"));
+          return next(new ErrorHandler(StatusCodes.NOT_FOUND,"Test not Found"));
          }
         
          const updatedTest = await this.instructorRepository.editTest(testId,testData) 
@@ -64,7 +64,7 @@ export class InstructorUseCase implements IInstructorUseCase {
      
       const course = await this.instructorRepository.findById(courseId);
       if(!course){
-        return next(new ErrorHandler(400,"Course not Found"));
+        return next(new ErrorHandler(StatusCodes.NOT_FOUND,"Course not Found"));
       }
       const test = await this.instructorRepository.creatTest(testData)
       if(test){
@@ -259,7 +259,7 @@ export class InstructorUseCase implements IInstructorUseCase {
         const checkCourse = await this.instructorRepository.findById(courseData.bodyData._id!)
         courseData.bodyData.image = JSON.parse(courseData.bodyData.image as unknown as string)
         if(!checkCourse){
-          return next(new ErrorHandler(400,"Course not Found"))
+          return next(new ErrorHandler(StatusCodes.NOT_FOUND,"Course not Found"))
         }
 
          const files = courseData.fileData as | { [fieldname: string]: Express.Multer.File[] } | undefined;
@@ -301,7 +301,7 @@ export class InstructorUseCase implements IInstructorUseCase {
     const course = await this.instructorRepository.findById(courseId);
    
     if(!course){
-     return next(new ErrorHandler(400,"Course Not fount"))
+     return next(new ErrorHandler(StatusCodes.NOT_FOUND,"Course Not fount"))
     }
     
     const listedCourse = await this.instructorRepository.list(courseId,course.isListed)

@@ -2,7 +2,7 @@ import { Response, Request, NextFunction } from "express";
 import { IuserUseCase } from "../useCase/interface/useCsesInterface/IuserUseCase";
 import kafkaWrapper from "../framework/webServer/config/kafka/kafkaWrapper";
 import { Producer } from "kafkajs";
-import { ErrorHandler,UserCreatedPublisher } from "@eduhublearning/common";
+import { ErrorHandler,StatusCodes,UserCreatedPublisher } from "@eduhublearning/common";
 
 export class UserController {
   private userUseCase: IuserUseCase;
@@ -43,14 +43,14 @@ export class UserController {
   async createUser(req: Request, res: Response, next: NextFunction) {
     try {
       if(!req.session){
-        return next(new ErrorHandler(401,"Invalid token"))
+        return next(new ErrorHandler(StatusCodes.UNAUTHORIZED,"Invalid token"))
       }
       if(!req.session.verificationToken){
-        return next(new ErrorHandler(401,"Invalid token"))
+        return next(new ErrorHandler(StatusCodes.UNAUTHORIZED,"Invalid token"))
       }
       const token = req.session.verificationToken
       if (typeof token !== "string") {
-        return next(new ErrorHandler(401,"Invalid token"))
+        return next(new ErrorHandler(StatusCodes.UNAUTHORIZED,"Invalid token"))
       }
       const user = await this.userUseCase.insertUser(
         token as string,
@@ -262,7 +262,7 @@ export class UserController {
   async checkTockens(req: Request, res: Response, next: NextFunction) {
     try {      
       if(!req.cookies.refreshToken){
-        return next(new ErrorHandler(401,"Invalid token")) 
+        return next(new ErrorHandler(StatusCodes.UNAUTHORIZED,"Invalid token")) 
       }
       const tocken = req.cookies.refreshToken;
 

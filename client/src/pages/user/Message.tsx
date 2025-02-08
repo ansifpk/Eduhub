@@ -281,8 +281,14 @@ const Message = () => {
               {chats.length > 0 ? (
                 chats
                   .filter((value: IChat) => value.role == "userToInstructor")
-                  .map((chat: IChat, index: number) => (
-                    <div key={index}>
+                  .map((chat: IChat, index: number) => {
+                    const chatMember = chat.members.find((member) => member._id !== userId);
+                    const unreadCount = notifications.filter(
+                      (notif) => !notif.isRead && notif.senderId === chatMember?._id
+                    ).length;
+                     console.log("hi",unreadCount,chatMember)
+                    return (
+                      <div key={index} className="flex justify-between items-center">
                       <div className="flex space-x-3 m-2">
                         <Avatar
                           className={`border-3 ${
@@ -323,9 +329,12 @@ const Message = () => {
                           </span>
                         </div>
                       </div>
-                      <Separator />
-                    </div>
-                  ))
+                        {unreadCount>0&&<div className="bg-success text-xs px-2 text-white rounded-full">
+                           {unreadCount}
+                        </div>}
+                      </div>
+                    )
+                  })
               ) : (
                 <div className="flex items-center justify-center">
                   <p>No chats started...</p>

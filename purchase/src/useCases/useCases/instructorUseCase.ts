@@ -7,7 +7,7 @@ import { ISubcription } from "../../entities/subscription";
 import Stripe from "stripe";
 import { IInstructorSubscribe } from "../../entities/instructorSubscribe";
 import exceljs from 'exceljs';
-import { ErrorHandler } from "@eduhublearning/common";
+import { ErrorHandler, StatusCodes } from "@eduhublearning/common";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET!, {
     apiVersion: "2025-01-27.acacia",
@@ -23,7 +23,7 @@ export class InstructorUseCase implements IInstructorUseCase{
      
       const user = await this.instructorRepository.userFindById(userId)
       if(!user){
-        return next(new ErrorHandler(400,"user Not found")) 
+        return next(new ErrorHandler(StatusCodes.NOT_FOUND,"user Not found")) 
     }
       const orders = await this.instructorRepository.instrutcorOrders(userId);
       if(orders){
@@ -39,7 +39,7 @@ export class InstructorUseCase implements IInstructorUseCase{
     try {
       const Subscription = await this.instructorRepository.userSubscriptionFindById(subscriptionId);
       if(!Subscription){
-          return next(new ErrorHandler(400,"Subscription Not found")) 
+          return next(new ErrorHandler(StatusCodes.NOT_FOUND,"Subscription Not found")) 
       }
       const subscriptions = await stripe.subscriptions.list();
       
@@ -77,7 +77,7 @@ export class InstructorUseCase implements IInstructorUseCase{
     try {
       const user = await this.instructorRepository.userFindById(userId);
       if(!user){
-          return next(new ErrorHandler(400,"User Not found")) 
+          return next(new ErrorHandler(StatusCodes.NOT_FOUND,"User Not found")) 
       }
       const subscriptions  = await this.instructorRepository.findInstructorSubscriptions(userId)
       if(subscriptions){
@@ -92,7 +92,7 @@ export class InstructorUseCase implements IInstructorUseCase{
       try {
         const user= await this.instructorRepository.userFindById(userId);
         if(!user){
-            return next(new ErrorHandler(400,"User Not found")) 
+            return next(new ErrorHandler(StatusCodes.NOT_FOUND,"User Not found")) 
         }
         const plans  = await this.instructorRepository.findPlans(userId)
         if(plans){
@@ -124,16 +124,16 @@ export class InstructorUseCase implements IInstructorUseCase{
            
             const user = await this.instructorRepository.userFindById(userId);
             if(!user){
-                return next(new ErrorHandler(400,"User Not found")) 
+                return next(new ErrorHandler(StatusCodes.NOT_FOUND,"User Not found")) 
             }
             
             const subscription = await this.instructorRepository.subscriptionFindByPlan(method)
             if(!subscription){
-                return next(new ErrorHandler(400,"Subsription Not found"))
+                return next(new ErrorHandler(StatusCodes.NOT_FOUND,"Subsription Not found"))
             }
             const checkSUbscribe = await this.instructorRepository.findPlan(userId);
             if(checkSUbscribe){
-              return next(new ErrorHandler(400,"You already have one plan"))
+              return next(new ErrorHandler(StatusCodes.CONFLICT,"You already have one plan"))
             }
           
              let customer = await stripe.customers.create({
@@ -202,11 +202,11 @@ export class InstructorUseCase implements IInstructorUseCase{
       
              const user = await this.instructorRepository.userFindById(userId) 
              if(!user){
-              return next(new ErrorHandler(400,"User Not found"))
+              return next(new ErrorHandler(StatusCodes.NOT_FOUND,"User Not found"))
              }
              const checkSUbscription = await this.instructorRepository.userSubscriptionFindByPlan(plan);
              if(checkSUbscription){
-              return next(new ErrorHandler(400,"This Plan Already Exists"))
+              return next(new ErrorHandler(StatusCodes.CONFLICT,"This Plan Already Exists"))
              }
          
           const product = await stripe.products.create({
@@ -235,7 +235,7 @@ export class InstructorUseCase implements IInstructorUseCase{
         
         const checkUser = await this.instructorRepository.userFindById(userId)
         if(!checkUser){
-          return next(new ErrorHandler(400,"User Not found"))
+          return next(new ErrorHandler(StatusCodes.NOT_FOUND,"User Not found"))
         }
       
        const orders = await this.instructorRepository.instrutcorOrders(userId);
@@ -278,7 +278,7 @@ export class InstructorUseCase implements IInstructorUseCase{
           try {
             const checkUser = await this.instructorRepository.userFindById(userId)
             if(!checkUser){
-              return next(new ErrorHandler(400,"User Not found"))
+              return next(new ErrorHandler(StatusCodes.NOT_FOUND,"User Not found"))
             }
           
             const orders = await this.instructorRepository.instrutcorOrders(userId);

@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "../ui/button";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { removeUser } from "@/redux/authSlice";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
@@ -10,13 +10,14 @@ import { logoutInstructor, setLastSeen } from "@/Api/instructor";
 
 export default function InstructorAside() {
   const dispatch = useDispatch();
-  
+  const userId = useSelector((state:User)=>state.id)
+  const navigate  = useNavigate()
   const handleLogout = async () => {
-    const userId = useSelector((state:User)=>state.id)
     const response = await logoutInstructor()
     if (response.succuss) {
       dispatch(removeUser());
       // await setLastSeen(userId)
+      navigate("/instructor/login")
       return toast.success("Instructor Logout Sucessfully");
     }
   };

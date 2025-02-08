@@ -8,7 +8,7 @@ import { IRating } from "../../entities/ratings";
 import { ICoupon } from "../../entities/coupon";
 import { ITest } from "../../entities/test";
 import { IReport } from "../../entities/report";
-import { ErrorHandler } from "@eduhublearning/common";
+import { ErrorHandler, StatusCodes } from "@eduhublearning/common";
 
 
 export class UserUseCase implements IUserUseCase{
@@ -36,12 +36,12 @@ export class UserUseCase implements IUserUseCase{
       
       const course = await this.userRepository.findById(courseId);
       if(!course){
-         return next(new ErrorHandler(400,"Course not found"));
+         return next(new ErrorHandler(StatusCodes.NOT_FOUND,"Course not found"));
       }
 
       const checkReport = await this.userRepository.checkReport(userId,content,courseId)
       if(checkReport){
-         return next(new ErrorHandler(400,"Already report this video"));
+         return next(new ErrorHandler(StatusCodes.CONFLICT,"Already report this video"));
       }
       const createReport = await this.userRepository.createReport(userId,report,content,courseId)
        if(createReport){
@@ -55,7 +55,7 @@ export class UserUseCase implements IUserUseCase{
   async getTest(testId: string,next: NextFunction): Promise<ITest | void> {
        try {
          const test = await this.userRepository.findTest(testId);
-         if(!test)  return next(new ErrorHandler(400,"Test Not found"))
+         if(!test)  return next(new ErrorHandler(StatusCodes.NOT_FOUND,"Test Not found"))
        
          if(test){
          return test
@@ -67,7 +67,7 @@ export class UserUseCase implements IUserUseCase{
   async submitTest(userId:string,testId: string,mark:number,next: NextFunction): Promise<ITest | void> {
        try {
          const test = await this.userRepository.findTest(testId);
-         if(!test)  return next(new ErrorHandler(400,"Test Not found"))
+         if(!test)  return next(new ErrorHandler(StatusCodes.NOT_FOUND,"Test Not found"))
           
             const updatedTest = await this.userRepository.submitTest(userId,testId,mark);
             if(updatedTest){
@@ -85,7 +85,7 @@ export class UserUseCase implements IUserUseCase{
    async addUserToCoupon(couponId: string, userId: string, next: NextFunction): Promise<ICoupon | void> {
       try {
          const checkCoupon = await this.userRepository.findCoupon(couponId);
-         if(!checkCoupon)  return next(new ErrorHandler(400,"Coupon Not found"))
+         if(!checkCoupon)  return next(new ErrorHandler(StatusCodes.NOT_FOUND,"Coupon Not found"))
          const coupons  = await this.userRepository.useCoupon(couponId,userId);
       if(coupons){
        return coupons
@@ -127,7 +127,7 @@ export class UserUseCase implements IUserUseCase{
 
          //! coupon not fund error
 
-         return next(new ErrorHandler(400,"Invalid coupon code"))
+         return next(new ErrorHandler(StatusCodes.NOT_FOUND,"Invalid coupon code"))
       }
    }
 
@@ -137,7 +137,7 @@ export class UserUseCase implements IUserUseCase{
      try {
         const checkRating  = await this.userRepository.findRating(ratingId);
         if(!checkRating){
-         return next(new ErrorHandler(400,"rating not found"));
+         return next(new ErrorHandler(StatusCodes.NOT_FOUND,"rating not found"));
         }
 
         const rating = await this.userRepository.deleteRating(ratingId);
@@ -154,7 +154,7 @@ export class UserUseCase implements IUserUseCase{
       try {
           const rating = await this.userRepository.findRating(ratingId);
           if(!rating){
-            return next(new ErrorHandler(400,"Rating not Found"))
+            return next(new ErrorHandler(StatusCodes.NOT_FOUND,"Rating not Found"))
           }
           const updatedRating = await this.userRepository.editRating(ratingId,review,stars);
           if(updatedRating){
@@ -169,7 +169,7 @@ export class UserUseCase implements IUserUseCase{
       try {
          const course = await this.userRepository.findById(courseId);
          if(!course){
-            return next(new ErrorHandler(400,"Course not found"));
+            return next(new ErrorHandler(StatusCodes.NOT_FOUND,"Course not found"));
          }
          const ratings = await this.userRepository.ratings(courseId);
          if(ratings){
@@ -185,11 +185,11 @@ export class UserUseCase implements IUserUseCase{
       try {
             const course = await this.userRepository.findById(courseId);
             if(!course){
-               return next(new ErrorHandler(400,"Course not Found"))
+               return next(new ErrorHandler(StatusCodes.NOT_FOUND,"Course not Found"))
             }
             const checkRatings = await this.userRepository.checkRating(courseId,userId);
             if(checkRatings){
-              return next(new ErrorHandler(400,"ALready Rated this course."))
+              return next(new ErrorHandler(StatusCodes.CONFLICT,"ALready Rated this course."))
             }
             const rating =  await this.userRepository.createRating(courseId,userId,review,stars,)
             if(rating){

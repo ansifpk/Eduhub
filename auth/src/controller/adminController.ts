@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { IadminUsecase } from "../useCase/interface/useCsesInterface/IadminUseCase";
 import kafkaWrapper from "../framework/webServer/config/kafka/kafkaWrapper";
 import { Producer } from "kafkajs";
-import { catchError,ErrorHandler,UserBlcokedPublisher } from "@eduhublearning/common";
+import { catchError,ErrorHandler,StatusCodes,UserBlcokedPublisher } from "@eduhublearning/common";
 
 
 export class AdminController{
@@ -101,7 +101,7 @@ export class AdminController{
     async checkTockens(req: Request, res: Response, next: NextFunction) {
         try {      
           if(!req.cookies.refreshAdminToken){
-            return next(new ErrorHandler(401,"Invalid token")) 
+            return next(new ErrorHandler(StatusCodes.UNAUTHORIZED,"Invalid token")) 
           }
           const tocken = req.cookies.refreshAdminToken;
     

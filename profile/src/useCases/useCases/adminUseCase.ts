@@ -2,7 +2,7 @@ import { NextFunction } from "express";
 import { Iuser } from "../../entities/user";
 import { IAdminRepository } from "../interfaces/repositoryInterfaces/IadminRepository";
 import { IAdminUseCase } from "../interfaces/useCasesInterfaces/IadminUseCase";
-import { ErrorHandler } from "@eduhublearning/common";
+import { ErrorHandler, StatusCodes } from "@eduhublearning/common";
 
 
 export class AdminUseCase implements IAdminUseCase{
@@ -60,7 +60,7 @@ export class AdminUseCase implements IAdminUseCase{
        try {
         const user = await this.adminRepository.findByEmail(email)
         if(!user){
-           return next(new ErrorHandler(400,"User Not Fount"));
+           return next(new ErrorHandler(StatusCodes.NOT_FOUND,"User Not Fount"));
         }
          let updatedUser 
         if(status == "Rejected"){

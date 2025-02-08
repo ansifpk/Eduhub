@@ -2,7 +2,7 @@ import { NextFunction } from "express";
 import { ICategory } from "../../entities/category";
 import { ICategoryRepository } from "../interfaces/repositoryInterfaces/IcategoryRepository";
 import { ICategoryUserCase } from "../interfaces/useCasesInterfaces/IcategoryUseCases";
-import { ErrorHandler } from "@eduhublearning/common";
+import { ErrorHandler, StatusCodes } from "@eduhublearning/common";
 
 
 export class CategoryUseCase implements ICategoryUserCase {
@@ -32,7 +32,7 @@ export class CategoryUseCase implements ICategoryUserCase {
             );
             return updatedCategory;
           } else {
-            return next(new ErrorHandler(400, "This Category Already Exists"));
+            return next(new ErrorHandler(StatusCodes.CONFLICT, "This Category Already Exists"));
           }
         } else {
           const updatedCategory = await this.categoryRepository.update(
@@ -44,7 +44,7 @@ export class CategoryUseCase implements ICategoryUserCase {
           return updatedCategory;
         }
       } else {
-        return next(new ErrorHandler(400, "Category Not Fount"));
+        return next(new ErrorHandler(StatusCodes.NOT_FOUND, "Category Not Fount"));
       }
     } catch (error) {
       console.error(error);
@@ -62,10 +62,10 @@ export class CategoryUseCase implements ICategoryUserCase {
         if (done) {
           return check;
         } else {
-          return next(new ErrorHandler(400, "Category Not Found"));
+          return next(new ErrorHandler(StatusCodes.NOT_FOUND, "Category Not Found"));
         }
       } else {
-        return next(new ErrorHandler(400, "Category Not Found"));
+        return next(new ErrorHandler(StatusCodes.NOT_FOUND, "Category Not Found"));
       }
     } catch (error) {
       console.error(error);
@@ -87,7 +87,7 @@ export class CategoryUseCase implements ICategoryUserCase {
     try {
       const check = await this.categoryRepository.findOne(data.title);
       if (check) {
-        return next(new ErrorHandler(400, "Category Already Exists"));
+        return next(new ErrorHandler(StatusCodes.CONFLICT, "Category Already Exists"));
       } else {
         const category = await this.categoryRepository.create(data);
         return category;

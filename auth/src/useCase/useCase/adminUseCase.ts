@@ -2,7 +2,7 @@ import { NextFunction } from "express";
 import { IAdmin } from "../../entities/admin";
 import { IJwt, IToken } from "../interface/serviceInterface/IJwt";
 import { IadminUsecase } from "../interface/useCsesInterface/IadminUseCase";
-import { ErrorHandler } from "@eduhublearning/common";
+import { ErrorHandler, StatusCodes } from "@eduhublearning/common";
 import { IHashPassword } from "../interface/serviceInterface/IHashPassword";
 import { IAdminRepository } from "../interface/repositoryInterface/IAdminRepository";
 import { Iuser } from "../../entities/user";
@@ -25,14 +25,14 @@ export class AdminUsecase implements IadminUsecase{
             const updatedUser = await this.adminRepository.update(instructorId,name,email)
             return updatedUser
            }else{
-            return next(new ErrorHandler(400,"Email ALready Registered"))
+            return next(new ErrorHandler(StatusCodes.CONFLICT,"Email ALready Registered"))
            }
         }else{
           const updatedUser = await this.adminRepository.update(instructorId,name,email)
           return updatedUser
         }
       }else{
-        return next(new ErrorHandler(400,"Admin Not Fount"))
+        return next(new ErrorHandler(StatusCodes.NOT_FOUND,"Admin Not Fount"))
       }
   }
     async adminLogin(email: string, password: string, next: NextFunction): Promise<{ admin: IAdmin; token: IToken; } | void> {
@@ -44,13 +44,13 @@ export class AdminUsecase implements IadminUsecase{
                 const token = await this.jwt.createAccessAndRefreashToken(admin._id!) as IToken
                 return {token,admin}
               }else{
-                return next(new ErrorHandler(400,"You Are Not Admin"))
+                return next(new ErrorHandler(StatusCodes.FORBIDDEN,"You Are Not Admin"))
               }
            }else{
-            return next(new ErrorHandler(400,"Incorrect Password"))
+            return next(new ErrorHandler(StatusCodes.BAD_REQUEST,"Incorrect Password"))
            }
         }else{
-            return next(new ErrorHandler(400,"Not Registered"))
+            return next(new ErrorHandler(StatusCodes.NOT_FOUND,"Not Registered"))
         }
     }
     async fetchStudents(): Promise<Iuser[]| void> {
@@ -76,7 +76,7 @@ export class AdminUsecase implements IadminUsecase{
            return data;
          }
        }else{
-        return next(new ErrorHandler(400,"User Not Found"))
+        return next(new ErrorHandler(StatusCodes.NOT_FOUND,"User Not Found"))
        }
     }
 

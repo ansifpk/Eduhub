@@ -5,7 +5,7 @@ import { IAdminRepository } from "../interfaces/repository/IAdminRepository";
 import { IAdminUseCase } from "../interfaces/useCases/IadminUseCase";
 import { IReport } from "../../entities/report";
 import { ISection } from "../../entities/section";
-import { ErrorHandler } from "@eduhublearning/common";
+import { ErrorHandler, StatusCodes } from "@eduhublearning/common";
 
 export class AdminUseCase implements IAdminUseCase{
     constructor(private adminRepository:IAdminRepository,){}
@@ -28,7 +28,7 @@ export class AdminUseCase implements IAdminUseCase{
             const couponCheck = await this.adminRepository.findCouponById(couponId);
 
             if(!couponCheck){
-                return next(new ErrorHandler(400,"Coupon Not found"))
+                return next(new ErrorHandler(StatusCodes.NOT_FOUND,"Coupon Not found"))
             }
                 
             const coupon = await this.adminRepository.editCoupon(couponId,title,description,offer,startingDate,startingTime,expiryDate,expiryTime,couponCode);
@@ -48,7 +48,7 @@ export class AdminUseCase implements IAdminUseCase{
             const couponCheck = await this.adminRepository.findCouponById(couponId);
 
             if(!couponCheck){
-                return next(new ErrorHandler(400,"Coupon Not found"))
+                return next(new ErrorHandler(StatusCodes.NOT_FOUND,"Coupon Not found"))
             }
                 
             
@@ -69,7 +69,7 @@ export class AdminUseCase implements IAdminUseCase{
             if(coupon){
                 return coupon
             }else{
-                return next(new ErrorHandler(400,"Coupon Not found"))
+                return next(new ErrorHandler(StatusCodes.NOT_FOUND,"Coupon Not found"))
             }
            } catch (error) {
             console.error(error)

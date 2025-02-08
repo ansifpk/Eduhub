@@ -6,7 +6,7 @@ import { ICourse } from "../../entities/course";
 import { ICart } from "../../entities/cart";
 import { IRating } from "../../entities/ratings";
 import { ICloudinary } from "../interfaces/serviceInterfaces/ICloudinery";
-import { ErrorHandler } from "@eduhublearning/common";
+import { ErrorHandler, StatusCodes } from "@eduhublearning/common";
 
 export class UserUseCases implements IUserUseCase {
   constructor(
@@ -20,7 +20,7 @@ export class UserUseCases implements IUserUseCase {
    try {
     const user = await this.userRepository.findById(userId);
     if(!user){
-     return next(new ErrorHandler(400,"User Not Found"))
+     return next(new ErrorHandler(StatusCodes.NOT_FOUND,"User Not Found"))
     }
     if(user.avatar.avatar_url){
       const profile =  await this.cloudinary.addFile(image.profileImage![0]);
@@ -48,7 +48,7 @@ export class UserUseCases implements IUserUseCase {
    try {
      const user = await this.userRepository.findById(userId);
      if(!user){
-      return next(new ErrorHandler(400,"User Not Found"))
+      return next(new ErrorHandler(StatusCodes.NOT_FOUND,"User Not Found"))
      }
      const updatedUser = await this.userRepository.findByIdAndUpdate(userId,name,thumbnail,aboutMe);
      if(updatedUser){
@@ -63,11 +63,11 @@ export class UserUseCases implements IUserUseCase {
     try {
        const instructor = await this.userRepository.findById(userId);
        if(!instructor){
-        return next(new ErrorHandler(400,"Instructor Not found"));
+        return next(new ErrorHandler(StatusCodes.NOT_FOUND,"Instructor Not found"));
        }
        const checkRating = await this.userRepository.checkingRating(instructorId,userId);
        if(checkRating){
-        return next(new ErrorHandler(400,"Already rated this instructor"));
+        return next(new ErrorHandler(StatusCodes.CONFLICT,"Already rated this instructor"));
        }
        
        const rating = await this.userRepository.createRating(instructorId, userId, review, stars)
@@ -82,7 +82,7 @@ export class UserUseCases implements IUserUseCase {
     try {
       const instructor = await this.userRepository.findById(instructorId);
       if(!instructor){
-        return next(new ErrorHandler(400,"Instructor not found"));
+        return next(new ErrorHandler(StatusCodes.NOT_FOUND,"Instructor not found"));
       }
 
       const ratings = await this.userRepository.findAllrating(instructorId);
@@ -98,7 +98,7 @@ export class UserUseCases implements IUserUseCase {
     try {
       const check = await this.userRepository.findRatinById(ratingId);
       if(!check){
-        return next(new ErrorHandler(400,"Rating not found")); 
+        return next(new ErrorHandler(StatusCodes.NOT_FOUND,"Rating not found")); 
       }
       const rating = await this.userRepository.editRatinById(ratingId,review,stars)
       if(rating){
@@ -112,7 +112,7 @@ export class UserUseCases implements IUserUseCase {
     try {
       const check = await this.userRepository.findRatinById(ratingId);
       if(!check){
-        return next(new ErrorHandler(400,"Rating not found")); 
+        return next(new ErrorHandler(StatusCodes.NOT_FOUND,"Rating not found")); 
       }
       const rating = await this.userRepository.deleteRatinById(ratingId)
       if(rating){
@@ -127,10 +127,10 @@ export class UserUseCases implements IUserUseCase {
     try {
       const user = await this.userRepository.findById(userId);
       if (!user) {
-        return next(new ErrorHandler(400, "User Not Fount"));
+        return next(new ErrorHandler(StatusCodes.NOT_FOUND, "User Not Fount"));
       }
       if (user.isBlock) {
-        return next(new ErrorHandler(403, "Access Denied by Admin"));
+        return next(new ErrorHandler(StatusCodes.FORBIDDEN, "Access Denied by Admin"));
       }
       const cart = await this.userRepository.findCart(userId);
       if (cart) {
@@ -149,15 +149,15 @@ export class UserUseCases implements IUserUseCase {
     try {
       const checkUser = await this.userRepository.findById(userId);
       if (!checkUser) {
-        return next(new ErrorHandler(400, "User Not Fount"));
+        return next(new ErrorHandler(StatusCodes.NOT_FOUND, "User Not Fount"));
       }
       if (checkUser.isBlock) {
-        return next(new ErrorHandler(403, "Access Denied by admin"));
+        return next(new ErrorHandler(StatusCodes.FORBIDDEN, "Access Denied by admin"));
       }
 
       const course = await this.userRepository.findCourse(courseId);
       if (!course) {
-        return next(new ErrorHandler(400, "Course Not Found"));
+        return next(new ErrorHandler(StatusCodes.NOT_FOUND, "Course Not Found"));
       }
       const checkCart = await this.userRepository.findCart(userId);
       if (checkCart) {
@@ -211,14 +211,14 @@ export class UserUseCases implements IUserUseCase {
     try {
       const checkUser = await this.userRepository.findById(userId);
       if (!checkUser) {
-        return next(new ErrorHandler(400, "User Not Fount"));
+        return next(new ErrorHandler(StatusCodes.NOT_FOUND, "User Not Fount"));
       }
       if (checkUser.isBlock) {
-        return next(new ErrorHandler(403, "Access Denied by admin"));
+        return next(new ErrorHandler(StatusCodes.FORBIDDEN, "Access Denied by admin"));
       }
       const course = await this.userRepository.findCourse(courseId);
       if (!course) {
-        return next(new ErrorHandler(400, "Course Not Found"));
+        return next(new ErrorHandler(StatusCodes.NOT_FOUND, "Course Not Found"));
       }
       const cart = await this.userRepository.removeFromCart(userId,courseId);
       if(cart){
@@ -242,7 +242,7 @@ export class UserUseCases implements IUserUseCase {
     try {
       const user = await this.userRepository.findById(userId);
       if(!user){
-         return next(new ErrorHandler(400,"User Not Fount"))
+         return next(new ErrorHandler(StatusCodes.NOT_FOUND,"User Not Fount"))
       }
       return user
 

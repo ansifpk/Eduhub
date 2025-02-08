@@ -37,11 +37,10 @@ ApiGatway.interceptors.response.use(
               
               return ApiGatway(originalRequest);
           } catch (err) {
-            store.dispatch(removeUser());
+              store.dispatch(removeUser());
               return Promise.reject(err);
           }
       }
-      store.dispatch(removeUser());
       return Promise.reject(error);
   }
 );

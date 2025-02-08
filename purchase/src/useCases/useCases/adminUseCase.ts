@@ -5,7 +5,7 @@ import { IAdminRepository } from "../interfaces/repository/IAdminrepository";
 import { IAdminUseCase } from "../interfaces/useCases/IAdminUseCase";
 import Stripe from 'stripe';
 import { IOrder } from "../../entities/order";
-import { ErrorHandler } from "@eduhublearning/common";
+import { ErrorHandler, StatusCodes } from "@eduhublearning/common";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET!, { apiVersion: "2025-01-27.acacia" });
 
@@ -58,7 +58,7 @@ export class AdminUseCase implements IAdminUseCase{
        try {
          const check = await this.adminRepository.findSubscriptionById(subscriptionId);
          if(!check){
-            return next(new ErrorHandler(400,"Subscription Not Found."));
+            return next(new ErrorHandler(StatusCodes.NOT_FOUND,"Subscription Not Found."));
          } 
          const sub = await stripe.subscriptions.list({})
          
@@ -105,7 +105,7 @@ export class AdminUseCase implements IAdminUseCase{
        try {
          const check = await this.adminRepository.findSubscriptionById(subscriptionId);
          if(!check){
-            return next(new ErrorHandler(400,"Subscription Not Found."));
+            return next(new ErrorHandler(StatusCodes.NOT_FOUND,"Subscription Not Found."));
          } 
           
     //      const deleted = await this.adminRepository.subscriptionDeleteById(subscriptionId);
@@ -136,7 +136,7 @@ export class AdminUseCase implements IAdminUseCase{
         try {
             const check = await this.adminRepository.findSubscription(plan)
             if(check){
-                return next(new ErrorHandler(400,"This plan alredy exists."));
+                return next(new ErrorHandler(StatusCodes.CONFLICT,"This plan alredy exists."));
             }
             const subscription = await this.adminRepository.createSubscription(price,plan,description);
             if(subscription){

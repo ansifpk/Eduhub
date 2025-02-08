@@ -7,7 +7,7 @@ import { Iuser } from "../../entities/user";
 import Stripe from "stripe";
 import { IUserSubcription } from "../../entities/userSubscription";
 import { IUserSubscribe } from "../../entities/userSubscribe";
-import { ErrorHandler } from "@eduhublearning/common";
+import { ErrorHandler, StatusCodes } from "@eduhublearning/common";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET!, {
    apiVersion: "2025-01-27.acacia",
@@ -22,7 +22,7 @@ export class UserUseCase implements IUserUseCase{
      try {
        const user = await this.userRepository.findUser(userId)
        if(!user){
-         return next(new ErrorHandler(400,"user not fount"))
+         return next(new ErrorHandler(StatusCodes.NOT_FOUND,"user not fount"))
        } 
        const plans = await this.userRepository.plans(userId);
        if(plans){
@@ -38,11 +38,11 @@ export class UserUseCase implements IUserUseCase{
         
          const user = await this.userRepository.findUser(userId)
          if(!user){
-            return next(new ErrorHandler(400,"user not fount"))
+            return next(new ErrorHandler(StatusCodes.NOT_FOUND,"user not fount"))
          }
          const subscription =  await this.userRepository.subscriptionFindById(subscriptionId)
          if(!subscription){
-            return next(new ErrorHandler(400,"Subscription not fount"))
+            return next(new ErrorHandler(StatusCodes.NOT_FOUND,"Subscription not fount"))
          }
          console.log(subscription);
          let customer = await stripe.customers.create({
@@ -129,7 +129,7 @@ export class UserUseCase implements IUserUseCase{
        console.log("usecase statrt");
        const course = await this.userRepository.findUser(user.id)
        if(!course){
-        return next(new ErrorHandler(400,"user not fount"))
+        return next(new ErrorHandler(StatusCodes.NOT_FOUND,"user not fount"))
        }
     //      console.log("order");
          
