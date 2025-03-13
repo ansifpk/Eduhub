@@ -7,7 +7,7 @@ import { ISubcription } from "../../entities/subscription";
 import Stripe from "stripe";
 import { IInstructorSubscribe } from "../../entities/instructorSubscribe";
 import exceljs from 'exceljs';
-import { ErrorHandler, StatusCodes } from "@eduhublearning/common";
+import {  BadRequestError, NotFoundError } from "@eduhublearning/common";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET!, {
     apiVersion: "2025-01-27.acacia",
@@ -23,8 +23,8 @@ export class InstructorUseCase implements IInstructorUseCase{
      
       const user = await this.instructorRepository.userFindById(userId)
       if(!user){
-        return next(new ErrorHandler(StatusCodes.NOT_FOUND,"user Not found")) 
-    }
+        throw new NotFoundError("user Not found") 
+       }
       const orders = await this.instructorRepository.instrutcorOrders(userId);
       if(orders){
        
@@ -39,7 +39,8 @@ export class InstructorUseCase implements IInstructorUseCase{
     try {
       const Subscription = await this.instructorRepository.userSubscriptionFindById(subscriptionId);
       if(!Subscription){
-          return next(new ErrorHandler(StatusCodes.NOT_FOUND,"Subscription Not found")) 
+        throw new NotFoundError("Subscription Not found")
+         
       }
       const subscriptions = await stripe.subscriptions.list();
       
@@ -77,7 +78,8 @@ export class InstructorUseCase implements IInstructorUseCase{
     try {
       const user = await this.instructorRepository.userFindById(userId);
       if(!user){
-          return next(new ErrorHandler(StatusCodes.NOT_FOUND,"User Not found")) 
+        throw new NotFoundError("user Not found")
+          
       }
       const subscriptions  = await this.instructorRepository.findInstructorSubscriptions(userId)
       if(subscriptions){
@@ -92,7 +94,8 @@ export class InstructorUseCase implements IInstructorUseCase{
       try {
         const user= await this.instructorRepository.userFindById(userId);
         if(!user){
-            return next(new ErrorHandler(StatusCodes.NOT_FOUND,"User Not found")) 
+          throw new NotFoundError("user Not found")
+           
         }
         const plans  = await this.instructorRepository.findPlans(userId)
         if(plans){
@@ -108,7 +111,7 @@ export class InstructorUseCase implements IInstructorUseCase{
        try {
           const portalSession = await stripe.billingPortal.sessions.create({
             customer:customerId,
-            return_url:"http://localhost:5173/instructor/plans"
+            return_url:"https://www.eduhublearning.online/instructor/plans"
           })
          
           if(portalSession){
@@ -124,16 +127,19 @@ export class InstructorUseCase implements IInstructorUseCase{
            
             const user = await this.instructorRepository.userFindById(userId);
             if(!user){
-                return next(new ErrorHandler(StatusCodes.NOT_FOUND,"User Not found")) 
+              throw new NotFoundError("user Not found")
+               
             }
             
             const subscription = await this.instructorRepository.subscriptionFindByPlan(method)
             if(!subscription){
-                return next(new ErrorHandler(StatusCodes.NOT_FOUND,"Subsription Not found"))
+              throw new NotFoundError("Subscription Not found")
+               
             }
             const checkSUbscribe = await this.instructorRepository.findPlan(userId);
             if(checkSUbscribe){
-              return next(new ErrorHandler(StatusCodes.CONFLICT,"You already have one plan"))
+              throw new BadRequestError("This Plan Already Exists")
+            
             }
           
              let customer = await stripe.customers.create({
@@ -166,8 +172,8 @@ export class InstructorUseCase implements IInstructorUseCase{
                     subscriptionId:JSON.stringify(subscription._id),
                     edited:''
                 },
-                success_url: "http://localhost:5173/instructor/success",
-                cancel_url: "https://localhost:5173/instructor/faile",
+                success_url: "https://www.eduhublearning.online/instructor/success",
+                cancel_url: "https://www.eduhublearning.online/faile",
                 
             })
        
@@ -202,11 +208,13 @@ export class InstructorUseCase implements IInstructorUseCase{
       
              const user = await this.instructorRepository.userFindById(userId) 
              if(!user){
-              return next(new ErrorHandler(StatusCodes.NOT_FOUND,"User Not found"))
+              throw new NotFoundError("user Not found")
+            
              }
              const checkSUbscription = await this.instructorRepository.userSubscriptionFindByPlan(plan);
              if(checkSUbscription){
-              return next(new ErrorHandler(StatusCodes.CONFLICT,"This Plan Already Exists"))
+              throw new BadRequestError("This Plan Already Exists")
+            
              }
          
           const product = await stripe.products.create({
@@ -235,7 +243,8 @@ export class InstructorUseCase implements IInstructorUseCase{
         
         const checkUser = await this.instructorRepository.userFindById(userId)
         if(!checkUser){
-          return next(new ErrorHandler(StatusCodes.NOT_FOUND,"User Not found"))
+          throw new NotFoundError("user Not found")
+    
         }
       
        const orders = await this.instructorRepository.instrutcorOrders(userId);
@@ -278,7 +287,8 @@ export class InstructorUseCase implements IInstructorUseCase{
           try {
             const checkUser = await this.instructorRepository.userFindById(userId)
             if(!checkUser){
-              return next(new ErrorHandler(StatusCodes.NOT_FOUND,"User Not found"))
+              throw new NotFoundError("user Not found")
+              
             }
           
             const orders = await this.instructorRepository.instrutcorOrders(userId);

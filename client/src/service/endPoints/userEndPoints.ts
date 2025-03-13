@@ -1,21 +1,21 @@
 const userRoutes = {
     
- // auth servic end points
+ // auth servic end poin
  signUp:'/auth/user/register',
  login:'/auth/user/login',
  googleLogin:'/auth/user/googleLogin',
  verifyOtp:'/auth/user/createUser',
  resentOtp:"/auth/user/resentOtp",
- verifyEmail:"/auth/user/forgetPassword",
- verifyPassOtp:"/auth/user/verifyOtp",
- newPassword:"/auth/user/newPassword",
- resetPassword:"/auth/user/resetPassword",
+ verifyEmail:"/user/forgetPassword",
+ verifyPassOtp:"/user/verifyOtp",
+ newPassword:"/user/newPassword",
+ resetPassword:"/user/resetPassword",
  logout:'/auth/user/logout',
 
  // user servic end points
  editUser:'/profile/user/profile',
- changeEmailVeryfy:'/auth/user/verifyEmail',
- changeEmail:'/auth/user/changeEmail',
+ changeEmailVeryfy:'/user/verifyEmail',
+ changeEmail:'/auth/changeEmail',
 
  getCourses:"/course/user/courses",
  fetchCourses:"/course/user/getCourses",

@@ -4,6 +4,7 @@ import { Router } from "express";
 
 export function UserRoute(router: Router) {
   router.post("/register", async (req, res, next) => {
+   
     userController.signUp(req, res, next);
   });
   router.post("/createUser", async (req, res, next) => {

@@ -1,36 +1,41 @@
 import { ICoupon } from "@/@types/couponType";
 import { User } from "@/@types/userType";
-import { fetchCoupons } from "@/Api/user";
 import Footer from "@/Components/Footer/Footer";
 import Header from "@/Components/Header/Header";
 import ProfileNavbar from "@/Components/Header/ProfileNavbar";
 import { Button } from "@/Components/ui/button";
 import { Card, CardContent, CardDescription } from "@/Components/ui/card";
+import useRequest from "@/hooks/useRequest";
+import userRoutes from "@/service/endPoints/userEndPoints";
 import { Code } from "@heroui/react";
 import { Copy } from "lucide-react";
-import { timeStamp } from "node:console";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 
 const UserListCoupons: React.FC = () => {
   const userId = useSelector((state: User) => state.id);
   const [coupons, setCoupons] = useState([]);
   let date = new Date();
-  let today = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+  const {doRequest,errors} = useRequest()
 
   useEffect(() => {
     const fetching = async () => {
-      const data = await fetchCoupons();
-      if (data.success) {
-        setCoupons(data.coupons);
-      }
+      doRequest({
+        url:userRoutes.coupons,
+        body:{},
+        method:"get",
+        onSuccess:(res)=>{
+          setCoupons(res.coupons);
+        }
+      })
     };
     fetching();
   }, []);
 
-
+  useEffect(()=>{
+    errors?.map((err)=>toast.error(err.message))
+  },[errors])
 
   return (
     <div className="w-full h-screen">

@@ -14,7 +14,7 @@ import { InstructorAprovedConsumer } from './framWorks/webServer/config/kafka/co
 import { EmailChangedConsumer } from './framWorks/webServer/config/kafka/consumer/email-changed-consumer';
 import { CouponUsedConsumer } from './framWorks/webServer/config/kafka/consumer/coupon-used-consumer';
 import { UserProfileUpdatedConsumer } from './framWorks/webServer/config/kafka/consumer/user-profile-updated-consumer';
-import { errMiddleware } from '@eduhublearning/common';
+import { errorHandler, NotFoundError } from '@eduhublearning/common';
 import cookieParser from 'cookie-parser';
 dotenv.config();
 
@@ -53,6 +53,7 @@ async function start(){
 
 
 const app = express();
+app.use(cookieParser())
 app.set('trust proxy',true)
 
 app.use(express.json({ limit: "50mb"})); 
@@ -62,15 +63,7 @@ app.use(cors({credentials:true,
       ? 'https://www.eduhublearning.online'
       : ['http://client-srv:5173', 'http://localhost:5173']
     ,methods: ['GET', 'POST'],}));
-// app.use(
-//     cookieSession({
-//         signed: false, 
-//         httpOnly: true, 
-//         sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax', 
-//         secure: process.env.NODE_ENV === 'production', 
-//       })
-// )
-app.use(cookieParser())
+
 const adminRoute = express.Router();
 const instructorRoute = express.Router();
 const userRouter = express.Router();
@@ -82,5 +75,8 @@ UserRouter(userRouter);
 app.use("/course/admin",adminRoute)
 app.use("/course/instructor",instructorRoute)
 app.use("/course/user",userRouter)
-app.use(errMiddleware);
+app.use("*",(req,res)=>{
+     throw new NotFoundError("Path Not Found.") 
+})
+app.use(errorHandler as any);
 start();

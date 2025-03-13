@@ -1,13 +1,13 @@
 import { AlertCircle, ArrowRight, Loader2 } from 'lucide-react'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button } from '../ui/button'
 import { Alert, AlertDescription } from '../ui/alert'
 import { Input } from '../ui/input'
 import { CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
-import { forgetPassword } from '@/Api/user'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import useRequest from '@/hooks/useRequest'
+import userRoutes from '@/service/endPoints/userEndPoints'
 
 interface ForgetPassEmailProps {
     successCheckEmail: React.Dispatch<React.SetStateAction<boolean | null>>;
@@ -21,36 +21,36 @@ const ForgetPassEmail:React.FC<ForgetPassEmailProps> = ({successCheckEmail,setEm
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
     const navigate = useNavigate()
+    const {doRequest,errors} = useRequest();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault(); 
         setIsLoading(true);
         setError(null);
-
-        try {
-
-          const data = await forgetPassword(email)
-          // const {data} = await axios.post("http://localhost:3000/auth/user/forgetPassword",email)
-      
-          if(data.sucess){
+        doRequest({
+          url:userRoutes.verifyEmail,
+          body:{email},
+          method:"post",
+          onSuccess:()=>{
             toast.success("otp sent to your email")
             setSuccess(true);
             successCheckEmail(true);
             setEmailProp(email);
             setEmail('');
             setIsLoading(false);
-          }else{
-            toast.error(data.response.data.message)
-            setIsLoading(false);
           }
-        } catch (err) {
-          setError('An error occurred while sending the reset link. Please try again.');
-        }
+        })
+        
       };
     
       const validateEmail = (email: string) => {
         return /^[A-Za-z0-9.%+-]+@gmail\.com$/.test(email);
       };
+
+     useEffect(()=>{
+      setIsLoading(false);
+      errors?.map((err)=>toast.error(err.message))
+     },[errors]);
 
   return (
     <div>

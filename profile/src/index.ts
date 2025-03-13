@@ -8,16 +8,25 @@ import { InstructorRouter } from './framwork/webServer/routes/instructorRouter';
 import { AdminRouter } from './framwork/webServer/routes/adminRouter';
 import bodyParser from 'body-parser';
 import { UserBlockedConsumer } from './framwork/webServer/config/kafka/consumer/user-block-consumer';
-import cookieSession from 'cookie-session';
 import { CourseCreatedConsumer } from './framwork/webServer/config/kafka/consumer/course-created-consumer';
 import { CourseListedConsumer } from './framwork/webServer/config/kafka/consumer/course-listed-consumer';
 import { CourseUpdatedConsumer } from './framwork/webServer/config/kafka/consumer/course-updated-consumer';
 import { OrderCreatedCreateConsumer } from './framwork/webServer/config/kafka/consumer/order-created-consumer';
-import { errMiddleware } from '@eduhublearning/common';
+import { errorHandler } from '@eduhublearning/common';
 import cookieParser from 'cookie-parser';
 
 const app = express()
 app.set('trust proxy',true);
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+
+app.use(cors({credentials:true,
+    origin: process.env.NODE_ENV === 'production'
+      ? 'https://www.eduhublearning.online'
+      : ['http://client-srv:5173', 'http://localhost:5173']
+    }));
+app.use(cookieParser());
+
 // Separate routers for user and admin
 const userRouter = express.Router()
 const adminRouter = express.Router()
@@ -28,29 +37,13 @@ UserRouter(userRouter);
 AdminRouter(adminRouter);
 InstructorRouter(instructorRouter);
 
-app.use(bodyParser.json({limit: '50mb'}));
-app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 
-app.use(cors({credentials:true,
-    origin: process.env.NODE_ENV === 'production'
-      ? 'https://www.eduhublearning.online'
-      : ['http://client-srv:5173', 'http://localhost:5173']
-    ,methods: ['GET', 'POST'],}));
-// app.use(
-//     cookieSession({
-//         signed: false, 
-//         httpOnly: true, 
-//         sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax', 
-//         secure: process.env.NODE_ENV === 'production', 
-//       })
-// )
-app.use(cookieParser())
 // Apply the separate routers to different paths
 app.use('/profile/user',userRouter);
 app.use('/profile/admin',adminRouter);
 app.use('/profile/instructor',instructorRouter);
 
-app.use(errMiddleware);
+app.use(errorHandler as any);
 
 const start = async () => {
     try {

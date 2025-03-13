@@ -2,7 +2,7 @@ import { NextFunction } from "express";
 import { ICategory } from "../../entities/category";
 import { ICategoryRepository } from "../interfaces/repositoryInterfaces/IcategoryRepository";
 import { ICategoryUserCase } from "../interfaces/useCasesInterfaces/IcategoryUseCases";
-import { ErrorHandler, StatusCodes } from "@eduhublearning/common";
+import {  BadRequestError, NotFoundError, StatusCodes } from "@eduhublearning/common";
 
 
 export class CategoryUseCase implements ICategoryUserCase {
@@ -32,7 +32,8 @@ export class CategoryUseCase implements ICategoryUserCase {
             );
             return updatedCategory;
           } else {
-            return next(new ErrorHandler(StatusCodes.CONFLICT, "This Category Already Exists"));
+           throw new  BadRequestError("This Category Already Exists")
+           
           }
         } else {
           const updatedCategory = await this.categoryRepository.update(
@@ -44,10 +45,12 @@ export class CategoryUseCase implements ICategoryUserCase {
           return updatedCategory;
         }
       } else {
-        return next(new ErrorHandler(StatusCodes.NOT_FOUND, "Category Not Fount"));
+        throw new  NotFoundError("Category Not Fount")
+        
       }
     } catch (error) {
       console.error(error);
+      next(error)
     }
   }
   async listCategory(
@@ -56,19 +59,21 @@ export class CategoryUseCase implements ICategoryUserCase {
   ): Promise<ICategory | void> {
     try {
       const check = await this.categoryRepository.findById(subjectId);
-      console.log("check in useusercasecategory", check);
+      
       if (check) {
         const done = await this.categoryRepository.list(check);
         if (done) {
           return check;
         } else {
-          return next(new ErrorHandler(StatusCodes.NOT_FOUND, "Category Not Found"));
+          throw new  NotFoundError("Category Not Fount")
+        
         }
       } else {
-        return next(new ErrorHandler(StatusCodes.NOT_FOUND, "Category Not Found"));
+        throw new  NotFoundError("Category Not Fount")
       }
     } catch (error) {
       console.error(error);
+      next(error)
     }
   }
 
@@ -87,13 +92,15 @@ export class CategoryUseCase implements ICategoryUserCase {
     try {
       const check = await this.categoryRepository.findOne(data.title);
       if (check) {
-        return next(new ErrorHandler(StatusCodes.CONFLICT, "Category Already Exists"));
+        throw new  BadRequestError("This Category Already Exists")
+           
       } else {
         const category = await this.categoryRepository.create(data);
         return category;
       }
     } catch (error) {
       console.error(error);
+      next(error)
     }
   }
 }

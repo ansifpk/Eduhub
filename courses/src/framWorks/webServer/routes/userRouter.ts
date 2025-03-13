@@ -4,6 +4,7 @@ import { isAuth } from "../midllewares/auth";
 
 
 
+
 export function UserRouter(router: Router) {
   router.get(
     "/courses",
@@ -20,6 +21,7 @@ export function UserRouter(router: Router) {
   router.get(
     "/courseDetailes/:courseId",
     isAuth,
+    
     async (req: Request, res: Response, next: NextFunction) => {
       userController.courseDetailes(req, res, next);
     }

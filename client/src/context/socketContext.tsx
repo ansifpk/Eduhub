@@ -20,7 +20,7 @@ export const SocketProvider: React.FC<{children: React.ReactNode}> = ({children}
     useEffect(()=>{
         if(userId){
             const newSocket = io(import.meta.env.VITE_APIGATEWAY,{
-                path: '/auth/socket.io',
+                path: '/auth/auth/socket.io',
                 query:{
                     userId
                 }

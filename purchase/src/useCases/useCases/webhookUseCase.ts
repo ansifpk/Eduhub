@@ -21,7 +21,7 @@ export class WebhookUseCase implements IWebhookUseCase {
       
       switch (event.type) {
         case "checkout.session.completed":
-          console.log("checkout.session.completed");
+          
 
           if (session.metadata!.buyer == "instructor") {
     
@@ -74,15 +74,13 @@ export class WebhookUseCase implements IWebhookUseCase {
           break;
 
         case "customer.subscription.deleted":
-          console.log("instructor subscription deleted");
-          // console.log(event.data);
+          
           break;
         case "customer.subscription.paused":
-          console.log("instructor subscription paused");
-          // console.log(event.data);
+          
           break;
         case "customer.subscription.updated":
-          console.log("instructor stripe updated");
+       
 
           if (event.data.previous_attributes?.cancel_at_period_end) {
             const customer = (await stripe.customers.retrieve(
@@ -90,16 +88,16 @@ export class WebhookUseCase implements IWebhookUseCase {
             )) as Stripe.Customer;
             const { userType } = customer.metadata;
             if (userType == "instructor") {
-              console.log("instructor rene");
+             
                await this.webhokkRepository.renewSubscribe(event.data.object.customer as string)
               return;
             } else {
-              console.log("user rene");
+              
                await this.webhokkRepository.renewUserSubscribe(event.data.object.customer as string)
               return;
             }
           } else if (previous?.plan?.id && session.metadata!.edited) {
-            console.log("instructor edited send notification");
+       
             return;
           } else if (
             !event.data.previous_attributes?.status &&
@@ -111,18 +109,11 @@ export class WebhookUseCase implements IWebhookUseCase {
                await this.webhokkRepository.cancelSubscribe(event.data.object.cancel_at!,event.data.object.customer as string)
                return
              }else{
-               // console.log("user cancell",userType)
+              
                await this.webhokkRepository.cancelUserSubscribe(event.data.object.cancel_at!,event.data.object.customer as string)
                return
              }
           }
-          //  else if(event.data.previous_attributes?.status){
-          //    console.log("instructor sub created");
-          //    return
-          //  }else{
-
-          //  }
-
           break;
       }
     } catch (error) {

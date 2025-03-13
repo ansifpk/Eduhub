@@ -17,7 +17,9 @@ import {
 import { useSelector } from "react-redux"
 import { User } from "@/@types/userType"
 import { useEffect, useState } from "react"
-import { getOrders } from "@/Api/admin"
+import useRequest from "@/hooks/useRequest"
+import adminRoutes from "@/service/endPoints/adminEndPoints"
+import toast from "react-hot-toast"
 
 
 const chartConfig = {
@@ -36,25 +38,27 @@ interface data {
 const AdminChart = () => {
     const [orders,setOrders] = useState<data[]>([])
     const userId = useSelector((state:User)=>state.id);
-   
+   const { doRequest,errors } = useRequest();
     useEffect(()=>{
-      const fetching = async() => {
-        const res = await getOrders()
-        if (res.success) {
+      doRequest({
+        url:adminRoutes.getOrders,
+        method:"get",
+        body:{},
+        onSuccess:(res)=>{
           setOrders(res.orders);
         }
-      }
-      fetching()
+      })
     },[userId])
-  
-
+   useEffect(()=>{
+    errors?.map((err)=>toast.error(err.message))
+   },[errors])
   return (
     <Card>
       <CardHeader className=" flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
         <div className="grid flex-1 gap-1 text-center sm:text-left">
           <CardTitle>Totel sales</CardTitle>
           <CardDescription>
-            Showing total sales  in admin side2.
+            Showing totel sales  in admin side.
           </CardDescription>
         </div>
         

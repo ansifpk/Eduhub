@@ -5,7 +5,7 @@ import { ICloudinary } from "../interfaces/serviceInterfaces/ICloudinery";
 import { IInstructorUseCase } from "../interfaces/useCasesInterfaces/IinstructorUsecase";
 
 import { IRating } from "../../entities/ratings";
-import { ErrorHandler, StatusCodes } from "@eduhublearning/common";
+import {  BadRequestError, ForbiddenError, NotFoundError, StatusCodes } from "@eduhublearning/common";
 
   interface Req {
   bodyData:{
@@ -52,16 +52,20 @@ export class InstructorUseCase implements IInstructorUseCase{
         
         const user = await this.instructorRepository.findByEmail(userData.bodyData.email)
         if(!user){
-             return next(new ErrorHandler(StatusCodes.NOT_FOUND, "user not registered"))
+            throw new  NotFoundError("user not registered")
+            
         }
          if(user.isBlock){
-            return next(new ErrorHandler(StatusCodes.FORBIDDEN,"user are blocked by admin"))
+            throw new ForbiddenError()
+          
          }
          if(user.isInstructor){
-            return next(new ErrorHandler(StatusCodes.BAD_REQUEST,"you are already registered as instructor"))
+           throw new BadRequestError("you are already registered as instructor")
+         
          }
          if(user.status == "pending" ){
-            return next(new ErrorHandler(StatusCodes.BAD_REQUEST,"your instructor request is in pending..."))
+            throw new BadRequestError("your instructor request is in pending...")
+
          }
 
            const certificate =  await this.cloudinary.addFile(userData.fileData.certificateImage![0])

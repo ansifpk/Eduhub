@@ -11,9 +11,11 @@ import {
 } from "../ui/select";
 import { useEffect, useState } from "react";
 import { ICategory } from "@/@types/categoryTpe";
-import { getCourses } from "@/Api/user";
 import { ICourse } from "@/@types/courseType";
 import { Input } from "../ui/input";
+import useRequest from "@/hooks/useRequest";
+import userRoutes from "@/service/endPoints/userEndPoints";
+import toast from "react-hot-toast";
 interface Props {
   categories: ICategory[];
   onsendcourse: (courses: ICourse[]) => void;
@@ -27,16 +29,21 @@ const FilterHeader: React.FC<Props> = ({ categories, onsendcourse,onsendpages,pa
   const [level, setLevel] = useState("");
   const [sort, setSort] = useState("");
   const [search, setSearch] = useState("");
+  const {doRequest,errors} = useRequest();
 
   useEffect(() => {
-    const courses = async () => {
-      const data = await getCourses(category,topic,level,search,sort,page);
-      if (data.success) {
-        onsendcourse(data.courses);
-        onsendpages(data.pages);
-      }
-    };
-    courses();
+   
+      doRequest({
+        url:`${userRoutes.getCourses}?category=${category}&&topic=${topic}&&level=${level}&&search=${search}&&sort=${sort}&&page=${page}`,
+        body:{},
+        method:"get",
+        onSuccess:(response)=>{
+          onsendcourse(response.courses);
+          onsendpages(response.pages);
+        }
+      });
+    
+  
     const cate = async () => {
       categories.filter((val) => {
         if (category.length > 0) {
@@ -48,7 +55,9 @@ const FilterHeader: React.FC<Props> = ({ categories, onsendcourse,onsendpages,pa
     };
     cate();
   }, [categories, category, topic, level, search,search,sort,page]);
-
+  useEffect(()=>{
+    errors?.map((err)=>toast.error(err.message))
+  },[errors])
   return (
     <div
       style={{

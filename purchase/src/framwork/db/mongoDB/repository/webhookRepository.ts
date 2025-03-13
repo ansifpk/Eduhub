@@ -5,16 +5,11 @@ import { IWebhookRepository } from "../../../../useCases/interfaces/repository/I
 import { courseModel } from "../models/courseMode";
 import { instructotSubscribeModel } from "../models/instructorSubscribe";
 import { OrderModel } from "../models/orderModel";
-import { subscriptionModel } from "../models/subscriptionModel";
-import { UserModel } from "../models/userMode";
 import { userSubscribeModel } from "../models/userSubscribe";
-import { userSubscriptionModel } from "../models/userSuscriptionModel";
+
 
 export class WebhookRepository implements IWebhookRepository{
     constructor(
-      private userSubscriptionModels: typeof userSubscriptionModel,
-      private subscriptionModels: typeof subscriptionModel,
-      private userModels: typeof UserModel,
       private subscribeModel: typeof instructotSubscribeModel,
       private subscribeUserModel: typeof userSubscribeModel,
       private orderMedels: typeof OrderModel,

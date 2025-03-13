@@ -5,7 +5,7 @@ import { IUserUseCase } from "../interfaces/useCasesInterfaces/IuserUseCas"
 import { IMessage } from "../../entities/message"
 import { INotification } from "../../entities/notifications"
 import { UpdateWriteOpResult } from "mongoose"
-import { ErrorHandler, StatusCodes } from "@eduhublearning/common"
+import {  BadRequestError, ForbiddenError, NotFoundError, StatusCodes } from "@eduhublearning/common"
 
 export class UseruseCase implements IUserUseCase{
     constructor(
@@ -16,7 +16,8 @@ export class UseruseCase implements IUserUseCase{
         const user  = await this.userRepository.findUserById(senterId);
 
         if(!user){
-         return next(new ErrorHandler(StatusCodes.NOT_FOUND,"User Not Found"))
+          throw new   NotFoundError("User Not Found")
+        
         }
         const notifications = await this.userRepository.updateNotification(userId,senterId);
         if(notifications){
@@ -28,7 +29,7 @@ export class UseruseCase implements IUserUseCase{
         const user  = await this.userRepository.findUserById(recipientId);
 
         if(!user){
-         return next(new ErrorHandler(StatusCodes.NOT_FOUND,"User Not Found"))
+            throw new   NotFoundError("User Not Found")
         }
         const notifications = await this.userRepository.findAllNotification(recipientId);
         if(notifications){
@@ -42,11 +43,11 @@ export class UseruseCase implements IUserUseCase{
         try {
             const user  = await this.userRepository.findUserById(recipientId);
             if(!user){
-             return next(new ErrorHandler(StatusCodes.NOT_FOUND,"User Not Found"))
+               throw new   NotFoundError("User Not Found")
             }
             const user2  = await this.userRepository.findUserById(senderId);
             if(!user2){
-             return next(new ErrorHandler(StatusCodes.NOT_FOUND,"User Not Found"))
+               throw new   NotFoundError("User Not Found")
             }
             const notifications = await this.userRepository.createNotification(recipientId,senderId);
             if(notifications){
@@ -62,11 +63,11 @@ export class UseruseCase implements IUserUseCase{
            const checkCurrentUser = await this.userRepository.findUserById(userId)
            const checkRecipientUser = await this.userRepository.findUserById(recipientId)
            if(!checkCurrentUser || !checkRecipientUser){
-             return next(new ErrorHandler(StatusCodes.NOT_FOUND,"User Not Found"))
+               throw new   NotFoundError("User Not Found")
            }
 
            if(checkRecipientUser.isBlock){
-            return next(new ErrorHandler(StatusCodes.FORBIDDEN,"This User Blocked By Admin"))
+             throw new  BadRequestError("This user is blocked")
            }
            const checkChatExists = await this.userRepository.findChat(userId,recipientId);
            if(checkChatExists){
@@ -88,7 +89,7 @@ export class UseruseCase implements IUserUseCase{
            const user  = await this.userRepository.findUserById(userId);
            const userChats = await this.userRepository.find(userId)
            if(!user){
-            return next(new ErrorHandler(StatusCodes.NOT_FOUND,"User Not Found"))
+              throw new   NotFoundError("User Not Found")
            }
            if(userChats){
             return userChats;
@@ -101,12 +102,14 @@ export class UseruseCase implements IUserUseCase{
         try {
      
            const chat = await this.userRepository.findChatById(chatId);
+           console.log("bur",chat,chatId);
            
            if(!chat){
-            return next(new ErrorHandler(StatusCodes.NOT_FOUND,"Chat Not Found"))
+
+            throw new NotFoundError("Chat Not Found")
            }
            if(chat.members[1].isBlock){
-            return next(new ErrorHandler(StatusCodes.FORBIDDEN,"This User Blocked By Admin"))
+            throw new  BadRequestError("This user is blocked")
            }
            return chat;
     
@@ -134,19 +137,19 @@ export class UseruseCase implements IUserUseCase{
       
             const checkChat = await this.userRepository.findChatById(chatId);
             if(!checkChat){
-                return next(new ErrorHandler(StatusCodes.NOT_FOUND,"Chat Not Found"))
+                throw new NotFoundError("Chat Not Found")
             }
             if(checkChat.members[1].isBlock){
-                return next(new ErrorHandler(StatusCodes.FORBIDDEN,"This user blocked by admin"))
+                throw new  BadRequestError("This user is blocked");
             }
             
             const checkUser = await this.userRepository.findUserById(senderId);
             
             if(!checkUser){
-                return next(new ErrorHandler(StatusCodes.NOT_FOUND,"User not found"))
+                  throw new   NotFoundError("User Not Found")
             }
             if(checkUser.isBlock){
-                return next(new ErrorHandler(StatusCodes.FORBIDDEN,"Access denied by admin"))
+               throw new  ForbiddenError()
             }
             
             const message = await this.userRepository.createMessage(chatId,senderId,text)

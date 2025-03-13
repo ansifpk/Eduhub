@@ -10,7 +10,8 @@ export function CategoryRoute(router:Router){
         categoryController.addCategory(req,res,next)
     })
     router.patch('/editCategory',async(req,res,next)=>{
-        // console.log(req.body)
+        console.log(req.body);
+        
         categoryController.editCategory(req,res,next)
     })
     router.patch('/listCategory/:categoryId',async(req,res,next)=>{

@@ -4,11 +4,8 @@ import { Separator } from "@/Components/ui/separator";
 import { Button } from "@/Components/ui/button";
 import { useEffect, useState } from "react";
 import {
-  couponDetailes,
   logout,
-  removeFromcart,
   stripePurchase,
-  userCart,
 } from "@/Api/user";
 import { useSelector } from "react-redux";
 import { User } from "@/@types/userType";
@@ -27,6 +24,8 @@ import {
   CardDescription,
   
 } from "@/Components/ui/card";
+import useRequest from "@/hooks/useRequest";
+import userRoutes from "@/service/endPoints/userEndPoints";
 
 
 const Cart = () => {
@@ -36,59 +35,48 @@ const Cart = () => {
   const userId = useSelector((state: User) => state.id);
   const [couponCode, setCouponCode] = useState("");
   const [discount, SetDiscount] = useState(0);
+  const {doRequest,errors} = useRequest()
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetching = async () => {
-      const data = await userCart(userId);
-      if (data.success) {
-        const courses = data.cart.courses;
-        if (courses) {
-          courses.map((value: ICourse) => {
-            setSubTotal((prev) => (prev += value.price));
-            setTotal((prev) => (prev += value.price));
-          });
+      await doRequest({
+        url:`${userRoutes.Cart}/${userId}`,
+        method:"get",
+        body:{},
+        onSuccess:(response)=>{
+          const courses = response.cart.courses;
+          if(courses){
+            courses.map((value: ICourse)=>{
+              setSubTotal((prev) => (prev += value.price));
+              setTotal((prev) => (prev += value.price));
+            })
+          }
+          setCart(response.cart);
         }
-        setCart(data.cart);
-      } else if (data.status == 403) {
-        const resp = await logout();
-        if (resp.succuss) {
-          localStorage.setItem("accessToken", "");
-          localStorage.setItem("refreshToken", "");
-          dispatch(removeUser());
-          toast.error(data.response.data.message);
-          return navigate("/users/login");
-        }
-      }
+      })
     };
     fetching();
   }, []);
 
   const handleCart = async (courseId: string) => {
-    const data = await removeFromcart(courseId, userId);
-    if (data.success) {
-      setCart(data.cart);
-      setSubTotal(0);
-      setTotal(0);
-      data.cart.courses.map((value: ICourse) => {
-        setSubTotal((prev) => (prev += value.price));
-        setTotal((prev) => (prev += value.price));
-      });
-      return toast.success("item removed from your cart");
-    } else if (data.status == 403) {
-      const resp = await logout();
-      if (resp.succuss) {
-        localStorage.setItem("accessToken", "");
-        localStorage.setItem("refreshToken", "");
-        dispatch(removeUser());
-        toast.error(data.response.data.message);
-        return navigate("/users/login");
+    doRequest({
+      url:`${userRoutes.addToCart}/${courseId}/${userId}`,
+      method:"delete",
+      body:{},
+      onSuccess:(data)=>{
+        setCart(data.cart);
+        setSubTotal(0);
+        setTotal(0);
+        data.cart.courses.map((value: ICourse) => {
+          setSubTotal((prev) => (prev += value.price));
+          setTotal((prev) => (prev += value.price));
+        });
+        return toast.success("item removed from your cart");
       }
-    } else {
-      return toast.error(data.response.data.message);
-    }
+    })
   };
 
   const handleOrder = async () => {
@@ -118,19 +106,22 @@ const Cart = () => {
   };
 
   const applyCoupon = async () => {
-    const response = await couponDetailes(couponCode);
-    if (response.success) {
-      if (response.coupons.users.includes(userId)) {
-        return toast.error("This Coupon Already Used");
+    await doRequest({
+      url:`${userRoutes.coupons}/${couponCode}`,
+      method:"get",
+      body:{},
+      onSuccess:(response)=>{
+        if (response.coupons.users.includes(userId)) {
+          return toast.error("This Coupon Already Used");
+        }
+        setSubTotal(
+          (prev) => (prev -= (subTotal * response.coupons.offer) / 100)
+        );
+        setTotal((prev) => (prev -= (subTotal * response.coupons.offer) / 100));
+        SetDiscount((subTotal * response.coupons.offer) / 100);
       }
-      setSubTotal(
-        (prev) => (prev -= (subTotal * response.coupons.offer) / 100)
-      );
-      setTotal((prev) => (prev -= (subTotal * response.coupons.offer) / 100));
-      SetDiscount((subTotal * response.coupons.offer) / 100);
-    } else {
-      toast.error(response.response.data.message);
-    }
+    })
+   
   };
 
   const removeCoupon = () => {
@@ -139,6 +130,9 @@ const Cart = () => {
     SetDiscount(0);
     setCouponCode("");
   };
+  useEffect(()=>{
+    errors?.map((err)=>toast.error(err.message))
+  },[errors])
   return (
     <div className="h-screen flex flex-col">
     <Header />

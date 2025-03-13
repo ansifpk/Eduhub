@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { IadminUsecase } from "../useCase/interface/useCsesInterface/IadminUseCase";
 import kafkaWrapper from "../framework/webServer/config/kafka/kafkaWrapper";
 import { Producer } from "kafkajs";
-import { catchError,ErrorHandler,StatusCodes,UserBlcokedPublisher } from "@eduhublearning/common";
+import { ForbiddenError, UserBlcokedPublisher } from "@eduhublearning/common";
 
 
 export class AdminController{
@@ -30,7 +30,7 @@ export class AdminController{
           res.send(adminAndToken)
         }
        } catch (error) {
-         catchError(error,next)
+         next(error)
        }
     }
 
@@ -39,7 +39,7 @@ export class AdminController{
         const studnets = await this.adminUsecase.fetchStudents();
         res.send(studnets)
        } catch (error) {
-         catchError(error,next)
+        next(error)
        }
     }
   
@@ -48,7 +48,7 @@ export class AdminController{
         const instructors = await this.adminUsecase.fetchInstructors();
         res.send(instructors)
        } catch (error) {
-         catchError(error,next)
+        next(error)
        }
     }
     async blockUser( req:Request,res:Response ,next: NextFunction) {
@@ -68,7 +68,7 @@ export class AdminController{
        
 
        } catch (error) {
-         catchError(error,next)
+        next(error)
        }
     }
     async editProfile( req:Request,res:Response ,next: NextFunction) {
@@ -78,7 +78,7 @@ export class AdminController{
             return res.send({success:true,admin:user});
           }
        } catch (error) {
-         catchError(error,next)
+        next(error)
        }
     }
 
@@ -101,7 +101,7 @@ export class AdminController{
     async checkTockens(req: Request, res: Response, next: NextFunction) {
         try {      
           if(!req.cookies.refreshAdminToken){
-            return next(new ErrorHandler(StatusCodes.UNAUTHORIZED,"Invalid token")) 
+            throw new ForbiddenError()
           }
           const tocken = req.cookies.refreshAdminToken;
     
@@ -124,6 +124,7 @@ export class AdminController{
           }
         } catch (error) {
           console.error(error);
+          next(error)
         }
       }
 

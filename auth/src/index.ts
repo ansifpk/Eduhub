@@ -3,18 +3,19 @@ import {json,urlencoded} from 'body-parser'
 import { connectDB } from './framework/webServer/config/mongoDB/db';
 import { UserRoute } from './framework/webServer/routes/userRoute';
 import cors from 'cors';
+import 'express-async-errors';
 import dotenv from 'dotenv';
 import { AdminRoute } from './framework/webServer/routes/adminRoute';
 import { InstructorRouter } from './framework/webServer/routes/instructorRouter';
 import kafkaWrapper from './framework/webServer/config/kafka/kafkaWrapper';
 import { InstructorAprovedConsumer } from './framework/webServer/config/kafka/consumer/instructor-approved-consumer';
-import cookieSession from 'cookie-session';
 import cookieParser from 'cookie-parser';
 import { EmailChangedConsumer } from './framework/webServer/config/kafka/consumer/email-changed-consumer';
 import { UserProfileUpdatedConsumer } from './framework/webServer/config/kafka/consumer/user-profile-updated-consumer';
-import { errMiddleware } from '@eduhublearning/common';
+// import { errMiddleware } from '@eduhublearning/common';
 import { Server, Socket } from 'socket.io';
 import {createServer} from 'http';
+import { errorHandler } from '@eduhublearning/common';
 
 dotenv.config();
 const app = express()
@@ -24,20 +25,12 @@ app.use(cors({credentials:true,
     origin: process.env.NODE_ENV === 'production'
       ? 'https://www.eduhublearning.online'
       : ['http://client-srv:5173', 'http://localhost:5173']
-    ,methods: ['GET', 'POST'],}));
+    }));
 app.use(json())
 app.use(urlencoded({ extended: true }))
-// app.use(
-//     cookieSession({
-//         signed: false, 
-//         httpOnly: true, 
-//         sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax', 
-//         secure: process.env.NODE_ENV === 'production', 
-//       })
-// )
 app.use(cookieParser())
 
-// Separate routers for user and admin
+// Separate routers for user , instructor and admin
 const userRouter = express.Router()
 const adminRouter = express.Router()
 const instructorRouter = express.Router()
@@ -53,7 +46,7 @@ app.use('/auth/user',userRouter);
 app.use('/auth/admin',adminRouter);
 app.use('/auth/instructor',instructorRouter);
 
-app.use(errMiddleware);
+app.use(errorHandler as any)
 
 let onlineUsers:{userId:string,socketId:string}[] = [];
 
@@ -74,6 +67,7 @@ const io = new Server(httpServer,{
             userId,
             socketId:socket.id
         })
+        
         socket.on("blockUser",(userId)=>{
             const user = onlineUsers.find((user)=>user.userId == userId);
             if(user){

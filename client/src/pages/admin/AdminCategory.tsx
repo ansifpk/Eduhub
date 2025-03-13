@@ -1,9 +1,8 @@
 import AdminAside from "@/Components/admin/AdminAside";
-import { Card,  CardHeader } from "@/Components/ui/card";
+import { Card } from "@/Components/ui/card";
 import { useEffect, useState } from "react";
 import { Button } from "@/Components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { category, listCategory } from "@/Api/admin";
 import toast from "react-hot-toast";
 import {
   Table,
@@ -21,12 +20,11 @@ import {
   AlertDialogContent,
   AlertDialogTitle,
   AlertDialogDescription,
-  
   AlertDialogAction,
 } from "@/Components/ui/alert-dialog";
-
-
 import { Badge } from "@/Components/ui/badge";
+import useRequest from "@/hooks/useRequest";
+import adminRoutes from "@/service/endPoints/adminEndPoints";
 
 interface ICategory {
   _id?: string;
@@ -36,68 +34,74 @@ interface ICategory {
 }
 
 const AdminCategory = () => {
+  const { doRequest,errors } = useRequest();
   const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
   useEffect(() => {
-    const fetchAllCategories = async () => {
-      const response = await category();
-      setCategories(response);
-    };
-    fetchAllCategories();
-  }, []);
-  const handleListCategory = async (id: string) => {
-    const response = await listCategory(id);
-
-    if (response.success) {
-      if (response.data.isListed) {
-        const res = await category();
-        setCategories(res);
-        toast.success("Successfully UnListed Category");
-        return;
-      } else {
-        const res = await category();
-        setCategories(res);
-        return toast.success("Successfully Listed Category");
+    doRequest({
+      url:adminRoutes.category,
+      method:"get",
+      body:{},
+      onSuccess:(response)=>{
+        setCategories(response);
       }
-    } else {
-      return toast.error(response.response.data.message);
-    }
+    })
+  }, []);
+  
+  const handleListCategory = async (id: string) => {
+    doRequest({
+      url:`${adminRoutes.listCategory}/${id}`,
+      method:"patch",
+      body:{},
+      onSuccess:(response)=>{
+        doRequest({
+          url:adminRoutes.category,
+          method:"get",
+          body:{},
+          onSuccess:(respo)=>{
+            setCategories(respo);
+            if(response.data.isListed){
+              toast.success("Successfully UnListed Category");
+            }else{
+              toast.success("Successfully Listed Category");
+            }
+          }
+        })
+      }
+    });
   };
-  return (
-    <div className="container-fluid ">
-      <div className="row">
-        <AdminAside />
-        <div className="col-md-10">
-          <div className="welcome mt-4 mb-4 bg-purple-600">
-            <h1>Welcome back, Admin</h1>
-            <img
-              src="https://via.placeholder.com/50"
-              alt="Profile Picture"
-              className="profile-pic"
-            />
-          </div>
-          <div className="grid grid-cols-1">
-            <Card>
-              <CardHeader>
-                <div className="flex justify-between">
-                  <h2>Category</h2>
 
-                  <Button onClick={() => navigate("/admin/addCategory")}>
-                    Add Category
-                  </Button>
-                </div>
-              </CardHeader>
-              <Table>
-                <TableHeader>
-                  <TableRow>
+  useEffect(()=>{
+    errors?.map((err)=>toast.error(err.message))
+  },[errors]);
+
+  return (
+    <div className="flex gap-2">
+      <AdminAside />
+      <div className="w-full mr-3">
+        <div className="w-full mx-auto mt-2 rounded-lg p-2  text-white bg-purple-600">
+          <h1>Welcome back, Admin</h1>
+        </div>
+        <div className="w-full">
+          <div className="flex justify-between my-3 ">
+            <h1 className="text-lg font-bold">Instructors</h1>
+             <Button onClick={() => navigate("/admin/addCategory")}>
+                Add Category
+              </Button>
+          </div>
+          {/* table card  */}
+          <Card>
+            <Table>
+              <TableHeader>
+               <TableRow>
                     <TableHead>Name</TableHead>
                     <TableHead>Descriptoin</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead className="text-center">Actions</TableHead>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {categories.length > 0 ? (
+              </TableHeader>
+              <TableBody>
+              {categories.length > 0 ? (
                     categories.map((value: ICategory, index) => (
                       <TableRow key={index}>
                         <TableCell>{value.title}</TableCell>
@@ -164,10 +168,10 @@ const AdminCategory = () => {
                       </TableCell>
                     </TableRow>
                   )}
-                </TableBody>
-              </Table>
-            </Card>
-          </div>
+              </TableBody>
+            </Table>
+          </Card>
+          {/* table card end */}
         </div>
       </div>
     </div>

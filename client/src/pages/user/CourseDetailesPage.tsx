@@ -56,7 +56,6 @@ import {
 } from "@/Components/ui/dialog";
 import { ScrollArea } from "@/Components/ui/scroll-area";
 import { useDispatch } from "react-redux";
-import { removeUser } from "@/redux/authSlice";
 import { IUserSubscribe } from "@/@types/userSubscribe";
 import { ISubcription } from "@/@types/subscriptionType";
 import {
@@ -67,6 +66,8 @@ import {
   DrawerFooter,
   useDisclosure,
 } from "@heroui/react";
+import useRequest from "@/hooks/useRequest";
+import userRoutes from "@/service/endPoints/userEndPoints";
 
 const stripe = await loadStripe(import.meta.env.VITE_PUBLISH_SECRET);
 const CourseDetailesPage = () => {
@@ -80,10 +81,9 @@ const CourseDetailesPage = () => {
   const [subscriptions, setSubscriptions] = useState<ISubcription[]>([]);
   const [plans, setPlans] = useState<IUserSubscribe[]>([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const dispatch = useDispatch();
   function getLabelText(value: number) {
     return `${value} Star${value !== 1 ? "s" : ""}, ${labels[value]}`;
-  }
+  }const {doRequest} =  useRequest();
 
   const navigate = useNavigate();
   const [errors, setErrors] = useState({
@@ -104,27 +104,41 @@ const CourseDetailesPage = () => {
 
   useEffect(() => {
     const call = async () => {
-      const data = await courseDetailes(courseId!);
-      if (data.success) {
-        setCourse(data.course);
-        const subscriptions = await instructorSubscriptions(
-          data.course.instructorId._id
-        );
-        setSubscriptions(subscriptions.subscriptions);
-      }
-      const ratings = await getRatings(courseId!);
-      if (ratings.success) {
-        setRatings(ratings.rating);
-      } else {
-        return toast.error(ratings.response.data.message);
-      }
+      
+      doRequest({
+        url:`${userRoutes.courseDeatiles}/${courseId}`,
+        method:"get",
+        body:{},
+        onSuccess:(data)=>{
+          setCourse(data.course);
+          doRequest({
+            url:`${userRoutes.subscriptions}/${data.course.instructorId._id}`,
+            method:"get",
+            body:{},
+            onSuccess:(subscriptions)=>{
+              setSubscriptions(subscriptions.subscriptions);
+            }
+          })
+        }
+      })
+     
+      doRequest({
+        url:`${userRoutes.ratingCourse}/${courseId!}`,
+        method:"get",
+        body:{},
+        onSuccess:(ratings)=>{
+          setRatings(ratings.rating);
+        }
+      });
 
-      const plans = await userPlans(userId);
-      if (plans.success) {
-        setPlans(plans.plans);
-      } else {
-        return toast.error(plans.response.data.message);
-      }
+      doRequest({
+        url:`${userRoutes.plans}/${userId}`,
+        method:"get",
+        body:{},
+        onSuccess:(plans)=>{
+          setPlans(plans.plans);
+        }
+      })
     };
     call();
   }, [courseId]);
@@ -195,10 +209,10 @@ const CourseDetailesPage = () => {
       <div className="flex bg-gray-900 w-full mt-16 h-[250px] ">
         <img
           src={course?.image.image_url}
-          className="h-[220px] w-[350px] object-fill m-3"
+          className="md:h-[220px] md:w-[350px] w-full object-fill m-3"
           alt=""
         />
-        <div className="w-full m-3">
+        <div className="md:block hidden w-full ">
           <h3 className="text-white m-3">Title : {course?.title}</h3>
           <h3 className="text-white m-3">About : {course?.thumbnail}</h3>
           <div className="flex m-3 gap-3 space-y-1 items-center">
@@ -223,8 +237,256 @@ const CourseDetailesPage = () => {
           </div>
         </div>
       </div>
-      <div className="row mt-4 flex justify-center">
-        <div className="col-8">
+      <div className="md:hidden bg-white w-full pl-3">
+         <p className="font-semibold text-3xl">{course?.title}</p>
+         <p>{course?.thumbnail}</p>
+      </div>
+      <div className="col-md-3 md:hidden">
+          <Card className="sticky top-0">
+            <CardHeader>
+              <h2 className="text-lg font-semibold">Purchase the course</h2>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col  gap-3 mb-4 last:mb-0">
+                {course?.students?.some((user) => user._id === userId) ? (
+                  <Button
+                    type="button"
+                    onClick={() => navigate(`/user/playCourse/${course._id}`)}
+                    className="w-full"
+                  >
+                    Go to class
+                  </Button>
+                ) : subscriptions.length > 0 ? (
+                  
+                  (() => {
+                    const isSubscribed = subscriptions.some((sub) =>
+                      plans.some((plan) => sub._id === plan.subscriptionId._id)
+                    );
+                    return (
+                      isSubscribed ? (
+                        <Button
+                          type="button"
+                          onClick={() =>
+                            navigate(`/user/playCourse/${course?._id}`)
+                          }
+                          className="w-full"
+                        >
+                          Go to class
+                        </Button>
+                      ):(
+                        <>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button type="button" className="w-full">
+                              purchase
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                Are you absolutely sure?
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure to purchase this course?
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogAction type="button">
+                                Cancel
+                              </AlertDialogAction>
+                              <AlertDialogAction
+                                onClick={handleOrder}
+                                type="button"
+                              >
+                                Continue
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                        {subscriptions.length>0&&<div>
+                          <h4 className="text-xs">OR</h4>
+                          <div className="space-y-3">
+                            <div className="text-xs">
+                              get access to this course and also all the courses of
+                              this instructor
+                            </div>
+                            <Button className="w-full" onClick={() => onOpen()}>
+                              subscribe
+                            </Button>
+                          </div>
+                        </div>}
+                        <Drawer isOpen={isOpen} size={"full"} onClose={onClose}>
+                          <DrawerContent>
+                            {(onClose) => (
+                              <>
+                                <DrawerHeader className="flex flex-col gap-1">
+                                  Instructor subscriptions
+                                </DrawerHeader>
+                                <DrawerBody>
+                                  {subscriptions.map((value, index) => (
+                                    <div
+                                      key={index}
+                                      className="border w-25 h-[300px] rounded-1"
+                                    >
+                                      <h4 className=" underline">Personal Plan</h4>
+                                      <div className="  m-1">
+                                        <div className="flex flex-col items-center justify-center h-[210px]">
+                                          <div>
+                                            {value.plan == "Monthly"
+                                              ? `Rs : ${value.price}/- per Month`
+                                              : `Rs : ${value.price}/- per Year`}
+                                          </div>
+                                          <div className="text-xs">
+                                            {value.plan == "Monthly"
+                                              ? `Billed monthly.`
+                                              : `Billed annually.`}
+                                          </div>
+                                          <div className="space-y-3 m-3">
+                                            {value.description.map((val, index) => (
+                                              <li className="text-xs" key={index}>
+                                                {val}
+                                              </li>
+                                            ))}
+                                          </div>
+                                        </div>
+                                        <div className="flex items-end ">
+                                          <Button
+                                            onClick={() => subscribe(value._id)}
+                                            type="button"
+                                            className="w-full bg-teal-500 hover:bg-teal-500 text-white"
+                                          >
+                                            Start Subscription
+                                          </Button>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </DrawerBody>
+                                <DrawerFooter>
+                                  <Button
+                                    className="text-danger bg-light"
+                                    onClick={onClose}
+                                  >
+                                    Close
+                                  </Button>
+                                </DrawerFooter>
+                              </>
+                            )}
+                          </DrawerContent>
+                        </Drawer>
+                       </>
+                      )
+                    );
+                  })()
+                ) : (
+                  <>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button type="button" className="w-full">
+                          purchase
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Are you absolutely sure?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure to purchase this course?
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogAction type="button">
+                            Cancel
+                          </AlertDialogAction>
+                          <AlertDialogAction
+                            onClick={handleOrder}
+                            type="button"
+                          >
+                            Continue
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                    {subscriptions.length>0&&<div>
+                      <h4 className="text-xs">OR</h4>
+                      <div className="space-y-3">
+                        <div className="text-xs">
+                          get access to this course and also all the courses of
+                          this instructor
+                        </div>
+                        <Button className="w-full" onClick={() => onOpen()}>
+                          subscribe
+                        </Button>
+                      </div>
+                    </div>}
+                    <Drawer isOpen={isOpen} size={"full"} onClose={onClose}>
+                      <DrawerContent>
+                        {(onClose) => (
+                          <>
+                            <DrawerHeader className="flex flex-col gap-1">
+                              Instructor subscriptions
+                            </DrawerHeader>
+                            <DrawerBody>
+                              {subscriptions.map((value, index) => (
+                                <div
+                                  key={index}
+                                  className="border w-25 h-[300px] rounded-1"
+                                >
+                                  <h4 className=" underline">Personal Plan</h4>
+                                  <div className="  m-1">
+                                    <div className="flex flex-col items-center justify-center h-[210px]">
+                                      <div>
+                                        {value.plan == "Monthly"
+                                          ? `Rs : ${value.price}/- per Month`
+                                          : `Rs : ${value.price}/- per Year`}
+                                      </div>
+                                      <div className="text-xs">
+                                        {value.plan == "Monthly"
+                                          ? `Billed monthly.`
+                                          : `Billed annually.`}
+                                      </div>
+                                      <div className="space-y-3 m-3">
+                                        {value.description.map((val, index) => (
+                                          <li className="text-xs" key={index}>
+                                            {val}
+                                          </li>
+                                        ))}
+                                      </div>
+                                    </div>
+                                    <div className="flex items-end ">
+                                      <Button
+                                        onClick={() => subscribe(value._id)}
+                                        type="button"
+                                        className="w-full bg-teal-500 hover:bg-teal-500 text-white"
+                                      >
+                                        Start Subscription
+                                      </Button>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </DrawerBody>
+                            <DrawerFooter>
+                              <Button
+                                className="text-danger bg-light"
+                                onClick={onClose}
+                              >
+                                Close
+                              </Button>
+                            </DrawerFooter>
+                          </>
+                        )}
+                      </DrawerContent>
+                    </Drawer>
+                  </>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      <div className="row md:mt-4  justify-center">
+        <div className="col-md-8 col-12">
           <div className="bg-white">
             <div className="m-2">
               <h2 className="m-1">course content</h2>
@@ -659,7 +921,7 @@ const CourseDetailesPage = () => {
                             `/user/instructorProfile/${course?.instructorId._id}`
                           )
                         }
-                        className="w-48 h-48 m-2 rounded-full  overflow-hidden bg-gray-200"
+                        className="md:w-48 w-24 h-24 md:h-48 m-2 rounded-full  overflow-hidden bg-gray-200"
                       >
                         <img
                           src={
@@ -668,10 +930,11 @@ const CourseDetailesPage = () => {
                               : "https://github.com/shadcn.png"
                           }
                           alt="instructor image"
+                          className="w-full h-full"
                         />
                       </div>
 
-                      <Card className="m-2 w-[600px] bg-gray-50/50 backdrop-blur-sm">
+                      <Card className="m-2 md:w-[600px] w-[400px]  bg-gray-50/50 backdrop-blur-sm">
                         <CardDescription className="m-4 space-y-2 overflow-hidden break-words">
                           <div className="font-bold text-black">
                             {course?.instructorId.name}
@@ -697,7 +960,7 @@ const CourseDetailesPage = () => {
             </div>
           </div>
         </div>
-        <div className="col-3">
+        <div className="col-md-3 md:block hidden">
           <Card className="sticky top-0">
             <CardHeader>
               <h2 className="text-lg font-semibold">Purchase the course</h2>

@@ -1,7 +1,7 @@
 import { NextFunction,Response,Request } from "express";
 import Stripe from "stripe";
 import { IWebhookUseCase } from "../useCases/interfaces/useCases/IWebhookUseCase";
-import { ErrorHandler, StatusCodes } from "@eduhublearning/common";
+import {  BadRequestError, StatusCodes } from "@eduhublearning/common";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET!, {
     apiVersion: "2025-01-27.acacia",
@@ -19,7 +19,7 @@ export class WebhookController{
                   const enpointSeceret = process.env.STRIPE_WEBHOOK_SECRET as string;
            
                     if (!sig) {
-                      return next(new ErrorHandler(StatusCodes.BAD_REQUEST, "missing stripe signature"));
+                      throw new BadRequestError("missing stripe signature")
                     }
                     const event = stripe.webhooks.constructEvent(
                       req.body,

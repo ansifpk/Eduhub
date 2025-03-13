@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AlertCircle, Check, Eye, EyeOff, Loader2, } from 'lucide-react';
 import { Alert, AlertDescription } from '../ui/alert';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { newPassword } from '@/Api/user';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import useRequest from '@/hooks/useRequest';
+import userRoutes from '@/service/endPoints/userEndPoints';
 
 interface changePassword {
   email: React.Dispatch<React.SetStateAction<any>>;
@@ -21,6 +22,7 @@ const NewPassword:React.FC<changePassword> = ({email}) => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean | null>(false);
   const navigate = useNavigate();
+  const {doRequest,errors} = useRequest()
  
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -37,24 +39,21 @@ const NewPassword:React.FC<changePassword> = ({email}) => {
 
     setIsLoading(true);
     setError(null);
-
-    try {
-      // const {data} = await axios.post("http:localhost:3000/auth/user/newPassword",{email.toString(),password})
-      const data = await newPassword(email.toString(),password)
-      if(data.sucess){
-        toast.success("Forget Password Success")
-        setIsLoading(false);
-        setSuccess(true)
-      }else{
-        toast.error(data.response.data.message);
-      }
-     
-    } catch (err) {
-      setError('An error occurred while resetting your password. Please try again.');
-    } 
-      
-    
+      doRequest({
+        url:userRoutes.newPassword,
+        body:{email,password},
+        method:"post",
+        onSuccess:()=>{
+          toast.success("Forget Password Success")
+          setIsLoading(false);
+          setSuccess(true)
+        }
+      })  
   };
+
+   useEffect(()=>{
+      errors?.map((err)=>toast.error(err.message))
+   },[errors]);
 
   if (success) {
     return (

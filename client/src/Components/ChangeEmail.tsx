@@ -1,4 +1,4 @@
-import  { useState } from 'react'
+import  { useEffect, useState } from 'react'
 import Header from './Header/Header'
 import ProfileNavbar from './Header/ProfileNavbar'
 import { Label } from './ui/label'
@@ -14,6 +14,8 @@ import toast from 'react-hot-toast'
 import { changeEmail, removeUser } from '@/redux/authSlice'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
+import useRequest from '@/hooks/useRequest'
+import userRoutes from '@/service/endPoints/userEndPoints'
 
 
 const ChangeEmail = () => {
@@ -21,7 +23,7 @@ const ChangeEmail = () => {
     const [otp,setOTP] = useState("");
     const [comingOtp,setComingOtp] = useState("");
     const [page,setPage] = useState(1);
-
+ const {doRequest} = useRequest()
  
     const [isLoading, setIsLoading] = useState(false);
     const [errors,setErrors] = useState({
@@ -39,57 +41,48 @@ const ChangeEmail = () => {
 
     const handleEmail = async ()=>{
         try {
-            setIsLoading(true)
-            
-            const response = await veryfyNewEmail(userId,email);
-
-            if(response.success){
+            setIsLoading(true);
+            doRequest({
+              url:`${userRoutes.changeEmailVeryfy}/${userId}`,
+              body:{email},
+              method:"post",
+              onSuccess:(response)=>{
                 setIsLoading(false)
                 setPage(2)
                 setComingOtp(response.otp);
-            }else if(response.status == 403){
-                setIsLoading(false)
-                const resp = await logout();
-                if (resp.succuss) {
-                  localStorage.setItem("accessToken", "");
-                  localStorage.setItem("refreshToken", "");
-                  dispatch(removeUser());
-                  toast.error(response.response.data.message);
-                  return navigate("/users/login");
-                }
-              }else{
-                setIsLoading(false)
-                return toast.error(response.response.data.message)
-            }
-            
+              }
+            })
         } catch (error) {
             console.log(error)
         }
     }
    
     const updateEmail  = async () => {
-
-        const response = await settingEmail(userId,email,otp);
-        if(response.success){
+      doRequest({
+        url:`${userRoutes.changeEmailVeryfy}/${userId}`,
+        body:{email,otp},
+        method:"post",
+        onSuccess:(response)=>{
+          setIsLoading(false)
+          setPage(2)
+          setComingOtp(response.otp);
+        }
+      })
+       
+        doRequest({
+          url:`${userRoutes.changeEmail}/${userId}`,
+          body:{email,otp},
+          method:"patch",
+          onSuccess:(response)=>{
             dispatch(changeEmail(response.user.email))
             toast.success("Email chnaged successfully")
             return navigate("/profile");
-        }else if(response.status == 403){
-            setIsLoading(false)
-            const resp = await logout();
-            if (resp.succuss) {
-              localStorage.setItem("accessToken", "");
-              localStorage.setItem("refreshToken", "");
-              dispatch(removeUser());
-              toast.error(response.response.data.message);
-              return navigate("/users/login");
-            }
-          }else{
-            setIsLoading(false)
-            return toast.error(response.response.data.message)
-        }
+          }
+        })
     }
-
+useEffect(()=>{
+  
+})
   return (
     <div className="bg-blue-50">
     <Header />

@@ -7,7 +7,6 @@ import { Label } from "@/Components/ui/label";
 import { Textarea } from "@/Components/ui/textarea";
 import { Button } from "@/Components/ui/button";
 import toast from "react-hot-toast";
-import { category, editCategory } from "@/Api/admin";
 import { ScrollArea } from "@/Components/ui/scroll-area";
 import { Separator } from "@/Components/ui/separator";
 import {
@@ -20,6 +19,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/Components/ui/alert-dialog";
+import useRequest from "@/hooks/useRequest";
+import adminRoutes from "@/service/endPoints/adminEndPoints";
 
 interface ICategory {
   _id?: string;
@@ -33,25 +34,25 @@ const EditCategory: React.FC = () => {
   const [subCategory, setsubCategory] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDiscription] = useState("");
-  // const [Category,setCategory] = useState<ICategory | undefined>()
+  const { doRequest,errors } = useRequest();
 
   const navigate = useNavigate();
   const { id } = useParams();
+
   useEffect(() => {
-    const fetchAllCategories = async () => {
-      const response = await category();
-      if (response) {
+    doRequest({
+      url:adminRoutes.category,
+      method:"get",
+      body:{},
+      onSuccess:(response)=>{
         const data = response.filter((value: ICategory) => value._id == id);
         const cate = data[0];
         setTitle(cate.title || title);
         setDiscription(cate.description || description);
         setTopics(cate.topics || topics);
-      } else {
-        return toast.error("Category Not Fount");
       }
-    };
-    fetchAllCategories();
-  }, []);
+    });
+  }, [id]);
 
   const handleSubCategory = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -67,8 +68,9 @@ const EditCategory: React.FC = () => {
       toast.error("maximum limite exceeded");
     }
   };
+
   const deleteTopic = async (index: number) => {
-    setTopics((prevTopics) => prevTopics.filter((value, i) => i !== index));
+    setTopics((prevTopics) => prevTopics.filter((_value, i) => i !== index));
     toast.success("sub Category removed");
   };
   const handleCategory = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -76,32 +78,30 @@ const EditCategory: React.FC = () => {
     if (topics.length == 0) {
       return toast.error("Atleast add one tpic for this category");
     }
-    console.log("creatig");
-    
-    const respose = await editCategory({ _id: id, title, description, topics });
-    console.log("edit cat", respose);
-    if (respose.success) {
-      toast.success(" Category edited");
-      return navigate("/admin/category");
-    } else {
-      toast.error(respose.response.data.message);
-    }
+     
+    doRequest({
+      url:adminRoutes.editCategory,
+      body:{ _id: id, title, description, topics },
+      method:"patch",
+      onSuccess:()=>{
+        toast.success(" Category edited");
+        return navigate("/admin/category");
+      }
+    })
   };
+
+  useEffect(()=>{
+    errors?.map((err)=>toast.error(err.message))
+  },[errors]);
+
   return (
-    <div className="container-fluid ">
-      <div className="row">
-        <AdminAside />
-        <div className="col-md-10">
-          <div className="welcome mt-4 mb-4 bg-purple-600">
-            <h1>Welcome back, Admin</h1>
-            <img
-              src="https://via.placeholder.com/50"
-              alt="Profile Picture"
-              className="profile-pic"
-            />
-          </div>
-          <div className="grid grid-cols-1">
-            <Card>
+    <div className="flex gap-2">
+      <AdminAside/>
+      <div className="w-full">
+         <div className="welcome mt-4 mb-4 bg-purple-600">
+           <h1>Welcome back, Admin</h1>
+         </div>
+         <Card>
               <CardHeader>
                 <div className="d-flex justify-content-between">
                   <h2 className="text-lg font-semibold">Edit Category</h2>
@@ -271,8 +271,6 @@ const EditCategory: React.FC = () => {
                 </form>
               </CardContent>
             </Card>
-          </div>
-        </div>
       </div>
     </div>
   );

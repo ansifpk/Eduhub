@@ -5,7 +5,7 @@ import dotenv from 'dotenv'
 import { connectDB } from './framework/webServer/config/db';
 import { CategoryRoute } from './framework/webServer/routes/categoryRoute';
 import { InstructorRouter } from './framework/webServer/routes/instructorRoute';
-import { errMiddleware } from '@eduhublearning/common';
+import {  errorHandler, NotFoundError } from '@eduhublearning/common';
 import cookieParser from 'cookie-parser';
 
 dotenv.config()
@@ -25,18 +25,14 @@ app.use(cors({credentials:true,
   origin: process.env.NODE_ENV === 'production'
     ? 'https://www.eduhublearning.online'
     : ['http://client-srv:5173', 'http://localhost:5173']
-  ,methods: ['GET', 'POST'],}));
-// app.use(
-//     cookieSession({
-//         signed: false, 
-//         httpOnly: true, 
-//         sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax', 
-//         secure: process.env.NODE_ENV === 'production', 
-//       })
-// )
+}));
+
 app.use(cookieParser())
 
 app.use("/category/admin",categoryRouter)
 app.use("/category/instructor",instructorRoute)
-app.use(errMiddleware);
+app.all("*",(req,res)=>{
+   throw new NotFoundError("Path Not Found.")
+})
+app.use(errorHandler as any);
 app.listen(process.env.PORT,()=>console.log(`catecory server running ${process.env.PORT} port`))

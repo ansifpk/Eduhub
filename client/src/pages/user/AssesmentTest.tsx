@@ -1,5 +1,4 @@
 import { ITest } from "@/@types/testType";
-import { getTests, submitTest } from "@/Api/user";
 import Footer from "@/Components/Footer/Footer";
 import Header from "@/Components/Header/Header";
 import ProfileNavbar from "@/Components/Header/ProfileNavbar";
@@ -20,10 +19,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Label } from "@/Components/ui/label";
 import { useSelector } from "react-redux";
 import { User } from "@/@types/userType";
+import useRequest from "@/hooks/useRequest";
+import userRoutes from "@/service/endPoints/userEndPoints";
 import toast from "react-hot-toast";
 
 const AssesmentTest = () => {
   const { testId } = useParams();
+  const {doRequest,errors} = useRequest()
   const [test, setTest] = useState<ITest[]>([]);
   const [isSelected, setIsSelected] = useState({
     selecte1: "",
@@ -34,22 +36,22 @@ const AssesmentTest = () => {
   });
   const navigate = useNavigate();
   useEffect(() => {
-    const fetch = async () => {
-      const response = await getTests(testId!);
-     
-
-      if (response.success) {
-        if (
-          response.test.students.some((user: { user: string }) => user.user)
-        ) {
-          return navigate(-1);
-        } else {
-          setTest(response.test.test);
-        }
-      }
-    };
-    fetch();
-  }, [testId]);
+   
+      doRequest({
+          url:`${userRoutes.test}/${testId}`,
+          body:{},
+          method:"get",
+          onSuccess:(response)=>{
+             if(response.test.students.some((user: { user: string }) => user.user)){
+              return navigate(-1);
+             }else{
+              setTest(response.test.test);
+             }
+          }
+        })
+ 
+   
+  },[testId]);
 
   const [page, setPage] = useState(1);
   const [mark, setMark] = useState(0);
@@ -74,12 +76,12 @@ const AssesmentTest = () => {
     }
 
     setMark(calculateMark);
-    const response = await submitTest(userId, testId!, calculateMark);
-    if (response.success) {
-      setPage((prev) => (prev += 1));
-    } else {
-      toast.error(response.response.data.message);
-    }
+   await doRequest({
+      url:`${userRoutes.test}/${testId}`,
+      method:"patch",
+      body:{userId,mark:calculateMark},
+      onSuccess:()=>setPage((prev) => (prev += 1))
+    })
   };
 
   const handleEndTest = async () => {
@@ -107,13 +109,19 @@ const AssesmentTest = () => {
     }
 
     setMark(calculateMark);
-    const response = await submitTest(userId, testId!, calculateMark);
-    if (response.success) {
-      setPage(6);
-    } else {
-      toast.error(response.response.data.message);
-    }
+    await doRequest({
+      url:`${userRoutes.test}/${testId}`,
+      method:"patch",
+      body:{userId,mark:calculateMark},
+      onSuccess:()=>setPage(6)
+    })
+    
   };
+
+  useEffect(()=>{
+    errors?.map((err)=>toast.error(err.message))
+  },[errors])
+  
   return (
     <div className="bg-blue-50">
       <Header />

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import { ErrorHandler } from "@eduhublearning/common";
+import { BadRequestError, ForbiddenError, NotAuthorizedError } from "@eduhublearning/common";
 import { UserModel } from "../../db/mongoDB/models/userMode";
 
 
@@ -16,26 +16,31 @@ interface User{
 
 export const isAuth = async (req:Request,res:Response,next:NextFunction)=>{ 
   
+try {
   if(!req.cookies){
-    return next(new ErrorHandler(401,"Tocken Expired"))
+    throw new NotAuthorizedError()
    } 
    if(!req.cookies.accessToken){
-    return next(new ErrorHandler(401,"Tocken Expired"))
+    throw new NotAuthorizedError()
    } 
     const check = jwt.verify(req.cookies.accessToken,process.env.JWT_ACCESSKEY!) as User;
     if(check){
       const user = await UserModel.findOne({_id:check.id});
       if(user){
          if(user.isBlock){
-          return next(new ErrorHandler(403,"You are blocked by Admin"))
+          throw new ForbiddenError()
+          
          }
          next();
       }else{
-        next(new ErrorHandler(401,"Tocken Expired"))
+        throw new NotAuthorizedError()
       }
     }else{
-      next(new ErrorHandler(401,"Tocken Expired"))
+      throw new NotAuthorizedError()
     } 
+} catch (error) {
+  next(error)
+}
 }
 
 export const isAdmin = async (req:Request,res:Response,next:NextFunction)=>{
@@ -43,26 +48,26 @@ export const isAdmin = async (req:Request,res:Response,next:NextFunction)=>{
     try {
      
       if(!req.cookies){
-        return next(new ErrorHandler(401,"Tocken Expired"))
+       throw new NotAuthorizedError()
        } 
       if(!req.cookies.accessAdminToken){
-        return next(new ErrorHandler(401,"Tocken Expired"))
+       throw new NotAuthorizedError()
        } 
       const check = jwt.verify(req.cookies.accessAdminToken,process.env.JWT_ACCESSKEY!) as User;
       if(!check){
-        return next(new ErrorHandler(401,"Tocken Expired"))
+       throw new NotAuthorizedError()
       }
       const user = await UserModel.findOne({_id:check.id});
         if(!user){
-          return next(new ErrorHandler(401,"Tocken Expired"))
+         throw new NotAuthorizedError()
         }
         if(user.isAdmin){
            next()
         }else{
-          return next(new ErrorHandler(401,"You are not admin"))
+          throw new NotAuthorizedError()
         }
     } catch (error) {
-      throw new Error("Admin not login")
+      next(error)
     }
       
       
@@ -72,29 +77,29 @@ export const isInstructor = async (req:Request,res:Response,next:NextFunction)=>
 
         try {
           if(!req.cookies){
-            return next(new ErrorHandler(401,"Tocken Expired"))
+           throw new NotAuthorizedError()
            } 
           if(!req.cookies.accessInstructorToken){
-            return next(new ErrorHandler(401,"Tocken Expired"))
+           throw new NotAuthorizedError()
            } 
           const check = jwt.verify(req.cookies.accessInstructorToken,process.env.JWT_ACCESSKEY!) as User;
           if(!check){
-            return next(new ErrorHandler(401,"Tocken Expired"))
+           throw new NotAuthorizedError()
           }
           const user = await UserModel.findOne({_id:check.id});
             if(!user){
-              return next(new ErrorHandler(401,"Tocken Expired"))
+             throw new NotAuthorizedError()
             }
             if(user.isBlock){
-              return next(new ErrorHandler(403,"You are blocked by Admin")) 
+              throw new ForbiddenError()
             }
             if(user.isInstructor){
                next()
             }else{
-              return next(new ErrorHandler(401,"You are not Instructor"))
+              throw new BadRequestError("You are not Instructor")
             }
         } catch (error) {
-          throw new Error("Admin not login")
+          next(error)
         }
           
           

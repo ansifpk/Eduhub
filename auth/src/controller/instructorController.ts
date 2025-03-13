@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { IInstructorInterface } from "../useCase/interface/useCsesInterface/IinstructorInterface";
-import { ErrorHandler, StatusCodes } from "@eduhublearning/common";
+import {  ForbiddenError } from "@eduhublearning/common";
 
 export class InstructorController{
 
@@ -71,7 +71,7 @@ export class InstructorController{
       async checkTockens(req: Request, res: Response, next: NextFunction) {
         try {      
           if(!req.cookies.refreshInstructorToken){
-            return next(new ErrorHandler(StatusCodes.UNAUTHORIZED,"Invalid token")) 
+             throw new ForbiddenError(  )
           }
           const tocken = req.cookies.refreshInstructorToken;
     
@@ -94,6 +94,7 @@ export class InstructorController{
           }
         } catch (error) {
           console.error(error);
+          next(error)
         }
       }
 }

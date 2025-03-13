@@ -2,7 +2,7 @@ import { Response, Request, NextFunction } from "express";
 import { IuserUseCase } from "../useCase/interface/useCsesInterface/IuserUseCase";
 import kafkaWrapper from "../framework/webServer/config/kafka/kafkaWrapper";
 import { Producer } from "kafkajs";
-import { ErrorHandler,StatusCodes,UserCreatedPublisher } from "@eduhublearning/common";
+import { ForbiddenError, NotAuthorizedError, UserCreatedPublisher } from "@eduhublearning/common";
 
 export class UserController {
   private userUseCase: IuserUseCase;
@@ -31,6 +31,7 @@ export class UserController {
   }
   async resentOtp(req: Request, res: Response, next: NextFunction) {
     try {
+     
       const data = await this.userUseCase.sentOtp(req.body.email, next);
       res.status(200).send({
         success: true,
@@ -43,14 +44,14 @@ export class UserController {
   async createUser(req: Request, res: Response, next: NextFunction) {
     try {
       if(!req.session){
-        return next(new ErrorHandler(StatusCodes.UNAUTHORIZED,"Invalid token"))
+       throw new NotAuthorizedError()
       }
       if(!req.session.verificationToken){
-        return next(new ErrorHandler(StatusCodes.UNAUTHORIZED,"Invalid token"))
+        throw new NotAuthorizedError()
       }
       const token = req.session.verificationToken
       if (typeof token !== "string") {
-        return next(new ErrorHandler(StatusCodes.UNAUTHORIZED,"Invalid token"))
+        throw new NotAuthorizedError()
       }
       const user = await this.userUseCase.insertUser(
         token as string,
@@ -77,7 +78,7 @@ export class UserController {
         httpOnly:true,
         secure:process.env.NODE_ENV !== 'development',
         sameSite:'strict',
-        maxAge:30 * 24 * 60 * 60 * 1000
+        maxAge: 15 * 60 * 1000
        });
 
       res.cookie('refreshToken',user.tokens.refreshToken,{
@@ -91,13 +92,15 @@ export class UserController {
       }
     } catch (err) {
       console.error(err);
+      next(err)
     }
   }
   async userLogin(req: Request, res: Response, next: NextFunction) {
     try {
+      const {email,password} = req.body;
       const userAndTokens = await this.userUseCase.login(
-        req.body.email,
-        req.body.password,
+        email,
+        password,
         next
       ); 
       if (userAndTokens) { 
@@ -122,10 +125,13 @@ export class UserController {
   }
   async googleLogin(req: Request, res: Response, next: NextFunction) {
     try {
+       const {email,name,password} = req.body;
+      
+       
       const userAndToken = await this.userUseCase.googleLogin(
-        req.body.email,
-        req.body.name,
-        req.body.password,
+        email,
+        name,
+        password,
         next
       );
       if (userAndToken) {
@@ -172,10 +178,10 @@ export class UserController {
   }
   async verifyOtp(req: Request, res: Response, next: NextFunction) {
     
-    try {
+    try { const {email,otp} = req.body;
       const data = await this.userUseCase.verifyOtp(
-        req.body.email,
-        req.body.otp,
+      email,
+       otp,
         next
       );
       if (data) {
@@ -189,9 +195,10 @@ export class UserController {
   async changePassword(req: Request, res: Response, next: NextFunction) {
 
     try {
+      const {email,password} = req.body;
       const data = await this.userUseCase.changePassword(
-        req.body.email,
-        req.body.password,
+        email,
+        password,
         next
       );
       if (data) {
@@ -260,11 +267,15 @@ export class UserController {
 
 
   async checkTockens(req: Request, res: Response, next: NextFunction) {
-    try {      
+    try {    
+      
       if(!req.cookies.refreshToken){
-        return next(new ErrorHandler(StatusCodes.UNAUTHORIZED,"Invalid token")) 
+  
+        throw new ForbiddenError()
       }
       const tocken = req.cookies.refreshToken;
+
+
 
       const tockens  = await this.userUseCase.checkTockens(tocken,next)
       if(tockens){
@@ -285,6 +296,7 @@ export class UserController {
       }
     } catch (error) {
       console.error(error);
+      next(error)
     }
   }
 

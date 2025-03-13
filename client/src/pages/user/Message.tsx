@@ -1,20 +1,10 @@
 import { IChat } from "@/@types/chatType";
 import { User } from "@/@types/userType";
-import {
-  getCurrentChat,
-  getMessages,
-  getNotifications,
-  markAsReadNotification,
-  sendMessage,
-  sendNotification,
-  userChats,
-} from "@/Api/user";
 import Footer from "@/Components/Footer/Footer";
 import Header from "@/Components/Header/Header";
 import ProfileNavbar from "@/Components/Header/ProfileNavbar";
 import { Avatar, AvatarImage } from "@/Components/ui/avatar";
 import { ScrollArea } from "@/Components/ui/scroll-area";
-import { Separator } from "@/Components/ui/separator";
 import { MoreVertical, Send } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
@@ -32,8 +22,9 @@ import {
   PopoverTrigger,
 } from "@/Components/ui/popover";
 import { INotification } from "@/@types/notificationType";
-import { removeUser } from "@/redux/authSlice";
 import { useDispatch } from "react-redux";
+import useRequest from "@/hooks/useRequest";
+import userRoutes from "@/service/endPoints/userEndPoints";
 
 const Message = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -53,7 +44,6 @@ const Message = () => {
   const [notifications, setNotifications] = useState<INotification[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  
   // Function to scroll to bottom
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -67,11 +57,10 @@ const Message = () => {
   //!websocket
   //* initialise socket
   useEffect(() => {
-
-    const newSocket = io(import.meta.env.VITE_APIGATEWAY,{
-      path: '/message/socket.io'
-     })
-     setSocket(newSocket!);
+    const newSocket = io(import.meta.env.VITE_APIGATEWAY, {
+      path: "/message/message/socket.io",
+    });
+    setSocket(newSocket!);
     return () => {
       newSocket.disconnect();
     };
@@ -97,8 +86,8 @@ const Message = () => {
     socket.emit("sendMessage", {
       text: newMessage,
       recipientId: recipientId?._id,
-      senderId:userId,
-      isRead:false
+      senderId: userId,
+      isRead: false,
     });
   }, [newMessage]);
 
@@ -107,25 +96,24 @@ const Message = () => {
   useEffect(() => {
     if (!socket) return;
 
-    socket.on("getMessage",(message)=>{
+    socket.on("getMessage", (message) => {
       const chatUser = currentChat?.members.find(
         (value) => value._id !== userId
       );
-         if(chatUser?._id !== message.senderId) return;
-         setMessages((prev)=>[...prev,message])
-        //  if (isChatOpen?._id == res.senderId) {
-        //   setNotifications((prev) => [{ ...res, isRead: true }, ...prev]);
-        // } else {
-        //   setNotifications((prev) => [res, ...prev]);
-        // }
-    })
+      if (chatUser?._id !== message.senderId) return;
+      setMessages((prev) => [...prev, message]);
+      //  if (isChatOpen?._id == res.senderId) {
+      //   setNotifications((prev) => [{ ...res, isRead: true }, ...prev]);
+      // } else {
+      //   setNotifications((prev) => [res, ...prev]);
+      // }
+    });
 
     socket.on("getMessageNotification", (res) => {
-
       const isChatOpen = currentChat?.members.find(
         (value) => value._id !== res.recipientId
       );
-      toast.success(`You got a new message`)
+      toast.success(`You got a new message`);
       if (isChatOpen?._id == res.senderId) {
         setNotifications((prev) => [{ ...res, isRead: true }, ...prev]);
       } else {
@@ -138,15 +126,18 @@ const Message = () => {
       socket.off("getMessageNotification");
     };
   }, [socket, currentChat]);
-
+   //*get all chats
+    const {doRequest,errors} = useRequest()
   useEffect(() => {
     const getUserChats = async () => {
-      const response = await userChats(userId);
-
-
-      if (response.success) {
-        setChats(response.chats);
-      }
+     await doRequest({
+           url:`${userRoutes.chat}?userId=${userId}`,
+           method:"get",
+           body:{},
+           onSuccess:(res)=>{
+            setChats(res.chats);
+           }
+      })
     };
     getUserChats();
   }, [userId]);
@@ -154,186 +145,223 @@ const Message = () => {
   useEffect(() => {
     if (chatId) {
       const fetchmessages = async () => {
-        const currentCht = await getCurrentChat(chatId);
-        if (currentCht.success) {
-          setCurrentChat(currentCht.chat);
-        } else {
-          return toast.error(currentCht.response.data.message);
-        }
-        const response = await getMessages(chatId);
-        if (response.success) {
-          setMessages(response.messages);
-        }
+        await doRequest({
+          url:`${userRoutes.privetChat}/${chatId}`,
+          method:"get",
+          body:{},
+          onSuccess:(res)=>{
+            setCurrentChat(res.chat);
+          }
+        });
+        await doRequest({
+          url:`${userRoutes.message}/${chatId}`,
+          method:"get",
+          body:{},
+          onSuccess:(res)=>{
+            setMessages(res.messages);
+          }
+        });
       };
       fetchmessages();
     }
   }, [chatId]);
 
- 
-  let  user = ''
-  const modification = notifications.map((notify:INotification)=>{
-     chats.map((chat:IChat)=>{
-       chat.members.map((value)=>{
-        if(value._id == notify.senderId){
+  let user = "";
+  const modification = notifications.map((notify: INotification) => {
+    chats.map((chat: IChat) => {
+      chat.members.map((value) => {
+        if (value._id == notify.senderId) {
           user = value.name;
         }
-       })
-    })
+      });
+    });
     return {
       ...notify,
-      senderName:user
-    }
-   })
-   const navigate = useNavigate();
-   const dispatch = useDispatch();
-   
-   const markAsRead  = async(sentId:string) => {
-      const mdNotifications = notifications.filter((value:INotification)=>value.senderId !== sentId);
-      if(mdNotifications){
-        const response = await markAsReadNotification(sentId,userId);
-        if(response.success){
-          setNotifications(mdNotifications)
-        }else{
-          return toast.error(response.response.data.message);
-        }
-      }
-   }
- 
-  const handletext = async () => {
-    let reciever = '';
-    currentChat?.members.map((user)=>{
-     if(user._id !== userId){
-          reciever = user._id
-     }
-    }) 
-    const response = await sendMessage(currentChat?._id!, userId, text);
-    if (response.success) {
-      setNewMessage(response.message.text);
-      setMessages((prev) => [...prev, response.message]);
-      setText("");
-      await sendNotification(reciever,userId)
-    } else {
-      return toast.error(response.response.data.message);
+      senderName: user,
+    };
+  });
+  const markAsRead = async (sentId: string) => {
+    const mdNotifications = notifications.filter(
+      (value: INotification) => value.senderId !== sentId
+    );
+    if (mdNotifications) {
+      await doRequest({
+        url:`${userRoutes.notification}/${userId}/${sentId}`,
+          method:"patch",
+          body:{},
+          onSuccess:()=>{
+            setNotifications(mdNotifications);
+          }
+      });
     }
   };
 
-   
-     useEffect(()=>{
-        const fetching  = async () =>{
-          const respo = await getNotifications(userId);
-          if(respo.success){
-            setNotifications(respo.notifications)
+  const handletext = async () => {
+    let reciever = "";
+    currentChat?.members.map((user) => {
+      if (user._id !== userId) {
+        reciever = user._id;
+      }
+    });
+    await doRequest({
+      url:userRoutes.message,
+      method:"post",
+      body:{chatId:currentChat?._id!, senderId:userId, text},
+      onSuccess:(response)=>{
+        setNewMessage(response.message.text);
+        setMessages((prev) => [...prev, response.message]);
+        setText("");
+        doRequest({
+          url:userRoutes.message,
+            method:"post",
+            body:{recipientId:reciever, senderId:userId,},
+            onSuccess:()=>{}
+        })
+      }
+    })
+  };
+
+  useEffect(() => {
+    const fetching = async () => {
+      doRequest({
+        url:`${userRoutes.notification}/${userId}`,
+          method:"get",
+          body:{},
+          onSuccess:(res)=>{
+            setNotifications(res.notifications);
           }
-        }
-        fetching ();
-       },[])
+      })
+    };
+    fetching();
+  }, []);
+
+  useEffect(() => {
+    errors?.map((err)=>toast.error(err.message))
+  }, [errors]);
+
+
   return (
     <div className="h-screen  pt-1">
       <Header />
-       <ProfileNavbar />
-      <div className="flex justify-center">
-        <div className="bg-white mx-5 my-4 flex  w-[950px] rounded-2">
+      <ProfileNavbar />
+      <div className="flex md:justify-center">
+        <div className="bg-white md:mx-5 my-4 flex  md:w-[950px] w-[500px]  rounded-2">
           <div className="border borer-danger bg-success-400  m-2  rounded-2">
-            <div className="flex items-center justify-between w-[330px]">
+            <div className="flex items-center justify-between md:w-[330px] w-[200px]">
               <h3 className="m-3 text-sm font-medium text-white leading-none">
                 Messages
               </h3>
               <Popover>
-              <PopoverTrigger><MarkEmailUnreadIcon  />{notifications.length}</PopoverTrigger>
-              <PopoverContent>
-              <div className="flex justify-between gap-3">
-                      <h5>Notifications</h5>
-                     
-              </div>
-             
-                      {modification.length>0?(
-                         modification.map((value:INotification,index)=>(
-                            <div onClick={() => {
-                              let id=''
-                              let sentId=''
-                              chats.map((chat:IChat)=>{
-                                chat.members.map((val)=>{
-                                 if(val._id == value.senderId){
-                                  id = chat._id;
-                                  sentId = value.senderId
-                                 }
-                                })
-                             })
-                              markAsRead(sentId)
-                              searchParams.set("chatId", id)
-                              setSearchParams(searchParams);
-                            }} className={`p-2 ${value.isRead?"bg-white":"bg-success-600"}`} key={index}>
-                                <div>{`${value.senderName} Sent you a new message`}</div>
-                                <div>{moment(value.date).calendar()}</div>
-                            </div>
-                         ))
-                      ):(
-                        <p>No New Notifications...</p>
-                      )
-                      }
-               
-              </PopoverContent>
-            </Popover>
-          
+                <PopoverTrigger>
+                  <MarkEmailUnreadIcon />
+                  {notifications.length}
+                </PopoverTrigger>
+                <PopoverContent>
+                  <div className="flex justify-between gap-3">
+                    <h5>Notifications</h5>
+                  </div>
+
+                  {modification.length > 0 ? (
+                    modification.map((value: INotification, index) => (
+                      <div
+                        onClick={() => {
+                          let id = "";
+                          let sentId = "";
+                          chats.map((chat: IChat) => {
+                            chat.members.map((val) => {
+                              if (val._id == value.senderId) {
+                                id = chat._id;
+                                sentId = value.senderId;
+                              }
+                            });
+                          });
+                          markAsRead(sentId);
+                          searchParams.set("chatId", id);
+                          setSearchParams(searchParams);
+                        }}
+                        className={`p-2 ${
+                          value.isRead ? "bg-white" : "bg-success-600"
+                        }`}
+                        key={index}
+                      >
+                        <div>{`${value.senderName} Sent you a new message`}</div>
+                        <div>{moment(value.date).calendar()}</div>
+                      </div>
+                    ))
+                  ) : (
+                    <p>No New Notifications...</p>
+                  )}
+                </PopoverContent>
+              </Popover>
             </div>
 
-            <ScrollArea className="h-[450px] w-[330px] rounded-md border bg-white p-2">
+            <ScrollArea className="h-[450px] md:w-[330px] w-[200px] rounded-md border bg-white p-2">
               {chats.length > 0 ? (
                 chats
                   .filter((value: IChat) => value.role == "userToInstructor")
                   .map((chat: IChat, index: number) => {
-                    const chatMember = chat.members.find((member) => member._id !== userId);
+                    const chatMember = chat.members.find(
+                      (member) => member._id !== userId
+                    );
                     const unreadCount = notifications.filter(
-                      (notif) => !notif.isRead && notif.senderId === chatMember?._id
+                      (notif) =>
+                        !notif.isRead && notif.senderId === chatMember?._id
                     ).length;
-                     console.log("hi",unreadCount,chatMember)
+           
                     return (
-                      <div key={index} className="flex justify-between items-center">
-                      <div className="flex space-x-3 m-2">
-                        <Avatar
-                          className={`border-3 ${
-                            onlineUsers.some(
-                              (value) =>
-                                value.userId ==
+                      <div
+                        key={index}
+                        className="flex justify-between items-center"
+                      >
+                        <div className="flex space-x-3 m-2">
+                          <Avatar
+                            className={`border-3 ${
+                              onlineUsers.some(
+                                (value) =>
+                                  value.userId ==
+                                  chat.members.find(
+                                    (member) => member._id !== userId
+                                  )?._id
+                              ) && "border-3 border-success-400"
+                            }  cursor-pointer`}
+                          >
+                            <AvatarImage
+                              src={
                                 chat.members.find(
                                   (member) => member._id !== userId
-                                )?._id
-                            ) && "border-3 border-success-400"
-                          }  cursor-pointer`}
-                        >
-                          <AvatarImage
-                            src={
-                              chat.members.find(
+                                )?.avatar.avatar_url ||
+                                "https://github.com/shadcn.png"
+                              }
+                              alt="@shadcn"
+                            />
+                          </Avatar>
+                          <div
+                            onClick={async() => {
+                              searchParams.set("chatId", chat._id);
+                              setSearchParams(searchParams);
+                              let id = chat.members.find(
                                 (member) => member._id !== userId
-                              )?.avatar.avatar_url ||
-                              "https://github.com/shadcn.png"
-                            }
-                            alt="@shadcn"
-                          />
-                        </Avatar>
-                        <div
-                          onClick={() => {
-                            let id = chat.members.find((member) => member._id !== userId)?._id
-                            markAsRead(id!)
-                            searchParams.set("chatId", chat._id);
-                            setSearchParams(searchParams);
-                          }}
-                          className="grid flex-1 text-left text-sm leading-tight cursor-pointer"
-                        >
-                          <span className="truncate font-semibold">
-                            {
-                              chat.members.find(
-                                (member) => member._id !== userId
-                              )?.name
-                            }
-                          </span>
+                              )?._id;
+                              markAsRead(id!);
+                            }}
+                            className="grid flex-1 text-left text-sm leading-tight cursor-pointer"
+                          >
+                            <span className="truncate font-semibold">
+                              {
+                                chat.members.find(
+                                  (member) => member._id !== userId
+                                )?.name
+                              }
+                            </span>
+                          </div>
                         </div>
+                        {unreadCount > 0 && (
+                          <div className="bg-success text-xs px-2 text-white rounded-full">
+                            {unreadCount}
+                          </div>
+                        )}
                       </div>
-                        {unreadCount>0&&<div className="bg-success text-xs px-2 text-white rounded-full">
-                           {unreadCount}
-                        </div>}
-                      </div>
-                    )
+                    );
                   })
               ) : (
                 <div className="flex items-center justify-center">
@@ -379,7 +407,7 @@ const Message = () => {
                     {messages.map((msg, index) => (
                       <div
                         key={index}
-                        className={`flex p-[0.75rem] w-[250px] border rounded shadow-md ${
+                        className={`flex p-[0.75rem] md:w-[250px] w-[200px]  border rounded shadow-md my-2 ${
                           msg.senderId == userId
                             ? "bg-success-200 ml-auto"
                             : "bg-white items-start"
@@ -395,7 +423,7 @@ const Message = () => {
                         </div>
                       </div>
                     ))}
-                    
+
                     <div ref={messagesEndRef} />
                   </>
                 ) : chatId ? (
@@ -428,7 +456,7 @@ const Message = () => {
           </div>
         </div>
       </div>
-       <Footer />
+      <Footer />
     </div>
   );
 };

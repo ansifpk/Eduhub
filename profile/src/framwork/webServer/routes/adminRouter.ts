@@ -21,6 +21,14 @@ export function AdminRouter(router:Router){
         }
  })
 
+ router.get("/instructorRequest",isAdmin,async(req,res,next)=>{
+  try {          
+      adminController.instructorRequest(req,res,next)
+  } catch (error) {
+    console.error(error)
+  }
+})
+
  router.patch("/instructorAprovel",isAdmin,async(req,res,next)=>{
         try {          
             adminController.instructorAprovel(req,res,next)
@@ -29,7 +37,8 @@ export function AdminRouter(router:Router){
         }
  })
 
- router.get("/top5Instructors",async(req,res,next)=>{
+
+ router.get("/top5Instructors",isAdmin,async(req,res,next)=>{
   adminController.top5Instructors(req,res,next);
 })
 

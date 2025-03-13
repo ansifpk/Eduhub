@@ -3,7 +3,7 @@ import { Iuser } from "../../entities/user";
 import { IJwt, IToken } from "../interface/serviceInterface/IJwt";
 import {  IInstructorInterface } from "../interface/useCsesInterface/IinstructorInterface";
 import { IInstructorRepository } from "../interface/repositoryInterface/IInstructorInterface";
-import { ErrorHandler, StatusCodes } from "@eduhublearning/common";
+import {  BadRequestError, ForbiddenError, StatusCodes } from "@eduhublearning/common";
 import { Icloudinary } from "../../framework/services/cloudinary";
 import { IHashPassword } from "../interface/serviceInterface/IHashPassword";
 
@@ -17,47 +17,51 @@ export class InstructorUseCase implements IInstructorInterface{
         private jwt:IJwt,
          private encrypt: IHashPassword,
     ){}
-    async instructorRegister(email: string, name: string,qualification: string, expirience: string, certificate: string, cv: string, next: NextFunction): Promise<{ user: Iuser; token: IToken; } | void> {
-       
-         
-        const userNew = await this.instructorRepository.findByEmail(email) as Iuser;
-       if(userNew){
-            const user = await this.instructorRepository.makeInstructor(email)
-            if(user){
-                const token = await this.jwt.createAccessAndRefreashToken(user._id!) as IToken
-                if(token){
-                    if(user.isBlock){
-                        return next(new ErrorHandler(StatusCodes.FORBIDDEN,"You are blocked by Admin"))
-                    }
-                   
-                    return {user,token}
-                }
-            }else{
-                return next(new ErrorHandler(StatusCodes.NOT_FOUND,"Not fount user"))
-            }
-           
-            
-       }
+    async instructorRegister(email: string, name: string,qualification: string, expirience: string, certificate: string, cv: string, next: NextFunction): Promise<{ user: Iuser; token: IToken; } | void> { 
+        try {
+          const userNew = await this.instructorRepository.findByEmail(email) as Iuser;
+         if(userNew){
+              const user = await this.instructorRepository.makeInstructor(email)
+              if(user){
+                  const token = await this.jwt.createAccessAndRefreashToken(user._id!) as IToken
+                  if(token){
+                      if(user.isBlock){
+                         throw new ForbiddenError()
+                          // return next(new ErrorHandler(StatusCodes.FORBIDDEN,"You are blocked by Admin"))
+                      }
+                     
+                      return {user,token}
+                  }
+              }else{
+                 throw new BadRequestError("User Not Fount" )
+              }  
+         }
+        } catch (error) {
+          console.log(error);
+          next(error)
+          
+        }
     }
    
     async editProfile(instructorId: string, email: string, name: string, next: NextFunction): Promise<Iuser | void> {
        const currentUser = await this.instructorRepository.findById(instructorId)
        if(currentUser){
-        
           const checkUser = await this.instructorRepository.findByEmail(email)
           if(checkUser){
               if(checkUser._id?.toString() === currentUser._id?.toString()){
                  const updatedUser = await this.instructorRepository.update(instructorId,email,name)
                  return updatedUser;
               }else{
-                return next(new ErrorHandler(StatusCodes.CONFLICT,"Email Already Registered"))
+                throw new BadRequestError( "Email Already Registered")
+                // return next(new ErrorHandler(StatusCodes.CONFLICT,"Email Already Registered"))
               }
           }else{
             const updatedUser = await this.instructorRepository.update(instructorId,email,name)
             return updatedUser;
         }
        }else{
-        return next(new ErrorHandler(StatusCodes.NOT_FOUND,"User Not Fount"))
+        throw new BadRequestError("User Not Fount" )
+        // return next(new ErrorHandler(StatusCodes.NOT_FOUND,"User Not Fount"))
        }
     }
 
@@ -71,16 +75,20 @@ export class InstructorUseCase implements IInstructorInterface{
                 const token = await this.jwt.createAccessAndRefreashToken(instructor._id!) as IToken
                 return {instructor,token}
               }else{
-                return next(new ErrorHandler(StatusCodes.BAD_REQUEST,"You Are Not Instructor"))
+                throw new BadRequestError( "You Are Not Instructor")
+                // return next(new ErrorHandler(StatusCodes.BAD_REQUEST,"You Are Not Instructor"))
               }
            }else{
-            return next(new ErrorHandler(StatusCodes.BAD_REQUEST,"Incorrect Password"))
+            throw new BadRequestError("Incorrect Password" )
+            // return next(new ErrorHandler(StatusCodes.BAD_REQUEST,"Incorrect Password"))
            }
        }else{
-        return next(new ErrorHandler(StatusCodes.BAD_REQUEST,"Instructor Not Found"))
+        throw new BadRequestError("Instructor Not Found" )
+        // return next(new ErrorHandler(StatusCodes.BAD_REQUEST,"Instructor Not Found"))
        }
      } catch (error) {
         console.error(error)
+        next(error)
     }
    }
     async fetchStudents(): Promise<Iuser[]| void> {

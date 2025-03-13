@@ -8,7 +8,8 @@ class KafkaWrapper {
     constructor() {
         this._kafka = new Kafka({
             clientId: 'message-service',
-            brokers: ['kafka-srv:9092'],
+            // brokers: ['kafka-srv:9092'],
+            brokers: ['localhost:9092'],
            
         })
     }

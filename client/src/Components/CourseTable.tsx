@@ -1,4 +1,4 @@
-import { MoreHorizontal, SubscriptIcon } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -19,7 +19,7 @@ import { Badge } from "./ui/badge";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { User } from "@/@types/userType";
-import { addTestToCourse, editTestToCourse, getCourses, getSubscriptions, instructorPlans, listCourses } from "@/Api/instructor";
+import { addTestToCourse, editTestToCourse, getCourses, instructorPlans, listCourses } from "@/Api/instructor";
 import toast from "react-hot-toast";
 import { Separator } from "./ui/separator";
 import { useNavigate } from "react-router-dom";
@@ -33,14 +33,6 @@ import {
 } from "./ui/select";
 import { ICourse } from "@/@types/courseType";
 
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "./ui/sheet";
 
 import {
   Dialog,
@@ -86,21 +78,19 @@ import { Card, CardContent } from "./ui/card";
 import { ITest } from "@/@types/testType";
 import { IUser } from "@/@types/chatUser";
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
-import { ISubcription } from "@/@types/subscriptionType";
 import { IInstructorSubscribe } from "@/@types/instructorSubscribe";
 
 export function Coursestable() {
   const [courses, setCourses] = useState([]);
   const [search, setSearch] = useState("");
   const [courseId, setCourseId] = useState<ICourse>();
-  const [filter, setFilter] = useState("");
   const [sort, setSort] = useState("");
   const instructorId = useSelector((state: User) => state.id);
   const { isOpen:isAddOpen, onOpen:addOpen, onClose:addClose } = useDisclosure();
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);  
-  const [loading, setLoding] = useState(false);  
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [students, setStudents] = useState<IUser[]>([]);
   const [test, setTest] = useState<ITest>();

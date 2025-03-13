@@ -2,7 +2,7 @@ import { NextFunction } from "express";
 import { Iuser } from "../../entities/user";
 import { IAdminRepository } from "../interfaces/repositoryInterfaces/IadminRepository";
 import { IAdminUseCase } from "../interfaces/useCasesInterfaces/IadminUseCase";
-import { ErrorHandler, StatusCodes } from "@eduhublearning/common";
+import { NotFoundError } from "@eduhublearning/common";
 
 
 export class AdminUseCase implements IAdminUseCase{
@@ -45,22 +45,28 @@ export class AdminUseCase implements IAdminUseCase{
             const count = await this.adminRepository.getUserPages(search,sort);
             const pages = count as number 
             const students = await this.adminRepository.find(search,sort,page)
-            
-            console.log(pages,"pages");
-            
-        if(students){
-            return {students,pages};
-        }
-        } catch (error) {
-            console.error(error)
-        }
+            if(students){
+                return {students,pages};
+            }
+            } catch (error) {
+                console.error(error)
+            }
     }
 
+    async instructorRequest(): Promise<Iuser[] | void> {
+       try {
+          const requests = await this.adminRepository.findIntructorRequests();
+          return requests
+       } catch (error) {
+           console.error(error)
+       }
+       
+    }
     async instructorAprovel(email: string, status: string, next: NextFunction): Promise<Iuser | void> {
        try {
         const user = await this.adminRepository.findByEmail(email)
         if(!user){
-           return next(new ErrorHandler(StatusCodes.NOT_FOUND,"User Not Fount"));
+            throw new  NotFoundError("User Not Fount")
         }
          let updatedUser 
         if(status == "Rejected"){

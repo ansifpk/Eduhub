@@ -13,7 +13,7 @@ import { ChatRoute } from './framwork/webServer/routers/chatRoute';
 import { Socket,Server } from 'socket.io';
 import { UserProfileUpdatedConsumer } from './framwork/webServer/config/kafka/consumer/user-profile-updated-consumer';
 import { NotificationRoute } from './framwork/webServer/routers/notificationRouter';
-import { errMiddleware } from '@eduhublearning/common';
+import { errorHandler } from '@eduhublearning/common';
 import cookieParser from 'cookie-parser';
 
 dotenv.config();
@@ -39,7 +39,7 @@ app.use(cors({credentials:true,
     origin: process.env.NODE_ENV === 'production'
       ? 'https://www.eduhublearning.online'
       : ['http://client-srv:5173', 'http://localhost:5173']
-    ,methods: ['GET', 'POST'],}));
+    ,methods: ['GET', 'POST','PATCH'],}));
 
 
 app.use(bodyParser.json({limit: '50mb'}));
@@ -57,7 +57,7 @@ app.use(cookieParser())
 app.use('/message/chat',chatRouter);
 app.use('/message/message',messageRouter);
 app.use('/message/notification',notificationRouter);
-app.use(errMiddleware);
+app.use(errorHandler as any);
 
 //! web socket configurations
 let onlineUsers:{userId:string,socketId:string}[] = [];
@@ -109,8 +109,7 @@ io.on("connect",(socket:Socket)=>{
 
 const start = async () => {
     try {
-        await connectDB();
-
+      
         await kafkaWrapper.connect();
         const userCreatedConsumer = await kafkaWrapper.createConsumer('message-user-created-group')
         const consumser = await kafkaWrapper.createConsumer('message-instructor-approved-group')
@@ -128,7 +127,8 @@ const start = async () => {
         await listener2.listen();
         await listener3.listen();
         await listener4.listen();
-        
+        await connectDB();
+
         httpServer.listen(PORT, () => console.log(`the Message server is running in http://localhost:${PORT} for message!!!!!!!!`))
     } catch (error) {
         console.error(error);

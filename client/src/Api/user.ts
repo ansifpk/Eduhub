@@ -4,6 +4,7 @@ import { loginType } from "../@types/loginType"
 import { registerType } from "../@types/registerType"
 import ApiGatway from "@/service/axios"
 import { ICourse } from "@/@types/courseType"
+import useRequest from "@/hooks/useRequest";
 
 export const signup = async (registerData: registerType) => {
     try {
@@ -25,6 +26,7 @@ export const otpVerify = async (otp:string,email:string) => {
 }
 export const userLogin = async (loginData:loginType) =>{
     try {
+        
         const response = await ApiGatway.post(userRoutes.login,loginData);       
         return response.data
     } catch (error) {

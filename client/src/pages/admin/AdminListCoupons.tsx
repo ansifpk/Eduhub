@@ -1,15 +1,8 @@
 import AdminAside from "@/Components/admin/AdminAside";
-import { Card, CardHeader } from "@/Components/ui/card";
+import { Card } from "@/Components/ui/card";
 import { useEffect, useState } from "react";
 import { Button } from "@/Components/ui/button";
 import { useNavigate } from "react-router-dom";
-import {
-  category,
-  deleteCoupon,
-  editCoupon,
-  getCoupons,
-  listCategory,
-} from "@/Api/admin";
 
 import toast from "react-hot-toast";
 import {
@@ -39,6 +32,9 @@ import { Textarea } from "@/Components/ui/textarea";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/Components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/Components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
+import useRequest from "@/hooks/useRequest";
+import adminRoutes from "@/service/endPoints/adminEndPoints";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/Components/ui/sheet";
 
 
 const AdminListCoupon = () => {
@@ -48,13 +44,13 @@ const AdminListCoupon = () => {
   const [description, setDescription] = useState("");
   const [couponCode, setCouponCode] = useState("");
   const [offer, setOffer] = useState(0);
-  const [success, setSuccess] = useState(false);
   const [expiryDate, setExpiryDate] = useState("");
   const [startingDate, setStartingDate] = useState("");
   const [expiryTime, setExpiryTime] = useState("");
   const [startingTime, setStartingTime] = useState("");
    const [today] = useState(new Date());
-  const [errors, setErrors] = useState({
+  const {doRequest,errors} = useRequest()
+   const [error, setErrors] = useState({
     title: false,
     description: false,
     offer: false,
@@ -68,23 +64,32 @@ const AdminListCoupon = () => {
   
   const navigate = useNavigate();
   useEffect(() => {
-    const fetchAllCoupons = async () => {
-      const response = await getCoupons();
-      if (response.success) {
+    doRequest({
+      url:adminRoutes.coupon,
+      method:"get",
+      body:{},
+      onSuccess:(response)=>{
         setCoupons(response.coupon);
       }
-    };
-    fetchAllCoupons();
+    })
   }, []);
 
   const handleCoupon = async (couponId: string) => {
-    const response = await deleteCoupon(couponId);
-    if (response.success) {
-      const response = await getCoupons();
-      if (response.success) {
-        setCoupons(response.coupon);
+    doRequest({
+      url:`${adminRoutes.coupon}/${couponId}`,
+      method:"delete",
+      body:{},
+      onSuccess:()=>{
+        doRequest({
+          url:adminRoutes.coupon,
+          method:"get",
+          body:{},
+          onSuccess:(response)=>{
+            setCoupons(response.coupon);
+          }
+        })
       }
-    }
+    })
   };
 
   const editCouponHandler = async (couponId: string) => {
@@ -160,67 +165,59 @@ const AdminListCoupon = () => {
       return
     }
 
-   
-    const response = await editCoupon(
-      couponId,
-      title,
-      description,
-      offer,
-      startingDate,
-      startingTime,
-      expiryDate,
-      expiryTime,
-      couponCode
-    );
-   
-    
-      if (response.success) {
-        setErrors(()=>({
-          title:false,
-          description:false,
-          offer:false,
-          statringDate:false,
-          startingTime:false,
-          expiryDate:false,
-          expiryTime:false,
-          couponCode:false,
-        }))
-        const respo = await getCoupons();
-   
-        if (respo.success) {
-           setCoupons(respo.coupon);
-           onClose();
+   doRequest({
+    url:`${adminRoutes.coupon}/${couponId}`,
+    body:{title,description,offer,expiryDate,expiryTime,startingDate,startingTime,couponCode},
+    method:"patch",
+    onSuccess:()=>{
+      setErrors(()=>({
+        title:false,
+        description:false,
+        offer:false,
+        statringDate:false,
+        startingTime:false,
+        expiryDate:false,
+        expiryTime:false,
+        couponCode:false,
+      }))
+      doRequest({
+        url:adminRoutes.coupon,
+        method:"get",
+        body:{},
+        onSuccess:(response)=>{
+          setCoupons(response.coupon);
           return toast.success("Edited successfully");
         }
-      }
+      })
+    }
+  })
   };
+  
+  useEffect(()=>{
+    errors?.map((err)=>toast.error(err.message))
+  },[errors]);
 
   const todaydate = new Date().toLocaleString();
-  return (
-    <div className="container-fluid ">
-      <div className="row">
-        <AdminAside />
-        <div className="col-md-10">
-          <div className="welcome mt-4 mb-4 bg-purple-600">
-            <h1>Welcome back, Admin</h1>
-            <img
-              src="https://via.placeholder.com/50"
-              alt="Profile Picture"
-              className="profile-pic"
-            />
-          </div>
-          <div className="grid grid-cols-1">
-            <Card>
-              <CardHeader>
-                <div className="flex justify-between">
-                  <h2>Coupons</h2>
 
-                  <Button onClick={() => navigate("/admin/addCoupon")}>
-                    Add Coupon
-                  </Button>
-                </div>
-              </CardHeader>
-              <Table>
+  return (
+    <div className="flex gap-2">
+        <AdminAside/>
+        <div className="w-full mr-2">
+          <div className="w-full mx-auto mt-2 rounded-lg p-2  text-white bg-purple-600">
+            <h1>Welcome back, Admin</h1>
+          </div>
+          <div className="w-full ">
+          <div className="flex justify-between my-3 ">
+            <h2>Coupons</h2>
+            <div className="flex">
+                <Button onClick={() => navigate("/admin/addCoupon")}>
+                     Add Coupon
+              </Button>
+            </div>
+          </div>
+          {/* card start */}
+          <Card>
+          <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead className="text-xs text-left">Name</TableHead>
@@ -336,7 +333,7 @@ const AdminListCoupon = () => {
                                             <Label
                                               htmlFor="Title"
                                               className={
-                                                errors.title
+                                                error.title
                                                   ? "text-danger"
                                                   : "text-black"
                                               }
@@ -348,7 +345,7 @@ const AdminListCoupon = () => {
                                               required
                                               value={title}
                                               className={
-                                                errors.title
+                                                error.title
                                                   ? "border-danger"
                                                   : "border-black"
                                               }
@@ -372,7 +369,7 @@ const AdminListCoupon = () => {
                                               id="Title"
                                               placeholder="Title"
                                             />
-                                            {errors.title ? (
+                                            {error.title ? (
                                               <p className="text-danger font-medium text-xs text-muted-foreground">
                                                 Title length should be in
                                                 between 3 and 20.
@@ -389,7 +386,7 @@ const AdminListCoupon = () => {
                                             <Label
                                               htmlFor="Deacription"
                                               className={
-                                                errors.description
+                                                error.description
                                                   ? "text-danger"
                                                   : "text-black"
                                               }
@@ -398,7 +395,7 @@ const AdminListCoupon = () => {
                                             </Label>
                                             <Textarea
                                               className={
-                                                errors.description
+                                                error.description
                                                   ? "border-danger"
                                                   : "border-black"
                                               }
@@ -424,7 +421,7 @@ const AdminListCoupon = () => {
                                               maxLength={100}
                                               placeholder="Add your Deacription here."
                                             />
-                                            {errors.description ? (
+                                            {error.description ? (
                                               <p className="text-danger font-medium text-xs text-muted-foreground">
                                                 Description length should be in
                                                 between 3 and 20.
@@ -443,7 +440,7 @@ const AdminListCoupon = () => {
                                             <div className="w-full max-w-sm items-center space-x-2">
                                               <Label
                                                 className={
-                                                  errors.offer
+                                                  error.offer
                                                     ? "text-danger"
                                                     : "text-black"
                                                 }
@@ -452,7 +449,7 @@ const AdminListCoupon = () => {
                                               </Label>
                                               <Input
                                                 className={
-                                                  errors.offer
+                                                  error.offer
                                                     ? "border-danger"
                                                     : "border-black"
                                                 }
@@ -488,7 +485,7 @@ const AdminListCoupon = () => {
                                                 }}
                                                 placeholder="Offer"
                                               />
-                                              {errors.offer ? (
+                                              {error.offer ? (
                                                 <p className="text-danger font-medium text-xs text-muted-foreground">
                                                   Offer should be in between 20%
                                                   and 70%.
@@ -505,7 +502,7 @@ const AdminListCoupon = () => {
                                               <div className="space-y-1">
                                                 <Label
                                                   className={
-                                                    errors.statringDate
+                                                    error.statringDate
                                                       ? "text-danger "
                                                       : "text-black"
                                                   }
@@ -515,7 +512,7 @@ const AdminListCoupon = () => {
                                                 <Input
                                                   value={startingDate}
                                                   className={
-                                                    errors.statringDate
+                                                    error.statringDate
                                                       ? "border text-danger border-danger"
                                                       : "text-black"
                                                   }
@@ -537,13 +534,13 @@ const AdminListCoupon = () => {
                                                 />
                                                <div>
                                                 <Label className={
-                                                    errors.startingTime
+                                                    error.startingTime
                                                       ? "text-danger "
                                                       : "text-black"
                                                   } >Starting Time</Label>
                                                <Input
                                                   className={
-                                                    errors.startingTime
+                                                    error.startingTime
                                                       ? "border border-danger "
                                                       : "border border-black"
                                                   }
@@ -568,7 +565,7 @@ const AdminListCoupon = () => {
                                               <div className="space-y-1">
                                                 <Label
                                                   className={
-                                                    errors.expiryDate
+                                                    error.expiryDate
                                                       ? "text-danger "
                                                       : "text-black"
                                                   }
@@ -578,7 +575,7 @@ const AdminListCoupon = () => {
                                                 <Input
                                                   value={expiryDate}
                                                   className={
-                                                    errors.expiryDate
+                                                    error.expiryDate
                                                       ? "text-danger "
                                                       : "text-black"
                                                   }
@@ -608,7 +605,7 @@ const AdminListCoupon = () => {
                                                 />
                                               <div>
                                               <Label  className={
-                                                    errors.expiryTime
+                                                    error.expiryTime
                                                       ? " text-danger "
                                                       : " text-black"
                                                   }>Expiring time</Label>
@@ -616,7 +613,7 @@ const AdminListCoupon = () => {
                                                   type="time"
                                                   value={expiryTime}
                                                   className={
-                                                    errors.expiryTime
+                                                    error.expiryTime
                                                       ? "border border-danger "
                                                       : "border border-black"
                                                   }
@@ -641,7 +638,7 @@ const AdminListCoupon = () => {
                                             <div className="w-full max-w-sm items-center space-x-2">
                                               <Label
                                                 className={
-                                                  errors.couponCode
+                                                  error.couponCode
                                                     ? "text-danger"
                                                     : "text-black"
                                                 }
@@ -650,7 +647,7 @@ const AdminListCoupon = () => {
                                               </Label>
                                               <Input
                                                 className={
-                                                  errors.couponCode
+                                                  error.couponCode
                                                     ? "border-danger"
                                                     : "border-black"
                                                 }
@@ -678,7 +675,7 @@ const AdminListCoupon = () => {
                                                 }}
                                                 placeholder="enter coupon ID"
                                               />
-                                              {errors.couponCode ? (
+                                              {error.couponCode ? (
                                                 <p className="text-danger font-medium text-xs text-muted-foreground">
                                                   Coupon ID length should be in
                                                   between 5 and 10.
@@ -796,10 +793,122 @@ const AdminListCoupon = () => {
                   )}
                 </TableBody>
               </Table>
+               {/* <Table>
+                 <TableHeader>
+                  <TableRow>
+                    <TableHead className="text-xs text-left">Name</TableHead>
+                     <TableHead className="text-xs text-left">Descriptoin</TableHead>
+                     <TableHead className="text-xs text-left">Offer</TableHead>
+                     <TableHead className="text-xs text-left ">created date</TableHead>
+                     <TableHead className="text-xs text-left">Starting date</TableHead>
+                     <TableHead className="text-xs text-left">Expired date</TableHead>
+                     <TableHead className="text-xs text-left">Status</TableHead>
+                     <TableHead className="text-left">Actions</TableHead>
+                   </TableRow>
+                 </TableHeader>
+                 <TableBody>
+                   {coupons?.length > 0 ? (
+                    coupons.map((value: ICoupon, index) => (
+                      <TableRow key={index}>
+                        <TableCell align="left" className="text-xs">{value.title}</TableCell>
+                        <TableCell align="left" className="text-xs ">
+                          {value.description}
+                        </TableCell>
+                        <TableCell align="left"  className="text-xs ">{value.offer}%</TableCell>
+                        <TableCell align="left" className="text-xs  ">{value.createdAt.slice(0, 10)}</TableCell>
+                        <TableCell align="left" className="text-xs  ">
+                          {value.startingDate?.slice(0, 10)}
+                        </TableCell>
+                        <TableCell align="left"  className="text-xs ">{value.expiryDate.slice(0, 10)}</TableCell>
+                        <TableCell align="left" className="text-xs  ">
+                          {value.expiryDate > todaydate ? (
+                            <Badge className="bg-success-500">Active</Badge>
+                          ) : (
+                            <Badge className="bg-danger-500">Expired</Badge>
+                          )}
+                        </TableCell>
+                        <TableCell align="left">
+                        <Sheet>
+                        <Dialog>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger>
+                            <MoreHorizontal />
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent>
+                            
+                               
+                        <SheetTrigger asChild>
+                        <DropdownMenuItem
+                           
+                            >
+                              open
+                        </DropdownMenuItem>
+                        </SheetTrigger>
+                        <SheetContent className="w-[400px] sm:w-[540px]">
+                          <SheetHeader>
+                            <SheetTitle>sdcsd</SheetTitle>
+                            <SheetDescription>
+                              csc
+                            </SheetDescription>
+                          </SheetHeader>
+                        </SheetContent>
+                     
+                           
+
+                            <DropdownMenuSeparator />
+                            <DialogTrigger asChild>
+                              <DropdownMenuItem>
+                                Delete
+                              </DropdownMenuItem>
+                            </DialogTrigger>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Are you absolutely sure?</DialogTitle>
+                            <DialogDescription>
+                              Are you absolutly sure you want to Delee this coupon? this action cannot be un done.
+                            </DialogDescription>
+                          </DialogHeader>
+                          <DialogFooter>
+                            <DialogClose asChild>
+                              <Button
+                                type="button"
+                                className="bg-black text-white"
+                              >
+                                Cancel
+                              </Button>
+                            </DialogClose>
+                            <DialogClose asChild>
+                              <Button
+                                type="button"
+                                onClick={() => handleCoupon(value._id!)}
+                                className="bg-black text-white"
+                              >
+                                Continue
+                              </Button>
+                            </DialogClose>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
+                        </Sheet>
+                     
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell align="center" colSpan={20}>
+                        No coupons Available
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table> */}
             </Card>
+          {/* card end  */}
           </div>
         </div>
-      </div>
     </div>
   );
 };

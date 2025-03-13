@@ -6,7 +6,7 @@ import { ICourse } from "../../entities/course";
 import { ICart } from "../../entities/cart";
 import { IRating } from "../../entities/ratings";
 import { ICloudinary } from "../interfaces/serviceInterfaces/ICloudinery";
-import { ErrorHandler, StatusCodes } from "@eduhublearning/common";
+import {  BadRequestError, ForbiddenError, NotFoundError, StatusCodes } from "@eduhublearning/common";
 
 export class UserUseCases implements IUserUseCase {
   constructor(
@@ -20,7 +20,8 @@ export class UserUseCases implements IUserUseCase {
    try {
     const user = await this.userRepository.findById(userId);
     if(!user){
-     return next(new ErrorHandler(StatusCodes.NOT_FOUND,"User Not Found"))
+    throw new NotFoundError("User Not Found")
+     
     }
     if(user.avatar.avatar_url){
       const profile =  await this.cloudinary.addFile(image.profileImage![0]);
@@ -48,7 +49,7 @@ export class UserUseCases implements IUserUseCase {
    try {
      const user = await this.userRepository.findById(userId);
      if(!user){
-      return next(new ErrorHandler(StatusCodes.NOT_FOUND,"User Not Found"))
+      throw new NotFoundError("User Not Found")
      }
      const updatedUser = await this.userRepository.findByIdAndUpdate(userId,name,thumbnail,aboutMe);
      if(updatedUser){
@@ -63,11 +64,11 @@ export class UserUseCases implements IUserUseCase {
     try {
        const instructor = await this.userRepository.findById(userId);
        if(!instructor){
-        return next(new ErrorHandler(StatusCodes.NOT_FOUND,"Instructor Not found"));
+        throw new NotFoundError("Instructor Not Found")
        }
        const checkRating = await this.userRepository.checkingRating(instructorId,userId);
        if(checkRating){
-        return next(new ErrorHandler(StatusCodes.CONFLICT,"Already rated this instructor"));
+        throw new BadRequestError("ALready Rated this instructor")
        }
        
        const rating = await this.userRepository.createRating(instructorId, userId, review, stars)
@@ -82,7 +83,7 @@ export class UserUseCases implements IUserUseCase {
     try {
       const instructor = await this.userRepository.findById(instructorId);
       if(!instructor){
-        return next(new ErrorHandler(StatusCodes.NOT_FOUND,"Instructor not found"));
+        throw new NotFoundError("Instructor not found")
       }
 
       const ratings = await this.userRepository.findAllrating(instructorId);
@@ -98,7 +99,8 @@ export class UserUseCases implements IUserUseCase {
     try {
       const check = await this.userRepository.findRatinById(ratingId);
       if(!check){
-        return next(new ErrorHandler(StatusCodes.NOT_FOUND,"Rating not found")); 
+        throw new NotFoundError("Rating not found")
+       
       }
       const rating = await this.userRepository.editRatinById(ratingId,review,stars)
       if(rating){
@@ -112,7 +114,8 @@ export class UserUseCases implements IUserUseCase {
     try {
       const check = await this.userRepository.findRatinById(ratingId);
       if(!check){
-        return next(new ErrorHandler(StatusCodes.NOT_FOUND,"Rating not found")); 
+        throw new NotFoundError("Rating not found")
+       
       }
       const rating = await this.userRepository.deleteRatinById(ratingId)
       if(rating){
@@ -127,10 +130,12 @@ export class UserUseCases implements IUserUseCase {
     try {
       const user = await this.userRepository.findById(userId);
       if (!user) {
-        return next(new ErrorHandler(StatusCodes.NOT_FOUND, "User Not Fount"));
+        throw new NotFoundError("User not found")
+
       }
       if (user.isBlock) {
-        return next(new ErrorHandler(StatusCodes.FORBIDDEN, "Access Denied by Admin"));
+        throw new ForbiddenError()
+       
       }
       const cart = await this.userRepository.findCart(userId);
       if (cart) {
@@ -149,15 +154,17 @@ export class UserUseCases implements IUserUseCase {
     try {
       const checkUser = await this.userRepository.findById(userId);
       if (!checkUser) {
-        return next(new ErrorHandler(StatusCodes.NOT_FOUND, "User Not Fount"));
+        throw new NotFoundError("User not found")
+        
       }
       if (checkUser.isBlock) {
-        return next(new ErrorHandler(StatusCodes.FORBIDDEN, "Access Denied by admin"));
+        throw new ForbiddenError()
       }
 
       const course = await this.userRepository.findCourse(courseId);
       if (!course) {
-        return next(new ErrorHandler(StatusCodes.NOT_FOUND, "Course Not Found"));
+        throw new NotFoundError("Course not found")
+       
       }
       const checkCart = await this.userRepository.findCart(userId);
       if (checkCart) {
@@ -211,18 +218,21 @@ export class UserUseCases implements IUserUseCase {
     try {
       const checkUser = await this.userRepository.findById(userId);
       if (!checkUser) {
-        return next(new ErrorHandler(StatusCodes.NOT_FOUND, "User Not Fount"));
+        throw new NotFoundError("User not found")
+       
       }
       if (checkUser.isBlock) {
-        return next(new ErrorHandler(StatusCodes.FORBIDDEN, "Access Denied by admin"));
+        throw new ForbiddenError()
+        
       }
       const course = await this.userRepository.findCourse(courseId);
       if (!course) {
-        return next(new ErrorHandler(StatusCodes.NOT_FOUND, "Course Not Found"));
+        throw new NotFoundError("Course not found")
+       
       }
       const cart = await this.userRepository.removeFromCart(userId,courseId);
       if(cart){
-        console.log(cart,"main");
+      
         return cart
         
       }
@@ -233,8 +243,7 @@ export class UserUseCases implements IUserUseCase {
 
   //user
   createProfile(userData: Iuser, next: NextFunction): Promise<Iuser | void> {
-    console.log(userData, "form kafka");
-
+   
     throw new Error("Method not implemented.");
   }
 
@@ -242,7 +251,7 @@ export class UserUseCases implements IUserUseCase {
     try {
       const user = await this.userRepository.findById(userId);
       if(!user){
-         return next(new ErrorHandler(StatusCodes.NOT_FOUND,"User Not Fount"))
+        throw new NotFoundError("User not found")
       }
       return user
 

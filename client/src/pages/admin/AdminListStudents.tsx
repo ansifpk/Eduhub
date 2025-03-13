@@ -1,14 +1,10 @@
 import AdminAside from "@/Components/admin/AdminAside";
-import { Card, CardContent, CardHeader } from "@/Components/ui/card";
+import { Card,  } from "@/Components/ui/card";
 import { useEffect, useState } from "react";
-import { Button } from "@/Components/ui/button";
-import { useNavigate } from "react-router-dom";
-import { students, blockUser } from "@/Api/admin";
 import toast from "react-hot-toast";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -36,8 +32,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/Components/ui/select";
-import { Pagination, Stack } from "@mui/material";
 import { useSocket } from "@/context/socketContext";
+import useRequest from "@/hooks/useRequest";
+import adminRoutes from "@/service/endPoints/adminEndPoints";
+import { Pagination, PaginationContent,  PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/Components/ui/pagination";
 
 const AdminListStudents = () => {
   const [student, setStudents] = useState([]);
@@ -46,58 +44,73 @@ const AdminListStudents = () => {
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(0);
   const socket = useSocket()
-  
+  const {doRequest,errors} = useRequest();
+
   useEffect(() => {
-    const fetchAllStudents = async () => {
-      const response = await students(search,sort,page);
-      setStudents(response.students);
-      setTotalPage(response.pages);
-    };
-    fetchAllStudents();
-  }, [search,sort,page]);
+    doRequest({
+      url:`${adminRoutes.students}?search=${search}&&sort=${sort}&&page=${page}`,
+      method:"get",
+      body:{},
+      onSuccess:(response)=>{
+        setStudents(response.students);
+        setTotalPage(response.pages);
+      }
+    })
+   }, [search,sort,page]);
 
 
   const handleBlockStudents = async (userId: string) => {
-    const response = await blockUser(userId);
-    if (response.success) {
-      if (response.data.isBlock) {
-        const res = await students(search,sort,page);
-        setStudents(res.students);
-        setTotalPage(res.pages);
-        socket?.emit(`blockUser`,userId)
-        toast.success("Successfully Block User");
-        return;
-      } else {
-        const res = await students(search,sort,page);
-        setStudents(res.students);
-        setTotalPage(res.pages);
-        return toast.success("Successfully UnBLock User");
+    doRequest({
+      url: `${adminRoutes.blockUser}/${userId}`,
+      method:"patch",
+      body:{},
+      onSuccess:(response)=>{
+       if(response.data.isBlock){
+        doRequest({
+          url:`${adminRoutes.students}?search=${search}&&sort=${sort}&&page=${page}`,
+          method:"get",
+          body:{},
+          onSuccess:(response)=>{
+            setStudents(response.students);
+            setTotalPage(response.pages);
+            socket?.emit(`blockUser`,userId)
+            toast.success("Successfully Block User");
+          }
+        })
+       }else{
+        doRequest({
+          url:`${adminRoutes.students}?search=${search}&&sort=${sort}&&page=${page}`,
+          method:"get",
+          body:{},
+          onSuccess:(response)=>{
+            setStudents(response.students);
+            setTotalPage(response.pages);
+            toast.success("Successfully UnBLock User");
+          }
+        })
+       }
       }
-    } else {
-      return toast.error(response.response.data.message);
-    }
+    });
+
   };
-  const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
-    setPage(value);
-  };
+  useEffect(()=>{
+    errors?.map((err)=>toast.error(err.message))
+  },[errors]);
+
+  
+  
   return (
-    <div className="container-fluid ">
-      <div className="row">
-        <AdminAside />
-        <div className="col-md-10">
-          <div className="welcome mt-4 mb-4 bg-purple-600">
-            <h1>Welcome back, Admin</h1>
-            <img
-              src="https://via.placeholder.com/50"
-              alt="Profile Picture"
-              className="profile-pic"
-            />
-          </div>
-          <div className="grid grid-cols-1">
-            <div className="d-flex  justify-content-between mb-2">
-              <h1 className="text-lg font-bold">Students</h1>
-              <div className="flex w-50 gap-1">
-              <Input
+    <div className="flex gap-2">
+      <AdminAside />
+      <div className="w-full mr-3">
+        <div className="w-full mx-auto mt-2 rounded-lg p-2  text-white bg-purple-600">
+          <h1>Welcome back, Admin</h1>
+        </div>
+        <div className="w-full">
+            <div className="flex justify-between my-3 ">
+               <h1 className="text-lg font-bold">Students</h1>
+               <div className="flex">
+                <Input
                 type="search"
                 placeholder="Search..."
                 onChange={(e) => setSearch(e.target.value)}
@@ -118,9 +131,9 @@ const AdminListStudents = () => {
                     </SelectGroup>
                   </SelectContent>
                 </Select>
-                
-              </div>
+               </div>
             </div>
+            {/* table card  */}
             <Card>
               <Table>
                 <TableHeader>
@@ -145,13 +158,13 @@ const AdminListStudents = () => {
                                 : "https://github.com/shadcn.png"
                             }
                             alt="Profile Picture"
-                            className="profile-pic"
+                            className="rounded-full"
                           />
                         </TableCell>
                         <TableCell>{value.name}</TableCell>
                         <TableCell>{value.email}</TableCell>
                         <TableCell>
-                          {moment(value.createdAt).calendar()}
+                          {moment(new Date(value.createdAt)).calendar()}
                         </TableCell>
                         <TableCell className="text-right">
                           <AlertDialog>
@@ -197,7 +210,6 @@ const AdminListStudents = () => {
                             </AlertDialogContent>
                           </AlertDialog>
 
-                          {/* <button onClick={()=>handleBlockStudents(value._id!)} className={value.isBlock?'btn btn-danger':'btn btn-success'}>{value.isBlock ? "UnBlock":"BLock"}</button> */}
                         </TableCell>
                       </TableRow>
                     ))
@@ -214,13 +226,33 @@ const AdminListStudents = () => {
                   )}
                 </TableBody>
               </Table>
-              <Stack className="flex items-center justify-center" spacing={2}>
-                    <div>
-                        <Pagination count={totalPage} page={page} onChange={handleChange} />
-                    </div>
-              </Stack>
+              <div>
+              <Pagination>
+                <PaginationContent >
+                  <PaginationItem>
+                    <PaginationPrevious  onClick={()=>{
+                      if(page>1){
+                        setPage((prev)=>prev-=1)
+                      }
+                    }} className={`text-black ${page>1?"cursor-pointer":""} `} />
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationLink className="text-black"  isActive>
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationNext  onClick={()=>{
+                       if(page !==totalPage){
+                        setPage((prev)=>prev+=1)
+                      }
+                      }} className={`text-black ${page<totalPage?"cursor-pointer":""}`} />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+              </div>
             </Card>
-          </div>
+            {/* table card end */}
         </div>
       </div>
     </div>

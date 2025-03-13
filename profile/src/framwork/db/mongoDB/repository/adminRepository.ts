@@ -41,7 +41,7 @@ export class AdminRepository implements IAdminRepository{
                 }
           
                 const limit = 4;
-                const pages =  await this.userModels.countDocuments({...queryData})
+                const pages =  await this.userModels.find({isAdmin:false}).countDocuments({...queryData})
                 const  count = Math.ceil(pages / limit)
                  if(pages>=0){
                      return count;
@@ -172,6 +172,14 @@ export class AdminRepository implements IAdminRepository{
             
            return user;
         }
+       } catch (error) {
+        console.error(error)
+       }
+    }
+    async findIntructorRequests(): Promise<Iuser[] | void> {
+       try {
+        const user = await this.userModels.find({isAdmin:false,status:"pending"})
+        return user
        } catch (error) {
         console.error(error)
        }

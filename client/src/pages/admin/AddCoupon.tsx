@@ -1,6 +1,6 @@
 import AdminAside from "@/Components/admin/AdminAside";
 import { Card, CardContent, CardHeader } from "@/Components/ui/card";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
@@ -19,9 +19,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/Components/ui/alert-dialog";
-
-
-import { addCoupon } from "@/Api/admin";
+import useRequest from "@/hooks/useRequest";
+import adminRoutes from "@/service/endPoints/adminEndPoints";
 
 const AdminAddCoupon: React.FC = () => {
   const [title, setTitle] = useState("");
@@ -33,7 +32,8 @@ const AdminAddCoupon: React.FC = () => {
   const [startingTime, setStartingTime] = useState("");
   const [couponId, setCouponId] = useState("");
   const [today] = useState(new Date());
-  const [errors, setErrors] = useState({
+  const { doRequest, errors } = useRequest();
+  const [error, setErrors] = useState({
     title: false,
     description: false,
     offer: false,
@@ -45,8 +45,10 @@ const AdminAddCoupon: React.FC = () => {
   });
 
   const navigate = useNavigate();
-
-  const handleCategory = async () => {
+useEffect(()=>{
+  errors?.map((err)=>toast.error(err.message))
+},[errors])
+  const handleCoupon = async () => {
     if (title.length < 3 || title.length > 20) {
       setErrors((prev) => ({
         ...prev,
@@ -115,390 +117,376 @@ const AdminAddCoupon: React.FC = () => {
       }));
       return;
     }
-
-    const respose = await addCoupon(
-      title,
-      description,
-      offer,
-      startingDate,
-      startingTime,
-      expiryDate,
-      expiryTime,
-      couponId
-    );
-    if (respose.success) {
-      toast.success(" Coupone added");
-      return navigate("/admin/coupon");
-    } else {
-      toast.error(respose.response.data.message);
-    }
+    doRequest({
+      url: adminRoutes.coupon,
+      method: "post",
+      body: {
+        title,
+        description,
+        offer,
+        startingDate,
+        startingTime,
+        expiryDate,
+        expiryTime,
+        couponCode: couponId,
+      },
+      onSuccess: () => {
+        toast.success(" Coupone added");
+        return navigate("/admin/coupon");
+      },
+    });
   };
 
   return (
-    <div className="container-fluid ">
-      <div className="row">
-        <AdminAside />
-        <div className="col-md-10">
-          <div className="welcome mt-4 mb-4 bg-purple-600">
-            <h1>Welcome back, Admin</h1>
-            <img
-              src="https://via.placeholder.com/50"
-              alt="Profile Picture"
-              className="profile-pic"
-            />
-          </div>
-          <div className="grid grid-cols-1">
-            <Card>
-              <CardHeader>
+    <div className="flex gap-2">
+      <AdminAside />
+      <div className="w-full mr-2">
+        <div className="w-full mx-auto mt-2 rounded-lg p-2  text-white bg-purple-600">
+          <h1>Welcome back, Admin</h1>
+        </div>
+        <div className="w-full">
+          <Card>
+            <CardHeader>
+              <div className="d-flex justify-content-between">
+                <h2 className="text-lg font-semibold">Add New Coupon</h2>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <form>
                 <div className="d-flex justify-content-between">
-                  <h2 className="text-lg font-semibold">Add New Coupon</h2>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <form>
-                  <div className="d-flex justify-content-between">
-                    <div className="grid w-full max-w-sm items-center gap-1.5">
-                      <div>
-                        <Label
-                          htmlFor="Title"
-                          className={errors.title ? "text-danger" : ""}
-                        >
-                          Title
-                        </Label>
-                        <Input
-                          type="text"
-                          required
-                          value={title}
-                          onChange={(e) => {
-                            if (
-                              e.target.value.length >= 3 &&
-                              e.target.value.length <= 20
-                            ) {
-                              setErrors((prev) => ({
-                                ...prev,
-                                title: false,
-                              }));
-                            }
-                            setTitle(e.target.value);
-                          }}
-                          id="Title"
-                          placeholder="Title"
-                        />
-                        {errors.title ? (
-                          <p className="text-danger font-medium text-xs text-muted-foreground">
-                            Title length should be in between 3 and 20.
-                          </p>
-                        ) : (
-                          <p className="font-medium text-xs text-muted-foreground">
-                            enter coupon title here.title length should be in
-                            between 3 and 20.
-                          </p>
-                        )}
-                      </div>
-
+                  <div className="grid w-full max-w-sm items-center gap-1.5">
+                    <div>
                       <Label
-                        htmlFor="Deacription"
-                        className={errors.description ? "text-danger" : ""}
+                        htmlFor="Title"
+                        className={error.title ? "text-danger" : ""}
                       >
-                        Deacription
+                        Title
                       </Label>
-                      <Textarea
-                        value={description}
+                      <Input
+                        type="text"
                         required
+                        value={title}
                         onChange={(e) => {
                           if (
                             e.target.value.length >= 3 &&
-                            e.target.value.length <= 50
+                            e.target.value.length <= 20
                           ) {
                             setErrors((prev) => ({
                               ...prev,
-                              description: false,
+                              title: false,
                             }));
                           }
-                          setDiscription(e.target.value);
+                          setTitle(e.target.value);
                         }}
-                        maxLength={100}
-                        placeholder="Add your Deacription here."
+                        id="Title"
+                        placeholder="Title"
                       />
-                      {errors.description ? (
+                      {error.title ? (
                         <p className="text-danger font-medium text-xs text-muted-foreground">
-                          Description length should be in between 3 and 50.
+                          Title length should be in between 3 and 20.
                         </p>
                       ) : (
                         <p className="font-medium text-xs text-muted-foreground">
-                          enter coupon Description here.Description length
-                          should be in between 3 and 50.
+                          enter coupon title here.title length should be in
+                          between 3 and 20.
                         </p>
                       )}
                     </div>
-                    <div className="grid w-full max-w-sm items-center gap-1.5">
-                      <div className="space-4">
-                        <div className="w-full max-w-sm items-center space-x-2">
+
+                    <Label
+                      htmlFor="Deacription"
+                      className={error.description ? "text-danger" : ""}
+                    >
+                      Deacription
+                    </Label>
+                    <Textarea
+                      value={description}
+                      required
+                      onChange={(e) => {
+                        if (
+                          e.target.value.length >= 3 &&
+                          e.target.value.length <= 50
+                        ) {
+                          setErrors((prev) => ({
+                            ...prev,
+                            description: false,
+                          }));
+                        }
+                        setDiscription(e.target.value);
+                      }}
+                      maxLength={100}
+                      placeholder="Add your Deacription here."
+                    />
+                    {error.description ? (
+                      <p className="text-danger font-medium text-xs text-muted-foreground">
+                        Description length should be in between 3 and 50.
+                      </p>
+                    ) : (
+                      <p className="font-medium text-xs text-muted-foreground">
+                        enter coupon Description here.Description length should
+                        be in between 3 and 50.
+                      </p>
+                    )}
+                  </div>
+                  <div className="grid w-full max-w-sm items-center gap-1.5">
+                    <div className="space-4">
+                      <div className="w-full max-w-sm items-center space-x-2">
+                        <Label
+                          className={error.offer ? "text-danger" : "text-black"}
+                        >
+                          Offer
+                        </Label>
+                        <Input
+                          type="number"
+                          value={offer}
+                          onChange={(e) => {
+                            if (
+                              parseInt(e.target.value) >= 20 &&
+                              parseInt(e.target.value) <= 70
+                            ) {
+                              setErrors((prev) => ({
+                                ...prev,
+                                offer: false,
+                              }));
+                            }
+                            setOffer(parseInt(e.target.value));
+                          }}
+                          placeholder="Offer"
+                        />
+                        {error.offer ? (
+                          <p className="text-danger font-medium text-xs text-muted-foreground">
+                            Offer should be in between 20% and 70%.
+                          </p>
+                        ) : (
+                          <p className="font-medium text-xs text-muted-foreground">
+                            enter coupon Offer here.Offer should be in between
+                            20% and 70%.
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex w-full max-w-sm items-center space-x-2">
+                        <div className="space-y-1">
                           <Label
                             className={
-                              errors.offer ? "text-danger" : "text-black"
+                              error.statringDate ? "text-danger " : "text-black"
                             }
                           >
-                            Offer
+                            Starting Date
                           </Label>
                           <Input
-                            type="number"
-                            value={offer}
+                            value={startingDate}
+                            className={
+                              error.statringDate
+                                ? "border text-danger border-danger"
+                                : "text-black"
+                            }
+                            type="date"
                             onChange={(e) => {
-                              if (
-                                parseInt(e.target.value) >= 20 &&
-                                parseInt(e.target.value) <= 70
-                              ) {
+                              if (new Date(e.target.value) > today) {
                                 setErrors((prev) => ({
                                   ...prev,
-                                  offer: false,
+                                  statringDate: false,
                                 }));
                               }
-                              setOffer(parseInt(e.target.value));
+                              setStartingDate(e.target.value);
                             }}
-                            placeholder="Offer"
                           />
-                          {errors.offer ? (
-                            <p className="text-danger font-medium text-xs text-muted-foreground">
-                              Offer should be in between 20% and 70%.
-                            </p>
-                          ) : (
-                            <p className="font-medium text-xs text-muted-foreground">
-                              enter coupon Offer here.Offer should be in between
-                              20% and 70%.
-                            </p>
-                          )}
-                        </div>
-                        <div className="flex w-full max-w-sm items-center space-x-2">
-                          <div className="space-y-1">
+                          <div>
                             <Label
                               className={
-                                errors.statringDate
-                                  ? "text-danger "
-                                  : "text-black"
+                                error.startingTime
+                                  ? " text-danger "
+                                  : " text-black"
                               }
                             >
-                              Starting Date
+                              starting time
                             </Label>
                             <Input
-                              value={startingDate}
                               className={
-                                errors.statringDate
-                                  ? "border text-danger border-danger"
-                                  : "text-black"
+                                error.startingTime
+                                  ? "border border-danger "
+                                  : "border border-black"
                               }
-                              type="date"
+                              type="time"
                               onChange={(e) => {
-                                if (new Date(e.target.value) > today) {
+                                if (e.target.value.length > 0) {
                                   setErrors((prev) => ({
                                     ...prev,
-                                    statringDate: false,
+                                    startingTime: false,
                                   }));
                                 }
-                                setStartingDate(e.target.value);
+                                setStartingTime(e.target.value);
                               }}
                             />
-                            <div>
-                              <Label
-                                className={
-                                  errors.startingTime
-                                    ? " text-danger "
-                                    : " text-black"
-                                }
-                              >
-                                starting time
-                              </Label>
-                              <Input
-                                className={
-                                  errors.startingTime
-                                    ? "border border-danger "
-                                    : "border border-black"
-                                }
-                                type="time"
-                                onChange={(e) => {
-                                  if (e.target.value.length > 0) {
-                                    setErrors((prev) => ({
-                                      ...prev,
-                                      startingTime: false,
-                                    }));
-                                  }
-                                  setStartingTime(e.target.value);
-                                }}
-                              />
-                            </div>
-                          </div>
-                          <div className="space-y-1">
-                            <Label
-                              className={
-                                errors.expiryDate
-                                  ? "text-danger "
-                                  : "text-black"
-                              }
-                            >
-                              Expiring Date
-                            </Label>
-                            <Input
-                              value={expiryDate}
-                              className={
-                                errors.expiryDate
-                                  ? "text-danger "
-                                  : "text-black"
-                              }
-                              type="date"
-                              onChange={(e) => {
-                                if (new Date(e.target.value) > today) {
-                                  setErrors((prev) => ({
-                                    ...prev,
-                                    expiryDate: false,
-                                  }));
-                                } else if (expiryDate > startingDate) {
-                                  setErrors((prev) => ({
-                                    ...prev,
-                                    expiryDate: false,
-                                  }));
-                                }
-                                setExpiryDate(e.target.value);
-                              }}
-                            />
-                            <div>
-                              <Label
-                                className={
-                                  errors.expiryTime
-                                    ? "text-danger"
-                                    : "text-black"
-                                }
-                              >
-                                Expiring Time
-                              </Label>
-                              <Input
-                                type="time"
-                                className={
-                                  errors.expiryTime
-                                    ? "border border-danger "
-                                    : "border border-black"
-                                }
-                                onChange={(e) => {
-                                  if (e.target.value > startingTime) {
-                                    setErrors((prev) => ({
-                                      ...prev,
-                                      expiryTime: false,
-                                    }));
-                                  }
-                                  setExpiryTime(e.target.value);
-                                }}
-                              />
-                            </div>
                           </div>
                         </div>
-                        <div className="w-full max-w-sm items-center space-x-2">
+                        <div className="space-y-1">
                           <Label
                             className={
-                              errors.couponCode ? "text-danger" : "text-black"
+                              error.expiryDate ? "text-danger " : "text-black"
                             }
                           >
-                            coupon code
+                            Expiring Date
                           </Label>
                           <Input
-                            type="text"
-                            value={couponId}
+                            value={expiryDate}
+                            className={
+                              error.expiryDate ? "text-danger " : "text-black"
+                            }
+                            type="date"
                             onChange={(e) => {
-                              if (
-                                e.target.value.length >= 5 &&
-                                e.target.value.length <= 10
-                              ) {
+                              if (new Date(e.target.value) > today) {
                                 setErrors((prev) => ({
                                   ...prev,
-                                  couponCode: false,
+                                  expiryDate: false,
+                                }));
+                              } else if (expiryDate > startingDate) {
+                                setErrors((prev) => ({
+                                  ...prev,
+                                  expiryDate: false,
                                 }));
                               }
-                              setCouponId(e.target.value.trim());
+                              setExpiryDate(e.target.value);
                             }}
-                            placeholder="enter coupon ID"
                           />
-                          {errors.couponCode ? (
-                            <p className="text-danger font-medium text-xs text-muted-foreground">
-                              Coupon ID length should be in between 50 and 10.
-                            </p>
-                          ) : (
-                            <p className="font-medium text-xs text-muted-foreground">
-                              enter coupon ID here.Coupon ID length should be in
-                              between 50 and 10.
-                            </p>
-                          )}
+                          <div>
+                            <Label
+                              className={
+                                error.expiryTime ? "text-danger" : "text-black"
+                              }
+                            >
+                              Expiring Time
+                            </Label>
+                            <Input
+                              type="time"
+                              className={
+                                error.expiryTime
+                                  ? "border border-danger "
+                                  : "border border-black"
+                              }
+                              onChange={(e) => {
+                                if (e.target.value > startingTime) {
+                                  setErrors((prev) => ({
+                                    ...prev,
+                                    expiryTime: false,
+                                  }));
+                                }
+                                setExpiryTime(e.target.value);
+                              }}
+                            />
+                          </div>
                         </div>
+                      </div>
+                      <div className="w-full max-w-sm items-center space-x-2">
+                        <Label
+                          className={
+                            error.couponCode ? "text-danger" : "text-black"
+                          }
+                        >
+                          coupon code
+                        </Label>
+                        <Input
+                          type="text"
+                          value={couponId}
+                          onChange={(e) => {
+                            if (
+                              e.target.value.length >= 5 &&
+                              e.target.value.length <= 10
+                            ) {
+                              setErrors((prev) => ({
+                                ...prev,
+                                couponCode: false,
+                              }));
+                            }
+                            setCouponId(e.target.value.trim());
+                          }}
+                          placeholder="enter coupon ID"
+                        />
+                        {error.couponCode ? (
+                          <p className="text-danger font-medium text-xs text-muted-foreground">
+                            Coupon ID length should be in between 50 and 10.
+                          </p>
+                        ) : (
+                          <p className="font-medium text-xs text-muted-foreground">
+                            enter coupon ID here.Coupon ID length should be in
+                            between 50 and 10.
+                          </p>
+                        )}
                       </div>
                     </div>
                   </div>
-                  <div className="d-flex justify-content-center gap-10">
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button>Back</Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>
-                            Are you absolutely sure?
-                          </AlertDialogTitle>
-                          <AlertDialogDescription>
-                            You cannot retrieve the informations you entered
-                            now. All will remove permenently
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogAction
-                            className="bg-black text-white"
-                            type="button"
-                          >
-                            Cancel
-                          </AlertDialogAction>
-                          <AlertDialogAction
-                            className="bg-black text-white"
-                            type="button"
-                            onClick={() => navigate(-1)}
-                          >
-                            Continue
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button
+                </div>
+                <div className="d-flex justify-content-center gap-10">
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button className="bg-purple-600 text-white hover:bg-purple-600">
+                        Back
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you absolutely sure?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          You cannot retrieve the informations you entered now.
+                          All will remove permenently
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogAction
+                          className="bg-black text-white"
                           type="button"
-                          className="bg-teal-500 hover:bg-teal-500"
                         >
-                          create
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>
-                            Are you absolutely sure?
-                          </AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This action will permenently dave this info to the
-                            database. and this data is show to the users
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel className="bg-black text-white">
-                            Cancel
-                          </AlertDialogCancel>
-                          <AlertDialogAction
-                            className="bg-black text-white"
-                            onClick={handleCategory}
-                          >
-                            Continue
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </div>
-                </form>
-              </CardContent>
-            </Card>
-          </div>
+                          Cancel
+                        </AlertDialogAction>
+                        <AlertDialogAction
+                          className="bg-black text-white"
+                          type="button"
+                          onClick={() => navigate(-1)}
+                        >
+                          Continue
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        type="button"
+                        className="bg-purple-600 text-white hover:bg-purple-600"
+                      >
+                        create
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you absolutely sure?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action will permenently dave this info to the
+                          database. and this data is show to the users
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel className="bg-black text-white">
+                          Cancel
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                          className="bg-black text-white"
+                          onClick={handleCoupon}
+                        >
+                          Continue
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

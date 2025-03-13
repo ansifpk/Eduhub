@@ -1,5 +1,4 @@
-import { IOrder } from "../../../../entities/order";
-// import { ICourse } from "../../../../entities/types/course";
+
 import { ICourse } from "../../../../entities/course";
 import { IUserRepository } from "../../../../useCases/interfaces/repository/IUserRepositoru";
 import { courseModel } from "../models/courseMode";
@@ -9,7 +8,6 @@ import { Iuser } from "../../../../entities/user";
 import { IUserSubscribe } from "../../../../entities/userSubscribe";
 import { userSubscriptionModel } from "../models/userSuscriptionModel";
 import { userSubscribeModel } from "../models/userSubscribe";
-import { ISubcription } from "../../../../entities/subscription";
 import { subscriptionModel } from "../models/subscriptionModel";
 import { IUserSubcription } from "../../../../entities/userSubscription";
 

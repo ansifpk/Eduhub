@@ -67,6 +67,7 @@ const UserRoter = () => {
          <Route path="/user/faile" element={id?<Faile/>:<Login />} /> 
          <Route path="/profile/message" element={id?<Message/>:<Login />} /> 
          <Route path="/profile/Plans" element={id?<Plans/>:<Login />} /> 
+         <Route path="/ex" element={<ExamplePage />} /> 
          <Route path="*" element={id?<ErrorPage/>:<Login />}/>
        </Routes>
        </Suspense>

@@ -6,24 +6,30 @@ import { useEffect, useState } from 'react';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import { ToggleButtonGroup } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { getUserDetailes } from '@/Api/user';
+import useRequest from '@/hooks/useRequest';
+import userRoutes from '@/service/endPoints/userEndPoints';
+import toast from 'react-hot-toast';
 
 const Header = () => {
    const [open,setOpen]  = useState(false)
    const id = useSelector((state:User)=>state.id);
    const [image,setImage] = useState('')
+   const {doRequest,errors} = useRequest()
    useEffect(()=>{
-     const fetching = async () => {
-        if(id){
-          const response = await getUserDetailes(id);   
-          if(response.success){
-            setImage(response.userData.avatar.avatar_url)
-          }
+     if(id){
+          doRequest({
+            url:`${userRoutes.profile}?userId=${id}`,
+            method:"get",
+            body:{},
+            onSuccess:(res)=>{
+              setImage(res.userData.avatar.avatar_url)
+            }
+          })
         } 
-     }
-     fetching()
    },[id])
- 
+ useEffect(()=>{
+  errors?.map((err)=>toast.error(err.message))
+ },[errors])
   return (
     <div className='shadow-md  w-full fixed top-0 left-0 z-50'>
       <div className='md:flex bg-teal-500 items-center  justify-between md:px-10 px-7'>
@@ -65,6 +71,7 @@ const Header = () => {
                )}
          </ul>
       </div>
+      
     </div>
   )
 }

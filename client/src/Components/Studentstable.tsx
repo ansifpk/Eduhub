@@ -1,4 +1,4 @@
-import { MoreHorizontal } from "lucide-react";
+
 import {
   Table,
   TableBody,
@@ -7,13 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "./ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "./ui/dropdown-menu";
-import { Button } from "./ui/button";
+
 import { Separator } from "./ui/separator";
 import { Input } from "./ui/input";
 import { useEffect, useState } from "react";
@@ -30,7 +24,7 @@ import { ICourse } from "@/@types/courseType";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { IUser } from "@/@types/chatUser";
 import { User } from "@/@types/userType";
-import { Pagination, Stack } from "@mui/material";
+
 
 export function Studentstable() {
   const [search, setSearch] = useState("");

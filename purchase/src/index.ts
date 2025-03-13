@@ -15,7 +15,7 @@ import { EmailChangedConsumer } from "./framwork/webServer/config/kafka/consumer
 import { webHookRouter } from "./framwork/webServer/router/webHookRouter";
 import { UserProfileUpdatedConsumer } from "./framwork/webServer/config/kafka/consumer/user-profile-updated-consumer";
 import { AdminRouter } from "./framwork/webServer/router/adminRouter";
-import { errMiddleware } from "@eduhublearning/common";
+import { errorHandler } from "@eduhublearning/common";
 import cookieParser from "cookie-parser";
 
 async function start(){
@@ -69,14 +69,6 @@ app.use(cors({credentials:true,
       : ['http://client-srv:5173', 'http://localhost:5173']
     ,methods: ['GET', 'POST'],}));
 
-// app.use(
-//     cookieSession({
-//         signed: false, 
-//         httpOnly: true, 
-//         sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax', 
-//         secure: process.env.NODE_ENV === 'production', 
-//       })
-// )
 app.use(cookieParser())
 const webHook = express.Router();
 
@@ -98,6 +90,6 @@ AdminRouter(adminRouter);
 app.use("/purchase/user",userRouter)
 app.use("/purchase/instructor",instructorRouter)
 app.use("/purchase/admin",adminRouter)
-app.use(errMiddleware);
+app.use(errorHandler as any);
 
 start();

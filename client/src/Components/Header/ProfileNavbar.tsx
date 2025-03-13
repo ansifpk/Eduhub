@@ -1,5 +1,4 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { logout } from "../../Api/user";
 import { removeUser } from "../../redux/authSlice";
 import { useDispatch } from "react-redux";
 import {
@@ -14,19 +13,34 @@ import {
 } from "../ui/alert-dialog";
 
 import toast from "react-hot-toast";
+import useRequest from "@/hooks/useRequest";
+import userRoutes from "@/service/endPoints/userEndPoints";
+import { useEffect } from "react";
 
 const ProfileNavbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const {doRequest,errors} = useRequest()
+ 
+
   const handleLogout = async () => {
-    const data = await logout();
-    if (data.succuss) {
-      dispatch(removeUser());
-      toast.success("logout");
-      return navigate("/users/login");
-    }
+    await doRequest({
+      url:userRoutes.logout,
+      method:"post",
+      body:{},
+      onSuccess:()=>{
+        dispatch(removeUser());
+        toast.success("logout");
+        return navigate("/users/login");
+      }
+    })
   };
+
+  useEffect(()=>{
+    errors?.map((err)=>toast.error(err.message))
+  },[errors]);
+  
   const navs = [
     { name: "Profile", path: "/profile" },
     { name: "Courses", path: "/profile/courses" },

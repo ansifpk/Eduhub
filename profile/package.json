@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@eduhublearning/common": "^1.0.21",
+    "@eduhublearning/common": "^1.0.36",
     "body-parser": "^1.20.3",
     "cloudinary": "^2.5.1",
     "cookie-parser": "^1.4.7",
