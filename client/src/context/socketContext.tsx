@@ -1,5 +1,5 @@
-import { User } from "@/@types/userType";
-import { removeUser } from "@/redux/authSlice";
+import { User } from "../@types/userType";
+import { removeUser } from "../redux/authSlice";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";

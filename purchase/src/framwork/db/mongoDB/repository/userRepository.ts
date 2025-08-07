@@ -35,7 +35,7 @@ export class UserRepository implements IUserRepository{
 
     async  plans(userId: string): Promise<IUserSubscribe[] | void> {
       try {
-        const plans = await this.subscribeModel.find({userId:userId}).populate('subscriptionId')
+        const plans = await this.subscribeModel.find({userId:userId}).populate({path:'subscriptionId',populate:"instructorId"}).populate('userId')
         if (plans) {
           return plans 
         }

@@ -13,8 +13,8 @@ import {
 } from "../ui/alert-dialog";
 
 import toast from "react-hot-toast";
-import useRequest from "@/hooks/useRequest";
-import userRoutes from "@/service/endPoints/userEndPoints";
+import useRequest from "../../hooks/useRequest";
+import userRoutes from "../../service/endPoints/userEndPoints";
 import { useEffect } from "react";
 
 const ProfileNavbar = () => {
@@ -52,7 +52,7 @@ const ProfileNavbar = () => {
   return (
     <div className="md:mt-16 mt-8 pt-2 sm:px-6 lg:px-8 mx-auto gap-5">
       <div className="mx-auto mx:auto ">
-      <ul className=" flex rounded-pill bg-teal-500 px-2 py-2 items-center justify-center sm:space-x-6 md:space-x-6 w-full sm:w-full md:w-9/12 lg:w-7/12 space-x-3 mx-auto">
+      <ul className=" flex rounded-lg bg-teal-500 px-2 py-2 items-center justify-center sm:space-x-6 md:space-x-6 w-full sm:w-full md:w-9/12 lg:w-7/12 space-x-3 mx-auto">
         {navs.map((value, index) => (
           <li key={index} className="flex-shrink">
             <NavLink

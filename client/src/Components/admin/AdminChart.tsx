@@ -5,7 +5,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/Components/ui/card"
+} from "../../components/ui/card"
 import {
   ChartConfig,
   ChartContainer,
@@ -13,12 +13,12 @@ import {
   ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/Components/ui/chart"
+} from "../../components/ui/chart"
 import { useSelector } from "react-redux"
-import { User } from "@/@types/userType"
+import { User } from "../../@types/userType"
 import { useEffect, useState } from "react"
-import useRequest from "@/hooks/useRequest"
-import adminRoutes from "@/service/endPoints/adminEndPoints"
+import useRequest from "../../hooks/useRequest"
+import adminRoutes from "../../service/endPoints/adminEndPoints"
 import toast from "react-hot-toast"
 
 

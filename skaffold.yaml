@@ -52,7 +52,7 @@ build:
         manual:
           - src: "src/**/*.ts"
             dest: .
-    - image: pkansif/eduhub-client
+    - image: pkansif/eduhub-client2
       context: client
       docker:
         dockerfile: Dockerfile

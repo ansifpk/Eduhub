@@ -11,9 +11,16 @@ export class AdminRepository implements IAdminRepository{
         private orderModels:typeof OrderModel
     ){}
 
-    async findOrders(): Promise<IOrder []| void> {
+    async findOrders(start:string,end:string): Promise<IOrder []| void> {
         try {
-            const orders = await this.orderModels.find().populate("user")
+            let query = {};
+            const today = new Date();
+            if(start&&end){
+                query = {createdAt:{$gte:new Date(start),$lte:new Date(end)}}
+            }else{
+               query =  {createdAt:{$gte:new Date(2020),$lte:new Date(today.getFullYear())}}
+            }
+            const orders = await this.orderModels.find(query).sort({createdAt:-1}).populate("user")
             if(orders){
                 return orders
             }
@@ -109,14 +116,28 @@ export class AdminRepository implements IAdminRepository{
         console.error(error)
        }
     }
-    async findChartOrders(): Promise<IOrder[] | void> {
+    async findChartOrders(filter:string): Promise<IOrder[] | void> {
        try {
-
+       let query ;
+       switch (filter) {
+        case "Monthly":
+             query="monthly"
+            break;
+        case "Daily":
+             query="daily"
+            break;
+       
+        default:
+            query="Yealy"
+            break;
+       }
+       console.log(query);
+       
        const orders = await OrderModel.aggregate([
                {
                  $group: {
                    _id: { $year: "$createdAt" }, 
-                   Courses: { $sum: 1 } 
+                   delivered: { $sum: 1 } 
                  }
                },
                {

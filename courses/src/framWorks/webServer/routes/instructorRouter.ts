@@ -11,15 +11,38 @@ export function InstructorRouter(router:Router){
 
     router.post("/createCourse",isInstructor,upload,async(req:Request,res:Response,next:NextFunction)=>{
         try {
+        
            instructorController.createCourse(req,res,next)
         } catch (error) {
            console.error(error)          
         }
-    
     }) 
+      router.get(
+        "/testDetailes/:testId",
+        isInstructor,
+        async (req: Request, res: Response, next: NextFunction) => {
+            instructorController.testDetailes(req, res, next);
+        }
+      ); 
     router.get("/getCourses",isInstructor,async(req:Request,res:Response,next:NextFunction)=>{
         try { 
            instructorController.getCourses(req,res,next)
+        } catch (error) {
+        console.error(error)          
+        }
+    
+    }) 
+    router.get("/courseDetailes/:courseId",isInstructor,async(req:Request,res:Response,next:NextFunction)=>{
+        try { 
+           instructorController.courseDetailes(req,res,next)
+        } catch (error) {
+        console.error(error)          
+        }
+    
+    }) 
+    router.get("/students",isInstructor,async(req:Request,res:Response,next:NextFunction)=>{
+        try { 
+           instructorController.getStudents(req,res,next)
         } catch (error) {
         console.error(error)          
         }

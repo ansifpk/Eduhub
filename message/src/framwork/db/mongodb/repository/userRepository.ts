@@ -119,8 +119,9 @@ export class UserRepository implements IUserRepository{
     }
     async findAllMessages(chatId: string): Promise<IMessage[] | void> {
       try {
-         const messages = await this.messageModels.find({chatId:chatId});
-         if(messages) return messages;
+        await this.messageModels.updateMany({chatId:chatId},{$set:{isRead:true}});
+        const messages = await this.messageModels.find({chatId:chatId})
+        if(messages) return messages;
       } catch (error) {
         console.error(error)
       }

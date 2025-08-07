@@ -73,12 +73,6 @@ export class WebhookUseCase implements IWebhookUseCase {
          
           break;
 
-        case "customer.subscription.deleted":
-          
-          break;
-        case "customer.subscription.paused":
-          
-          break;
         case "customer.subscription.updated":
        
 
@@ -118,6 +112,7 @@ export class WebhookUseCase implements IWebhookUseCase {
       }
     } catch (error) {
       console.error(error);
+      next(error)
     }
   }
 }

@@ -6,8 +6,8 @@ import { Input } from '../ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import useRequest from '@/hooks/useRequest';
-import userRoutes from '@/service/endPoints/userEndPoints';
+import useRequest from '../../hooks/useRequest';
+import userRoutes from '../../service/endPoints/userEndPoints';
 
 interface changePassword {
   email: React.Dispatch<React.SetStateAction<any>>;
@@ -52,6 +52,7 @@ const NewPassword:React.FC<changePassword> = ({email}) => {
   };
 
    useEffect(()=>{
+    setIsLoading(false);
       errors?.map((err)=>toast.error(err.message))
    },[errors]);
 
@@ -67,7 +68,7 @@ const NewPassword:React.FC<changePassword> = ({email}) => {
               </AlertDescription>
             </Alert>
             <Button
-              className="mt-4 w-full"
+              className="mt-4 w-full bg-teal-400 hover:bg-teal-600"
               onClick={() => navigate('/')}
             >
               Go to Login
@@ -140,7 +141,7 @@ const NewPassword:React.FC<changePassword> = ({email}) => {
 
             <Button
               type="submit"
-              className="w-full"
+              className="w-full bg-teal-400 hover:bg-teal-600"
               disabled={isLoading }
             >
               {isLoading ? (

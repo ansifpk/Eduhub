@@ -1,12 +1,11 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
-import "./InstructorHome.css";
-import InstructorAside from "../../Components/instructor/InstructorAside";
+import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
+import InstructorAside from "../../components/instructor/InstructorAside";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/Components/ui/button";
+import { Button } from "../../components/ui/button";
 import React, { useEffect, useState } from "react";
-import { Input } from "@/Components/ui/input";
+import { Input } from "../../components/ui/input";
 import { AlertCircle } from "lucide-react";
-import { Alert, AlertDescription } from "@/Components/ui/alert";
+import { Alert, AlertDescription } from "../../components/ui/alert";
 import {
   Select,
   SelectContent,
@@ -14,12 +13,13 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/Components/ui/select";
+} from "../../components/ui/select";
 
-import { getCategoryies } from "@/Api/instructor";
-import { Separator } from "@/Components/ui/separator";
+import { getCategoryies } from "../../Api/instructor";
+import { Separator } from "../../components/ui/separator";
+import CourseCreatePage from "../../components/instructor/CourseCreatePage";
 
-import Ex from "@/Components/instructor/ex";
+
 
 
 
@@ -34,7 +34,6 @@ interface ICategory {
 const InstructorCreateCourses = () => {
 
   const [categories, setCategories] = useState([]);
-
   const [title, setTitle] = useState<string>("");
   const [error] = useState(false);
   let [page, setPage] = useState(1);
@@ -66,12 +65,7 @@ const InstructorCreateCourses = () => {
 
   if (title.length > 1 && category.length > 1 && page == 3) {
     return (
-      // <CourseCreatePage
-      //   Title={title}
-      //   Category={category}
-      //   categories={categories}
-      // />
-      <Ex  Title={title}
+      <CourseCreatePage  Title={title}
       Category={category}
       categories={categories} />
     );
@@ -155,7 +149,7 @@ const InstructorCreateCourses = () => {
                           )}
 
                           <div className="flex justify-end gap-2">
-                            <Button type="submit" className="bg-white text-black">next</Button>
+                            <Button type="submit" className="bg-white hover:bg-white cursor-pointer text-black">next</Button>
                           </div>
                         </>
                       ) : page === 2 ? (
@@ -164,7 +158,7 @@ const InstructorCreateCourses = () => {
                             <Select
                               onValueChange={(value) => setCategory(value)}
                             >
-                              <SelectTrigger className="w-100 rounded-full border-1 border-blue-900">
+                              <SelectTrigger className="w-100 rounded-full border-1 border-white text-white">
                                 <SelectValue placeholder="Select..." />
                               </SelectTrigger>
                               <SelectContent>
@@ -201,16 +195,16 @@ const InstructorCreateCourses = () => {
                           )}
 
                           <div className="flex justify-end gap-2">
-                            <button
+                            <Button
                               onClick={() => setPage(page - 1)}
-                              className="bg-white text-black px-4 py-1  rounded-1 "
+                              className="bg-white hover:bg-white cursor-pointer text-black px-4 py-1  rounded-1 "
                             >
                               Prev
-                            </button>
+                            </Button>
 
                             <Button
                               type="submit"
-                              className="bg-white text-black"
+                              className="bg-white  text-black"
                               disabled={!validateCategory(category)}
                             >
                               next
@@ -223,7 +217,7 @@ const InstructorCreateCourses = () => {
                       <div className="text-center">
                         <p
                           onClick={() => navigate(-1)}
-                          className="text-sm text-gray-600 hover:text-gray-900 underline cursor-pointer"
+                          className="text-sm text-white hover:text-white underline cursor-pointer"
                         >
                           Back
                         </p>

@@ -1,8 +1,7 @@
 export interface ISection{
     _id?:string,
     sectionTitle:string,
-    lectures:[{
-        _id?:string,
+    lectures:{
         content:{
             _id:string,
             video_url:string|File,
@@ -10,5 +9,5 @@ export interface ISection{
         id:string,
         duration:string,
         title:string,
-    }]  
+    }[] 
 }

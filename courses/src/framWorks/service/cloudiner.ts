@@ -22,8 +22,7 @@ class CloudinaryV2 implements ICloudinary{
 
     async addFile(file:MulterFile): Promise<CLoudineryResult|void> {
      try {
-        //  const buffor = await sharp(file.buffer).resize({width:1920,height:1080,fit:"inside"}).toBuffer()
-        //  if(buffor){
+      
             const data =  await this.cloudinaryClient.uploader.upload(`data:${file.mimetype};base64,${file.buffer.toString('base64')}`,{
                 folder:"courses",
                 resource_type: file.mimetype.startsWith("video/")?"video":"auto"
@@ -31,7 +30,7 @@ class CloudinaryV2 implements ICloudinary{
             if(data){
                 return {public_id:data.public_id,secure_url:data.secure_url}
             }
-        //  }
+      
         
          
      } catch (error) {

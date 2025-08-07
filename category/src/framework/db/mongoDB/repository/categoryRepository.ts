@@ -42,7 +42,7 @@ export class CategoryRepository implements ICategoryRepository{
     }
     async findOne(name: string): Promise<ICategory | void> {
        try {
-         const check = await this.categoryModels.findOne({ title: { $regex: `${name}`, $options: "i" } });
+         const check = await this.categoryModels.findOne({ title: { $regex: name, $options: "i" } });
          if(check){
              return check
          }

@@ -1,50 +1,46 @@
-import { IInstructorSubscribe } from '@/@types/instructorSubscribe'
-import { User } from '@/@types/userType'
-import { instructorPlans, viewDetailes,  } from '@/Api/instructor'
-import InstructorAside from '@/Components/instructor/InstructorAside'
-import { Avatar, AvatarFallback, AvatarImage } from '@/Components/ui/avatar'
-import { Button } from '@/Components/ui/button'
-import { Separator } from '@/Components/ui/separator'
+import { IInstructorSubscribe } from '../../@types/instructorSubscribe'
+import { User } from '../../@types/userType'
+import InstructorAside from '../../components/instructor/InstructorAside'
+import { Button } from '../../components/ui/button'
+import { Separator } from '../../components/ui/separator'
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useSelector } from 'react-redux'
-import {  useNavigate } from 'react-router-dom'
+import useRequest from '../../hooks/useRequest'
+import instructorRoutes from '../../service/endPoints/instructorEndPoints'
 
 const InstructorPlans = () => {
   const [plans,setPlans] = useState<IInstructorSubscribe[]>([]);
   const instructorId = useSelector((state:User)=>state.id);
-const navigate = useNavigate()
+  const {doRequest,errors} = useRequest();
   useEffect(()=>{
-    const fetching = async () => {
-       const response = await instructorPlans(instructorId)
-      
-       
-       if(response.success){
+    doRequest({
+      url:`${instructorRoutes.subscribe}/${instructorId}`,
+      method:"get",
+      body:{},
+      onSuccess:(response)=>{
         setPlans(response.plans);
-        return 
-       }else if(response.status == 403){
-         toast.error(response.response.data.message)
-         return navigate('/instructor/login')
-       }else{
-        return toast.error(response.response.data.message)
-       }
-    }
-    fetching()
+      }
+    });
   },[]);
+
+  useEffect(()=>{
+    errors?.map((err)=>toast.error(err.message));
+  },[errors])
+
   const goToDetailes = async(plan:IInstructorSubscribe)=>{
-     const response = await viewDetailes(plan.customerId);
-     if(response.success){
-       window.location.href = response.url;
-      return 
-     }else if(response.status == 403){
-       toast.error(response.response.data.message)
-       return navigate('/instructor/login')
-     }else{
-      return toast.error(response.response.data.message)
-     }
+    doRequest({
+      url: `${instructorRoutes.customer}/${plan.customerId}`,
+      method:"get",
+      body:{},
+      onSuccess:(response)=>{
+        window.location.href = response.url;
+        return ;
+      }
+    });
   }
   return (
-    <div className="bg-black ">
+    <div className="bg-black h-screen">
     <div className="hidden space-y-6 p-10 pb-16 md:block">
     <div className="flex items-center justify-between space-y-2">
         <div className="space-y-0.5">
@@ -54,12 +50,6 @@ const navigate = useNavigate()
           <p className="text-muted-foreground">
             Manage your instructor account students and courses.
           </p>
-        </div>
-        <div>
-          <Avatar className="h-9 w-9">
-            <AvatarImage src="/avatars/03.png" alt="@shadcn" />
-            <AvatarFallback>SC</AvatarFallback>
-          </Avatar>
         </div>
       </div>
       <Separator className="my-6" />
@@ -79,7 +69,7 @@ const navigate = useNavigate()
            {
            plans.length>0?(
             plans.map((value,ind)=>(
-              <div key={ind} className='border w-25 h-[300px] rounded-1' >
+              <div key={ind} className='border w-50 h-[300px] rounded-1' >
                   <h4 className='text-white underline'>Personal Plan</h4>
                   <div className=' text-white m-1'>
                    <div className='flex flex-col items-center justify-center h-[210px]'>
@@ -96,7 +86,7 @@ const navigate = useNavigate()
                    </div>
                       </div>
                       <div className='flex items-end '>
-                       <Button onClick={()=>goToDetailes(value)}  type='button' className='w-full bg-white text-black'   >View Plan</Button>
+                       <Button onClick={()=>goToDetailes(value)}  type='button' className='w-full bg-white hover:bg-white cursor-pointer text-black'   >View Plan</Button>
                       </div>
                      </div>
               </div>

@@ -48,8 +48,8 @@ export class AdminController{
     }
     async getOrders(req:Request,res:Response,next:NextFunction){
        try {
-        const {report,year,month}  = req.query 
-         const orders = await this.adminUseCase.getOrders(report as string,year as string,month as string,next)
+        const {end,start}  = req.query; 
+         const orders = await this.adminUseCase.getOrders(start as string,end as string,next)
          if(orders){
              return res.send({success:true,orders});
          }
@@ -59,10 +59,8 @@ export class AdminController{
     }
     async getOrdersForChart(req:Request,res:Response,next:NextFunction){
        try {
-         const {timeRange} = req.params
-         console.log(req.params);
-         
-         const orders = await this.adminUseCase.getOrdersForChart()
+         const {filter} = req.params
+         const orders = await this.adminUseCase.getOrdersForChart(filter)
          if(orders){
              return res.send({success:true,orders});
          }

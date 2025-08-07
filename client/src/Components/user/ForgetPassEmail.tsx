@@ -6,8 +6,8 @@ import { Input } from '../ui/input'
 import { CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
-import useRequest from '@/hooks/useRequest'
-import userRoutes from '@/service/endPoints/userEndPoints'
+import useRequest from '../../hooks/useRequest'
+import userRoutes from '../../service/endPoints/userEndPoints'
 
 interface ForgetPassEmailProps {
     successCheckEmail: React.Dispatch<React.SetStateAction<boolean | null>>;
@@ -19,7 +19,7 @@ const ForgetPassEmail:React.FC<ForgetPassEmailProps> = ({successCheckEmail,setEm
     const [email, setEmail] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [success, setSuccess] = useState(false);
+
     const navigate = useNavigate()
     const {doRequest,errors} = useRequest();
 
@@ -33,7 +33,6 @@ const ForgetPassEmail:React.FC<ForgetPassEmailProps> = ({successCheckEmail,setEm
           method:"post",
           onSuccess:()=>{
             toast.success("otp sent to your email")
-            setSuccess(true);
             successCheckEmail(true);
             setEmailProp(email);
             setEmail('');
@@ -83,7 +82,7 @@ const ForgetPassEmail:React.FC<ForgetPassEmailProps> = ({successCheckEmail,setEm
 
                <Button
                  type="submit"
-                 className="w-full"
+                 className="w-full bg-teal-400 hover:bg-teal-600"
                  disabled={!validateEmail(email) || isLoading}
                >
                  {isLoading ? (

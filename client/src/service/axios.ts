@@ -1,10 +1,9 @@
 import axios from 'axios'
-import { tocken } from '@/Api/user';
-import { tockenInstructor } from '@/Api/instructor';
-import { tockenAdmin } from '@/Api/admin';
-import { removeUser } from '@/redux/authSlice';
-import { store } from '@/redux/store';
-
+import { tocken } from '../Api/user';
+import { tockenInstructor } from '../Api/instructor';
+import { tockenAdmin } from '../Api/admin';
+import { removeUser } from '../redux/authSlice';
+import { store } from '../redux/store';
 
 const ApiGatway = axios.create({ 
     baseURL: import.meta.env.VITE_APIGATEWAY, 
@@ -25,14 +24,15 @@ ApiGatway.interceptors.response.use(
           originalRequest._retry = true;
           try {
               let undPoints = originalRequest.url.split("/")
-             
+              console.log(originalRequest.url,"originalRequest.url");
+              
               if(undPoints[2].startsWith("admin")){
               
                 await tockenAdmin()
                 
               }else if(undPoints[2].startsWith("user")){
               
-                await tocken()
+                // await tocken()
               }else if(undPoints[2].startsWith("instructor")){
                
                 await tockenInstructor()
@@ -44,7 +44,7 @@ ApiGatway.interceptors.response.use(
               return Promise.reject(err);
           }
       }
-      store.dispatch(removeUser());
+      // store.dispatch(removeUser());
       return Promise.reject(error);
   }
 );

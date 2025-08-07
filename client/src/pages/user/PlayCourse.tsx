@@ -1,36 +1,21 @@
-import ProfileNavbar from "@/Components/Header/ProfileNavbar";
-import Header from "../../Components/Header/Header";
 import { useNavigate, useParams } from "react-router-dom";
 import React, { useEffect, useState } from "react";
-import ImageList from "@mui/material/ImageList";
-import ImageListItem from "@mui/material/ImageListItem";
-
-import Footer from "@/Components/Footer/Footer";
-import {
-  courseDetailes,
-  deleteRating,
-  editRating,
-  getInstructorRatings,
-  getRatings,
-  getReports,
-  instructorRating,
-  ratingCourse,
-  reportCourse,
-} from "@/Api/user";
+import Footer from "../../components/Footer/Footer";
 import toast from "react-hot-toast";
-import { ICourse } from "@/@types/courseType";
-import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
-import { Button } from "@/Components/ui/button";
+import { ICourse } from "../../@types/courseType";
+import { Button } from "../../components/ui/button";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/Components/ui/accordion";
-import { Box, Rating, Tab, Tabs } from "@mui/material";
-import { Separator } from "@/Components/ui/separator";
-import { Avatar, AvatarImage } from "@/Components/ui/avatar";
-import { Card, CardDescription } from "@/Components/ui/card";
+} from "../../components/ui/accordion";
+import { Avatar, AvatarImage } from "../../components/ui/avatar";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+} from "../../components/ui/card";
 import {
   Dialog,
   DialogClose,
@@ -40,22 +25,13 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/Components/ui/dialog";
-import { ScrollArea } from "@/Components/ui/scroll-area";
-import {
-  Delete,
-  DeleteIcon,
-  Edit,
-  MoreHorizontal,
-  StarIcon,
-  Trash,
-} from "lucide-react";
-import { Label } from "@/Components/ui/label";
-import { Textarea } from "@/Components/ui/textarea";
+} from "../../components/ui/dialog";
+import { ScrollArea } from "../../components/ui/scroll-area";
+import { Label } from "../../components/ui/label";
+import { Textarea } from "../../components/ui/textarea";
 import { useSelector } from "react-redux";
-import { User } from "@/@types/userType";
-import { IRating } from "@/@types/ratingType";
-
+import { User } from "../../@types/userType";
+import { IRating } from "../../@types/ratingType";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -65,186 +41,190 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/Components/ui/alert-dialog";
-import { IInstructorRating } from "@/@types/instructorRatingType";
+} from "../../components/ui/alert-dialog";
 import moment from "moment";
-import { ILecture } from "@/@types/lectureType";
-import { IReport } from "@/@types/report";
+import { IInstructorRating } from "../../@types/instructorRatingType";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../../components/ui/tabs";
+import { ILecture } from "../../@types/lectureType";
+import { IReport } from "../../@types/report";
+import useRequest from "../../hooks/useRequest";
+import userRoutes from "../../service/endPoints/userEndPoints";
+import ProfileNavbar from "../../components/Header/ProfileNavbar";
+import Header from "../../components/Header/Header";
+
 
 const PlayCourse: React.FC = () => {
   const [course, setCourse] = useState<ICourse>();
   const [chapter, setChapter] = useState("");
   const [lecture, setLecture] = useState<ILecture>();
   const [reports, setReports] = useState<IReport[]>([]);
-  const [hover, setHover] = React.useState(-1);
-  const [expant, setExpant] = useState(false);
-  const [navbar, setNavbar] = React.useState("one");
-  const [value, setValue] = React.useState<number | null>(1);
+  const [value, setValue] = useState<number | null>(1);
   const [stars, setStars] = useState(0);
   const [review, setReview] = useState("");
   const [report, setReport] = useState("");
   const [ratings, setRatings] = useState<IRating[]>([]);
+  const {doRequest,errors} = useRequest();
   const [instructorRatings, setInstructorRatings] = useState<
     IInstructorRating[]
   >([]);
-  const [errors, setErrors] = useState({
+  const [error, setErrors] = useState({
     ratingError: true,
-  })
-
+  });
   const userId = useSelector((state: User) => state.id);
   const userEmail = useSelector((state: User) => state.email);
-
   const { courseId } = useParams();
   const navigate = useNavigate();
+
   useEffect(() => {
-    const course = async () => {
-      const course = await courseDetailes(courseId!);
-
-      if (course.success) {
+    doRequest({
+      url:`${userRoutes.courseDeatiles}/${courseId}`,
+      method:"get",
+      body:{},
+      onSuccess:async (course)=>{
         setCourse(course.course);
-        setLecture(course.course.sections[0].lectures[0])
+        setLecture(course.course.sections[0].lectures[0]);
         setChapter(course.course.sections[0].lectures[0].content.video_url);
-        const reports = await getReports(courseId!,userId);
-        if (reports.success) {
-          setReports(reports.reports);
-        } else {
-          return toast.error(reports.response.data.message);
-        }
-        const instructorRatings = await getInstructorRatings(
-          course.course.instructorId._id
-        );
-        if (instructorRatings.success) {
-          setInstructorRatings(instructorRatings.ratings);
-        } else {
-          return toast.error(instructorRatings.response.data.message);
-        }
-      } else {
-        return toast.error(course.response.data.message);
+        await doRequest({
+          url:`${userRoutes.report}/${userId}/${courseId}`,
+          method:"get",
+          body:{},
+          onSuccess:(response)=>{
+            setReports(response.reports);}
+        });
+        await doRequest({
+          url:`${userRoutes.instructorRating}/${course.course.instructorId._id}`,
+          method:"get",
+          body:{},
+          onSuccess:(response)=>{
+            setInstructorRatings(response.ratings)
+          }
+        });
+        await doRequest({
+          url:`${userRoutes.ratingCourse}/${courseId}`,
+          method:"get",
+          body:{},
+          onSuccess:(response)=>{
+            setRatings(response.rating);
+          }
+        });
       }
-      const ratings = await getRatings(courseId!);
-      if (ratings.success) {
-        setRatings(ratings.rating);
-      } else {
-        return toast.error(ratings.response.data.message);
-      }
-
-      
-    };
-    course();
+    }); 
   }, [courseId]);
 
-  const handleChange = (event: React.SyntheticEvent, navbar: string) => {
-    setNavbar(navbar);
-  };
-
-
   const labels: { [index: string]: string } = {
-    0.5: "Useless",
-    1: "Useless+",
-    1.5: "Poor",
-    2: "Poor+",
-    2.5: "Ok",
-    3: "Ok+",
-    3.5: "Good",
-    4: "Good+",
-    4.5: "Excellent",
-    5: "Excellent+",
+    1: "Useless",
+    2: "Poor",
+    3: "Ok",
+    4: "Good",
+    5: "Excellent",
   };
 
-  function getLabelText(value: number) {
-    return `${value} Star${value !== 1 ? "s" : ""}, ${labels[value]}`;
-  }
 
   const handleRating = async () => {
-    const data = await ratingCourse(review, stars, course?._id!, userId);
-
-    if (data.success) {
-      setValue(1);
-      setStars(0!);
-      setExpant(false);
-      setReview("");
-      const ratings = await getRatings(courseId!);
-      if (ratings.success) {
-        setRatings(ratings.rating);
-      } else {
-        return toast.error(ratings.response.data.message);
+    doRequest({
+      url:userRoutes.ratingCourse,
+      method:"post",
+      body:{review,stars,courseId,userId},
+      onSuccess:()=>{
+        setValue(1);
+        setStars(0!);
+        setReview("");
+        doRequest({
+          url:`${userRoutes.ratingCourse}/${courseId}`,
+          method:"get",
+          body:{},
+          onSuccess:(response)=>{
+            setRatings(response.rating);
+          }
+        })
       }
-    } else {
-      toast.error(data.response.data.message);
-    }
+    })
   };
 
   const handleEditRatings = async (ratingId: string) => {
-    const response = await editRating(ratingId, review, stars);
 
-    if (response.success) {
-      const ratings = await getRatings(courseId!);
-      if (ratings.success) {
-        setRatings(ratings.rating);
+await doRequest({
+  url:userRoutes.ratingCourse,
+  method:"patch",
+  body:{ratingId,review,stars},
+  onSuccess:async()=>{
+   await doRequest({
+      url:`${userRoutes.ratingCourse}/${courseId}`,
+      method:"get",
+      body:{},
+      onSuccess:(response)=>{
+        toast.success("Review updated successfully...")
+        setRatings(response.rating);
         setValue(1);
         setStars(0!);
-        setExpant(false);
         setReview("");
-        return toast.success("Review edit successfully..");
-      } else {
-        return toast.error(ratings.response.data.message);
       }
-    } else {
-      return toast.error(response.response.data.message);
-    }
+    })
+  }
+})
   };
 
   const handleDeleteRating = async (ratingId: string) => {
-    const response = await deleteRating(ratingId);
-
-    if (response.success) {
-      const ratings = await getRatings(courseId!);
-      if (ratings.success) {
-        setRatings(ratings.rating);
-        toast.success("Review deleted successfully..");
-      } else {
-        return toast.error(ratings.response.data.message);
+   await doRequest({
+      url:`${userRoutes.ratingCourse}/${ratingId}`,
+      method:"delete",
+      body:{},
+      onSuccess:async()=>{
+       await doRequest({
+          url:`${userRoutes.ratingCourse}/${courseId}`,
+          method:"get",
+          body:{},
+          onSuccess:(response)=>{
+            setRatings(response.rating);
+            toast.success("Review deleted successfully..");
+          }
+        })
       }
-    } else {
-      return toast.error(response.response.data.message);
-    }
+    })
   };
 
   const handleInstructorRating = async () => {
-    const response = await instructorRating(
-      course?.instructorId._id!,
-      userId,
-      review,
-      stars
-    );
 
-    if (response.success) {
-      const instructorRatings = await getInstructorRatings(
-        course?.instructorId?._id!
-      );
-
-      if (instructorRatings.success) {
-        setInstructorRatings(instructorRatings.ratings);
-        return toast.success("instrutcor rated succesfuly...");
-      } else {
-        return toast.error(instructorRatings.response.data.message);
+   await doRequest({
+      url:`${userRoutes.instructorRating}`,
+      method:"post",
+      body:{instructorId:course?.instructorId._id,userId,review,stars},
+      onSuccess:async()=>{
+       await doRequest({
+          url:`${userRoutes.instructorRating}/${course?.instructorId._id}`,
+          method:"get",
+          body:{},
+          onSuccess:(response)=>{
+            setStars(1);
+            setReview("");
+            setInstructorRatings(response.ratings);
+            return toast.success("instrutcor rated succesfuly...");
+          }
+        });
       }
-    } else {
-      return toast.error(response.response.data.message);
-    }
+    });
   };
 
-  const handleReport = async (url:string) => {
-   
-    const response = await reportCourse(url,course?._id!,report,userId)
-    if(response.success){
-      setReport("");
-      toast.success("reported successfully");
-    }else{
-      setReport("");
-      toast.error(response.response.data.message)
-    }
+  const handleReport = async (url: string) => {
+    doRequest({
+      url:`${userRoutes.report}/${userId}`,
+      body:{content:url,courseId,report},
+      method:"post",
+      onSuccess:()=>{
+        setReport("");
+        toast.success("reported successfully");
+      }
+    });
   };
+
+useEffect(()=>{
+errors?.map((err)=>toast.error(err.message))
+},[errors]);
 
   return (
     <div className="bg-blue-100">
@@ -257,620 +237,467 @@ const PlayCourse: React.FC = () => {
               className="bg-[#49BBBD] hover:bg-[#49BBBD]"
               onClick={() => navigate(-1)}
             >
-              <KeyboardBackspaceIcon />
+              <i className="bi bi-arrow-left"></i>
             </Button>
-            <div className=" bg-white border rounded-4 w-full ">
-              <div className="flex flex-col p-3">
+            <div className="flex items-center justify-between bg-white border rounded-4 w-full ">
+              <div className="p-3">
                 <h6 className="text-s">{course?.title}</h6>
                 <p className="font-medium text-xs text-muted-foreground">
                   {course?.sections.length} contents
                 </p>
               </div>
+              <Dialog>
+                {
+                  reports.map((val)=>val.userId._id==userId&&val.content==chapter)?"": <DialogTrigger asChild>
+                  <Button className="bg-destructive mr-5">
+                    Report
+                  </Button>
+                </DialogTrigger>
+                }
+             
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Repot</DialogTitle>
+                  <DialogDescription>
+                    Your reporting the video {lecture?.title}. of course{" "}
+                    {course?.title}
+                  </DialogDescription>
+                </DialogHeader>
+                <Textarea
+                  value={report}
+                  onChange={(e) => setReport(e.target.value)}
+                  placeholder="Type your mesage"
+                />
+                <DialogFooter className="sm:justify-center">
+                  <DialogClose asChild>
+                    <Button
+                      onClick={() => handleReport(chapter)}
+                      disabled={report.length > 0 ? false : true}
+                      type="button"
+                      className="bg-destructive"
+                    >
+                      Report
+                    </Button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
             </div>
           </div>
           <div className="m-2">
-            <ImageList
-              sx={{ width: 640, height: 360 }}
-              cols={1}
-              rowHeight={164}
-            >
-              <ImageListItem>
-                <video
-                  src={`${chapter}`}
-                  autoPlay={true}
-                  controls
-                  muted={false}
-                  controlsList="nodownload"
-                />
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <button
-                      style={{
-                        position: "absolute",
-                        top: "10px",
-                        right: "10px",
-                        backgroundColor: "rgba(255, 0, 0, 0.8)",
-                        color: "#fff",
-                        border: "none",
-                        borderRadius: "4px",
-                        padding: "5px 10px",
-                        cursor: "pointer",
-                        fontSize: "14px",
-                      }}
-                    >
-                      Report
-                    </button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                      <DialogTitle>Edit profile</DialogTitle>
-                      <DialogDescription>
-                       Your reporting the video {lecture?.title}. of course {course?.title}
-                      </DialogDescription>
-                    </DialogHeader>
-                      <Textarea value={report} onChange={(e)=>setReport(e.target.value)} placeholder="Type your mesage" />
-                    <DialogFooter className="sm:justify-center">
-                    <DialogClose asChild>
-                      <Button  onClick={() => handleReport(chapter)} disabled={report.length>0?false:true} type="button" className="bg-danger">
-                        Report
-                      </Button>
-                    </DialogClose>
-                  </DialogFooter>
-                  
-                  </DialogContent>
-                </Dialog>
-              </ImageListItem>
-            </ImageList>
+            {chapter ? (
+              <video
+                src={chapter}
+                autoPlay
+                controls
+                muted={false}
+                controlsList="nodownload"
+              />
+            ) : (
+              <p>Video not available</p>
+            )}
             <div className="m-2">
-              <Box sx={{ width: "100%" }}>
-                <Tabs
-                  value={navbar}
-                  onChange={handleChange}
-                  textColor="inherit"
-                  aria-label="secondary tabs example"
-                >
-                  <Tab value="one" label="Description" />
-                  <Tab value="two" label="Reviews & ratings" />
-                  <Tab value="three" label="Instructor" />
-                </Tabs>
-                <Separator className="bg-gray-400" />
-              </Box>
-              <div>
-                {navbar == "one" ? (
-                  <div className="p-2">
-                    <p className="font-bold"> Title : {course?.thumbnail}</p>
-                    <p className="font-semibold">
-                      Description : {course?.description}
-                      <br />
-                      <br />
-                      category : {course?.category}
-                      <br />
-                      Topic : {course?.subCategory}
-                      <br />
-                      Price : {course?.price}
-                      <br />
-                      Level : {course?.level}
-                      <br />
-                      created At : {course?.createdAt.slice(0, 10)}
-                    </p>
-                    <div>
-                      <h6 className="font-bold">Tests</h6>
-                      <div>
-                        {course?.test ? (
-                          course.test.students.some(
-                            (val) => val.user == userId
-                          ) ? (
-                            <div className="flex flex-col w-25 h-[200px] gap-2">
-                              <div className="border rounded-2 shadow-lg w-full h-[150px]">
-                                <h4 className="font-medium text-sm ">
-                                  Your Score
-                                </h4>
-                                <div className="flex h-full w-full items-center justify-center">
-                                  <h1>
-                                    {
-                                      course.test.students.find(
-                                        (val) => val.user == userId
-                                      )?.score
+              <Tabs defaultValue="Description" className="w-full">
+                <TabsList className="grid w-full grid-cols-3">
+                  <TabsTrigger value="Description">Description</TabsTrigger>
+                  <TabsTrigger value="Reviews&ratings">
+                    Reviews & ratings
+                  </TabsTrigger>
+                  <TabsTrigger value="Instructor">Instructor</TabsTrigger>
+                </TabsList>
+                <TabsContent value="Description">
+                  <Card>
+                    <CardContent className="space-y-2">
+                      <div className="p-2">
+                        <p className="font-bold">
+                          {" "}
+                          Title : {course?.thumbnail}
+                        </p>
+                        <p className="font-semibold">
+                          Description : {course?.description}
+                          <br />
+                          <br />
+                          category : {course?.category}
+                          <br />
+                          Topic : {course?.subCategory}
+                          <br />
+                          Price : {course?.price}
+                          <br />
+                          Level : {course?.level}
+                          <br />
+                          created At : {course?.createdAt.slice(0, 10)}
+                        </p>
+                        <div>
+                          <h6 className="font-bold">Tests</h6>
+                          <div>
+                            {course?.test ? (
+                              course.test.students.some(
+                                (val) => val.user == userId
+                              ) ? (
+                                <div className="flex flex-col w-25 h-[200px] gap-2">
+                                  <div className="border rounded-2 shadow-lg w-full h-[150px]">
+                                    <h4 className="font-medium text-sm ">
+                                      Your Score
+                                    </h4>
+                                    <div className="flex h-full w-full items-center justify-center">
+                                      <h1>
+                                        {
+                                          course.test.students.find(
+                                            (val) => val.user == userId
+                                          )?.score
+                                        }
+                                      </h1>
+                                    </div>
+                                  </div>
+                                  <Button
+                                    disabled
+                                    className="text-black  shadow-lg bg-teal-300 hover:bg-teal-300 w-full"
+                                  >
+                                    Test Attended
+                                  </Button>
+                                </div>
+                              ) : (
+                                <div className="flex flex-col w-25 h-[200px] gap-2">
+                                  <img
+                                    className="border rounded-2 shadow-lg w-full h-[150px]"
+                                    src={course.image.image_url}
+                                  />
+                                  <Button
+                                    className=" shadow-lg bg-teal-300 hover:bg-teal-300 w-full"
+                                    onClick={() =>
+                                      navigate(
+                                        `/user/assesmentTest/${course.test._id}`
+                                      )
                                     }
-                                  </h1>
+                                  >
+                                    Go to test
+                                  </Button>
                                 </div>
-                              </div>
-                              <Button
-                                disabled
-                                className="text-black  shadow-lg bg-teal-300 hover:bg-teal-300 w-full"
-                              >
-                                Test Attended
-                              </Button>
-                            </div>
-                          ) : (
-                            <div className="flex flex-col w-25 h-[200px] gap-2">
-                              <img
-                                className="border rounded-2 shadow-lg w-full h-[150px]"
-                                src={course.image.image_url}
-                              />
-                              <Button
-                                className=" shadow-lg bg-teal-300 hover:bg-teal-300 w-full"
-                                onClick={() =>
-                                  navigate(
-                                    `/user/assesmentTest/${course.test._id}`
-                                  )
-                                }
-                              >
-                                Go to test
-                              </Button>
-                            </div>
-                          )
-                        ) : (
-                          "No Tests Available for this Course."
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ) : navbar == "two" ? (
-                  <div>
-                    <h6 className="my-3">Reviews & Ratings</h6>
-                    <div className="grid gap-2 grid-cols-2">
-                      {ratings.length > 0 ? (
-                        ratings.map((val: IRating, index) => (
-                          <div className="border" key={index}>
-                            <div className="m-3">
-                              <div className="flex items-center justify-between">
-                                <div className="flex  gap-3 items-center">
-                                  <Avatar>
-                                    <AvatarImage
-                                      src={
-                                        val.userId.avatar.avatar_url
-                                          ? val.userId.avatar.avatar_url
-                                          : "https://github.com/shadcn.png"
-                                      }
-                                      alt="user profile"
-                                    />
-                                  </Avatar>
-                                  <p className="text-black font-medium">
-                                    {val.userId.name}
-                                  </p>
-                                </div>
-                                <div>
-                                  <AlertDialog>
-                                    <AlertDialogTrigger asChild>
-                                      {val.userId._id == userId && (
-                                        <Edit
-                                          onClick={() => {
-                                            setReview(val.review);
-                                            setStars(val.stars);
-                                            setValue(val.stars);
-                                          }}
-                                          className="h-3 m-1 cursor-pointer"
-                                        />
-                                      )}
-                                    </AlertDialogTrigger>
-                                    <AlertDialogContent>
-                                      <AlertDialogHeader>
-                                        <AlertDialogTitle>
-                                          Edit your Review
-                                        </AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                          <div className="grid w-full gap-1.5">
-                                            <Rating
-                                              className="mx-5"
-                                              name="hover-feedback"
-                                              value={value}
-                                              precision={0.5}
-                                              getLabelText={getLabelText}
-                                              onChange={(event, newValue) => {
-                                                setValue(newValue);
-                                                setStars(newValue!);
-                                              }}
-                                              onChangeActive={(
-                                                event,
-                                                newHover
-                                              ) => {
-                                                setHover(newHover);
-                                              }}
-                                              emptyIcon={
-                                                <StarIcon
-                                                  style={{ opacity: 0.55 }}
-                                                  fontSize="inherit"
-                                                />
-                                              }
-                                            />
-                                            <Label
-                                              className={
-                                                errors.ratingError
-                                                  ? "text-danger"
-                                                  : ""
-                                              }
-                                              htmlFor="message-2"
-                                            >
-                                              Your Message
-                                            </Label>
-                                            <Textarea
-                                              value={review}
-                                              onChange={(e) => {
-                                                if (e.target.value.length < 3) {
-                                                  setErrors((prev) => ({
-                                                    ...prev,
-                                                    ratingError: true,
-                                                  }));
-                                                } else {
-                                                  setErrors((prev) => ({
-                                                    ...prev,
-                                                    ratingError: false,
-                                                  }));
-                                                  setReview(e.target.value);
-                                                }
-                                              }}
-                                              placeholder="Type your message here."
-                                              id="message-2"
-                                            />
-                                            {errors.ratingError ? (
-                                              <p className="text-sm text-danger text-muted-foreground">
-                                                Your message will be show to the
-                                                public.
-                                              </p>
-                                            ) : (
-                                              <p className="text-sm text-muted-foreground">
-                                                Your message will be show to the
-                                                public.
-                                              </p>
-                                            )}
-                                          </div>
-                                        </AlertDialogDescription>
-                                      </AlertDialogHeader>
-                                      <AlertDialogFooter>
-                                        <AlertDialogAction
-                                          className="bg-teal-500 hover:bg-teal-500"
-                                          type="button"
-                                        >
-                                          Cancel
-                                        </AlertDialogAction>
-                                        <AlertDialogAction
-                                          onClick={() =>
-                                            handleEditRatings(val._id)
-                                          }
-                                          type="button"
-                                          className="bg-teal-500 hover:bg-teal-500"
-                                        >
-                                          Continue
-                                        </AlertDialogAction>
-                                      </AlertDialogFooter>
-                                    </AlertDialogContent>
-                                  </AlertDialog>
-                                  <AlertDialog>
-                                    <AlertDialogTrigger asChild>
-                                      {val.userId._id == userId && (
-                                        <Trash className="h-3 m-1 cursor-pointer" />
-                                      )}
-                                    </AlertDialogTrigger>
-                                    <AlertDialogContent>
-                                      <AlertDialogHeader>
-                                        <AlertDialogTitle>
-                                          Are you absolutely sure?
-                                        </AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                          This action cannot be undone. This
-                                          will permanently delete this review
-                                          and remove data from our servers.
-                                        </AlertDialogDescription>
-                                      </AlertDialogHeader>
-                                      <AlertDialogFooter>
-                                        <AlertDialogAction
-                                          className="bg-teal-500 hover:bg-teal-500"
-                                          type="button"
-                                        >
-                                          Cancel
-                                        </AlertDialogAction>
-                                        <AlertDialogAction
-                                          onClick={() =>
-                                            handleDeleteRating(val._id)
-                                          }
-                                          type="button"
-                                          className="bg-teal-500 hover:bg-teal-500"
-                                        >
-                                          Continue
-                                        </AlertDialogAction>
-                                      </AlertDialogFooter>
-                                    </AlertDialogContent>
-                                  </AlertDialog>
-                                </div>
-                              </div>
-                              <div className="text-sm my-2">
-                                <div>
-                                  {" "}
-                                  <Rating
-                                    name="customized-10"
-                                    defaultValue={1}
-                                    max={1}
-                                    size="small"
-                                  />{" "}
-                                  {val.stars} {labels[`${val.stars}`]}
-                                </div>
-                                {val.review}
-                              </div>
-                              <p className="text-black font-medium text-xs">
-                                {" "}
-                                {moment(val.updatedAt).calendar()}
-                              </p>
-                            </div>
+                              )
+                            ) : (
+                              "No Tests Available for this Course."
+                            )}
                           </div>
-                        ))
-                      ) : (
-                        <div>No ratings for this course</div>
-                      )}
-                    </div>
-                    <div className="flex justify-between">
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          {ratings.length > 4 && (
-                            <Button className="underline" variant="link">
-                              See more...
-                            </Button>
-                          )}
-                        </DialogTrigger>
-                        <DialogTitle>
-                          <DialogContent className="sm:max-w-[900px]">
-                            <div>
-                              <h6 className="my-3">Reviews & Ratings</h6>
-                              <ScrollArea className="h-[400px] w-full rounded-md border p-4">
-                                <div className="grid gap-2 grid-cols-2">
-                                  <div className="border">
-                                    <div className="m-3">
-                                      <div className="flex  gap-3 items-center">
-                                        <Avatar>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+                <TabsContent value="Reviews&ratings">
+                  <Card>
+                    <CardContent className="space-y-2">
+                      <div>
+                        <h6 className="my-3">Reviews & Ratings</h6>
+                        <div className="grid gap-2 grid-cols-2">
+                          {ratings.length > 0 ? (
+                            ratings.map((val: IRating, index) => (
+                              <div className="border" key={index}>
+                                <div className="m-3">
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex justify-center gap-3 items-center">
+                                      <Avatar>
+                                        {
+                                          val.userId.avatar.avatar_url?
                                           <AvatarImage
-                                            src={
-                                              course?.instructorId.avatar
-                                                .avatart_url
-                                                ? course?.instructorId.avatar
-                                                    .avatart_url
-                                                : "https://github.com/shadcn.png"
-                                            }
-                                            alt="instrutcor profile"
-                                          />
-                                        </Avatar>
-                                        <p className="text-black font-medium">
-                                          {"ansif pk"}
-                                        </p>
-                                      </div>
-                                      <div className="text-sm my-2">
-                                        this is ma very nyse course . really
-                                        usefull course from...
-                                      </div>
-                                      <p className="text-black font-medium text-xs">
-                                        {" "}
-                                        {"12/4/2002"}
+                                          src={
+                                            val.userId.avatar.avatar_url
+                                          }
+                                          alt="user profile"
+                                        />
+                                          :
+                                          <i className="bi bi-person-circle text-2xl"></i>
+                                        }
+                                      
+                                      </Avatar>
+                                      <p className="text-black font-medium">
+                                        {val.userId.name}
                                       </p>
                                     </div>
-                                  </div>
-                                </div>
-                              </ScrollArea>
-                            </div>
-                          </DialogContent>
-                        </DialogTitle>
-                      </Dialog>
+                                    <div>
+                                      <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                          {val.userId._id == userId && (
+                                            <i onClick={() => {
+                                              setReview(val.review);
+                                              setStars(val.stars);
+                                              setValue(val.stars);
+                                            }} className="bi bi-pencil-square"></i>
+                                       
+                                          )}
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                          <AlertDialogHeader>
+                                            <AlertDialogTitle>
+                                              Edit your Review
+                                            </AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                              {[...Array(5)].map((_, index) => {
+                                                const ratingValue = index + 1;
+                                                return (
+                                                  <i
+                                                    key={index}
+                                                    className={`bi ${
+                                                      ratingValue <=
+                                                      (value || stars)
+                                                        ? "bi-star-fill"
+                                                        : "bi-star"
+                                                    } mx-1`}
+                                                    style={{
+                                                      fontSize: "1.5rem",
+                                                      color: "#ffc107",
+                                                      opacity:
+                                                        ratingValue <=
+                                                        (value || stars)
+                                                          ? 1
+                                                          : 0.55,
+                                                      cursor: "pointer",
+                                                    }}
+                                                    onClick={() =>
+                                                      setStars(ratingValue)
+                                                    }
+                                                    onMouseEnter={() =>
+                                                      setValue(ratingValue)
+                                                    }
+                                                    onMouseLeave={() =>
+                                                      setValue(0)
+                                                    }
+                                                  />
+                                                );
+                                              })}
 
-                      <Dialog>
-                        <DialogTrigger>
-                          {ratings.some(
-                            (value) => value.userId.email == userEmail
-                          ) ? (
-                            ""
-                          ) : (
-                            <Button className="underline" variant="link">
-                              Rate this course
-                            </Button>
-                          )}
-                        </DialogTrigger>
-                        <DialogContent>
-                          <DialogHeader>
-                            <DialogTitle>
-                              How whould you Rate this course?
-                            </DialogTitle>
-                            <DialogDescription>
-                              <div className="space-y-3">
-                                {value !== null && (
-                                  <Box sx={{ ml: 2, font: "caption" }}>
-                                    {labels[hover !== -1 ? hover : value]}
-                                  </Box>
-                                )}
-                                <Rating
-                                  className="mx-5"
-                                  name="hover-feedback"
-                                  value={value}
-                                  precision={0.5}
-                                  getLabelText={getLabelText}
-                                  onChange={(event, newValue) => {
-                                    setValue(newValue);
-                                    setStars(newValue!);
-                                    setExpant(true);
-                                    // handleRating(newValue!)
-                                  }}
-                                  onChangeActive={(event, newHover) => {
-                                    setHover(newHover);
-                                  }}
-                                  emptyIcon={
-                                    <StarIcon
-                                      style={{ opacity: 0.55 }}
-                                      fontSize="inherit"
-                                    />
-                                  }
-                                />
-                                {expant && (
-                                  <div>
-                                    <div className="grid w-full gap-1.5">
-                                      <Label
-                                        htmlFor="message-2"
-                                        className={
-                                          errors.ratingError
-                                            ? "text-danger"
-                                            : "text-black"
-                                        }
-                                      >
-                                        Your Message
-                                      </Label>
-                                      <Textarea
-                                        onChange={(e) => {
-                                          if (e.target.value.length < 3) {
-                                            setErrors((prev) => ({
-                                              ...prev,
-                                              ratingError: true,
-                                            }));
-                                          } else {
-                                            setErrors((prev) => ({
-                                              ...prev,
-                                              ratingError: false,
-                                            }));
-                                            setReview(e.target.value);
-                                          }
-                                        }}
-                                        className="text-black"
-                                        placeholder=" Please share your personal expierience after taking this course."
-                                        id="message-2"
-                                      />
-                                      {errors.ratingError ? (
-                                        <p className="text-sm text-danger text-muted-foreground">
-                                          Your message will be show to the
-                                          public.
-                                        </p>
-                                      ) : (
-                                        <p className="text-sm text-muted-foreground">
-                                          Your message will be show to the
-                                          public.
-                                        </p>
-                                      )}
+                                              <Label
+                                                className={
+                                                  error.ratingError
+                                                    ? "text-danger"
+                                                    : ""
+                                                }
+                                                htmlFor="message-2"
+                                              >
+                                                Your Message
+                                              </Label>
+                                              <Textarea
+                                                value={review}
+                                                onChange={(e) => {
+                                                  if (
+                                                    e.target.value.length < 3
+                                                  ) {
+                                                    setErrors((prev) => ({
+                                                      ...prev,
+                                                      ratingError: true,
+                                                    }));
+                                                  } else {
+                                                    setErrors((prev) => ({
+                                                      ...prev,
+                                                      ratingError: false,
+                                                    }));
+                                                  }
+                                                  setReview(e.target.value);
+                                                }}
+                                                placeholder="Type your message here."
+                                                id="message-2"
+                                              />
+                                              {error.ratingError ? (
+                                                <span className="text-sm text-danger text-muted-foreground">
+                                                  Your message will be show to
+                                                  the public.
+                                                </span>
+                                              ) : (
+                                                <span className="text-sm text-muted-foreground">
+                                                  Your message will be show to
+                                                  the public.
+                                                </span>
+                                              )}
+                                            </AlertDialogDescription>
+                                          </AlertDialogHeader>
+                                          <AlertDialogFooter>
+                                            <AlertDialogAction
+                                              className="bg-teal-500 hover:bg-teal-500"
+                                              type="button"
+                                            >
+                                              Cancel
+                                            </AlertDialogAction>
+                                            <AlertDialogAction
+                                              onClick={() =>
+                                                handleEditRatings(val._id)
+                                              }
+                                              type="button"
+                                              className="bg-teal-500 hover:bg-teal-500"
+                                            >
+                                              Continue
+                                            </AlertDialogAction>
+                                          </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                      </AlertDialog>
+                                      <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                          {val.userId._id == userId && (
+                                            <i className="bi bi-trash-fill cursor-pointer"></i>
+                                            
+                                          )}
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                          <AlertDialogHeader>
+                                            <AlertDialogTitle>
+                                              Are you absolutely sure?
+                                            </AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                              This action cannot be undone. This
+                                              will permanently delete this
+                                              review and remove data from our
+                                              servers.
+                                            </AlertDialogDescription>
+                                          </AlertDialogHeader>
+                                          <AlertDialogFooter>
+                                            <AlertDialogAction
+                                              className="bg-teal-500 hover:bg-teal-500"
+                                              type="button"
+                                            >
+                                              Cancel
+                                            </AlertDialogAction>
+                                            <AlertDialogAction
+                                              onClick={() =>
+                                                handleDeleteRating(val._id)
+                                              }
+                                              type="button"
+                                              className="bg-teal-500 hover:bg-teal-500"
+                                            >
+                                              Continue
+                                            </AlertDialogAction>
+                                          </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                      </AlertDialog>
                                     </div>
-                                    <DialogClose asChild>
-                                      <Button
-                                        type="button"
-                                        disabled={
-                                          errors.ratingError ? true : false
-                                        }
-                                        onClick={handleRating}
-                                      >
-                                        submit
-                                      </Button>
-                                    </DialogClose>
                                   </div>
-                                )}
+                                  <div className="text-sm my-2">
+                                    <div>
+                                      <i className="bi bi-star-fill text-yellow-500">
+                                        {" "}
+                                        {val.stars} {labels[`${val.stars}`]}
+                                      </i>
+                                    </div>
+                                    {val.review}
+                                  </div>
+                                  <p className="text-black font-medium text-xs">
+                                    {" "}
+                                    {moment(val.updatedAt).calendar()}
+                                  </p>
+                                </div>
                               </div>
-                            </DialogDescription>
-                          </DialogHeader>
-                        </DialogContent>
-                      </Dialog>
-                    </div>
-                  </div>
-                ) : (
-                  <div>
-                    <p className="font-medium text-lg">Instructor info</p>
-                    <div
-                      className="flex bg-blue-200 rounded-3"
-                      style={{
-                        backgroundImage: `linear-gradient(
-                      rgba(4, 18, 19, 0.5),
-                  rgba(10, 10, 10, 0.5)
-                    ), url(https://github.com/shadcn.png)`,
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                      }}
-                    >
-                      <div
-                        onClick={() =>
-                          navigate(
-                            `/user/instructorProfile/${course?.instructorId._id}`
-                          )
-                        }
-                        className="w-48 h-48 m-2 rounded-full  overflow-hidden bg-gray-200"
-                      >
-                        <img
-                          src={
-                            course?.instructorId.avatar.avatart_url
-                              ? course?.instructorId.avatar.avatart_url
-                              : "https://github.com/shadcn.png"
-                          }
-                          alt="instructor image"
-                        />
-                      </div>
-
-                      <Card className="m-2 w-[400px] bg-gray-50/50 backdrop-blur-sm">
-                        <CardDescription className="m-4 space-y-2 overflow-hidden break-words">
-                          <div className="font-bold text-black">
-                            {course?.instructorId.name}
-                          </div>
-                          <div className="font-bold">{"im developer"}</div>
-                          <div className="font-bold text-black">
-                            {"about me"}
-                          </div>
-                          <div className="flex items-center">
-                            <p className="text-sm font-medium">
-                              <Rating readOnly max={1} />
-                            </p>
-                            <p className="">
-                              {instructorRatings.length} instructor Ratings
-                            </p>
-                          </div>
-                        </CardDescription>
-                      </Card>
-                    </div>
-                    <Dialog>
-                      <DialogTrigger>
-                        {instructorRatings.some(
-                          (value) => value.userId.email == userEmail
-                        ) ? (
-                          ""
-                        ) : (
-                          <Button className="underline" variant="link">
-                            Rate this instructor
-                          </Button>
-                        )}
-                      </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle>
-                            How whould you Rate this instructor?
-                          </DialogTitle>
-                          <DialogDescription>
-                            <div className="space-y-3">
-                              {value !== null && (
-                                <Box sx={{ ml: 2, font: "caption" }}>
-                                  {labels[hover !== -1 ? hover : value]}
-                                </Box>
+                            ))
+                          ) : (
+                            <div>No ratings for this course</div>
+                          )}
+                        </div>
+                        <div className="flex justify-between">
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              {ratings.length > 4 && (
+                                <Button className="underline" variant="link" 
+                            
+                              >
+                                  See more...
+                                </Button>
                               )}
-                              <Rating
-                                className="mx-5"
-                                name="hover-feedback"
-                                value={value}
-                                precision={0.5}
-                                getLabelText={getLabelText}
-                                onChange={(event, newValue) => {
-                                  setValue(newValue);
-                                  setStars(newValue!);
-                                  // setExpant(true);
-                                  // handleRating(newValue!)
-                                }}
-                                onChangeActive={(event, newHover) => {
-                                  setHover(newHover);
-                                }}
-                                emptyIcon={
-                                  <StarIcon
-                                    style={{ opacity: 0.55 }}
-                                    fontSize="inherit"
-                                  />
-                                }
-                              />
+                            </DialogTrigger>
+                            <DialogTitle>
+                              <DialogContent className="sm:max-w-[900px]">
+                                <div>
+                                  <h6 className="my-3">Reviews & Ratings</h6>
+                                  <ScrollArea className="h-[400px] w-full rounded-md border p-4">
+                                    <div className="grid gap-2 grid-cols-2">
+                                      <div className="border">
+                                        <div className="m-3">
+                                          <div className="flex  gap-3 items-center">
+                                            <Avatar>
+                                              <AvatarImage
+                                                src={
+                                                  course?.instructorId.avatar
+                                                    .avatart_url
+                                                    ? course?.instructorId
+                                                        .avatar.avatart_url
+                                                    : "https://github.com/shadcn.png"
+                                                }
+                                                alt="instrutcor profile"
+                                              />
+                                            </Avatar>
+                                            <p className="text-black font-medium">
+                                              {"ansif pk"}
+                                            </p>
+                                          </div>
+                                          <div className="text-sm my-2">
+                                            this is ma very nyse course . really
+                                            usefull course from...
+                                          </div>
+                                          <p className="text-black font-medium text-xs">
+                                            {" "}
+                                            {"12/4/2002"}
+                                          </p>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </ScrollArea>
+                                </div>
+                              </DialogContent>
+                            </DialogTitle>
+                          </Dialog>
 
-                              <div>
-                                <div className="grid w-full gap-1.5">
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              {ratings.some(
+                                (value) => value.userId.email == userEmail
+                              ) ? (
+                                ""
+                              ) : (
+                                <Button className="underline" variant="link">
+                                  Rate this course
+                                </Button>
+                              )}
+                            </DialogTrigger>
+                            <DialogContent>
+                              <DialogHeader>
+                                <DialogTitle>
+                                  How whould you Rate this course?
+                                </DialogTitle>
+                                <DialogDescription>
+                                  {[...Array(5)].map((_, index) => {
+                                    const ratingValue = index + 1;
+                                    return (
+                                      <i
+                                        key={index}
+                                        className={`bi ${
+                                          ratingValue <= (value || stars)
+                                            ? "bi-star-fill"
+                                            : "bi-star"
+                                        } mx-1`}
+                                        style={{
+                                          fontSize: "1.5rem",
+                                          color: "#ffc107",
+                                          opacity:
+                                            ratingValue <= (value || stars)
+                                              ? 1
+                                              : 0.55,
+                                          cursor: "pointer",
+                                        }}
+                                        onClick={() => setStars(ratingValue)}
+                                        onMouseEnter={() =>
+                                          setValue(ratingValue)
+                                        }
+                                        onMouseLeave={() => setValue(0)}
+                                      />
+                                    );
+                                  })}
+
                                   <Label
-                                    htmlFor="message-2"
                                     className={
-                                      errors.ratingError
-                                        ? "text-danger"
-                                        : "text-black"
+                                      error.ratingError ? "text-danger" : "text-black"
                                     }
+                                    htmlFor="message-2"
                                   >
                                     Your Message
                                   </Label>
                                   <Textarea
+                                   className="text-black"
+                                    value={review}
                                     onChange={(e) => {
                                       if (e.target.value.length < 3) {
                                         setErrors((prev) => ({
@@ -882,41 +709,214 @@ const PlayCourse: React.FC = () => {
                                           ...prev,
                                           ratingError: false,
                                         }));
-                                        setReview(e.target.value);
                                       }
+                                      setReview(e.target.value);
                                     }}
-                                    className="text-black"
-                                    placeholder=" Please share your personal expierience after taking this course."
+                                    placeholder="Type your message here."
                                     id="message-2"
                                   />
-                                  {errors.ratingError ? (
-                                    <p className="text-sm text-danger text-muted-foreground">
+                                  {error.ratingError ? (
+                                    <span className="text-sm text-danger ">
                                       Your message will be show to the public.
-                                    </p>
+                                    </span>
                                   ) : (
-                                    <p className="text-sm text-muted-foreground">
+                                    <span className="text-sm ">
                                       Your message will be show to the public.
-                                    </p>
+                                    </span>
                                   )}
-                                </div>
+                                </DialogDescription>
+                              </DialogHeader>
+                              <DialogFooter>
                                 <DialogClose asChild>
-                                  <Button
-                                    type="button"
-                                    disabled={errors.ratingError ? true : false}
-                                    onClick={handleInstructorRating}
-                                  >
-                                    submit
+                                <Button type="button"     className="bg-teal-500 hover:bg-teal-500">
+                                    cancell
                                   </Button>
                                 </DialogClose>
+                                <DialogClose asChild>
+                                  <Button type="button"     className="bg-teal-500 hover:bg-teal-500" onClick={handleRating}>
+                                    Confirm
+                                  </Button>
+                                </DialogClose>
+                              </DialogFooter>
+                            </DialogContent>
+                            
+                          </Dialog>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+                <TabsContent value="Instructor">
+                  <Card>
+                    <CardContent className="space-y-2">
+                      <div>
+                        <p className="font-medium text-lg">Instructor info</p>
+                        <div
+                          className="flex bg-blue-200 rounded-3"
+                          style={{
+                            backgroundImage: `linear-gradient(
+                      rgba(4, 18, 19, 0.5),
+                  rgba(10, 10, 10, 0.5)
+                    ), url(https://github.com/shadcn.png)`,
+                            backgroundSize: "cover",
+                            backgroundPosition: "center",
+                          }}
+                        >
+                          <div
+                            onClick={() =>
+                              navigate(
+                                `/user/instructorProfile/${course?.instructorId._id}`
+                              )
+                            }
+                            className="w-48 h-48 m-2 rounded-full justify-center flex items-center overflow-hidden bg-gray-200"
+                          >
+                             {course?.instructorId.avatar.avatart_url
+                              ?
+                              <img
+                              src={course?.instructorId.avatar.avatart_url}
+                              alt="instructor image"
+                            />
+                              :
+                              <i className="bi bi-person-circle text-5xl"></i>
+                             }
+                          
+                          </div>
+
+                          <Card className="m-2 w-[400px] bg-gray-50/50 backdrop-blur-sm">
+                            <CardDescription className="m-4 space-y-2 overflow-hidden break-words">
+                              <div className="font-bold text-black">
+                                {course?.instructorId.name}
                               </div>
-                            </div>
-                          </DialogDescription>
-                        </DialogHeader>
-                      </DialogContent>
-                    </Dialog>
-                  </div>
-                )}
-              </div>
+                              <div className="font-bold">{"im developer"}</div>
+                              <div className="font-bold text-black">
+                                {"about me"}
+                              </div>
+                              <div className="flex items-center">
+                                <p className="text-sm font-medium">
+                                <i className="bi bi-star-fill text-yellow-500"></i>
+                                </p>
+                                <p className="">
+                                  {instructorRatings.length} instructor Ratings
+                                </p>
+                              </div>
+                            </CardDescription>
+                          </Card>
+                        </div>
+                        <Dialog>
+                          {instructorRatings.some(
+                              (value) => value.userId.email == userEmail
+                            ) ? (
+                              ""
+                            ) : (
+                              <DialogTrigger onClick={()=>setStars(1)} className="underline mt-2 text-blue-600">
+                                  Rate this instructor
+                             
+                              </DialogTrigger>
+                            )}
+                         
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>
+                                How whould you Rate this instructor?
+                              </DialogTitle>
+                              <DialogDescription>
+                              {[...Array(5)].map((_, index) => {
+                                                const ratingValue = index + 1;
+                                                return (
+                                                  <i
+                                                    key={index}
+                                                    className={`bi ${
+                                                      ratingValue <=
+                                                      (value || stars)
+                                                        ? "bi-star-fill"
+                                                        : "bi-star"
+                                                    } mx-1`}
+                                                    style={{
+                                                      fontSize: "1.5rem",
+                                                      color: "#ffc107",
+                                                      opacity:
+                                                        ratingValue <=
+                                                        (value || stars)
+                                                          ? 1
+                                                          : 0.55,
+                                                      cursor: "pointer",
+                                                    }}
+                                                    onClick={() =>
+                                                      setStars(ratingValue)
+                                                    }
+                                                    onMouseEnter={() =>
+                                                      setValue(ratingValue)
+                                                    }
+                                                    onMouseLeave={() =>
+                                                      setValue(0)
+                                                    }
+                                                  />
+                                                );
+                                              })}
+
+                                              <Label
+                                                className={
+                                                  error.ratingError
+                                                    ? "text-danger"
+                                                    : ""
+                                                }
+                                                htmlFor="message-2"
+                                              >
+                                                Your Message
+                                              </Label>
+                                              <Textarea
+                                                value={review}
+                                                onChange={(e) => {
+                                                  if (
+                                                    e.target.value.length < 3
+                                                  ) {
+                                                    setErrors((prev) => ({
+                                                      ...prev,
+                                                      ratingError: true,
+                                                    }));
+                                                  } else {
+                                                    setErrors((prev) => ({
+                                                      ...prev,
+                                                      ratingError: false,
+                                                    }));
+                                                  }
+                                                  setReview(e.target.value);
+                                                }}
+                                                placeholder="Type your message here."
+                                                id="message-2"
+                                              />
+                                              {error.ratingError ? (
+                                                <span className="text-sm text-danger text-muted-foreground">
+                                                  Your message will be show to
+                                                  the public.
+                                                </span>
+                                              ) : (
+                                                <span className="text-sm text-muted-foreground">
+                                                  Your message will be show to
+                                                  the public.
+                                                </span>
+                                              )}
+                              </DialogDescription>
+                            </DialogHeader>
+                              <DialogFooter>
+                                <DialogClose asChild>
+                                <Button type="button" className="bg-teal-400 hover:bg-teal-600" >
+                                    cancell
+                                  </Button>
+                                </DialogClose>
+                                <DialogClose asChild>
+                                  <Button type="button" className="bg-teal-400 hover:bg-teal-600" onClick={handleInstructorRating}>
+                                    Confirm
+                                  </Button>
+                                </DialogClose>
+                              </DialogFooter>
+                          </DialogContent>
+                        </Dialog>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              </Tabs>
             </div>
           </div>
         </div>
@@ -939,11 +939,10 @@ const PlayCourse: React.FC = () => {
                       {section.lectures.map((lecture, ind) => (
                         <AccordionContent
                           key={ind}
-
-                          onClick={() =>{
-                             setLecture(lecture)
-                             setChapter(lecture.content.video_url);
-                            }}
+                          onClick={() => {
+                            setLecture(lecture);
+                            setChapter(lecture.content.video_url);
+                          }}
                           className="flex justify-between py-2 my-1 border-top bg-white mx-2"
                         >
                           <div className="cursor-pointer">{lecture.title}</div>

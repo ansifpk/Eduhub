@@ -127,9 +127,12 @@ export class UserController {
       success_url: "https://www.eduhublearning.online/user/success",
       cancel_url: "https://www.eduhublearning.online/user/faile",
     });
-
+     
+    console.log("going to check out1");
+    
     if (session) {
-      res.json({ id: session.id });
+      console.log("going to check out2");
+      res.send({ id: session.id });
     }
   }
 
@@ -158,9 +161,10 @@ export class UserController {
   }
 
   async updateRating(req: Request, res: Response, next: NextFunction) {
-    const { ratingId, review, stars } = req.body;
+    const { _id } = req.params;
+    const {  review, stars } = req.body;
     const ratings = await this.userUseCase.updateRating(
-      ratingId,
+      _id,
       review,
       stars,
       next
@@ -189,8 +193,8 @@ export class UserController {
   }
 
   async couponDetailes(req: Request, res: Response, next: NextFunction) {
-    const { couponCode } = req.params;
-    const coupons = await this.userUseCase.couponDetailes(couponCode, next);
+    const { couponCode,userId } = req.params;
+    const coupons = await this.userUseCase.couponDetailes(couponCode,userId, next);
     if (coupons) {
       return res.send({ success: true, coupons: coupons });
     }

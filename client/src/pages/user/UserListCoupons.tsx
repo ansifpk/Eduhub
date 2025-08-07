@@ -1,14 +1,12 @@
-import { ICoupon } from "@/@types/couponType";
-import { User } from "@/@types/userType";
-import Footer from "@/Components/Footer/Footer";
-import Header from "@/Components/Header/Header";
-import ProfileNavbar from "@/Components/Header/ProfileNavbar";
-import { Button } from "@/Components/ui/button";
-import { Card, CardContent, CardDescription } from "@/Components/ui/card";
-import useRequest from "@/hooks/useRequest";
-import userRoutes from "@/service/endPoints/userEndPoints";
-import { Code } from "@heroui/react";
-import { Copy } from "lucide-react";
+import { ICoupon } from "../../@types/couponType";
+import { User } from "../../@types/userType";
+import Footer from "../../components/Footer/Footer";
+import Header from "../../components/Header/Header";
+import ProfileNavbar from "../../components/Header/ProfileNavbar";
+import { Button } from "../../components/ui/button";
+import { Card, CardContent, CardDescription } from "../../components/ui/card";
+import useRequest from "../../hooks/useRequest";
+import userRoutes from "../../service/endPoints/userEndPoints";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
@@ -51,30 +49,26 @@ const UserListCoupons: React.FC = () => {
                 className={`md:w-[250px] md:h-[200px] sm:w-[300px] sm:h-[200px] lg:w-[330px] lg:h-[170px] w-[235px]  h-[170px] border-1 rounded-3 p-1 sm:m-1 lg:mx-auto md:mx-auto sm:mx-auto mx-auto ${
                   !value.users.includes(userId)
                     ? date > new Date(value.expiryDate)
-                      ? "bg-danger-100 border-danger"
-                      : "bg-success-50 border-success-500"
+                      ? "bg-red-100 border-danger"
+                      : "bg-green-50 border-green-500"
                     : "bg-gray-100 border-gray-500"
                 }`}
               >
                 <div>
                   <div className="flex justify-between items-center">
                     <h3>Flate {value.offer}% off</h3>
-
-                    <Code
-                      className={
+                    <span className={
+                        
                         !value.users.includes(userId)
                           ? date > new Date(value.expiryDate)
-                            ? "bg-danger-200 text-danger"
-                            : "bg-success-200 text-success"
-                          : "bg-gray-200 text-gray-500"
-                      }
-                    >
-                      {!value.users.includes(userId)
+                            ? "bg-red-200 text-red-600 p-1 rounded"
+                            : "bg-green-200 text-green-600 p-1 rounded"
+                          : "bg-gray-200 text-gray-500 p-1 rounded"
+                      }>{!value.users.includes(userId)
                         ? date > new Date(value.expiryDate)
-                          ? "Expired"
-                          : "Active"
-                        : "Used"}
-                    </Code>
+                        ? "Expired"
+                        : "Active"
+                        : "Used"}</span>
                   </div>
                   <span>{value.title}</span>
                 </div>
@@ -106,10 +100,8 @@ const UserListCoupons: React.FC = () => {
                     }}
                   >
                     <span className="text-xs">Copy</span>
-                    <Copy
-                      size={"sm"}
-                      className="color-primary text-primary text-xs "
-                    />
+                    <i className="bi bi-copy color-primary text-primary text-xs"></i>
+                   
                   </Button>
                 </div>
                 <div>

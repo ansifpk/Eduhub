@@ -30,7 +30,8 @@ export class UserUseCase implements IUserUseCase{
          return plans
        }
      } catch (error) {
-      console.error(error)
+      console.error(error);
+      next(error)
      }
     }
 
@@ -87,6 +88,7 @@ export class UserUseCase implements IUserUseCase{
          
       } catch (error) {
          console.error(error)
+         next(error)
       }
    }
 

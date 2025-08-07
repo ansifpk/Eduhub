@@ -1,12 +1,11 @@
-import InstructorAside from '@/Components/instructor/InstructorAside'
-import { SubscriptionTable } from '@/Components/instructor/SubscriptionTable'
-import { Avatar, AvatarFallback, AvatarImage } from '@/Components/ui/avatar'
-import { Separator } from '@/Components/ui/separator'
+import InstructorAside from '../../components/instructor/InstructorAside'
+import { SubscriptionTable } from '../../components/instructor/SubscriptionTable'
+import { Separator } from '../../components/ui/separator'
 
 
 const InstructorSubscriptions = () => {
   return (
-    <div className="bg-black ">
+    <div className="bg-black h-screen">
     <div className="md:hidden">
       <img
         src="/examples/forms-light.png"
@@ -33,12 +32,7 @@ const InstructorSubscriptions = () => {
             Manage your instructor account students and courses.
           </p>
         </div>
-        <div>
-          <Avatar className="h-9 w-9">
-            <AvatarImage src="/avatars/03.png" alt="@shadcn" />
-            <AvatarFallback>SC</AvatarFallback>
-          </Avatar>
-        </div>
+       
       </div>
       <Separator className="my-6" />
       <div className="flex flex-col space-y-8 lg:flex-row  lg:space-y-0">

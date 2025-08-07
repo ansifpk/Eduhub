@@ -37,11 +37,12 @@ export interface MulterFile {
   }
 
 export interface CLoudineryResult {
+    [x: string]: any;
     public_id: string;
     secure_url: string;
   }
 export interface Query {
-    page: number | undefined;
+    page: number ;
     search: string;
     category: string;
     level: string;

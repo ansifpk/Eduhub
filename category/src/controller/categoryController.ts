@@ -28,11 +28,12 @@ export class CategoryController {
   }
   async editCategory(req: Request, res: Response, next: NextFunction) {
     try {
+      const {_id,title,description,topics} = req.body; 
       const categories = await this.categoryUseCase.editCategory(
-        req.body._id,
-        req.body.title,
-        req.body.description,
-        req.body.topics,
+        _id,
+        title,
+        description,
+        topics,
         next
       );
     

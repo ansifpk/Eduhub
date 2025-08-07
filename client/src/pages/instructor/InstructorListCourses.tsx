@@ -1,9 +1,7 @@
 
-import { Coursestable } from "@/Components/CourseTable"
-import InstructorAside from "@/Components/instructor/InstructorAside"
-import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
-
-import { Separator } from "@/Components/ui/separator"
+import { Coursestable } from "../../components/instructor/CourseTable";
+import InstructorAside from "../../components/instructor/InstructorAside"
+import { Separator } from "../../components/ui/separator"
 
 
 
@@ -11,7 +9,7 @@ export default function InstructorListCourses() {
 
  
   return (
-    <div className="bg-black ">
+    <div className="bg-black h-screen">
       <div className="md:hidden">
         <img
           src="/examples/forms-light.png"
@@ -38,12 +36,7 @@ export default function InstructorListCourses() {
               Manage your instructor account students and courses.
             </p>
           </div>
-          <div>
-            <Avatar className="h-9 w-9">
-              <AvatarImage src="/avatars/03.png" alt="@shadcn" />
-              <AvatarFallback>SC</AvatarFallback>
-            </Avatar>
-          </div>
+          
         </div>
         <Separator className="my-6" />
         <div className="flex flex-col space-y-8 lg:flex-row  lg:space-y-0">
@@ -57,8 +50,8 @@ export default function InstructorListCourses() {
               <Separator  orientation="vertical"  />
               <Separator  orientation="vertical"  />
               <Separator  orientation="vertical"  />
-          <div className="flex-1 lg:max-w-full md:max-w-full">
-            <div className="space-y-6">
+          <div className="flex-1  lg:max-w-full md:max-w-full">
+            <div >
               <Coursestable  />
             </div>
           </div>

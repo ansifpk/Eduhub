@@ -1,11 +1,11 @@
-import AdminAside from "@/Components/admin/AdminAside";
-import { Card, CardContent, CardHeader } from "@/Components/ui/card";
+import AdminAside from "../../components/admin/AdminAside";
+import { Card, CardContent, CardHeader } from "../../components/ui/card";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Input } from "@/Components/ui/input";
-import { Label } from "@/Components/ui/label";
-import { Textarea } from "@/Components/ui/textarea";
-import { Button } from "@/Components/ui/button";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
+import { Textarea } from "../../components/ui/textarea";
+import { Button } from "../../components/ui/button";
 import toast from "react-hot-toast";
 
 import {
@@ -17,11 +17,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/Components/ui/alert-dialog";
-import { ScrollArea } from "@/Components/ui/scroll-area";
-import { Separator } from "@/Components/ui/separator";
-import useRequest from "@/hooks/useRequest";
-import adminRoutes from "@/service/endPoints/adminEndPoints";
+} from "../../components/ui/alert-dialog";
+import { ScrollArea } from "../../components/ui/scroll-area";
+import { Separator } from "../../components/ui/separator";
+import useRequest from "../../hooks/useRequest";
+import adminRoutes from "../../service/endPoints/adminEndPoints";
 
 const AdminCategory: React.FC = () => {
   const [topics, setTopics] = useState<string[]>([]);
@@ -85,8 +85,8 @@ const AdminCategory: React.FC = () => {
     <div className="flex gap-2">
       <AdminAside />
       <div className="w-full">
-        <div className="welcome mt-4 mb-4 bg-purple-600">
-          <h1>Welcome back, Admin</h1>
+      <div className="w-full mx-auto mt-2 rounded-lg p-5  text-white bg-purple-600">
+          <span className="text-3xl">Welcome back, Admin</span>
         </div>
         <Card>
           <CardHeader>
@@ -96,7 +96,7 @@ const AdminCategory: React.FC = () => {
           </CardHeader>
           <CardContent>
             <form>
-              <div className="d-flex justify-content-between">
+              <div className="flex justify-between ">
                 <div className="grid w-full max-w-sm items-center gap-1.5">
                   <Label htmlFor="Title">Title</Label>
                   <Input
@@ -126,7 +126,7 @@ const AdminCategory: React.FC = () => {
                         onChange={(e) => setsubCategory(e.target.value.trim())}
                         placeholder="Sub Categories"
                       />
-                      <Button type="button" onClick={handleSubCategory}>
+                      <Button className="bg-purple-600 hover:bg-purple-400" type="button" onClick={handleSubCategory}>
                         Add
                       </Button>
                     </div>
@@ -162,10 +162,10 @@ const AdminCategory: React.FC = () => {
                   </div>
                 </div>
               </div>
-              <div className="d-flex justify-content-center gap-10">
+              <div className="flex justify-content-center gap-10">
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button>Back</Button>
+                    <Button className="bg-purple-600 hover:bg-purple-400">Back</Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
@@ -179,13 +179,13 @@ const AdminCategory: React.FC = () => {
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogAction
-                        className="bg-black text-white"
+                        className="bg-purple-600 hover:bg-purple-400"
                         type="button"
                       >
                         Cancel
                       </AlertDialogAction>
                       <AlertDialogAction
-                        className="bg-black text-white"
+                        className="bg-purple-600 hover:bg-purple-400"
                         type="button"
                         onClick={() => navigate(-1)}
                       >
@@ -197,7 +197,7 @@ const AdminCategory: React.FC = () => {
 
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button type="button">Add Category</Button>
+                    <Button className="bg-purple-600 hover:bg-purple-400" type="button">Add Category</Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
@@ -211,13 +211,13 @@ const AdminCategory: React.FC = () => {
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogAction
-                        className="bg-black text-white"
+                        className="bg-purple-600 hover:bg-purple-400"
                         type="button"
                       >
                         Cancel
                       </AlertDialogAction>
                       <AlertDialogAction
-                        className="bg-black text-white"
+                        className="bg-purple-600 hover:bg-purple-400"
                         type="button"
                         onClick={(e) => handleCategory(e)}
                       >

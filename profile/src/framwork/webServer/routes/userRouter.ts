@@ -28,7 +28,7 @@ export function UserRouter(router: Router) {
       console.error(error);
     }
   });
-  router.get("/Cart/:userId", async (req, res, next) => {
+  router.get("/Cart/:userId",isAuth, async (req, res, next) => {
     try {
       userController.Cart(req, res, next);
     } catch (error) {

@@ -1,30 +1,28 @@
-import { IChat } from "@/@types/chatType";
-import { User } from "@/@types/userType";
-import Footer from "@/Components/Footer/Footer";
-import Header from "@/Components/Header/Header";
-import ProfileNavbar from "@/Components/Header/ProfileNavbar";
-import { Avatar, AvatarImage } from "@/Components/ui/avatar";
-import { ScrollArea } from "@/Components/ui/scroll-area";
+import { IChat } from "../../@types/chatType";
+import { User } from "../../@types/userType";
+import Footer from "../../components/Footer/Footer";
+import Header from "../../components/Header/Header";
+import ProfileNavbar from "../../components/Header/ProfileNavbar";
+import { Avatar, AvatarImage } from "../../components/ui/avatar";
+import { ScrollArea } from "../../components/ui/scroll-area";
 import { MoreVertical, Send } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import {  useSearchParams } from "react-router-dom";
 import InputEmoji from "react-input-emoji";
 import moment from "moment";
-import { IMessage } from "@/@types/messageType";
+import { IMessage } from "../../@types/messageType";
 import { io, Socket } from "socket.io-client";
 import { DefaultEventsMap } from "@socket.io/component-emitter";
-import MarkEmailUnreadIcon from "@mui/icons-material/MarkEmailUnread";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/Components/ui/popover";
-import { INotification } from "@/@types/notificationType";
-import { useDispatch } from "react-redux";
-import useRequest from "@/hooks/useRequest";
-import userRoutes from "@/service/endPoints/userEndPoints";
+} from "../../components/ui/popover";
+import { INotification } from "../../@types/notificationType";
+import useRequest from "../../hooks/useRequest";
+import userRoutes from "../../service/endPoints/userEndPoints";
 
 const Message = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -166,20 +164,7 @@ const Message = () => {
     }
   }, [chatId]);
 
-  let user = "";
-  const modification = notifications.map((notify: INotification) => {
-    chats.map((chat: IChat) => {
-      chat.members.map((value) => {
-        if (value._id == notify.senderId) {
-          user = value.name;
-        }
-      });
-    });
-    return {
-      ...notify,
-      senderName: user,
-    };
-  });
+
   const markAsRead = async (sentId: string) => {
     const mdNotifications = notifications.filter(
       (value: INotification) => value.senderId !== sentId
@@ -246,14 +231,14 @@ const Message = () => {
       <ProfileNavbar />
       <div className="flex md:justify-center">
         <div className="bg-white md:mx-5 my-4 flex  md:w-[950px] w-[500px]  rounded-2">
-          <div className="border borer-danger bg-success-400  m-2  rounded-2">
+          <div className="border borer-danger bg-green-500  m-2  rounded-2">
             <div className="flex items-center justify-between md:w-[330px] w-[200px]">
               <h3 className="m-3 text-sm font-medium text-white leading-none">
                 Messages
               </h3>
               <Popover>
                 <PopoverTrigger>
-                  <MarkEmailUnreadIcon />
+                  <i className="bi bi-envelope-exclamation-fill"></i>
                   {notifications.length}
                 </PopoverTrigger>
                 <PopoverContent>
@@ -280,7 +265,7 @@ const Message = () => {
                           setSearchParams(searchParams);
                         }}
                         className={`p-2 ${
-                          value.isRead ? "bg-white" : "bg-success-600"
+                          value.isRead ? "bg-white" : "bg-reen-600"
                         }`}
                         key={index}
                       >
@@ -295,7 +280,7 @@ const Message = () => {
               </Popover>
             </div>
 
-            <ScrollArea className="h-[450px] md:w-[330px] w-[200px] rounded-md border bg-white p-2">
+            <ScrollArea className="h-[460px] md:w-[330px] w-[200px]  border bg-white p-2">
               {chats.length > 0 ? (
                 chats
                   .filter((value: IChat) => value.role == "userToInstructor")
@@ -356,7 +341,7 @@ const Message = () => {
                           </div>
                         </div>
                         {unreadCount > 0 && (
-                          <div className="bg-success text-xs px-2 text-white rounded-full">
+                          <div className="bg-green text-xs px-2 text-white rounded-full">
                             {unreadCount}
                           </div>
                         )}
@@ -370,8 +355,8 @@ const Message = () => {
               )}
             </ScrollArea>
           </div>
-          <div className="w-full m-2 border bg-success-50 rounded-2">
-            <header className="flex  items-center text-white bg-success-400 rounded-2 h-[50px]">
+          <div className="w-full m-2 border bg-green-50 rounded-2">
+            <header className="flex  items-center text-white bg-green-400 rounded-2 h-[50px]">
               {currentChat && (
                 <div className="flex w-full items-center justify-between mx-3">
                   <div className="flex items-center space-x-3 m-2">
@@ -401,7 +386,7 @@ const Message = () => {
               )}
             </header>
             <div className="flex flex-col justify-between m-2 h-[430px]">
-              <ScrollArea>
+              <ScrollArea className="h-[390px]" >
                 {chatId && messages.length > 0 ? (
                   <>
                     {messages.map((msg, index) => (
@@ -409,7 +394,7 @@ const Message = () => {
                         key={index}
                         className={`flex p-[0.75rem] md:w-[250px] w-[200px]  border rounded shadow-md my-2 ${
                           msg.senderId == userId
-                            ? "bg-success-200 ml-auto"
+                            ? "bg-green-200 ml-auto"
                             : "bg-white items-start"
                         }`}
                       >

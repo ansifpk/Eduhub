@@ -6,8 +6,8 @@ import { Iuser } from "../../../entities/user";
 import { IInstructorSubscribe } from "../../../entities/instructorSubscribe";
 
 export interface IInstructorRepository{
-    orders():Promise<IOrder[]|void>
-    instrutcorOrders(userId:string): Promise<IOrder[] | void>
+    orders(instructorId:string,end:string,start:string):Promise<IOrder[]|void>
+    instrutcorOrders(instructorId: string,filter:string): Promise<IOrder[] | void>
     userFindById(userId:string):Promise<Iuser|void>
     findSubscriptions():Promise<ISubcription[]|void>
     subscribeInstructor(method:string):Promise<ISubcription|void>

@@ -1,6 +1,6 @@
 
-import Header from '@/Components/Header/Header'
-import { Button } from '@/Components/ui/button'
+import Header from '../../components/Header/Header'
+import { Button } from '../../components/ui/button'
 import { useNavigate } from 'react-router-dom'
 
 const Success = () => {

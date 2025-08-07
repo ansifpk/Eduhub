@@ -17,8 +17,6 @@ export function AdminRoute(router:Router){
             adminControleer.showInstructors(req,res,next)
         })
         router.patch("/blockUser/:userId",isAdmin,async(req,res,next)=>{
-      
-         
             adminControleer.blockUser(req,res,next)
         })
         router.patch("/editProfile",isAdmin,async(req,res,next)=>{

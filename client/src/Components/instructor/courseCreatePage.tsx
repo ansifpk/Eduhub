@@ -1,4 +1,4 @@
-import React, { useEffect,  useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Form,
   FormControl,
@@ -22,15 +22,14 @@ import {
   SelectValue,
 } from "../ui/select";
 import toast from "react-hot-toast";
-import { createCourse } from "@/Api/instructor";
+import { createCourse } from "../../Api/instructor";
 import { useSelector } from "react-redux";
 import {
   ChevronDown,
   ChevronUp,
   Loader2,
   Plus,
-  
-  Trash2,
+  Terminal,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Separator } from "../ui/separator";
@@ -38,6 +37,7 @@ import InstructorAside from "./InstructorAside";
 import { Card, CardContent, CardDescription, CardHeader } from "../ui/card";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Label } from "../ui/label";
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 
 interface Title {
   Title: string;
@@ -85,8 +85,8 @@ const formSchema = z.object({
     .min(4, {
       message: "category must be at least 5 characters.",
     })
-    .max(120, {
-      message: "title must be lesthan 120 characters.",
+    .max(500, {
+      message: "Description must be lesthan 120 characters.",
     }),
   subcategory: z.string().min(1, {
     message: "At least choose one sub Category.",
@@ -95,15 +95,13 @@ const formSchema = z.object({
     message: "At least choose one level.",
   }),
   courseprice: z.number(),
-  // courseVideo: z.array(z.instanceof(File)).min(1, {
-  //   message: "At least one video is required.",
-  // }),
+
   courseImage: z.instanceof(File, {
     message: "A thumbnile image is required.",
   }),
 });
 
-const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
+const CourseCreatePage: React.FC<Title> = ({ Title, Category, categories }) => {
   const [select, setSelect] = useState("Carriculum");
   const [category, setCategory] = useState(Category);
   const [subCategory, setSubCategory] = useState("");
@@ -113,8 +111,8 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
   const [topics, setTopics] = useState([]);
   const [price, setPrice] = useState(0);
   const [image, setImage] = useState({
-    _id:"" as string,
-    image_url:"" as string | File
+    _id: "" as string,
+    image_url: "" as string | File,
   });
   const [previeImage, setPreview] = useState("");
   const [isLoading, setLoading] = useState(false);
@@ -132,8 +130,6 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
       description: description,
       thumbnail: thumbnail,
       courseprice: price,
-      // courseVideo: video,
-      // courseImage: image,
     },
   });
 
@@ -150,35 +146,45 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
     };
     topic();
     if (Object.keys(form.formState.errors).length > 0) {
-     
       toast.error("Please provide all the details");
     }
   }, [category, categories, form.formState.errors]);
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    
+  const onSubmit = async () => {
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("courseImage", image.image_url);
+    formData.append("thumbnail", thumbnail);
+    formData.append("description", description);
+    formData.append("category", category);
+    formData.append("subCategory", subCategory);
+    formData.append("instructorId", instructorId);
+    formData.append("level", level);
+    formData.append("price", JSON.stringify(price));
+    formData.append("sectionsVideos", JSON.stringify(sections));
 
-    // setLoading(true);
-    const response = await createCourse({
-      title,
-      sections,
-      image,
-      category,
-      subCategory,
-      level,
-      price,
-      description,
-      thumbnail,
-      instructorId,
-    });
-    if (response.success) {
-  
-      
-      toast.success("Course Created SuccessFully..");
+    for (let i = 0; i < sections.length; i++) {
+      for (let j = 0; j < sections[i].lectures.length; j++) {
+        let data = sections[i].lectures[j].content.video_url as File;
+        formData.append(
+          "courseVideo",
+          data,
+          `section${i}_lecture${j}_${data.name}`
+        );
+      }
+    }
+
+    const data = await createCourse(formData);
+console.log(data);
+
+    if (data.success) {
+
       setLoading(false);
-      return navigate("/instructor/courses");
+      toast.success("Successfully created Course");
+      navigate("/instructor/courses");
     } else {
-      toast.error(response.response.data.message);
+      setLoading(false);
+      return toast.error(data.response.data.message);
     }
   };
 
@@ -205,14 +211,14 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
   const [sections, setSections] = useState([
     {
       id: 1,
-      sessionTitle: "",
+      sectionTitle: "",
       isExpanded: true,
       lectures: [
         {
           id: 1,
           title: "",
           content: {
-            _id:"",
+            _id: "" as string,
             video_url: "" as string | File,
           },
           duration: "",
@@ -227,7 +233,7 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
       ...sections,
       {
         id: sections.length + 1,
-        sessionTitle: "",
+        sectionTitle: "",
         isExpanded: true,
         lectures: [],
       },
@@ -246,8 +252,8 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
                 id: section.lectures.length + 1,
                 title: "",
                 content: {
-                  _id:"",
-                  video_url:"" as string |File
+                  _id: "",
+                  video_url: "" as string | File,
                 },
                 duration: "",
                 type: "video",
@@ -263,7 +269,9 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
   const updateSectionTitle = (sectionId: number, newTitle: string) => {
     setSections(
       sections.map((section) =>
-        section.id === sectionId ? { ...section, sessionTitle: newTitle } : section
+        section.id === sectionId
+          ? { ...section, sectionTitle: newTitle }
+          : section
       )
     );
   };
@@ -272,33 +280,30 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
     sectionId: number,
     lectureId: number,
     field: string,
-    value: string|File
+    value: string | File
   ) => {
- 
-    
     setSections(
       sections.map((section) => {
         if (section.id === sectionId) {
-           if(field == "content"){
-              
-              return {
-                ...section,
-                lectures: section.lectures.map((lecture) =>
-                  lecture.id === lectureId
-                    ? { ...lecture, [field]:{_id:"1",video_url:value} }
-                    : lecture
-                ),
-              };
-           }else{
+          if (field == "content") {
             return {
               ...section,
               lectures: section.lectures.map((lecture) =>
                 lecture.id === lectureId
-                  ? { ...lecture, [field]:value }
+                  ? { ...lecture, [field]: { _id: "1", video_url: value } }
                   : lecture
               ),
             };
-           }
+          } else {
+            return {
+              ...section,
+              lectures: section.lectures.map((lecture) =>
+                lecture.id === lectureId
+                  ? { ...lecture, [field]: value }
+                  : lecture
+              ),
+            };
+          }
         }
         return section;
       })
@@ -316,10 +321,16 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
   };
 
   const deleteSection = (sectionId: number) => {
+    if (sections.length == 1) {
+      return toast.error("Upload Atleast one section");
+    }
     setSections(sections.filter((section) => section.id !== sectionId));
   };
 
   const deleteLecture = (sectionId: number, lectureId: number) => {
+    if (sections[0].lectures.length == 1) {
+      return toast.error("Upload Atleast one Lecture");
+    }
     setSections(
       sections.map((section) => {
         if (section.id === sectionId) {
@@ -334,8 +345,7 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
       })
     );
   };
- 
- 
+
   return (
     <div className="bg-black ">
       <div className="md:hidden">
@@ -366,666 +376,654 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
         <Separator className="my-6" />
         <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">
           <InstructorAside />
-
-          <div className="flex-1 lg:max-w-full ">
-            <div className="space-y-6">
-              <div className="col-md-12">
-                <div className="row">
-                  <div className="col-4 w-full h-60 flex justify-center p-4">
-                    <Card className="w-full bg-black">
+          <div className="w-full  flex gap-5">
+            <div className="w-1/3 ">
+              <Card className="w-full bg-black">
+                <CardHeader>
+                  <div className="text-xl font-bold text-white">
+                    Create your course
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <RadioGroup
+                    onValueChange={(value) => {
+                      setSelect(value);
+                    }}
+                    defaultValue="Carriculum"
+                  >
+                    <div className="flex items-center  space-x-2">
+                      <RadioGroupItem
+                        className="border-white bg-white"
+                        value="Carriculum"
+                        id="r1"
+                      />
+                      <Label className="text-white" htmlFor="r1">
+                        Carriculum
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem
+                        className="border-white bg-white"
+                        value="Course landing page"
+                        id="r2"
+                      />
+                      <Label className="text-white" htmlFor="r2">
+                        Course landing page
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem
+                        className="border-white bg-white"
+                        value="Pricing"
+                        id="r3"
+                      />
+                      <Label className="text-white" htmlFor="r3">
+                        Pricing
+                      </Label>
+                    </div>
+                    <div className="flex  justify-end space-x-2">
+                      <Button
+                        className="bg-white text-black"
+                        onClick={() => navigate(-1)}
+                      >
+                        Cancell
+                      </Button>
+                    </div>
+                  </RadioGroup>
+                </CardContent>
+              </Card>
+            </div>
+            <div className="w-full">
+              <Form {...form}>
+                <form
+                  className="space-y-6 w-full"
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  encType="multipart/form-data"
+                >
+                  {select === "Carriculum" ? (
+                    <Card className="bg-black">
                       <CardHeader>
                         <div className="text-xl font-bold text-white">
-                          Create your course
+                          Upload course Videos
                         </div>
+                        <CardDescription className="text-white">
+                          Your course image and videos are very importent on
+                          Your Success on Eduhub.
+                        </CardDescription>
                       </CardHeader>
                       <CardContent>
-                        <RadioGroup
-                          onValueChange={(value) => {
-                            setSelect(value);
-                          }}
-                          defaultValue="Carriculum"
-                        >
-                          <div className="flex items-center  space-x-2">
-                            <RadioGroupItem
-                              className="border-white"
-                              value="Carriculum"
-                              id="r1"
-                            />
-                            <Label className="text-white" htmlFor="r1">
-                              Carriculum
-                            </Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem
-                              className="border-white"
-                              value="Course landing page"
-                              id="r2"
-                            />
-                            <Label className="text-white" htmlFor="r2">
-                              Course landing page
-                            </Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem
-                              className="border-white "
-                              value="Pricing"
-                              id="r3"
-                            />
-                            <Label className="text-white" htmlFor="r3">
-                              Pricing
-                            </Label>
-                          </div>
-                          <div className="flex  justify-end space-x-2">
-                            <Button
-                              className="bg-white text-black"
-                              onClick={() => navigate(-1)}
-                            >
-                              Cancell
-                            </Button>
-                          </div>
-                        </RadioGroup>
-                      </CardContent>
-                    </Card>
-                  </div>
-                  <div className="col-8 flex   justify-center p-4">
-                    <Form {...form}>
-                      <form
-                        className="space-y-6 w-full"
-                        onSubmit={form.handleSubmit(onSubmit)}
-                        encType="multipart/form-data"
-                      >
-                        {select === "Carriculum" ? (
-                          <Card className="bg-black">
-                            <CardHeader>
-                              <div className="text-xl font-bold text-white">
-                                Upload course Videos
-                              </div>
-                              <CardDescription className="text-white">
-                                Your course image and videos are very importent
-                                on Your Success on Eduhub.
-                              </CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                              <div className="grid w-full max-w-sm items-center gap-1.5">
-                                <FormField
-                                  control={form.control}
-                                  name="courseImage"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel className="text-white">
-                                        course Image
-                                      </FormLabel>
-                                      <FormControl>
-                                        <div>
-                                          <img src={previeImage} alt="" />
-                                          <Input
-                                            type="file"
-                                            accept="image/*"
-                                            name="courseImage"
-                                            placeholder="course Image"
-                                            onChange={(e) => {
-                                              if (e.target.files) {
-                                                previewFile(e);
-                                                if (e.target.files[0]) {
-                                                  const val = e.target.files[0];
-                                                  setImage({
-                                                    _id:`1`,
-                                                    image_url:val
-                                                  });
-                                                  form.setValue(
-                                                    "courseImage",
-                                                    val
-                                                  );
-                                                }
-                                              }
-                                            }}
-                                          />
-                                        </div>
-                                      </FormControl>
-                                      <FormDescription>
-                                        {form.formState.errors.courseImage ? (
-                                          <FormLabel className="text-danger">
-                                            {
-                                              form.formState.errors.courseImage
-                                                .message
-                                            }
-                                          </FormLabel>
-                                        ) : (
-                                          "This is your public display Image thumbnail."
-                                        )}
-                                      </FormDescription>
-                                    </FormItem>
+                        <div className="grid w-full max-w-sm items-center gap-1.5">
+                          <FormField
+                            control={form.control}
+                            name="courseImage"
+                            render={() => (
+                              <FormItem>
+                                <FormLabel className="text-white">
+                                  course Image
+                                </FormLabel>
+                                <FormControl>
+                                  <div>
+                                    {
+                                      previeImage&&<img src={previeImage} alt="" />
+                                    }
+                                    
+                                    <Input
+                                      type="file"
+                                      accept="image/*"
+                                      name="courseImage"
+                                      placeholder="course Image"
+                                      className="text-white"
+                                      onChange={(e) => {
+                                        if (e.target.files) {
+                                          previewFile(e);
+                                          if (e.target.files[0]) {
+                                            const val = e.target.files[0];
+                                            setImage({
+                                              _id: `1`,
+                                              image_url: val,
+                                            });
+                                            form.setValue("courseImage", val);
+                                          }
+                                        }
+                                      }}
+                                    />
+                                  </div>
+                                </FormControl>
+                                <FormDescription>
+                                  {form.formState.errors.courseImage ? (
+                                    <FormLabel className="text-danger">
+                                      {
+                                        form.formState.errors.courseImage
+                                          .message
+                                      }
+                                    </FormLabel>
+                                  ) : (
+                                    "This is your public display Image thumbnail."
                                   )}
-                                />
-                              </div>
-                              <div className="grid w-full items-center gap-1.5">
-                                <Label className="text-white my-2">
-                                  videos Section
-                                </Label>
-                                <div className="mb-6">
-                                  {sections.map((section,index) => (
-                                    <div
-                                      key={section.id}
-                                      className="border rounded-lg mb-4 p-4"
+                                </FormDescription>
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                        <div className="grid w-full items-center gap-1.5">
+                          <Label className="text-white my-2">
+                            videos Section
+                          </Label>
+                          <div className="mb-6">
+                            {sections.map((section, index) => (
+                              <div
+                                key={`${section} - ${index}`}
+                                className="border rounded-lg mb-4 p-4"
+                              >
+                                <div className="flex items-center justify-between mb-2">
+                                  <div className="flex-1">
+                                    <Label
+                                      htmlFor="Section"
+                                      className="text-white"
                                     >
-                                      <div className="flex items-center justify-between mb-2">
-                                        <div className="flex-1">
-                                             <Label htmlFor="Section" className="text-white">
-                                               Section {index+1}
-                                              </Label>
+                                      Section {index + 1}
+                                    </Label>
+                                    <input
+                                      type="text"
+                                      value={section.sectionTitle}
+                                      onChange={(e) =>
+                                        updateSectionTitle(
+                                          section.id,
+                                          e.target.value
+                                        )
+                                      }
+                                      placeholder="Section Title"
+                                      className="w-full p-2 bg-black text-white border rounded"
+                                    />
+                                  </div>
+                                  <div className="flex gap-2 ml-2 ">
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        toggleSectionExpand(section.id)
+                                      }
+                                      className="p-2 mt-4 bg-white hover:bg-gray-100 rounded"
+                                    >
+                                      {section.isExpanded ? (
+                                        <ChevronUp size={20} />
+                                      ) : (
+                                        <ChevronDown size={20} />
+                                      )}
+                                    </button>
+                                    <i
+                                      onClick={() => deleteSection(section.id)}
+                                      className="bi bi-trash3-fill text-red-600 p-2 mt-4 cursor-pointer"
+                                    ></i>
+                                  </div>
+                                </div>
+
+                                {section.isExpanded && (
+                                  <div className=" ">
+                                    {section.lectures.map((lecture, ind) => (
+                                      <div
+                                        key={`${lecture} - ${ind}`}
+                                        className="flex-col "
+                                      >
+                                        <div className="flex items-center gap-2 my-2">
+                                          <div>
+                                            <Label className="text-white">
+                                              lecture {ind + 1}
+                                            </Label>
+                                            <input
+                                              type="text"
+                                              value={lecture.title}
+                                              onChange={(e) =>
+                                                updateLecture(
+                                                  section.id,
+                                                  lecture.id,
+                                                  "title",
+                                                  e.target.value
+                                                )
+                                              }
+                                              placeholder="Lecture Title"
+                                              className="flex-1 p-2 border rounded bg-black text-white"
+                                            />
+                                          </div>
+                                          <Label className="text-white mt-4">
+                                            Duration
+                                          </Label>
                                           <input
                                             type="text"
-                                            value={section.sessionTitle}
+                                            value={lecture.duration}
                                             onChange={(e) =>
-                                              updateSectionTitle(
+                                              updateLecture(
                                                 section.id,
+                                                lecture.id,
+                                                "duration",
                                                 e.target.value
                                               )
                                             }
-                                            placeholder="Section Title"
-                                            className="w-full p-2 bg-black text-white border rounded"
+                                            placeholder="Duration"
+                                            className="w-24 p-2 mt-4 border rounded bg-black text-white"
+                                          />
+                                          <i
+                                            onClick={() =>
+                                              deleteLecture(
+                                                section.id,
+                                                lecture.id
+                                              )
+                                            }
+                                            className="bi bi-trash3-fill p-2 mt-4 text-red-600 cursor-pointer"
+                                          ></i>
+                                        </div>
+
+                                        <div>
+                                          <Label
+                                            htmlFor="Duration"
+                                            className="text-white"
+                                          >
+                                            Content
+                                          </Label>
+                                          <input
+                                            type="file"
+                                            onChange={(e) => {
+                                              const target = e.target;
+                                              if (
+                                                target.files &&
+                                                target.files.length > 0
+                                              ) {
+                                                updateLecture(
+                                                  section.id,
+                                                  lecture.id,
+                                                  "content",
+                                                  target.files[0]
+                                                );
+                                              }
+                                            }}
+                                            accept="video/*"
+                                            placeholder="Content"
+                                            required
+                                            className="w-full p-2 border rounded bg-black text-white"
                                           />
                                         </div>
-                                        <div className="flex gap-2 ml-2 ">
-                                          <button
-                                            type="button"
-                                            onClick={() =>
-                                              toggleSectionExpand(section.id)
-                                            }
-                                            className="p-2 mt-4 bg-white hover:bg-gray-100 rounded"
-                                          >
-                                            {section.isExpanded ? (
-                                              <ChevronUp size={20} />
-                                            ) : (
-                                              <ChevronDown size={20} />
-                                            )}
-                                          </button>
-                                          <button
-                                            onClick={() =>
-                                              deleteSection(section.id)
-                                            }
-                                            className="p-2 mt-4 text-red-600 hover:bg-red-50 rounded"
-                                          >
-                                            <Trash2 size={20} />
-                                          </button>
-                                        </div>
+                                        <Separator className="my-4" />
                                       </div>
+                                    ))}
 
-                                      {section.isExpanded && (
-                                        <div className=" ">
-                                          {section.lectures.map((lecture,ind) => (
-                                            <div key={lecture.id} className="flex-col " >
+                                    <button
+                                      type="button"
+                                      onClick={() => addLecture(section.id)}
+                                      className="mt-2 bg-white text-black flex items-center gap-2  hover:bg-blue-50 p-2 rounded"
+                                    >
+                                      <Plus size={20} /> Add Lecture
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
 
-                                              <div
-                                              key={lecture.id}
-                                              className="flex items-center gap-2 my-2"
-                                            >
-                                               <div>
-                                               <Label className="text-white">lecture {ind+1}</Label>
-                                              <input
-                                                type="text"
-                                                value={lecture.title}
-                                                onChange={(e) =>
-                                                  updateLecture(
-                                                    section.id,
-                                                    lecture.id,
-                                                    "title",
-                                                    e.target.value
-                                                  )
-                                                }
-                                                placeholder="Lecture Title"
-                                                className="flex-1 p-2 border rounded bg-black text-white"
-                                              />
-                                               </div>
-                                               <Label  className="text-white mt-4">
-                                               Duration
-                                              </Label>
-                                              <input
-                                                type="text"
-                                                value={lecture.duration}
-                                                onChange={(e) =>
-                                                  updateLecture(
-                                                    section.id,
-                                                    lecture.id,
-                                                    "duration",
-                                                    e.target.value
-                                                  )
-                                                }
-                                                placeholder="Duration"
-                                                className="w-24 p-2 mt-4 border rounded bg-black text-white"
-                                              />
-                                              <button
-                                                onClick={() =>
-                                                  deleteLecture(
-                                                    section.id,
-                                                    lecture.id
-                                                  )
-                                                }
-                                                className="p-2 mt-4 text-red-600 hover:bg-red-50 rounded"
-                                              >
-                                                <Trash2 size={20} />
-                                              </button>
-                                              
-                                            </div>
-                                              <div>
-                                              <Label htmlFor="Duration" className="text-white">
-                                              Content
-                                              </Label>
-                                              <input
-                                                type="file"
-                                                // value={lecture.content.name}
-                                                onChange={(e) =>{
-                                                    const target = e.target;
-                                                    if(target.files&&target.files.length>0){
-                                                      updateLecture(
-                                                        section.id,
-                                                        lecture.id,
-                                                        "content",
-                                                        target.files[0]
-                                                      )
-                                                    }
-                                                    
-                
-                                                }}
-                                                accept="video/*"
-                                                placeholder="Content"
-                                                required
-                                                className="w-full p-2 border rounded bg-black text-white"
-                                              />
-                                              </div>
-                                              <Separator className="my-4" />
-                                            </div>
-                                          ))}
-                                          
-                                          <button
-                                            type="button"
-                                            onClick={() =>
-                                              addLecture(section.id)
-                                            }
-                                            className="mt-2 bg-white text-black flex items-center gap-2 hover:bg-blue-50 p-2 rounded"
-                                          >
-                                            <Plus size={20} /> Add Lecture
-                                          </button>
-                                        </div>
-                                      )}
-                                    </div>
-                                  ))}
-                                </div>
-
-                                <button
-                                  onClick={addSection}
-                                  type="button"
-                                  className="w-full flex items-center justify-center gap-2 bg-white text-black p-2 rounded hover:bg-blue-700"
-                                >
-                                  <Plus size={20} /> Add New Section
-                                </button>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        ) : select === "Course landing page" ? (
-                          <Card className="bg-black">
-                            <CardHeader>
-                              <div className="text-xl font-bold text-white">
-                                Course landing page
-                              </div>
-                              <CardDescription className="text-white">
-                                Your course landing page is very importent on
-                                Your Success on Eduhub.People will search and
-                                explore your course based on this informations
-                              </CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                              <FormField
-                                control={form.control}
-                                name="coursetitle"
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel className="text-white">
-                                      Title
-                                    </FormLabel>
-                                    <FormControl>
-                                      <Input
-                                        required
-                                        placeholder="Enter your Title for this course"
-                                        value={title}
-                                        onChange={(e) => {
-                                          setTitle(e.target.value);
-                                          form.setValue(
-                                            "coursetitle",
-                                            e.target.value
-                                          );
-                                        }}
-                                      />
-                                    </FormControl>
-                                    <FormDescription>
-                                      {form.formState.errors.coursetitle ? (
-                                        <FormLabel className="text-danger">
-                                          {
-                                            form.formState.errors.coursetitle
-                                              .message
-                                          }
-                                        </FormLabel>
-                                      ) : (
-                                        "This is your public display Title."
-                                      )}
-                                    </FormDescription>
-                                  </FormItem>
-                                )}
-                              />
-                              <div className="grid grid-cols-3 gap-1">
-                                <FormField
-                                  control={form.control}
-                                  name="category"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel className="text-white">
-                                        Category
-                                      </FormLabel>
-                                      <FormControl>
-                                        <Select
-                                          value={category}
-                                          onValueChange={(value) => {
-                                            setCategory(value);
-                                            setSubCategory("");
-                                            form.setValue("subcategory", "");
-                                          }}
-                                        >
-                                          <SelectTrigger className="w-100 rounded-full border-1 border-blue-900">
-                                            <SelectValue placeholder="Select..." />
-                                          </SelectTrigger>
-                                          <SelectContent>
-                                            <SelectGroup>
-                                              {categories.length > 0 ? (
-                                                <>
-                                                  {categories.map(
-                                                    (value: ICategory) => (
-                                                      <SelectItem
-                                                        key={value._id}
-                                                        value={`${value.title}`}
-                                                      >
-                                                        {value.title}
-                                                      </SelectItem>
-                                                    )
-                                                  )}
-                                                </>
-                                              ) : (
-                                                <>No Category Found</>
-                                              )}
-                                            </SelectGroup>
-                                          </SelectContent>
-                                        </Select>
-                                      </FormControl>
-                                      <FormDescription>
-                                        {form.formState.errors.category ? (
-                                          <FormLabel className="text-danger">
-                                            {
-                                              form.formState.errors.category
-                                                .message
-                                            }
-                                          </FormLabel>
-                                        ) : (
-                                          "This is your public display Category."
-                                        )}
-                                      </FormDescription>
-                                    </FormItem>
-                                  )}
+                          <button
+                            onClick={addSection}
+                            type="button"
+                            className="w-full flex items-center justify-center gap-2 bg-white text-black p-2 rounded hover:bg-blue-700"
+                          >
+                            <Plus size={20} /> Add New Section
+                          </button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ) : select === "Course landing page" ? (
+                    <Card className="bg-black">
+                      <CardHeader>
+                        <div className="text-xl font-bold text-white">
+                          Course landing page
+                        </div>
+                        <CardDescription className="text-white">
+                          Your course landing page is very importent on Your
+                          Success on Eduhub.People will search and explore your
+                          course based on this informations
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <FormField
+                          control={form.control}
+                          name="coursetitle"
+                          render={() => (
+                            <FormItem>
+                              <FormLabel className="text-white">
+                                Title
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  required
+                                  className="text-white"
+                                  placeholder="Enter your Title for this course"
+                                  value={title}
+                                  onChange={(e) => {
+                                    setTitle(e.target.value);
+                                    form.setValue(
+                                      "coursetitle",
+                                      e.target.value
+                                    );
+                                  }}
                                 />
-                                <FormField
-                                  control={form.control}
-                                  name="subcategory"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel className="text-white">
-                                        Sub Category
-                                      </FormLabel>
-                                      <FormControl>
-                                        <Select
-                                          value={subCategory}
-                                          onValueChange={(value) => {
-                                            setSubCategory(value);
-                                            form.setValue("subcategory", value);
-                                          }}
-                                        >
-                                          <SelectTrigger className="w-100 rounded-full border-1 border-blue-900">
-                                            <SelectValue placeholder="Select..." />
-                                          </SelectTrigger>
-                                          <SelectContent>
-                                            <SelectGroup>
-                                              {topics.length > 0 ? (
-                                                <>
-                                                  {topics.map(
-                                                    (value, index) => (
-                                                      <SelectItem
-                                                        key={index}
-                                                        value={value}
-                                                      >
-                                                        {value}
-                                                      </SelectItem>
-                                                    )
-                                                  )}
-                                                </>
-                                              ) : (
-                                                <>No Subcategory Found</>
-                                              )}
-                                            </SelectGroup>
-                                          </SelectContent>
-                                        </Select>
-                                      </FormControl>
-                                      <FormDescription>
-                                        {form.formState.errors.subcategory ? (
-                                          <FormLabel className="text-danger">
-                                            {
-                                              form.formState.errors.subcategory
-                                                .message
-                                            }
-                                          </FormLabel>
-                                        ) : (
-                                          "This is your public display Sub Category."
-                                        )}
-                                      </FormDescription>
-                                    </FormItem>
-                                  )}
-                                />
-                                <FormField
-                                  control={form.control}
-                                  name="levels"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel className="text-white">
-                                        Level
-                                      </FormLabel>
-                                      <FormControl>
-                                        <Select
-                                          value={level}
-                                          onValueChange={(value) => {
-                                            setLevel(value);
-                                            form.setValue("levels", value);
-                                          }}
-                                        >
-                                          <SelectTrigger className="w-100 rounded-full border-1 border-blue-900">
-                                            <SelectValue placeholder="Select..." />
-                                          </SelectTrigger>
-                                          <SelectContent>
-                                            <SelectGroup>
-                                              <SelectItem value="All">
-                                                All
-                                              </SelectItem>
-                                              <SelectItem value="Beginner">
-                                                Beginner
-                                              </SelectItem>
-                                              <SelectItem value="Intermediat">
-                                                Intermediat
-                                              </SelectItem>
-                                              <SelectItem value="Advance">
-                                                Advance
-                                              </SelectItem>
-                                            </SelectGroup>
-                                          </SelectContent>
-                                        </Select>
-                                      </FormControl>
-                                      <FormDescription>
-                                        {form.formState.errors.levels ? (
-                                          <FormLabel className="text-danger">
-                                            {
-                                              form.formState.errors.levels
-                                                .message
-                                            }
-                                          </FormLabel>
-                                        ) : (
-                                          "This is your public display level."
-                                        )}
-                                      </FormDescription>
-                                    </FormItem>
-                                  )}
-                                />
-                              </div>
-                              <FormField
-                                control={form.control}
-                                name="thumbnail"
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel className="text-white">
-                                      Thumbnail
-                                    </FormLabel>
-                                    <FormControl>
-                                      <Input
-                                        required
-                                        placeholder="Enter your Thumbnail for this course"
-                                        value={thumbnail}
-                                        onChange={(e) => {
-                                          setThumbnail(e.target.value);
-                                          form.setValue(
-                                            "thumbnail",
-                                            e.target.value
-                                          );
-                                        }}
-                                      />
-                                    </FormControl>
-                                    <FormDescription>
-                                      {form.formState.errors.thumbnail ? (
-                                        <FormLabel className="text-danger">
-                                          {
-                                            form.formState.errors.thumbnail
-                                              .message
-                                          }
-                                        </FormLabel>
-                                      ) : (
-                                        "This is your public display Title."
-                                      )}
-                                    </FormDescription>
-                                  </FormItem>
+                              </FormControl>
+                              <FormDescription>
+                                {form.formState.errors.coursetitle ? (
+                                  <FormLabel className="text-danger">
+                                    {form.formState.errors.coursetitle.message}
+                                  </FormLabel>
+                                ) : (
+                                  "This is your public display Title."
                                 )}
-                              />
-                              <FormField
-                                control={form.control}
-                                name="description"
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel className="text-white">
-                                      Description
-                                    </FormLabel>
-                                    <FormControl>
-                                      <Input
-                                        required
-                                        placeholder="Enter your Discription for this course"
-                                        value={description}
-                                        onChange={(e) => {
-                                          setDiscription(e.target.value);
-                                          form.setValue(
-                                            "description",
-                                            e.target.value
-                                          );
-                                        }}
-                                      />
-                                    </FormControl>
-                                    <FormDescription>
-                                      {form.formState.errors.description ? (
-                                        <FormLabel className="text-danger">
-                                          {
-                                            form.formState.errors.description
-                                              .message
-                                          }
-                                        </FormLabel>
-                                      ) : (
-                                        "This is your public display Title."
-                                      )}
-                                    </FormDescription>
-                                  </FormItem>
-                                )}
-                              />
-                            </CardContent>
-                          </Card>
-                        ) : (
-                          <Card className="bg-black">
-                            <CardHeader>
-                              <div className="text-xl font-bold text-white">
-                                Add Pricing
-                              </div>
-                              <CardDescription>
-                                Please Add an Apropier Price for your
-                                course.Users Can buy your course for this price
-                              </CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                              <FormField
-                                control={form.control}
-                                name="courseprice"
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel className="text-white">
-                                      Price
-                                    </FormLabel>
-                                    <FormControl>
-                                      <Input
-                                        type="number"
-                                        required
-                                        placeholder="Enter your price for this course"
-                                        min={50}
-                                        max={7999}
-                                        maxLength={4}
-                                        value={price}
-                                        onChange={(e) => {
-                                          setPrice(parseInt(e.target.value));
-                                          form.setValue(
-                                            "courseprice",
-                                            parseInt(e.target.value)
-                                          );
-                                        }}
-                                      />
-                                    </FormControl>
-                                    <FormDescription>
-                                      <span>
-                                        This is your public display Price.And
-                                        the Price should be in betwee RS: 50 -
-                                        Rs: 7999
-                                      </span>
-                                    </FormDescription>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-                            </CardContent>
-                          </Card>
-                        )}
-                        <Button
-                          type="submit"
-                          className="bg-white text-black"
-                          disabled={isLoading}
-                        >
-                          {isLoading ? (
-                            <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                              creating....
-                            </>
-                          ) : (
-                            <>Create</>
+                              </FormDescription>
+                            </FormItem>
                           )}
-                        </Button>
-                      </form>
-                    </Form>
-                  </div>
-                </div>
-              </div>
+                        />
+                        <div className="grid grid-cols-3 gap-1">
+                          <FormField
+                            control={form.control}
+                            name="category"
+                            render={() => (
+                              <FormItem>
+                                <FormLabel className="text-white">
+                                  Category
+                                </FormLabel>
+                                <FormControl>
+                                  <Select
+                                    value={category}
+                                    onValueChange={(value) => {
+                                      setCategory(value);
+                                      setSubCategory("");
+                                      form.setValue("subcategory", "");
+                                    }}
+                                  >
+                                    <SelectTrigger className="w-full rounded-full border-1 border-white-900 text-white">
+                                      <SelectValue placeholder="Select..." />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectGroup>
+                                        {categories.length > 0 ? (
+                                          <>
+                                            {categories.map(
+                                              (
+                                                value: ICategory,
+                                                indx: number
+                                              ) => (
+                                                <SelectItem
+                                                  key={`${value} - ${indx}`}
+                                                  value={`${value.title}`}
+                                                >
+                                                  {value.title}
+                                                </SelectItem>
+                                              )
+                                            )}
+                                          </>
+                                        ) : (
+                                          <>No Category Found</>
+                                        )}
+                                      </SelectGroup>
+                                    </SelectContent>
+                                  </Select>
+                                </FormControl>
+                                <FormDescription>
+                                  {form.formState.errors.category ? (
+                                    <FormLabel className="text-danger">
+                                      {form.formState.errors.category.message}
+                                    </FormLabel>
+                                  ) : (
+                                    "This is your public display Category."
+                                  )}
+                                </FormDescription>
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name="subcategory"
+                            render={() => (
+                              <FormItem>
+                                <FormLabel className="text-white">
+                                  Sub Category
+                                </FormLabel>
+                                <FormControl>
+                                  <Select
+                                    value={subCategory}
+                                    onValueChange={(value) => {
+                                      setSubCategory(value);
+                                      form.setValue("subcategory", value);
+                                    }}
+                                  >
+                                    <SelectTrigger className="w-full rounded-full border-1 border-white text-white">
+                                      <SelectValue placeholder="Select..." />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectGroup>
+                                        {topics.length > 0 ? (
+                                          <>
+                                            {topics.map((value, inx) => (
+                                              <SelectItem
+                                                key={`${value} - ${inx}`}
+                                                value={value}
+                                              >
+                                                {value}
+                                              </SelectItem>
+                                            ))}
+                                          </>
+                                        ) : (
+                                          <>No Subcategory Found</>
+                                        )}
+                                      </SelectGroup>
+                                    </SelectContent>
+                                  </Select>
+                                </FormControl>
+                                <FormDescription className="text-xs">
+                                  {form.formState.errors.subcategory ? (
+                                    <FormLabel className="text-red-500">
+                                      {
+                                        form.formState.errors.subcategory
+                                          .message
+                                      }
+                                    </FormLabel>
+                                  ) : (
+                                    "This is your public display Sub Category."
+                                  )}
+                                </FormDescription>
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name="levels"
+                            render={() => (
+                              <FormItem>
+                                <FormLabel className="text-white">
+                                  Level
+                                </FormLabel>
+                                <FormControl>
+                                  <Select
+                                    value={level}
+                                    onValueChange={(value) => {
+                                      setLevel(value);
+                                      form.setValue("levels", value);
+                                    }}
+                                  >
+                                    <SelectTrigger className="w-full rounded-full border-1 border-white text-white">
+                                      <SelectValue placeholder="Select..." />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectGroup>
+                                        <SelectItem value="All">All</SelectItem>
+                                        <SelectItem value="Beginner">
+                                          Beginner
+                                        </SelectItem>
+                                        <SelectItem value="Intermediat">
+                                          Intermediat
+                                        </SelectItem>
+                                        <SelectItem value="Advance">
+                                          Advance
+                                        </SelectItem>
+                                      </SelectGroup>
+                                    </SelectContent>
+                                  </Select>
+                                </FormControl>
+                                <FormDescription>
+                                  {form.formState.errors.levels ? (
+                                    <FormLabel className="text-danger">
+                                      {form.formState.errors.levels.message}
+                                    </FormLabel>
+                                  ) : (
+                                    "This is your public display level."
+                                  )}
+                                </FormDescription>
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                        <FormField
+                          control={form.control}
+                          name="thumbnail"
+                          render={() => (
+                            <FormItem>
+                              <FormLabel className="text-white">
+                                Thumbnail
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  required
+                                  className="text-white"
+                                  placeholder="Enter your Thumbnail for this course"
+                                  value={thumbnail}
+                                  onChange={(e) => {
+                                    setThumbnail(e.target.value);
+                                    form.setValue("thumbnail", e.target.value);
+                                  }}
+                                />
+                              </FormControl>
+                              <FormDescription>
+                                {form.formState.errors.thumbnail ? (
+                                  <FormLabel className="text-danger">
+                                    {form.formState.errors.thumbnail.message}
+                                  </FormLabel>
+                                ) : (
+                                  "This is your public display Title."
+                                )}
+                              </FormDescription>
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="description"
+                          render={() => (
+                            <FormItem>
+                              <FormLabel className="text-white">
+                                Description
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  required
+                                  className="text-white"
+                                  placeholder="Enter your Discription for this course"
+                                  value={description}
+                                  onChange={(e) => {
+                                    setDiscription(e.target.value);
+                                    form.setValue(
+                                      "description",
+                                      e.target.value
+                                    );
+                                  }}
+                                />
+                              </FormControl>
+                              <FormDescription>
+                                {form.formState.errors.description ? (
+                                  <FormLabel className="text-danger">
+                                    {form.formState.errors.description.message}
+                                  </FormLabel>
+                                ) : (
+                                  "This is your public display Title."
+                                )}
+                              </FormDescription>
+                            </FormItem>
+                          )}
+                        />
+                      </CardContent>
+                    </Card>
+                  ) : (
+                    <Card className="bg-black">
+                      <CardHeader>
+                        <div className="text-xl font-bold text-white">
+                          Add Pricing
+                        </div>
+                        <CardDescription>
+                          Please Add an Apropier Price for your course.Users Can
+                          buy your course for this price.
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <FormField
+                          control={form.control}
+                          name="courseprice"
+                          render={() => (
+                            <FormItem>
+                              <FormLabel className="text-white">
+                                Price
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="number"
+                                  required
+                                  className="text-white"
+                                  placeholder="Enter your price for this course"
+                                  min={50}
+                                  max={7999}
+                                  maxLength={4}
+                                  value={price}
+                                  onChange={(e) => {
+                                    setPrice(parseInt(e.target.value));
+                                    form.setValue(
+                                      "courseprice",
+                                      parseInt(e.target.value)
+                                    );
+                                  }}
+                                />
+                              </FormControl>
+                              <FormDescription>
+                                <span>
+                                  This is your public display Price.And the
+                                  Price should be in betwee RS: 50 - Rs: 7999
+                                </span>
+                                <Alert className="bg-black text-white">
+                                  <Terminal className="h-4 w-4 " />
+                                  <AlertTitle>Please Note!</AlertTitle>
+                                  <AlertDescription>
+                                    With the price you are enter an adiitional
+                                    amount will add with this price. that is the
+                                    price will show to users who are willing to
+                                    purchase this course.
+                                  </AlertDescription>
+                                </Alert>
+                              </FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  <Button
+                    type="submit"
+                    className="bg-white text-black hover:bg-white cursor-pointer"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        creating....
+                      </>
+                    ) : (
+                      <>Create</>
+                    )}
+                  </Button>
+                </form>
+              </Form>
             </div>
           </div>
         </div>
@@ -1034,4 +1032,4 @@ const Ex: React.FC<Title> = ({ Title, Category, categories }) => {
   );
 };
 
-export default Ex;
+export default CourseCreatePage;

@@ -14,41 +14,11 @@ export class AdminUseCase implements IAdminUseCase{
         private adminRepository:IAdminRepository
     ){}
  
-   async getOrders(report:string,year:string,month:string,next:NextFunction): Promise<IOrder[]|void> {
+   async getOrders(start:string,end:string,next:NextFunction): Promise<IOrder[]|void> {
      try {
-      
-      
-      const orders =  await this.adminRepository.findOrders()
-      if(report == "Monthly"){
-        const months = [
-          "01",
-          "02",
-          '03',
-          '04',
-          '05',
-          '06',
-          '07',
-          '08',
-          '09',
-          '10',
-          '11',
-          '12',
-        ]
-        const index = months[parseInt(month)]
-        const starting =`${year}-${index}-01` ;
-        const ending = `${year}-${index}-30`;
-        if(orders){
-          const find = orders?.filter((value)=>value.createdAt >= new Date(starting)&&value.createdAt <= new Date(ending))
-          return find;
-        }
-      }else{
-            const start =`${year}-01-01` ;
-            const end = `${year}-12-30`;
-           if(orders){
-             const find = orders?.filter((value)=>value.createdAt >= new Date(start)&&value.createdAt <= new Date(end))
-             return find;
-           }
-      }
+      const orders =  await this.adminRepository.findOrders(start,end)
+      return orders;
+     
      } catch (error) {
       console.error(error)
      }
@@ -190,53 +160,53 @@ export class AdminUseCase implements IAdminUseCase{
         '11',
         '12',
       ]
-      const orders =  await this.adminRepository.findOrders();
-      let  starting = '' 
-      let ending = ''
-        if(report == "Monthly"){
-            const index = months[parseInt(month)]
-            starting =`${year}-${index}-01` ;
-            ending = `${year}-${index}-30`;
-        }else{
-          starting =`${year}-01-01` ;
-          ending = `${year}-12-30`;
-        }
+      // const orders =  await this.adminRepository.findOrders();
+      // let  starting = '' 
+      // let ending = ''
+      //   if(report == "Monthly"){
+      //       const index = months[parseInt(month)]
+      //       starting =`${year}-${index}-01` ;
+      //       ending = `${year}-${index}-30`;
+      //   }else{
+      //     starting =`${year}-01-01` ;
+      //     ending = `${year}-12-30`;
+      //   }
 
-        if(orders){
-          let datas = {
-            s_no:0,
-            userName:'',
-            courseName:'',
-            coursePrice:0,
-            orderDate:new Date(),
-            total:0
-          }
+      //   if(orders){
+      //     let datas = {
+      //       s_no:0,
+      //       userName:'',
+      //       courseName:'',
+      //       coursePrice:0,
+      //       orderDate:new Date(),
+      //       total:0
+      //     }
           
-          orders.map((order,index)=>{
-            if(order.createdAt >= new Date(starting)&&order.createdAt <= new Date(ending) ){
-              datas.s_no = index+1
-              datas.userName = order.user.name
-              datas.courseName = order.course.title
-              datas.coursePrice = order.course.price
-              datas.orderDate = order.createdAt
-              datas.total = order.course.price
-              worksheet.addRow(datas);
-            }
-          })
-          worksheet.getRow(1).eachCell((cell) => {
-          cell.font = { bold: true };
-          });
-            return workbook    
-         }
+      //     orders.map((order,index)=>{
+      //       if(order.createdAt >= new Date(starting)&&order.createdAt <= new Date(ending) ){
+      //         datas.s_no = index+1
+      //         datas.userName = order.user.name
+      //         datas.courseName = order.course.title
+      //         datas.coursePrice = order.course.price
+      //         datas.orderDate = order.createdAt
+      //         datas.total = order.course.price
+      //         worksheet.addRow(datas);
+      //       }
+      //     })
+      //     worksheet.getRow(1).eachCell((cell) => {
+      //     cell.font = { bold: true };
+      //     });
+      //       return workbook    
+      //    }
           
       } catch (error) {
         console.error(error)
       }
     }
 
-   async getOrdersForChart():Promise<IOrder[]|void>{
+   async getOrdersForChart(filter:string):Promise<IOrder[]|void>{
      try {
-        const orders = await this.adminRepository.findChartOrders();
+        const orders = await this.adminRepository.findChartOrders(filter);
         if(orders){
           return orders
         }

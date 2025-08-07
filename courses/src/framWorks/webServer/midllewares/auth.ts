@@ -100,6 +100,7 @@ export const isInstructor = async (req:Request,res:Response,next:NextFunction)=>
    
             }
         } catch (error) {
+          console.error(error)
           next(error)
         }          
 }

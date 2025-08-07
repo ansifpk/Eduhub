@@ -7,7 +7,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/Components/ui/card"
+} from "../../components/ui/card"
 import {
   ChartConfig,
   ChartContainer,
@@ -15,33 +15,12 @@ import {
   ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/Components/ui/chart"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/Components/ui/select"
-import { getOrders } from "@/Api/instructor"
+} from "../../components/ui/chart"
+import { getOrders } from "../../Api/instructor"
 import { useSelector } from "react-redux"
-import { User } from "@/@types/userType"
+import { User } from "../../@types/userType"
 
 
-const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
   
 
 const chartConfig = {
@@ -60,8 +39,7 @@ interface data {
 const Cart = () => {
     const [orders,setOrders] = React.useState<data[]>([])
     const userId = useSelector((state:User)=>state.id);
-    const [timeRange, setTimeRange] = React.useState('Yearly')
-
+   
     React.useEffect(()=>{
       const fetching = async() => {
         const res1 = await getOrders(userId);

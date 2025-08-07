@@ -65,7 +65,7 @@ export class UserUseCase implements IuserUseCase {
         }
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
       
       next(error)
     }
@@ -112,7 +112,7 @@ export class UserUseCase implements IuserUseCase {
        
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
       next(error)
       
     }
@@ -134,7 +134,7 @@ export class UserUseCase implements IuserUseCase {
       console.log("reg otp", otp);
 
       await this.otpRepository.createOtp(user.email, otp);
-      await this.sentEmail.sentEmailVerification(user.name, user.email, otp);
+      await this.sentEmail.sentEmailVerification(user.email, otp);
 
       const token = await this.jwtToken.createVerificationJwt({
         name: user.name,
@@ -143,7 +143,7 @@ export class UserUseCase implements IuserUseCase {
       });
       return token;
     } catch (err) {
-      console.log(err);
+      console.error(err);
       
       next(err);
     }
@@ -151,14 +151,14 @@ export class UserUseCase implements IuserUseCase {
 
   async sentOtp(email: string, next: NextFunction): Promise<boolean | void> {
     try {
-      const data = await this.otpRepository.deleteOtp(email);
 
-      if (data) {
+        const data = await this.otpRepository.deleteOtp(email);
         const otp = await this.otpGenerate.createOtp();
         console.log("new otp", otp);
         await this.otpRepository.createOtp(email, otp);
+        await this.sentEmail.sentEmailVerification(email, otp);
         return data;
-      } 
+      
     } catch (error) {
       next(error);
     }
@@ -172,6 +172,9 @@ export class UserUseCase implements IuserUseCase {
     try {
       const decoded = (await this.jwtToken.verifyJwt(token)) as Iuser;
       const result = await this.otpRepository.findOtp(decoded.email);
+      console.log(decoded);
+      console.log(result);
+      
       if (!result) {
         throw new BadRequestError("OTP Expired" )
         
@@ -193,7 +196,7 @@ export class UserUseCase implements IuserUseCase {
       }
     } catch (err) {
 
-      console.log(err);
+      console.error(err);
       next(err)
       
     }
@@ -204,8 +207,7 @@ export class UserUseCase implements IuserUseCase {
     next: NextFunction
   ): Promise<{ user: Iuser; token: IToken } | void> {
     try {
-      console.log(email,password);
-      
+    
       const user = await this.userRepository.findByEmail(email);
 
       if (!user) {
@@ -243,7 +245,6 @@ export class UserUseCase implements IuserUseCase {
         console.log("otp to change pass", otp);
         await this.otpRepository.createOtp(checkuser.email, otp);
         await this.sentEmail.sentEmailVerification(
-          checkuser.name,
           checkuser.email,
           otp
         );
@@ -290,15 +291,17 @@ export class UserUseCase implements IuserUseCase {
     try {
       const user = await this.userRepository.findByEmail(email);
       if (user) {
+        const compare = await this.encrypt.comparePassword(password,user.password);
+        if(compare){
+          throw new BadRequestError("You Cannot Set Old Password Again")
+        };
         const newPassword = await this.encrypt.createHash(password);
-        user.password = newPassword;
-
+        await this.userRepository.updatePassword(user._id!,newPassword)
         await this.otpRepository.deleteOtp(email);
         return user;
       } else {
         throw new BadRequestError( "User Not Found")
-        
-      }
+      };
     } catch (err) {
       console.error(err);
       next(err)
@@ -308,35 +311,39 @@ export class UserUseCase implements IuserUseCase {
     userId: string,
     password: string,
     newPassword: string,
+    conPassword:string,
     next: NextFunction
-  ): Promise<any | void> {
+  ): Promise<Iuser | void> {
     try {
+
       const user = await this.userRepository.findById(userId);
-      if (user) {
-        
-        const checkPassword = await this.encrypt.comparePassword(
+      if(!user){
+        throw new BadRequestError("User Not Found" )
+      }
+      if(newPassword.length < 6  || newPassword.length > 20 ){
+        throw new BadRequestError("Password should be in between 6 and 20")
+      }
+      const checkPassword = await this.encrypt.comparePassword(
           password,
           user.password
-        );
-        if(!checkPassword){
-          throw new BadRequestError( "Current password is not matching")
-          
-        }
-        
-        const Password = await this.encrypt.createHash(newPassword);
-       
-       
-        
+      );
+ 
+      if(!checkPassword){
+        throw new BadRequestError("Current password is not matching")
+      }
+
+      if(password == newPassword){
+        throw new BadRequestError("You cannot set the old password again")
+      }
+      if(newPassword !== conPassword){
+        throw new BadRequestError("Confirm password is not matching")
+      }
+     const Password = await this.encrypt.createHash(newPassword);
+
         const updatedUser = await this.userRepository.updatePassword(userId,Password)
         if(updatedUser){
           return updatedUser;
         }
-      
-       
-      } else {
-        throw new BadRequestError("User Not Found" )
-        
-      }
     } catch (err) {
       console.error(err);
       next(err)
@@ -367,7 +374,6 @@ export class UserUseCase implements IuserUseCase {
         console.log("otp to change email", OTP);
         await this.otpRepository.createOtp(checkuser.email, OTP);
         await this.sentEmail.sentEmailVerification(
-          checkuser.name,
           checkuser.email,
           OTP
         );
@@ -409,6 +415,7 @@ export class UserUseCase implements IuserUseCase {
   async checkTockens(tocken:string,next: NextFunction): Promise<IToken | void> {
     try {
       const decoded = await this.jwtToken.verifyRefreshJwt(tocken)
+      console.log("check",decoded);
       
       if(decoded){
        const tockens =  await this.jwtToken.createAccessAndRefreashToken(decoded.id);
@@ -417,7 +424,6 @@ export class UserUseCase implements IuserUseCase {
        }
       }else{
         throw new BadRequestError("Invalid token" )
-        
       }
       
     } catch (error) {

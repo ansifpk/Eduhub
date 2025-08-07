@@ -13,7 +13,7 @@ import { ChatRoute } from './framwork/webServer/routers/chatRoute';
 import { Socket,Server } from 'socket.io';
 import { UserProfileUpdatedConsumer } from './framwork/webServer/config/kafka/consumer/user-profile-updated-consumer';
 import { NotificationRoute } from './framwork/webServer/routers/notificationRouter';
-import { errorHandler } from '@eduhublearning/common';
+import { errorHandler, NotFoundError } from '@eduhublearning/common';
 import cookieParser from 'cookie-parser';
 
 dotenv.config();
@@ -44,19 +44,14 @@ app.use(cors({credentials:true,
 
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
-// app.use(
-//     cookieSession({
-//         signed: false, 
-//         httpOnly: true, 
-//         sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax', 
-//         secure: process.env.NODE_ENV === 'production', 
-//       })
-// )
 app.use(cookieParser())
 // Apply the separate routers to different paths
 app.use('/message/chat',chatRouter);
 app.use('/message/message',messageRouter);
 app.use('/message/notification',notificationRouter);
+app.use("*",(req,res)=>{
+     throw new NotFoundError("Path Not Found.") 
+})
 app.use(errorHandler as any);
 
 //! web socket configurations
@@ -65,7 +60,6 @@ let onlineUsers:{userId:string,socketId:string}[] = [];
 const io = new Server(httpServer,{
 cors:{
     origin: ['http://client-srv:5173', 'http://localhost:5173',"https://www.eduhublearning.online"],
-    methods: ["*"],
     credentials:true
 },
   path: '/message/socket.io',
@@ -76,29 +70,47 @@ io.on("connect",(socket:Socket)=>{
     
     //TODO listen connection
     socket.on("addNewUser",(userId:string)=>{
-      console.log("message srv", userId)
+     
     !onlineUsers.some((user)=>user.userId == userId)&&
       onlineUsers.push({
         userId,
         socketId:socket.id
       })
-
+      // console.log('onlineUsers',onlineUsers);
+      
       io.emit("getOnlineUsers",onlineUsers)
     })
 
     //* add message
     socket.on("sendMessage",(message)=>{
-       const user = onlineUsers.find((user)=>user.userId == message.recipientId);
+
+      const user = onlineUsers.find((user)=>user.userId == message.recipientId);
+      const user2 = onlineUsers.find((user)=>user.userId == message.senderId);
+     
        if(user){
         io.to(user.socketId).emit("getMessage",message);
         io.to(user.socketId).emit("getMessageNotification",{
-            recipientId:message.recipientId,
-            senderId:message.senderId,
-            isRead:false,
-            date:new Date()
+          recipientId:message.recipientId,
+          senderId:message.senderId,
+          isRead:false,
+          date:new Date()
         });
        }
+       if(user2){
+        //  io.to(user2.socketId).emit("markAsRead",message);
+       }
     })
+
+    //* mark seen message
+    socket.on("seenMsg",(res)=>{
+      const user = onlineUsers.find((user)=>user.userId == res.senter);
+      console.log(user,"user");
+      
+       if(user){
+        io.to(user.socketId).emit("markSeenMessage");
+       }
+    })
+   
 
     //*disconnect user when
     socket.on("disconnect",()=>{
@@ -110,23 +122,23 @@ io.on("connect",(socket:Socket)=>{
 const start = async () => {
     try {
       
-        await kafkaWrapper.connect();
-        const userCreatedConsumer = await kafkaWrapper.createConsumer('message-user-created-group')
-        const consumser = await kafkaWrapper.createConsumer('message-instructor-approved-group')
-        const consumser2 = await kafkaWrapper.createConsumer('message-user-blocked-group')
-        const consumser3 = await kafkaWrapper.createConsumer('message-profile-updated-group')
-        userCreatedConsumer.connect();
-        consumser.connect();
-        consumser2.connect();
-        consumser3.connect();
-        const listener1 = new UserProfileCreatedConsumer(userCreatedConsumer)
-        const listener2 = new InstructorAprovalConsumer(consumser)
-        const listener3 = new UserBlockedConsumer(consumser2)
-        const listener4 = new UserProfileUpdatedConsumer(consumser3)
-        await listener1.listen();
-        await listener2.listen();
-        await listener3.listen();
-        await listener4.listen();
+        // await kafkaWrapper.connect();
+        // const userCreatedConsumer = await kafkaWrapper.createConsumer('message-user-created-group')
+        // const consumser = await kafkaWrapper.createConsumer('message-instructor-approved-group')
+        // const consumser2 = await kafkaWrapper.createConsumer('message-user-blocked-group')
+        // const consumser3 = await kafkaWrapper.createConsumer('message-profile-updated-group')
+        // userCreatedConsumer.connect();
+        // consumser.connect();
+        // consumser2.connect();
+        // consumser3.connect();
+        // const listener1 = new UserProfileCreatedConsumer(userCreatedConsumer)
+        // const listener2 = new InstructorAprovalConsumer(consumser)
+        // const listener3 = new UserBlockedConsumer(consumser2)
+        // const listener4 = new UserProfileUpdatedConsumer(consumser3)
+        // await listener1.listen();
+        // await listener2.listen();
+        // await listener3.listen();
+        // await listener4.listen();
         await connectDB();
 
         httpServer.listen(PORT, () => console.log(`the Message server is running in http://localhost:${PORT} for message!!!!!!!!`))

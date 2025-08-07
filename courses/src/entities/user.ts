@@ -9,5 +9,5 @@ export interface Iuser {
         id:string,
         avatar_url:string
     },
-    createdAt:string
+    createdAt:Date
  }

@@ -65,6 +65,7 @@ export class WebhookRepository implements IWebhookRepository{
     
     async createSubscribe(userId: string, subscriptionId: string, customerId: string, subscription: string): Promise<IInstructorSubscribe | void> {
        try {
+      
         const subscribe = await this.subscribeModel.create({
           subscriptionId:JSON.parse(subscriptionId),
           customerId,
@@ -109,6 +110,8 @@ export class WebhookRepository implements IWebhookRepository{
               { new: true } 
             )
           if(check){
+            console.log("order",order,check);
+            
             return check
           }
         }

@@ -31,7 +31,7 @@ export class UserController {
   }
   async resentOtp(req: Request, res: Response, next: NextFunction) {
     try {
-     
+      
       const data = await this.userUseCase.sentOtp(req.body.email, next);
       res.status(200).send({
         success: true,
@@ -43,13 +43,13 @@ export class UserController {
   }
   async createUser(req: Request, res: Response, next: NextFunction) {
     try {
-      if(!req.session){
+      if(!req.cookies){
        throw new NotAuthorizedError()
       }
-      if(!req.session.verificationToken){
+      if(!req.cookies.verificationToken){
         throw new NotAuthorizedError()
       }
-      const token = req.session.verificationToken
+      const token = req.cookies.verificationToken
       if (typeof token !== "string") {
         throw new NotAuthorizedError()
       }
@@ -60,14 +60,14 @@ export class UserController {
       );
  
       if (user) {
-       await new UserCreatedPublisher(kafkaWrapper.producer as Producer).produce({
-         _id: user.user._id! as string,
-         name: user.user.name as string,
-         email: user.user.email as string,
-         isInstructor: user.user.isInstructor! as boolean,
-         password: user.user.password,
-         createdAt: user.user.createdAt!,
-       })
+      //  await new UserCreatedPublisher(kafkaWrapper.producer as Producer).produce({
+      //    _id: user.user._id! as string,
+      //    name: user.user.name as string,
+      //    email: user.user.email as string,
+      //    isInstructor: user.user.isInstructor! as boolean,
+      //    password: user.user.password,
+      //    createdAt: user.user.createdAt!,
+      //  })
   
        res.cookie('verificationToken','',{
         httpOnly:true,
@@ -167,8 +167,8 @@ export class UserController {
   async resetPassword(req: Request, res: Response, next: NextFunction) {
    try {
     const {userId} = req.params
-    const {password,newPassword} = req.body
-     const data = await this.userUseCase.resetPassword(userId,password,newPassword, next);
+    const {password,newPassword,conPassword} = req.body
+     const data = await this.userUseCase.resetPassword(userId,password,newPassword,conPassword, next);
      if (data) {
        return res.send({ success: true });
      }
@@ -268,14 +268,11 @@ export class UserController {
 
   async checkTockens(req: Request, res: Response, next: NextFunction) {
     try {    
-      
+       console.log("hi",req.cookies.refreshToken)
       if(!req.cookies.refreshToken){
-  
         throw new ForbiddenError()
       }
       const tocken = req.cookies.refreshToken;
-
-
 
       const tockens  = await this.userUseCase.checkTockens(tocken,next)
       if(tockens){

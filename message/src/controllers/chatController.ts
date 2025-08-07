@@ -10,7 +10,7 @@ export class ChatController{
    async createChat(req:Request,res:Response,next:NextFunction){
          try {
             const {userId,recipientId,role} = req.body;
-            console.log(req.body);
+           
             
             const chat = await this.userUseCase.createChat(userId,recipientId,role,next);
             if(chat){
@@ -33,7 +33,6 @@ export class ChatController{
     }
    async findChate(req:Request,res:Response,next:NextFunction){
          try {
-           console.log("hiiii");
            
             const {chatId} = req.params
             const checkChat = await this.userUseCase.privetChat(chatId,next);

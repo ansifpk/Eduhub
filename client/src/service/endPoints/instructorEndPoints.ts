@@ -1,12 +1,13 @@
 const instructorRoutes = { 
     //* course
     getCourses:"/course/instructor/getCourses", 
+    courseDeatiles:"/course/instructor/courseDetailes",
     uploadVideo:"/course/instructor/uploadVideo", 
     createCourse:"/course/instructor/createCourse", 
     allCourses:"/course/instructor/allCourses", 
     editCourse:"/course/instructor/editCourse", 
     listCourses:"/course/instructor/listCourses", 
-    coursesDetailes:"/course/instructor/coursesDetailes", 
+    testDetailes:"/course/instructor/testDetailes", 
     tests:"/course/instructor/tests", 
     top5Courses:"/course/instructor/course",
     top5RatedCourses:"/course/instructor/topRated",

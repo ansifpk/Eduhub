@@ -1,46 +1,32 @@
-import { IChat } from "@/@types/chatType";
-import { IMessage } from "@/@types/messageType";
-import { User } from "@/@types/userType";
-import InstructorAside from "@/Components/instructor/InstructorAside";
-import { Avatar, AvatarImage } from "@/Components/ui/avatar";
-import { ScrollArea } from "@/Components/ui/scroll-area";
-import { Separator } from "@/Components/ui/separator";
+import { IChat } from "../../@types/chatType";
+import { IMessage } from "../../@types/messageType";
+import { User } from "../../@types/userType";
+import InstructorAside from "../../components/instructor/InstructorAside";
+import { Avatar, AvatarImage } from "../../components/ui/avatar";
+import { ScrollArea } from "../../components/ui/scroll-area";
+import { Separator } from "../../components/ui/separator";
 import { MoreVertical, Send } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import InputEmoji from "react-input-emoji";
 import { useSelector } from "react-redux";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import {  useSearchParams } from "react-router-dom";
 import { io, Socket } from "socket.io-client";
 import { DefaultEventsMap } from "@socket.io/component-emitter";
-import moment, { monthsShort } from "moment";
+import moment from "moment";
 import toast from "react-hot-toast";
-import {
-  getInstructorCurrentChat,
-  getInstructorMessages,
-  getNotifications,
-  instructorChats,
-  instructorSendMessage,
-  markAsReadNotification,
-  sendNotification,
-} from "@/Api/instructor";
-import { INotification } from "@/@types/notificationType";
+import { INotification } from "../../@types/notificationType";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/Components/ui/popover";
-import MarkEmailUnreadIcon from "@mui/icons-material/MarkEmailUnread";
-import { useDispatch } from "react-redux";
-import { ToggleButtonGroup } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
+} from "../../components/ui/popover";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/Components/ui/dropdown-menu";
+} from "../../components/ui/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -50,7 +36,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/Components/ui/alert-dialog";
+} from "../../components/ui/alert-dialog";
+import useRequest from "../../hooks/useRequest";
+import instructorRoutes from "../../service/endPoints/instructorEndPoints";
 
 export default function InstructorMessage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -62,6 +50,7 @@ export default function InstructorMessage() {
   const [currentChat, setCurrentChat] = useState<IChat>();
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
+  const {doRequest,errors}=useRequest();
   const [onlineUsers, setOnlineUsers] = useState<
     { userId: string; socketId: string }[]
   >([]);
@@ -152,42 +141,46 @@ export default function InstructorMessage() {
   //*initial calls
 
   useEffect(() => {
-    const getUserChats = async () => {
-      const response = await instructorChats(userId);
-
-      if (response.success) {
+    doRequest({
+      url:`${instructorRoutes.chat}?userId=${userId}`,
+      method:"get",
+      body:{},
+      onSuccess:(response)=>{
         setChats(response.chats);
       }
-    };
-    getUserChats();
+    });
   }, [userId]);
 
   useEffect(() => {
     if (chatId) {
-      const fetchmessages = async () => {
-        const currentCht = await getInstructorCurrentChat(chatId);
-        if (currentCht.success) {
-          setCurrentChat(currentCht.chat);
-        } else {
-          return toast.error(currentCht.response.data.message);
+      doRequest({
+        url:`${instructorRoutes.privetChat}/${chatId}`,
+        method:"get",
+        body:{},
+        onSuccess:(response)=>{
+          setCurrentChat(response.chat);
         }
-        const response = await getInstructorMessages(chatId);
-        if (response.success) {
+      });
+      doRequest({
+        url:`${instructorRoutes.message}/${chatId}`,
+        method:"get",
+        body:{},
+        onSuccess:(response)=>{
           setMessages(response.messages);
         }
-      };
-      fetchmessages();
+      });
     }
   }, [chatId]);
 
   useEffect(() => {
-    const fetching = async () => {
-      const respo = await getNotifications(userId);
-      if (respo.success) {
-        setNotifications(respo.notifications);
+    doRequest({
+      url:`${instructorRoutes.notification}/${userId}`,
+      method:"get",
+      body:{},
+      onSuccess:(response)=>{
+        setNotifications(response.notifications);
       }
-    };
-    fetching();
+    });
   }, []);
 
   const handletext = async () => {
@@ -197,20 +190,26 @@ export default function InstructorMessage() {
         reciever = user._id;
       }
     });
-    const response = await instructorSendMessage(
-      currentChat?._id!,
-      userId,
-      text
-    );
-    if (response.success) {
-      setNewMessage(response.message.text);
-      setMessages((prev) => [...prev, response.message]);
-      setText("");
-      await sendNotification(reciever, userId);
-    } else {
-      return toast.error(response.response.data.message);
-    }
+    doRequest({
+      url:instructorRoutes.message,
+      method:"post",
+      body:{chatId:currentChat?._id!,senderId:userId,text},
+      onSuccess:(response)=>{
+        setNewMessage(response.message.text);
+        setMessages((prev) => [...prev, response.message]);
+        setText("");
+        doRequest({
+          url: instructorRoutes.notification,
+          method:"post",
+          body:{recipientId:reciever,senderId:userId},
+          onSuccess:()=>{
+            
+          }
+        });
+      }
+    });
   };
+// console.log("notifications",notifications);
 
   let user = "";
   const modification = notifications.map((notify: INotification) => {
@@ -232,14 +231,20 @@ export default function InstructorMessage() {
       (value: INotification) => value.senderId !== sentId
     );
     if (mdNotifications) {
-      const response = await markAsReadNotification(sentId, userId);
-      if (response.success) {
-        setNotifications(mdNotifications);
-      } else {
-        return toast.error(response.response.data.message);
-      }
+      doRequest({
+        url:`${instructorRoutes.notification}/${userId}/${sentId}`,
+        method:"patch",
+        body:{},
+        onSuccess:(response)=>{
+          setNotifications(response);
+        }
+      });
     }
   };
+
+  useEffect(()=>{
+    errors?.map((err)=>toast.error(err.message))
+  },[errors]);
 
   return (
     <div className="bg-black ">
@@ -255,21 +260,13 @@ export default function InstructorMessage() {
           </div>
           <div className="block md:hidden lg:hidden">
             {open ? (
-              <ToggleButtonGroup
-                onClick={() => setOpen(!open)}
-                size="large"
-                aria-label="Large sizes"
-              >
-                <CloseIcon htmlColor={"white"} fontSize="large" />
-              </ToggleButtonGroup>
+            
+                <i onClick={()=>setOpen(!open)} className="bi bi-x-lg text-white"></i>
+                
             ) : (
-              <ToggleButtonGroup
-                onClick={() => setOpen(!open)}
-                size="large"
-                aria-label="Large sizes"
-              >
-                <MenuRoundedIcon htmlColor={"white"} fontSize="large" />
-              </ToggleButtonGroup>
+              
+                <i onClick={()=>setOpen(!open)} className="bi bi-list text-white"></i>
+             
             )}
           </div>
         </div>
@@ -279,19 +276,19 @@ export default function InstructorMessage() {
           <div className="flex justify-center">
             <div className="bg-white md:mx-5 lg:mx:-5  flex lg:w-[900px] md:w-[900px] w-full rounded-2">
               <div className="border borer-danger  m-2   rounded-2 md:w-[330px] lg:w-[330px] w-50">
-                <div className="flex items-center bg-success-400  justify-between md:p-3 p-2">
+                <div className="flex items-center bg-green-400  justify-between md:p-3 p-2">
                   <h3 className=" md:text-sm text-xs font-medium text-white leading-none">
                     Messages
                   </h3>
 
                   <Popover>
                     <PopoverTrigger>
-                      <MarkEmailUnreadIcon />
+                      <i className="bi bi-envelope-exclamation-fill"></i>
                       {notifications.length}
                     </PopoverTrigger>
                     <PopoverContent>
                       <div className="flex justify-between gap-3">
-                        <h5 className="text-xs">Notifications</h5>
+                        <span className="text-xs">Notifications</span>
                       </div>
 
                       {modification.length > 0 ? (
@@ -313,7 +310,7 @@ export default function InstructorMessage() {
                               setSearchParams(searchParams);
                             }}
                             className={`p-2 ${
-                              value.isRead ? "bg-white" : "bg-success-600"
+                              value.isRead ? "bg-white" : "bg-green-600"
                             }`}
                             key={index}
                           >
@@ -349,7 +346,11 @@ export default function InstructorMessage() {
                             className="flex justify-between items-center"
                           >
                             <div className="flex space-x-3 m-2">
-                              <Avatar
+                            {
+                                  chat.members.find(
+                                    (member) => member._id !== userId
+                                  )?.avatar.avatar_url?
+                                  <Avatar
                                 className={`border-3 ${
                                   onlineUsers.some(
                                     (value) =>
@@ -360,16 +361,19 @@ export default function InstructorMessage() {
                                   ) && "border-3 border-success-400"
                                 }  cursor-pointer`}
                               >
+                                
                                 <AvatarImage
                                   src={
                                     chat.members.find(
                                       (member) => member._id !== userId
-                                    )?.avatar.avatar_url ||
-                                    "https://github.com/shadcn.png"
-                                  }
+                                    )?.avatar.avatar_url}
                                   alt="@shadcn"
                                 />
                               </Avatar>
+                                  :
+                                  <i className="bi bi-person-circle text-2xl"></i>
+                                }
+                              
                               <div
                                 onClick={() => {
                                   let id = chat.members.find(
@@ -392,7 +396,7 @@ export default function InstructorMessage() {
                               </div>
                             </div>
                             {unreadCount > 0 && (
-                              <div className="bg-success text-xs px-2 text-white rounded-full">
+                              <div className="bg-green text-xs px-2 text-white rounded-full">
                                 {unreadCount}
                               </div>
                             )}
@@ -407,22 +411,28 @@ export default function InstructorMessage() {
                 </ScrollArea>
               </div>
 
-              <div className="w-75 m-2 border bg-success-50 rounded-2">
-                <header className="flex  items-center text-white bg-success-400 rounded-2 h-[50px]">
+              <div className="w-full m-2 border bg-green-50 rounded-2">
+                <header className="flex  items-center text-white bg-green-400 rounded-2 h-[50px]">
                   {currentChat && (
                     <div className="flex w-full items-center justify-between mx-3">
                       <div className="flex items-center space-x-3 m-2">
-                        <Avatar className={` cursor-pointer`}>
+                        {
+                          currentChat.members.find(
+                            (member) => member._id !== userId
+                          )?.avatar.avatar_url?
+                          <Avatar className={`cursor-pointer`}>
                           <AvatarImage
                             src={
                               currentChat.members.find(
                                 (member) => member._id !== userId
-                              )?.avatar.avatar_url ||
-                              "https://github.com/shadcn.png"
-                            }
+                              )?.avatar.avatar_url }
                             alt="@shadcn"
                           />
                         </Avatar>
+                          :
+                          <i className="bi bi-person-circle text-2xl"></i>
+                        }
+                        
                         <div className="grid flex-1 text-left text-sm leading-tight cursor-pointer">
                           <span className="truncate font-semibold">
                             {
@@ -483,7 +493,7 @@ export default function InstructorMessage() {
                               key={index}
                               className={`flex p-[0.75rem] md:w-[250px] w-[200px] border rounded shadow-md  ${
                                 msg.senderId == userId
-                                  ? "bg-success-200 ml-auto"
+                                  ? "bg-green-200 ml-auto"
                                   : "bg-white items-start"
                               }`}
                             >

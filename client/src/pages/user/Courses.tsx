@@ -1,20 +1,23 @@
-import { Card, CardContent, CardDescription } from "@/Components/ui/card";
-import Footer from "../../Components/Footer/Footer";
-import Header from "../../Components/Header/Header";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { ICourse } from "@/@types/courseType";
-import FilterHeader from "@/Components/user/FilterHeader";
-import { ICategory } from "@/@types/categoryTpe";
-import { getCategoryies } from "@/Api/instructor";
-import { Button } from "@/Components/ui/button";
-import toast from "react-hot-toast";
-import { addToCart, userCart, userPlans } from "@/Api/user";
+import { ICourse } from "../../@types/courseType";
 import { useSelector } from "react-redux";
-import { User } from "@/@types/userType";
-import { ICart } from "@/@types/cartType";
-import { Pagination, Stack } from "@mui/material";
-import { IUserSubscribe } from "@/@types/userSubscribe";
+import { User } from "../../@types/userType";
+import { ICategory } from "../../@types/categoryTpe";
+import { ICart } from "../../@types/cartType";
+import { useNavigate } from "react-router";
+import { addToCart, userCart, userPlans } from "../../Api/user";
+import toast from "react-hot-toast";
+import Header from "../../components/Header/Header";
+import FilterHeader from "../../components/user/FilterHeader";
+import { getCategoryies } from "../../Api/instructor";
+import { IUserSubscribe } from "../../@types/userSubscribe";
+import { Button } from "../../components/ui/button";
+import { Card, CardContent, CardDescription } from "../../components/ui/card";
+import Footer from "../../components/Footer/Footer";
+import useRequest from "../../hooks/useRequest";
+import instructorRoutes from "../../service/endPoints/instructorEndPoints";
+import userRoutes from "../../service/endPoints/userEndPoints";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "../../components/ui/pagination";
 
 
 const Courses = () => {
@@ -22,28 +25,35 @@ const Courses = () => {
   const [cart, setCart] = useState<ICart>();
   const [categories, setCategories] = useState<ICategory[]>([]);
   const userId = useSelector((state: User) => state.id);
-  const [page, setPage] = useState(1);
-  const [totalPage, setTotalPage] = useState(0);
+   const [page, setPage] = useState(1);
+    const [totalPage, setTotalPage] = useState(0);
   const [plans, setPlans] = useState<IUserSubscribe[]>([]);
-
+  const {doRequest,errors} = useRequest()
   useEffect(() => {
-    const category = async () => {
-      const data = await getCategoryies();
-      if (data) {
+    doRequest({
+      url:instructorRoutes.getCategoryies,
+      method:"get",
+      body:{},
+      onSuccess:(data)=>{
         setCategories(data);
       }
-      const plan = await userPlans(userId);
-      
-      if (plan.success) {
-        setPlans(plan.plans);
-      } 
-      const cart = await userCart(userId);
-     
-      if (cart.success) {
-        setCart(cart.cart);
-      } 
-    };
-    category();
+    })
+    doRequest({
+      url:`${userRoutes.plans}/${userId}`,
+      method:"get",
+      body:{},
+      onSuccess:(data)=>{
+        setPlans(data.plans);
+      }
+    })
+    doRequest({
+      url:`${userRoutes.Cart}/${userId}`,
+      method:"get",
+      body:{},
+      onSuccess:(data)=>{
+        setCart(data.cart);
+      }
+    })
   }, []);
 
   const navigate = useNavigate();
@@ -59,22 +69,27 @@ const Courses = () => {
     if(!userId){
       return navigate("/users/login");
     }
-    const data = await addToCart(courseId, userId);
-
-    if (data.success) {
-      const cart = await userCart(userId);
-      if (cart.success) {
-        setCart(cart.cart);
-        toast.success("Item Added to cart..");
+    doRequest({
+      url:userRoutes.addToCart,
+      method:"post",
+      body:{courseId,userId},
+      onSuccess:()=>{
+        doRequest({
+          url:`${userRoutes.Cart}/${userId}`,
+          method:"get",
+          body:{},
+          onSuccess:(data)=>{
+            setCart(data.cart);
+            toast.success("Item Added to cart..");
+          }
+        })
       }
-    } else {
-      toast.error(data.response.data.message);
-    }
+    })
   };
 
-  const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
-    setPage(value);
-  };
+  // const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+  //   setPage(value);
+  // };
 
   return (
     <div>
@@ -170,7 +185,7 @@ const Courses = () => {
           </div>
         </div>
       ) : (
-        <div className="h-full flex justify-center items-center">
+        <div className="h-full flex justify-center items-center ">
           <Card className="w-4/5 sm:w-1/2 h-[200px] flex justify-center items-center">
             <CardContent>
               <CardDescription>No courses available</CardDescription>
@@ -178,9 +193,31 @@ const Courses = () => {
           </Card>
         </div>
       )}
-      <Stack className="flex items-center justify-center mt-4" spacing={2}>
-        <Pagination count={totalPage} page={page} onChange={handleChange} />
-      </Stack>
+     <div className="my-5">
+              <Pagination>
+                <PaginationContent className="gap-5">
+                  <PaginationItem>
+                    <PaginationPrevious  onClick={() => {
+                      if (page > 1) {
+                        setPage((prev) => prev -= 1);
+                      }
+                    } } className={`text-black ${page > 1 ? "cursor-pointer" : ""} `} size={undefined} />
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationLink size={undefined} className="text-black"  isActive>
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationNext size={undefined}  onClick={()=>{
+                       if(page !==totalPage){
+                        setPage((prev)=>prev+=1)
+                      }
+                      }} className={`text-black ${page<totalPage?"cursor-pointer":""}`} />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+              </div>
       <Footer />
     </div>
   );

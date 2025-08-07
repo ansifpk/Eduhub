@@ -1,8 +1,7 @@
-import { User } from "@/@types/userType";
-import { resetPassword } from "@/Api/user";
-import Footer from "@/Components/Footer/Footer";
-import Header from "@/Components/Header/Header";
-import ProfileNavbar from "@/Components/Header/ProfileNavbar";
+import { User } from "../../@types/userType";
+import Footer from "../../components/Footer/Footer";
+import Header from "../../components/Header/Header";
+import ProfileNavbar from "../../components/Header/ProfileNavbar";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,15 +11,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/Components/ui/alert-dialog";
-import { Button } from "@/Components/ui/button";
-import { Input } from "@/Components/ui/input";
-import { Label } from "@/Components/ui/label";
-import { Eye, EyeOff } from "lucide-react";
-
-import { useState } from "react";
+} from "../../components/ui/alert-dialog";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
+import useRequest from "../../hooks/useRequest";
+import userRoutes from "../../service/endPoints/userEndPoints";
 
 const Settings = () => {
   const [password, setPassword] = useState("");
@@ -29,15 +28,16 @@ const Settings = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setSchowConfirmPassword] = useState(false);
-  const [errors, setErrors] = useState({
+  const [error, setErrors] = useState({
     password: "",
     newPassword: "",
     confirmPassword: "",
     success: true,
   });
+  const {doRequest,errors} = useRequest();
   const userId = useSelector((state: User) => state.id);
   const handlePassword = async () => {
-    try {
+
       if (password.length < 8 || password.length > 20) {
         setErrors((prev) => ({
           ...prev,
@@ -81,40 +81,51 @@ const Settings = () => {
         }));
       }
 
-      if (errors.success) {
-        const response = await resetPassword(userId, password, newPassword);
-      
-        if (response.success) {
-          setPassword("");
-          setNewPassword("");
-          setConfirmPassword("");
-          return toast.success("successfully reseted your password");
-        } else {
-          if (
-            response.response.data.message == "Current password is not matching"
-          ) {
-            setErrors((prev) => ({
-              ...prev,
-              password: "Current password is not matching",
-              // success:false
-            }));
-
-            return toast.error(response.response.data.message);
-          } else if (response.response.data.message == "User Not Found") {
-            return toast.error(response.response.data.message);
+      if (error.success) {
+       await doRequest({
+          url:`${userRoutes.resetPassword}/${userId}`,
+          body:{password,newPassword},
+          method:"patch",
+          onSuccess:()=>{
+            setPassword("");
+            setNewPassword("");
+            setConfirmPassword("");
+            return toast.success("successfully reseted your password");
           }
-        }
+        })
+        // const response = await resetPassword(userId, password, newPassword);
+      
+        // if (response.success) {
+         
+        // } else {
+        //   if (
+        //     response.response.data.message == "Current password is not matching"
+        //   ) {
+        //     setErrors((prev) => ({
+        //       ...prev,
+        //       password: "Current password is not matching",
+             
+        //     }));
+
+        //     return toast.error(response.response.data.message);
+        //   } else if (response.response.data.message == "User Not Found") {
+        //     return toast.error(response.response.data.message);
+        //   }
+        // }
       }
-    } catch (error) {
-      console.error(error);
-    }
   };
+  console.log("erro",errors);
+  
+  useEffect(()=>{
+    errors?.map((err)=>toast.error(err.message));
+  },[errors]);
+
   return (
     <div className="bg-blue-50 h-screen">
       <Header />
       <ProfileNavbar />
       <main className="w-full flex justify-center  gap-10 py-8">
-        <div className="grid w-50 gap-1.5">
+        <div className="grid w-75 gap-1.5">
           <h3>Reset your password</h3>
           <div className="grid  gap-1.5">
             <Label htmlFor="message-2">Enter your current password</Label>
@@ -133,15 +144,17 @@ const Settings = () => {
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
               >
                 {showPassword ? (
-                  <EyeOff className="h-4 w-4" />
+                 
+                  <i className="bi bi-eye-slash-fill"></i>
+                  
                 ) : (
-                  <Eye className="h-4 w-4" />
+                  <i className="bi bi-eye-fill"></i>
                 )}
               </button>
             </div>
-            {errors.password && (
-              <div className="text-sm text-danger text-muted-foreground">
-                {errors.password}
+            {error.password && (
+              <div className="text-sm text-red-500">
+                {error.password}
               </div>
             )}
           </div>
@@ -163,15 +176,16 @@ const Settings = () => {
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
               >
                 {showNewPassword ? (
-                  <EyeOff className="h-4 w-4" />
+                   <i className="bi bi-eye-slash-fill"></i>
+                 
                 ) : (
-                  <Eye className="h-4 w-4" />
+                  <i className="bi bi-eye-fill"></i>
                 )}
               </button>
             </div>
-            {errors.newPassword && (
-              <div className="text-sm text-danger text-muted-foreground">
-                {errors.newPassword}
+            {error.newPassword && (
+              <div className="text-sm text-red-500 ">
+                {error.newPassword}
               </div>
             )}
           </div>
@@ -193,15 +207,15 @@ const Settings = () => {
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
               >
                 {showConfirmPassword ? (
-                  <EyeOff className="h-4 w-4" />
+                  <i className="bi bi-eye-slash-fill"></i>
                 ) : (
-                  <Eye className="h-4 w-4" />
+                  <i className="bi bi-eye-fill"></i>
                 )}
               </button>
             </div>
-            {errors.confirmPassword && (
-              <div className="text-sm text-danger text-muted-foreground">
-                {errors.confirmPassword}
+            {error.confirmPassword && (
+              <div className="text-sm text-red-500">
+                {error.confirmPassword}
               </div>
             )}
           </div>

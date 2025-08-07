@@ -71,8 +71,7 @@ export class InstructorController{
         try {
         const {userId} = req.params;
         const {plan,price,description} = req.body
-        console.log(req.body);
-        
+     
         const subscription =  await this.instructorUseCase.createSubscription(userId,plan,price,description,next)
         if (subscription) {
             res.send({success:true});
@@ -84,8 +83,9 @@ export class InstructorController{
     
     async getOrders(req:Request,res:Response,next:NextFunction){
         try {
-         const {userId,report,year,month}  = req.query 
-          const orders = await this.instructorUseCase.getOrders(userId as string,report as string,year as string,month as string,next)
+         const {instructorId,start,end}  = req.query ;
+        
+          const orders = await this.instructorUseCase.getOrders(instructorId as string,start as string,end as string,next)
           if(orders){
               return res.send({success:true,orders});
           }
@@ -112,8 +112,8 @@ export class InstructorController{
 
     async instructorOrders(req:Request,res:Response,next:NextFunction){
         try {
-           const {userId}  = req.params 
-           const orders = await this.instructorUseCase.instructorOrders(userId,next)
+           const {instructorId,filter}  = req.params 
+           const orders = await this.instructorUseCase.instructorOrders(instructorId,filter,next)
            if(orders){
            
              res.send({success:true,orders:orders});

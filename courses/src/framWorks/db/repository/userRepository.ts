@@ -59,7 +59,7 @@ export class UserRepository implements IUserRepository{
         if(search){
             queryData.title = {$regex:search,$options: "i"}
         }
-        const limit = 4
+        const limit = 8
         const pages = await this.courseModel.countDocuments(
             queryData
         )
@@ -249,7 +249,7 @@ export class UserRepository implements IUserRepository{
     
     async courses(instructorId: string): Promise<ICourse[] | void> {
        try {
-        const courses = await this.courseModel.find({instructorId:instructorId}).sort({createdAt:-1}).populate("instructorId")
+        const courses = await this.courseModel.find({instructorId:instructorId}).sort({createdAt:-1}).populate("instructorId").populate("students")
         if(courses){
             return courses;
         }
@@ -274,16 +274,13 @@ export class UserRepository implements IUserRepository{
 
     async find(query:Query): Promise<ICourse[] | void> {
        try {
-        const {page,search,category,level,topic,sort} = query
+        const {search,category,level,topic,sort,page} = query
         
          
         let queryData:any = {isListed:true}
         let sortQuery:any = {}
             
             switch (sort) {
-                case "All":
-                  sortQuery.createdAt = -1
-                  break;
                 case "Price Low to High":
                   sortQuery.price = 1
                   break;
@@ -293,9 +290,6 @@ export class UserRepository implements IUserRepository{
                 case "Old":
                   sortQuery.createdAt = 1
                   break;
-                case "New":
-                    sortQuery.createdAt = -1
-                    break;
                 default:
                     sortQuery.createdAt = -1
                     break;
@@ -317,7 +311,7 @@ export class UserRepository implements IUserRepository{
            
         }
         if(level ){
-            if(topic == "All"){
+            if(level == "All"){
                 queryData.level = { $regex: "", $options: "i" };
              }else{
                 queryData.level = { $regex: level, $options: "i" };
@@ -327,11 +321,11 @@ export class UserRepository implements IUserRepository{
         if(search){
             queryData.title = {$regex:search,$options: "i"}
         }
-        const limit = 4;
+        const limit = 8;
         const courses = await this.courseModel.find(
             queryData
-        ).sort(sortQuery).limit(limit * 1).skip((page! - 1) * limit).populate("students").populate("instructorId")
-         
+        ).sort(sortQuery).skip(limit*(page-1)).limit(limit*page).populate("students").populate("instructorId")
+        
        if(courses){
         return courses;
        }

@@ -1,5 +1,5 @@
-import AdminAside from "@/Components/admin/AdminAside";
-import { Card } from "@/Components/ui/card";
+import AdminAside from "../../components/admin/AdminAside";
+import { Card } from "../../components/ui/card";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import {
@@ -9,9 +9,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/Components/ui/table";
-import { Button } from "@/Components/ui/button";
-import { ICourse } from "@/@types/courseType";
+} from "../../components/ui/table";
+import { Button } from "../../components/ui/button";
+import { ICourse } from "../../@types/courseType";
 import moment from "moment";
 import {
   Select,
@@ -21,11 +21,11 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/Components/ui/select";
-import { Input } from "@/Components/ui/input";
+} from "../../components/ui/select";
+import { Input } from "../../components/ui/input";
 
-import { IUser } from "@/@types/chatUser";
-import { IReport } from "@/@types/report";
+import { IUser } from "../../@types/chatUser";
+import { IReport } from "../../@types/report";
 
 import {
   Sheet,
@@ -34,7 +34,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/Components/ui/sheet";
+} from "../../components/ui/sheet";
 import {
   Pagination,
   PaginationContent,
@@ -42,9 +42,9 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/Components/ui/pagination";
-import useRequest from "@/hooks/useRequest";
-import adminRoutes from "@/service/endPoints/adminEndPoints";
+} from "../../components/ui/pagination";
+import useRequest from "../../hooks/useRequest";
+import adminRoutes from "../../service/endPoints/adminEndPoints";
 
 const AdminListCourses = () => {
   const [courses, setCourses] = useState([]);
@@ -114,8 +114,8 @@ const AdminListCourses = () => {
     <div className="flex gap-2">
       <AdminAside />
       <div className="w-full mr-3">
-        <div className="w-full mx-auto mt-2 rounded-lg p-2  text-white bg-purple-600">
-          <h1>Welcome back, Admin</h1>
+      <div className="w-full mx-auto mt-2 rounded-lg p-5  text-white bg-purple-600">
+          <span className="text-3xl">Welcome back, Admin</span>
         </div>
 
         <div className="flex justify-between my-3 ">
@@ -127,7 +127,7 @@ const AdminListCourses = () => {
               onChange={(e) => setSearch(e.target.value)}
               className="md:w-[100px] lg:w-[300px] "
             />
-            <Select onValueChange={(value) => setSort(value)}>
+            <Select onValueChange={(value:string) => setSort(value)}>
               <SelectTrigger>
                 <SelectValue placeholder="Sort..." />
               </SelectTrigger>
@@ -165,7 +165,7 @@ const AdminListCourses = () => {
                       <img
                         src={value.image.image_url}
                         alt="Profile Picture"
-                        className="profile-pic"
+                        className="profile-pic w-20"
                       />
                     </TableCell>
                     <TableCell className="text-xs">{value.title}</TableCell>
@@ -260,8 +260,8 @@ const AdminListCourses = () => {
                                               type="button"
                                               className={`rounded-full ${
                                                 value.isListed
-                                                  ? "bg-success-400 text-xs"
-                                                  : "bg-danger-500 text-xs"
+                                                  ? "bg-green-400 text-xs"
+                                                  : "bg-red-500 text-xs"
                                               }`}
                                             >
                                               {value.isListed
@@ -318,12 +318,17 @@ const AdminListCourses = () => {
                                 students?.map((student) => (
                                   <TableRow key={student._id}>
                                     <TableCell className="font-medium">
-                                      {" "}
+                                     {
+                                      student.avatar.avatar_url?
                                       <img
-                                        src={"https://github.com/shadcn.png"}
+                                        src={student.avatar.avatar_url}
                                         alt="Profile Picture"
-                                        className="profile-pic"
+                                        className="profile-pic w-20"
                                       />
+                                      :
+                                      <i className="bi bi-person-circle text-3xl"></i>
+                                     }
+                                      
                                     </TableCell>
                                     <TableCell>{student.name}</TableCell>
                                     <TableCell>{student.email}</TableCell>
@@ -361,6 +366,7 @@ const AdminListCourses = () => {
               <PaginationContent>
                 <PaginationItem>
                   <PaginationPrevious
+                  size={undefined}
                     onClick={() => {
                       if (page > 1) {
                         setPage((prev) => (prev -= 1));
@@ -372,12 +378,13 @@ const AdminListCourses = () => {
                   />
                 </PaginationItem>
                 <PaginationItem>
-                  <PaginationLink className="text-black" isActive>
+                  <PaginationLink  size={undefined} className="text-black" isActive>
                     {page}
                   </PaginationLink>
                 </PaginationItem>
                 <PaginationItem>
                   <PaginationNext
+                   size={undefined}
                     onClick={() => {
                       if (page !== totalPage) {
                         setPage((prev) => (prev += 1));

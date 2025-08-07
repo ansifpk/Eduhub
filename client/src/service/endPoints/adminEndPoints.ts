@@ -18,7 +18,7 @@ const adminRoutes = {
      //*course
     getCourses:"/course/admin/getCourses",
     course:"/course/admin/course",
-    editProfile:"/admin/editProfile",
+    editProfile:"/editProfile",
     coupon:'/course/admin/coupon',
     report:'/course/admin/report',
     top5RatedCourse:'/course/admin/top5Course',

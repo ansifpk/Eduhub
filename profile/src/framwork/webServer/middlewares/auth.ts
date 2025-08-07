@@ -17,7 +17,9 @@ interface User{
 export const isAuth = async (req:Request,res:Response,next:NextFunction)=>{ 
   
 try {
+  
   if(!req.cookies){
+    
     throw new NotAuthorizedError()
    } 
    if(!req.cookies.accessToken){
@@ -25,20 +27,20 @@ try {
    } 
     const check = jwt.verify(req.cookies.accessToken,process.env.JWT_ACCESSKEY!) as User;
     if(check){
-      const user = await userModel.findOne({_id:check.id});
+      const user = await userModel.findById({_id:check.id});
       if(user){
          if(user.isBlock){
-          throw new ForbiddenError()
-          
+          throw new ForbiddenError();
          }
          next();
       }else{
         throw new NotAuthorizedError()
       }
     }else{
-      throw new NotAuthorizedError()
+      throw new BadRequestError("User Not Logined!")
     } 
 } catch (error) {
+  console.error(error)
   next(error)
 }
 }

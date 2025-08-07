@@ -116,6 +116,7 @@ export class AdminUseCase implements IAdminUseCase{
 
     async top5Courses(next: NextFunction): Promise<ICourse[] | void> {
         try {
+            
             const courses = await this.adminRepository.findTop5()
             if(courses) return courses
           } catch (error) {

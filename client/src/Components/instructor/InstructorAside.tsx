@@ -1,23 +1,20 @@
-import { cn } from "@/lib/utils";
+import { cn } from "../../lib/utils";
 import { buttonVariants } from "../ui/button";
 import { NavLink, useNavigate } from "react-router-dom";
-import { removeUser } from "@/redux/authSlice";
+import { removeUser } from "../../redux/authSlice";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
-import { useSelector } from "react-redux";
-import { User } from "@/@types/userType";
-import { logoutInstructor, setLastSeen } from "@/Api/instructor";
+import { logoutInstructor } from "../../Api/instructor";
 
 export default function InstructorAside() {
   const dispatch = useDispatch();
-  const userId = useSelector((state:User)=>state.id)
+  
   const navigate  = useNavigate()
   const handleLogout = async () => {
     const response = await logoutInstructor()
     if (response.succuss) {
       dispatch(removeUser());
-      // await setLastSeen(userId)
-      navigate("/instructor/login")
+      navigate("/instructor")
       return toast.success("Instructor Logout Sucessfully");
     }
   };
@@ -33,7 +30,7 @@ export default function InstructorAside() {
                 buttonVariants({ variant: "ghost" }),
                 isActive
                   ? "bg-gray-600 hover:bg-gray-600 text-white no-underline"
-                  : "hover:bg-transparent hover:underline text-white no-underline",
+                  : "hover:bg-gray-500 hover:text-white hover:underline text-white no-underline",
                 "justify-start"
               )
             }
@@ -51,7 +48,7 @@ export default function InstructorAside() {
                 buttonVariants({ variant: "ghost" }),
                 isActive
                   ? "bg-gray-600 hover:bg-gray-600 text-white no-underline"
-                  : "hover:bg-transparent hover:underline text-white no-underline",
+                  : "hover:bg-gray-500 hover:text-white hover:underline text-white no-underline",
                 "justify-start"
               )
             }
@@ -68,7 +65,7 @@ export default function InstructorAside() {
                 buttonVariants({ variant: "ghost" }),
                 isActive
                   ? "bg-gray-600 hover:bg-gray-600 text-white no-underline"
-                  : "hover:bg-transparent hover:underline text-white no-underline",
+                  : "hover:bg-gray-500 hover:text-white hover:underline text-white no-underline",
                 "justify-start"
               )
             }
@@ -85,7 +82,7 @@ export default function InstructorAside() {
                 buttonVariants({ variant: "ghost" }),
                 isActive
                   ? "bg-gray-600 hover:bg-gray-600 text-white no-underline"
-                  : "hover:bg-transparent hover:underline text-white no-underline",
+                  : "hover:bg-gray-500 hover:text-white hover:underline text-white no-underline",
                 "justify-start"
               )
             }
@@ -101,7 +98,7 @@ export default function InstructorAside() {
                 buttonVariants({ variant: "ghost" }),
                 isActive
                   ? "bg-gray-600 hover:bg-gray-600 text-white no-underline"
-                  : "hover:bg-transparent hover:underline text-white no-underline",
+                  : "hover:bg-gray-500 hover:text-white hover:underline text-white no-underline",
                 "justify-start"
               )
             }
@@ -118,7 +115,7 @@ export default function InstructorAside() {
                 buttonVariants({ variant: "ghost" }),
                 isActive
                   ? "bg-gray-600 hover:bg-gray-600 text-white no-underline"
-                  : "hover:bg-transparent hover:underline text-white no-underline",
+                  : "hover:bg-gray-500 hover:text-white hover:underline text-white no-underline",
                 "justify-start"
               )
             }
@@ -135,7 +132,7 @@ export default function InstructorAside() {
                 buttonVariants({ variant: "ghost" }),
                 isActive
                   ? "bg-gray-600 hover:bg-gray-600 text-white no-underline"
-                  : "hover:bg-transparent hover:underline text-white no-underline",
+                  : "hover:bg-gray-500 hover:text-white hover:underline text-white no-underline",
                 "justify-start"
               )
             }
@@ -147,14 +144,13 @@ export default function InstructorAside() {
           onClick={handleLogout}
           className={cn(
             buttonVariants({ variant: "ghost" }),
-            "hover:bg-transparent hover:underline text-white no-underline",
+            "hover:bg-gray-500 hover:text-white hover:underline text-white no-underline",
             "justify-start"
           )}
         >
           Log Out
         </li>
       </ul>
-      <nav className=""></nav>
     </aside>
   );
 }

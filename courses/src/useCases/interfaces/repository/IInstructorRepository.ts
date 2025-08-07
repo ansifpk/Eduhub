@@ -4,7 +4,8 @@ import { ITest } from "../../../entities/test";
 import { Iuser } from "../../../entities/user";
 
 export interface IInstructorrepository{
-    find(instructorId:string,search : string,sort:string):Promise<ICourse[]|void>
+    find(instructorId:string,search : string,sort:string,page:number):Promise<ICourse[]|void>
+    findStudents(instructorId:string,search : string,sort:string):Promise<Iuser[]|void>
     get():Promise<ICourse[]|void>
     findById(courseId:string):Promise<ICourse|void>
     create(courseData:ICourse):Promise<ICourse|void>
@@ -19,4 +20,5 @@ export interface IInstructorrepository{
     findTest(testId:string):Promise<ITest|void>
     findTop5(userId:string):Promise<ICourse[]|void>
     findTopRated(userId:string):Promise<ICourse[]|void>
+
 }

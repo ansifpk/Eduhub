@@ -21,7 +21,7 @@ export  interface  IUserUseCase {
      //coupons
      fetchCoupons():Promise<ICoupon[]|void>
      findCouponByCode(couponCode:string,next:NextFunction):Promise<ICoupon|void>
-     couponDetailes(couponCode:string,next:NextFunction):Promise<ICoupon|void>
+     couponDetailes(couponCode:string,userId:string,next:NextFunction):Promise<ICoupon|void>
      addUserToCoupon(couponId:string,userId:string,next:NextFunction):Promise<ICoupon|void>
      getTest(testId:string,next:NextFunction):Promise<ITest|void>
      submitTest(userId:string,testId:string,mark:number,next:NextFunction):Promise<ITest|void>

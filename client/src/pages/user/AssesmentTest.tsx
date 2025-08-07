@@ -1,7 +1,7 @@
-import { ITest } from "@/@types/testType";
-import Footer from "@/Components/Footer/Footer";
-import Header from "@/Components/Header/Header";
-import ProfileNavbar from "@/Components/Header/ProfileNavbar";
+import { ITest } from "../../@types/testType";
+import Footer from "../../components/Footer/Footer";
+import Header from "../../components/Header/Header";
+import ProfileNavbar from "../../components/Header/ProfileNavbar";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,16 +11,16 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/Components/ui/alert-dialog";
-import { Checkbox } from "@/Components/ui/checkbox";
-import { Button } from "@/Components/ui/button";
+} from "../../components/ui/alert-dialog";
+import { Checkbox } from "../../components/ui/checkbox";
+import { Button } from "../../components/ui/button";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Label } from "@/Components/ui/label";
+import { Label } from "../../components/ui/label";
 import { useSelector } from "react-redux";
-import { User } from "@/@types/userType";
-import useRequest from "@/hooks/useRequest";
-import userRoutes from "@/service/endPoints/userEndPoints";
+import { User } from "../../@types/userType";
+import useRequest from "../../hooks/useRequest";
+import userRoutes from "../../service/endPoints/userEndPoints";
 import toast from "react-hot-toast";
 
 const AssesmentTest = () => {

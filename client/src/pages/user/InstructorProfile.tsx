@@ -1,28 +1,13 @@
-import { ICourse } from "@/@types/courseType";
-import { IRating } from "@/@types/ratingType";
-import { User } from "@/@types/userType";
-import {
-  createMessage,
-  deleteInstructorRating,
-  editInstructorRating,
-  getInstructorRatings,
-  getUserDetailes,
-  instructorCourses,
-  instructorSubscriptions,
-  purchaseSubscription,
-  userPlans,
-  viewDetailes,
-} from "@/Api/user";
-import Footer from "@/Components/Footer/Footer";
-import Header from "@/Components/Header/Header";
-import { Avatar, AvatarImage } from "@/Components/ui/avatar";
-import { Button } from "@/Components/ui/button";
-import { Label } from "@/Components/ui/label";
-import { ScrollArea, ScrollBar } from "@/Components/ui/scroll-area";
-import { Rating } from "@mui/material";
-import { CardBody,Card, Drawer, DrawerContent, DrawerHeader, DrawerBody, DrawerFooter, useDisclosure, button } from "@heroui/react";
-import { Tab,Tabs } from "@heroui/react";
-import { Edit, Send, StarIcon, Trash } from "lucide-react";
+import { ICourse } from "../../@types/courseType";
+import { IRating } from "../../@types/ratingType";
+import { User } from "../../@types/userType";
+import Footer from "../../components/Footer/Footer";
+import Header from "../../components/Header/Header";
+import { Avatar, AvatarImage } from "../../components/ui/avatar";
+import { Button } from "../../components/ui/button";
+import { Label } from "../../components/ui/label";
+import { ScrollArea, ScrollBar } from "../../components/ui/scroll-area";
+import { Send } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -34,20 +19,28 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/Components/ui/alert-dialog";
-import { Textarea } from "@/Components/ui/textarea";
+} from "../../components/ui/alert-dialog";
+import { Textarea } from "../../components/ui/textarea";
 import toast from "react-hot-toast";
-import { IUser } from "@/@types/chatUser";
+import { IUser } from "../../@types/chatUser";
 import { useSelector } from "react-redux";
 import moment from "moment";
-import { ISubcription } from "@/@types/subscriptionType";
-import { IUserSubscribe } from "@/@types/userSubscribe";
+import { ISubcription } from "../../@types/subscriptionType";
+import { IUserSubscribe } from "../../@types/userSubscribe";
 import { loadStripe } from "@stripe/stripe-js";
+import { Card, CardContent } from "../../components/ui/card";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../../components/ui/tabs";
+import useRequest from "../../hooks/useRequest";
+import userRoutes from "../../service/endPoints/userEndPoints";
 const stripe = await loadStripe(import.meta.env.VITE_PUBLISH_SECRET);
 
 const InstructorProfile = () => {
   const { instructorId } = useParams();
-  const [selected, setSelected] = useState("Courses");
   const [user, setUser] = useState<IUser>();
   const [courses, setCourses] = useState<ICourse[]>([]);
   const [reviews, setReviews] = useState<IRating[]>([]);
@@ -58,43 +51,55 @@ const InstructorProfile = () => {
   const userId = useSelector((state: User) => state.id);
   const [subscriptions, setSubscriptions] = useState<ISubcription[]>([]);
   const [plans, setPlans] = useState<IUserSubscribe[]>([]);
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { doRequest, errors } = useRequest();
 
   useEffect(() => {
-    const fetching = async () => {
-      const instructor = await getUserDetailes(instructorId!);
+    doRequest({
+      url: `${userRoutes.profile}?userId=${instructorId}`,
+      method: "get",
+      body: {},
+      onSuccess: (res) => {
+        setUser(res.userData);
+      },
+    });
 
-      if (instructor.success) {
-
-        setUser(instructor.userData);
-      }
-      const data = await instructorCourses(instructorId!);
-      if (data.success) {
-        setCourses(data.courses);
-      }
-      const review = await getInstructorRatings(instructorId!);
-      if (review.success) {
-        setReviews(review.ratings);
-      }
-      const subscriptions = await instructorSubscriptions(instructorId!);
-      if (subscriptions.success) {
-        setSubscriptions(subscriptions.subscriptions);
-      } else {
-        return toast.error(subscriptions.response.data.message);
-      }
-      const plans = await userPlans(userId);
-      if (plans.success) {
-        setPlans(plans.plans);
-      } else {
-        return toast.error(plans.response.data.message);
-      }
-    };
-    fetching();
+    doRequest({
+      url: `${userRoutes.fetchCourses}/${instructorId}`,
+      method: "get",
+      body: {},
+      onSuccess: (res) => {
+        setCourses(res.courses);
+      },
+    });
+    doRequest({
+      url: `${userRoutes.instructorRating}/${instructorId}`,
+      method: "get",
+      body: {},
+      onSuccess: (res) => {
+        setReviews(res.ratings);
+      },
+    });
+    doRequest({
+      url: `${userRoutes.subscriptions}/${instructorId}`,
+      method: "get",
+      body: {},
+      onSuccess: (res) => {
+        setSubscriptions(res.subscriptions);
+      },
+    });
+    doRequest({
+      url: `${userRoutes.plans}/${userId}`,
+      method: "get",
+      body: {},
+      onSuccess: (res) => {
+        setPlans(res.plans);
+      },
+    });
   }, []);
 
-  const [errors, setErrors] = useState({
-    ratingError: false,
-  });
+  useEffect(() => {
+    errors?.map((err) => toast.error(err.message));
+  }, [errors]);
 
   const labels: { [index: string]: string } = {
     0.5: "Useless",
@@ -109,70 +114,68 @@ const InstructorProfile = () => {
     5: "Excellent+",
   };
 
-  function getLabelText(value: number) {
-    return `${value} Star${value !== 1 ? "s" : ""}, ${labels[value]}`;
-  }
-
   const handleEditRatings = async (ratingId: string) => {
-    
-    const response = await editInstructorRating(ratingId, review, stars);
-
-    if (response.success) {
-      const ratings = await getInstructorRatings(instructorId!);
-      if (ratings.success) {
-        setReviews(ratings.ratings);
-        setValue(1);
-        setStars(0!);
-        setReview("");
-        return toast.success("Review edit successfully..");
-      } else {
-        return toast.error(ratings.response.data.message);
-      }
-    } else {
-      return toast.error(response.response.data.message);
-    }
+    await doRequest({
+      url: userRoutes.instructorRating,
+      body: { ratingId, review, stars },
+      method: "patch",
+      onSuccess: async () => {
+        await doRequest({
+          url: `${userRoutes.instructorRating}/${instructorId}`,
+          method: "get",
+          body: {},
+          onSuccess: (ratings) => {
+            setReviews(ratings.ratings);
+            setValue(1);
+            setStars(0!);
+            setReview("");
+            return toast.success("Review edit successfully..");
+          },
+        });
+      },
+    });
   };
 
   const handleDeleteRating = async (ratingId: string) => {
-  
-    const response = await deleteInstructorRating(ratingId);
-
-    if (response.success) {
-      const ratings = await getInstructorRatings(instructorId!);
-      if (ratings.success) {
-        setReviews(ratings.rating);
-        toast.success("Review deleted successfully..");
-      } else {
-        return toast.error(ratings.response.data.message);
-      }
-    } else {
-      return toast.error(response.response.data.message);
-    }
+    await doRequest({
+      url: `${userRoutes.instructorRating}/${ratingId}`,
+      method: "delete",
+      body: {},
+      onSuccess: async () => {
+        await doRequest({
+          url: `${userRoutes.instructorRating}/${instructorId}`,
+          method: "get",
+          body: {},
+          onSuccess: (ratings) => {
+            setReviews(ratings.rating);
+            toast.success("Review deleted successfully..");
+          },
+        });
+      },
+    });
   };
-   
-  const goToDetailes = async(customerId:string)=>{
-    const response = await viewDetailes(customerId);
-    if(response.success){
-      window.location.href = response.url;
-     return 
-    }else if(response.status == 403){
-      toast.error(response.response.data.message);
-      return navigate('/instructor/login');
-    }else{
-     return toast.error(response.response.data.message)
-    }
- }
+
+  const goToDetailes = async (customerId: string) => {
+    await doRequest({
+      url: `${userRoutes.customer}/${customerId}`,
+      method: "get",
+      body: {},
+      onSuccess: (response) => {
+        return (window.location.href = response.url);
+      },
+    });
+  };
 
   const createMessageWithUser = async (recipientId: string) => {
     try {
-      const response = await createMessage(
-        userId!,
-        recipientId,
-        "userToInstructor"
-      );
-      if (response.success) {
-        return navigate(`/profile/message?chatId=${response.chat._id}`);
-      }
+      await doRequest({
+        url: userRoutes.chat,
+        method: "post",
+        body: { userId, recipientId, role: "userToInstructor" },
+        onSuccess: (response) => {
+          return navigate(`/profile/message?chatId=${response.chat._id}`);
+        },
+      });
     } catch (error) {
       console.error(error);
     }
@@ -180,18 +183,20 @@ const InstructorProfile = () => {
 
   let wr =
     "Hi everyone, I’m Ansif, a student on EduHub, and I’m thrilled to be here! This platform has been incredibly helpful in my learning journey. The variety of courses available, taught by expert instructors, has allowed me to dive deep into new areas and build valuable skills. What I love most about EduHub is the supportive community of like-minded learners who share the same passion for growth. With flexible learning options and expert guidance, EduHub makes it easy for anyone to improve their skills. I’m excited to continue learning and growing here, and I hope you are too!";
-  const subscribe = async (subscriptionId: string) => {
-   
-    const response = await purchaseSubscription(subscriptionId, userId);
 
-    if (response.success) {
-      await stripe?.redirectToCheckout({
-        sessionId: response.sessionId,
-      });
-    } else {
-      return toast.error(response.response.data.message);
-    }
+  const subscribe = async (subscriptionId: string) => {
+    await doRequest({
+      url: `${userRoutes.subscriptions}/${subscriptionId}`,
+      body: { userId },
+      method: "post",
+      onSuccess: async (response) => {
+        await stripe?.redirectToCheckout({
+          sessionId: response.sessionId,
+        });
+      },
+    });
   };
+
   return (
     <div className="bg-blue-200">
       <Header />
@@ -208,27 +213,24 @@ const InstructorProfile = () => {
               backgroundPosition: "center",
             }}
           >
-            <div className="w-48 h-48 m-2 rounded-full  overflow-hidden bg-gray-200">
-              <img
-                src={
-                  user?.avatar.avatar_url
-                    ? user?.avatar.avatar_url
-                    : "https://github.com/shadcn.png"
-                }
-                alt="instructor image"
-              />
+            <div className="w-48 h-48 m-2 rounded-full flex items-center overflow-hidden justify-center bg-gray-200">
+              {user?.avatar.avatar_url ? (
+                <img src={user?.avatar.avatar_url} alt="instructor image" />
+              ) : (
+                <i className="bi bi-person-circle text-black text-6xl"></i>
+              )}
             </div>
 
             <Card className="m-2 w-[800px] bg-gray-50/50 backdrop-blur-sm">
-              <CardBody className=" space-y-2 overflow-hidden break-words">
+              <CardContent className=" space-y-2 overflow-hidden break-words">
                 <div className="font-bold text-black">{user?.name}</div>
                 <div className="text-sm">{wr}</div>
-                {/* <div className="font-bold text-black">{user?.email}</div> */}
                 <div className="flex items-center">
-                  <p className="text-sm font-medium">
-                    <Rating readOnly max={1} />
+                  <p className="">
+                    {" "}
+                    <i className="bi bi-star-fill text-yellow-600"></i>2
+                    instructor Ratings
                   </p>
-                  <p className="">2 instructor Ratings</p>
                 </div>
                 <div
                   onClick={() => createMessageWithUser(user?._id!)}
@@ -236,482 +238,377 @@ const InstructorProfile = () => {
                 >
                   Message <Send className="h-4" />
                 </div>
-              </CardBody>
+              </CardContent>
             </Card>
           </div>
         </div>
         <div>
-          <div className="flex w-full flex-col ">
-            <Tabs
-              className="m-3"
-              aria-label="Options"
-              selectedKey={selected}
-              onSelectionChange={(value) => setSelected(value.toString())}
-            >
-              <Tab key="Courses" title="Courses">
-                <Card className="mx-3">
-                  <CardBody>
-                    <ScrollArea>
-                      <div className="relative flex">
-                        <div className="flex  mx-5 my-4 gap-3 m-auto ">
-                          {courses.map((course) => (
-                            <div
-                              className={
-                                "w-[250px]  border shadow-lg overflow-hidden "
-                              }
-                              key={course._id}
-                            >
-                              <div className=" overflow-hidden border rounded-md m-1 ">
-                                <img
-                                  src={course.image.image_url}
-                                  alt={course.title}
-                                  width={150}
-                                  height={150}
-                                  className={
-                                    "h-[150px] w-full object-fill transition-all hover:scale-105 aspect-square"
-                                  }
-                                />
-                              </div>
-                              <div className=" text-sm m-2 ">
-                                <div className="flex flex-wrap ">
-                                  <h6 className="font-medium leading-none overflow-hidden break-words">
-                                    {"course.title"}
-                                  </h6>
-                                </div>
-                                <p className="font-medium text-xs text-muted-foreground">
-                                  Created : {course.instructorId.name} <br />
-                                  Price: {course.price}
-                                </p>
-                                {plans.map((plan) => {
-                                  const isSubscribed = subscriptions.some(
-                                    (value) => value._id === plan.subscriptionId._id
-                                  );
-                                  return (
-                                    <div key={plan.subscriptionId._id}>
-                                      {isSubscribed ? (
-                                        <Button
-                                          type="button"
-                                          onClick={() =>
-                                            navigate(
-                                              `/user/playCourse/${course?._id}`
-                                            )
-                                          }
-                                          className="w-full"
-                                        >
-                                          Go to Class
-                                        </Button>
-                                      ) : (
-                                        <Button
-                                          type="button"
-                                          onClick={() =>
-                                            navigate(
-                                              `/users/courseDetailes/${course._id}`
-                                            )
-                                          }
-                                          className="bg-[#49BBBD] text-sm  w-full text-white hover:bg-[#49BBBD]"
-                                        >
-                                          View Details
-                                        </Button>
-                                      )}
-                                    </div>
-                                  );
-                                })}
-                              </div>
+          <Tabs defaultValue="Courses" className="w-full my-5">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="Courses">Courses</TabsTrigger>
+              <TabsTrigger value="Reviews">Reviews</TabsTrigger>
+              <TabsTrigger value="Subscriptions">Subscriptions</TabsTrigger>
+            </TabsList>
+            <TabsContent value="Courses">
+              <Card className="mx-3">
+                <CardContent>
+                  <ScrollArea>
+                    <div className="relative flex">
+                      <div className="flex  mx-5 my-4 gap-3 m-auto ">
+                        {courses.map((course) => (
+                          <div
+                            className={
+                              "w-[250px]  border shadow-lg overflow-hidden "
+                            }
+                            key={course._id}
+                          >
+                            <div className=" overflow-hidden border rounded-md m-1 ">
+                              <img
+                                src={course.image.image_url}
+                                alt={course.title}
+                                width={150}
+                                height={150}
+                                className={
+                                  "h-[150px] w-full object-fill transition-all hover:scale-105 aspect-square"
+                                }
+                              />
                             </div>
-                          ))}
-                        </div>
+                            <div className=" text-sm m-2 ">
+                              <div className="flex flex-wrap ">
+                                <h6 className="font-medium leading-none overflow-hidden break-words">
+                                  {"course.title"}
+                                </h6>
+                              </div>
+                              <p className="font-medium text-xs text-muted-foreground">
+                                Created : {course.instructorId.name} <br />
+                                Price: {course.price}
+                              </p>
+                              {course.students?.some((v) => v._id == userId) ? (
+                                <Button
+                                  type="button"
+                                  onClick={() =>
+                                    navigate(`/user/playCourse/${course?._id}`)
+                                  }
+                                  className="w-full bg-teal-500 hover:bg-teal-400"
+                                >
+                                  Go to Class
+                                </Button>
+                              ) : (
+                                <>
+                                  {plans.map((plan) => {
+                                    const isSubscribed = subscriptions.some(
+                                      (value) =>
+                                        value._id === plan.subscriptionId._id
+                                    );
+                                    return (
+                                      <div key={plan.subscriptionId._id}>
+                                        {isSubscribed ? (
+                                          <Button
+                                            type="button"
+                                            onClick={() =>
+                                              navigate(
+                                                `/user/playCourse/${course?._id}`
+                                              )
+                                            }
+                                            className="w-full"
+                                          >
+                                            Go to Class
+                                          </Button>
+                                        ) : (
+                                          <Button
+                                            type="button"
+                                            onClick={() =>
+                                              navigate(
+                                                `/users/courseDetailes/${course._id}`
+                                              )
+                                            }
+                                            className="bg-[#49BBBD] text-sm  w-full text-white hover:bg-[#49BBBD]"
+                                          >
+                                            View Details
+                                          </Button>
+                                        )}
+                                      </div>
+                                    );
+                                  })}
+                                </>
+                              )}
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                      <ScrollBar orientation="horizontal" />
-                    </ScrollArea>
-                  </CardBody>
-                </Card>
-              </Tab>
-              <Tab key="reviews" title="Reviews">
-                <Card className="mx-3">
-                  <CardBody>
-                    <ScrollArea className="w-full h-[350px]  rounded-md border">
-                      <div className="m-3">
-                        <h6>Reviews</h6>
+                    </div>
+                    <ScrollBar orientation="horizontal" />
+                  </ScrollArea>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            <TabsContent value="Reviews">
+              <Card className="mx-3">
+                <CardContent>
+                  <ScrollArea className="w-full h-[350px]  rounded-md border">
+                    <div className="m-3">
+                      <h6>Reviews</h6>
 
-                        <div className="grid gap-2 grid-cols-2 ">
-                          {reviews?.length > 0 ? (
-                            reviews.map((val, index) => (
-                              <div className=" border" key={index}>
-                                <div className="m-3">
-                                  <div className="flex  justify-between items-center">
-                                    <div className="flex gap-3">
-                                      <Avatar>
+                      <div className="grid gap-2 grid-cols-2 ">
+                        {reviews?.length > 0 ? (
+                          reviews.map((val, index) => (
+                            <div className=" border" key={index}>
+                              <div className="m-3">
+                                <div className="flex  justify-between items-center">
+                                  <div className="flex gap-3">
+                                    <Avatar>
+                                      {val?.userId.avatar.avatar_url ? (
                                         <AvatarImage
-                                          src={
-                                            val?.userId.avatar.avatar_url
-                                              ? val?.userId.avatar.avatar_url
-                                              : "https://github.com/shadcn.png"
-                                          }
+                                          src={val?.userId.avatar.avatar_url}
                                           alt="instrutcor profile"
                                         />
-                                      </Avatar>
-                                      <p className="text-black font-medium">
-                                        {val.userId.name}
-                                      </p>
-                                    </div>
-                                    <div>
-                                      <AlertDialog>
-                                        <AlertDialogTrigger asChild>
-                                          {val.userId._id == userId && (
-                                            <Edit
-                                              onClick={() => {
-                                                setReview(val.review);
-                                                setStars(val.stars);
-                                                setValue(val.stars);
-                                              }}
-                                              className="h-3 m-1 cursor-pointer"
-                                            />
-                                          )}
-                                        </AlertDialogTrigger>
-                                        <AlertDialogContent>
-                                          <AlertDialogHeader>
-                                            <AlertDialogTitle>
-                                              Edit your Review
-                                            </AlertDialogTitle>
-                                            <AlertDialogDescription>
-                                              <div className="grid w-full gap-1.5">
-                                                <Rating
-                                                  className="mx-5"
-                                                  name="hover-feedback"
-                                                  value={value}
-                                                  precision={0.5}
-                                                  getLabelText={getLabelText}
-                                                  onChange={(
-                                                    event,
-                                                    newValue
-                                                  ) => {
-                                                    setValue(newValue);
-                                                    setStars(newValue!);
-
-                                                    // handleRating(newValue!)
-                                                  }}
-                                                 
-                                                  emptyIcon={
-                                                    <StarIcon
-                                                      style={{ opacity: 0.55 }}
-                                                      fontSize="inherit"
-                                                    />
-                                                  }
-                                                />
-                                                <Label
-                                                  className={
-                                                    errors.ratingError
-                                                      ? "text-danger"
-                                                      : ""
-                                                  }
-                                                  htmlFor="message-2"
-                                                >
-                                                  Your Message
-                                                </Label>
-                                                <Textarea
-                                                  value={review}
-                                                  onChange={(e) => {
-                                                    if (
-                                                      e.target.value.length < 3
-                                                    ) {
-                                                      setErrors((prev) => ({
-                                                        ...prev,
-                                                        ratingError: true,
-                                                      }));
-                                                    } else {
-                                                      setErrors((prev) => ({
-                                                        ...prev,
-                                                        ratingError: false,
-                                                      }));
-                                                    }
-                                                    setReview(e.target.value);
-                                                  }}
-                                                  placeholder="Type your message here."
-                                                  id="message-2"
-                                                />
-                                                {errors.ratingError ? (
-                                                  <p className="text-sm text-danger text-muted-foreground">
-                                                    Your message will be show to
-                                                    the public.
-                                                  </p>
-                                                ) : (
-                                                  <p className="text-sm text-muted-foreground">
-                                                    Your message will be show to
-                                                    the public.
-                                                  </p>
-                                                )}
-                                              </div>
-                                            </AlertDialogDescription>
-                                          </AlertDialogHeader>
-                                          <AlertDialogFooter>
-                                            <AlertDialogAction
-                                              className="bg-teal-500 hover:bg-teal-500"
-                                              type="button"
-                                            >
-                                              Cancel
-                                            </AlertDialogAction>
-                                            <AlertDialogAction
-                                              onClick={() =>
-                                                handleEditRatings(val._id)
-                                              }
-                                              type="button"
-                                              className="bg-teal-500 hover:bg-teal-500"
-                                            >
-                                              Continue
-                                            </AlertDialogAction>
-                                          </AlertDialogFooter>
-                                        </AlertDialogContent>
-                                      </AlertDialog>
-                                      <AlertDialog>
-                                        <AlertDialogTrigger asChild>
-                                          {val.userId._id == userId && (
-                                            <Trash className="h-3 m-1 cursor-pointer" />
-                                          )}
-                                        </AlertDialogTrigger>
-                                        <AlertDialogContent>
-                                          <AlertDialogHeader>
-                                            <AlertDialogTitle>
-                                              Are you absolutely sure?
-                                            </AlertDialogTitle>
-                                            <AlertDialogDescription>
-                                              This action cannot be undone. This
-                                              will permanently delete this
-                                              review and remove data from our
-                                              servers.
-                                            </AlertDialogDescription>
-                                          </AlertDialogHeader>
-                                          <AlertDialogFooter>
-                                            <AlertDialogAction
-                                              className="bg-teal-500 hover:bg-teal-500"
-                                              type="button"
-                                            >
-                                              Cancel
-                                            </AlertDialogAction>
-                                            <AlertDialogAction
-                                              onClick={() =>
-                                                handleDeleteRating(val._id)
-                                              }
-                                              type="button"
-                                              className="bg-teal-500 hover:bg-teal-500"
-                                            >
-                                              Continue
-                                            </AlertDialogAction>
-                                          </AlertDialogFooter>
-                                        </AlertDialogContent>
-                                      </AlertDialog>
-                                    </div>
-                                  </div>
-                                  <div className="text-sm my-2">
-                                    <div>
-                                      {" "}
-                                      <Rating
-                                        name="customized-10"
-                                        defaultValue={1}
-                                        max={1}
-                                        size="small"
-                                      />{" "}
-                                      {val.stars} {labels[`${val.stars}`]}
-                                    </div>
-                                    {val.review}
-                                  </div>
-                                  <p className="text-black font-medium text-xs">
-                                    {" "}
-                                    {moment(val.updatedAt).calendar()}
-                                  </p>
-                                </div>
-                              </div>
-                            ))
-                          ) : (
-                            <div className=" border">
-                              <div className="m-3">no reviwes</div>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </ScrollArea>
-                  </CardBody>
-                </Card>
-              </Tab>
-              <Tab key="Subscriptions" title="Subscriptions">
-                <Card className="mx-3">
-                  <CardBody>
-                    <ScrollArea>
-                      <div className="relative flex">
-                        <div className="flex  mx-5 my-4 gap-3 m-auto ">
-                          {subscriptions.map((value, index) => (
-                            <div
-                              key={index}
-                              className="border w-full h-[300px] rounded-1"
-                            >
-                              <h4 className=" underline">Personal Plan</h4>
-                              <div className="  m-1">
-                                <div className="flex flex-col items-center justify-center h-[210px]">
-                                  <div>
-                                    {value.plan == "Monthly"
-                                      ? `Rs : ${value.price}/- per Month`
-                                      : `Rs : ${value.price}/- per Year`}
-                                  </div>
-                                  <div className="text-xs">
-                                    {value.plan == "Monthly"
-                                      ? `Billed monthly.`
-                                      : `Billed annually.`}
-                                  </div>
-                                  <div className="space-y-3 m-3">
-                                    {value.description.map((val, index) => (
-                                      <li className="text-xs" key={index}>
-                                        {val}
-                                      </li>
-                                    ))}
-                                  </div>
-                                </div>
-                          
-                               {plans.length>0?(
-                                  (()=>{
-                                    let customerId:string 
-                                    const isSubscribed = subscriptions.some((sub) =>
-                                      plans.some((plan) =>{
-                                         if(sub._id === plan.subscriptionId._id){
-                                          customerId = plan.customerId
-                                           return true
-                                         }
-                                      })
-                                    )
-                                    return(
-                                      isSubscribed?(
-                                        <Button
-                                          type="button"
-                                          onClick={() =>
-                                           goToDetailes(customerId)
-                                          }
-                                          className="w-full"
-                                        >
-                                          View detailes
-                                        </Button>
-                                      ):(
-                                        <Button
-                                            onClick={() => subscribe(value._id)}
-                                            type="button"
-                                            className="w-full bg-teal-500 hover:bg-teal-500 text-white"
-                                          >
-                                            Start Subscription
-                                          </Button>
-                                      )
-                                    )
-                                  })()
-                                ):(
-                                  <>
-                                  {subscriptions.length>0&&
-                                  <div>                                  
-                                      <Button className="w-full" onClick={() => onOpen()}>
-                                        subscribe
-                                      </Button>
-                                  </div>}
-                                  <Drawer isOpen={isOpen} size={"full"} onClose={onClose}>
-                                    <DrawerContent>
-                                      {(onClose) => (
-                                        <>
-                                          <DrawerHeader className="flex flex-col gap-1">
-                                            Instructor subscriptions
-                                          </DrawerHeader>
-                                          <DrawerBody>
-                                            {subscriptions.map((value, index) => (
-                                              <div
-                                                key={index}
-                                                className="border w-25 h-[300px] rounded-1"
-                                              >
-                                                <h4 className=" underline">Personal Plan</h4>
-                                                <div className="  m-1">
-                                                  <div className="flex flex-col items-center justify-center h-[210px]">
-                                                    <div>
-                                                      {value.plan == "Monthly"
-                                                        ? `Rs : ${value.price}/- per Month`
-                                                        : `Rs : ${value.price}/- per Year`}
-                                                    </div>
-                                                    <div className="text-xs">
-                                                      {value.plan == "Monthly"
-                                                        ? `Billed monthly.`
-                                                        : `Billed annually.`}
-                                                    </div>
-                                                    <div className="space-y-3 m-3">
-                                                      {value.description.map((val, index) => (
-                                                        <li className="text-xs" key={index}>
-                                                          {val}
-                                                        </li>
-                                                      ))}
-                                                    </div>
-                                                  </div>
-                                                  <div className="flex items-end ">
-                                                    <Button
-                                                      onClick={() => subscribe(value._id)}
-                                                      type="button"
-                                                      className="w-full bg-teal-500 hover:bg-teal-500 text-white"
-                                                    >
-                                                      Start Subscription
-                                                    </Button>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                            ))}
-                                          </DrawerBody>
-                                          <DrawerFooter>
-                                            <Button
-                                              className="text-danger bg-light"
-                                              onClick={onClose}
-                                            >
-                                              Close
-                                            </Button>
-                                          </DrawerFooter>
-                                        </>
-                                      )}
-                                    </DrawerContent>
-                                  </Drawer>
-                                 </>
-                               )}
-                                {/* {plans.map((plan) => {
-                                  const isSubscribed = subscriptions.some(
-                                    (val) => val._id === plan.subscriptionId._id
-                                  );
-                                  return (
-                                    <div key={plan.subscriptionId._id}>
-                                      {isSubscribed ? (
-                                        <Button
-                                          type="button"
-                                          onClick={() =>
-                                           goToDetailes(plan)
-                                          }
-                                          className="w-full"
-                                        >
-                                          View detailes
-                                        </Button>
                                       ) : (
-                                        <Button
-                                          type="button"
-                                          // onClick={() =>
-                                          //   navigate(
-                                          //     `/users/courseDetailes/${course._id}`
-                                          //   )
-                                          // }
-                                          className="bg-[#49BBBD] text-sm  w-full text-white hover:bg-[#49BBBD]"
-                                        >
-                                         Start subscription
-                                        </Button>
+                                        <i className="bi bi-person-circle text-2xl"></i>
                                       )}
-                                    </div>
-                                  );
-                                })} */}
+                                    </Avatar>
+                                    <p className="text-black font-medium">
+                                      {val.userId.name}
+                                    </p>
+                                  </div>
+                                  <div>
+                                    <AlertDialog>
+                                      <AlertDialogTrigger asChild>
+                                        {val.userId._id == userId && (
+                                          <i
+                                            onClick={() => {
+                                              setReview(val.review);
+                                              setStars(val.stars);
+                                              setValue(val.stars);
+                                            }}
+                                            className="bi bi-pencil-square cursor-pointer"
+                                          ></i>
+                                        )}
+                                      </AlertDialogTrigger>
+                                      <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                          <AlertDialogTitle>
+                                            Edit your Review
+                                          </AlertDialogTitle>
 
+                                          <AlertDialogDescription>
+                                            {[...Array(5)].map((_, index) => {
+                                              const ratingValue = index + 1;
+                                              return (
+                                                <i
+                                                  key={index}
+                                                  className={`bi ${
+                                                    ratingValue <=
+                                                    (value || stars)
+                                                      ? "bi-star-fill"
+                                                      : "bi-star"
+                                                  } mx-1`}
+                                                  style={{
+                                                    fontSize: "1.5rem",
+                                                    color: "#ffc107",
+                                                    opacity:
+                                                      ratingValue <=
+                                                      (value || stars)
+                                                        ? 1
+                                                        : 0.55,
+                                                    cursor: "pointer",
+                                                  }}
+                                                  onClick={() =>
+                                                    setStars(ratingValue)
+                                                  }
+                                                  onMouseEnter={() =>
+                                                    setValue(ratingValue)
+                                                  }
+                                                  onMouseLeave={() =>
+                                                    setValue(0)
+                                                  }
+                                                />
+                                              );
+                                            })}
+
+                                            <Label htmlFor="message-2">
+                                              Your Message
+                                            </Label>
+                                            <Textarea
+                                              value={review}
+                                              onChange={(e) => {
+                                                setReview(e.target.value);
+                                              }}
+                                              placeholder="Type your message here."
+                                              id="message-2"
+                                            />
+                                          </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                          <AlertDialogAction
+                                            className="bg-teal-500 hover:bg-teal-500"
+                                            type="button"
+                                          >
+                                            Cancel
+                                          </AlertDialogAction>
+                                          <AlertDialogAction
+                                            onClick={() =>
+                                              handleEditRatings(val._id)
+                                            }
+                                            disabled={review.length <= 0}
+                                            type="button"
+                                            className="bg-teal-500 hover:bg-teal-500"
+                                          >
+                                            Continue
+                                          </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                      </AlertDialogContent>
+                                    </AlertDialog>
+                                    <AlertDialog>
+                                      <AlertDialogTrigger asChild>
+                                        {val.userId._id == userId && (
+                                          <i className="bi bi-trash-fill cursor-pointer"></i>
+                                        )}
+                                      </AlertDialogTrigger>
+                                      <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                          <AlertDialogTitle>
+                                            Are you absolutely sure?
+                                          </AlertDialogTitle>
+                                          <AlertDialogDescription>
+                                            This action cannot be undone. This
+                                            will permanently delete this review
+                                            and remove data from our servers.
+                                          </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                          <AlertDialogAction
+                                            className="bg-teal-500 hover:bg-teal-500"
+                                            type="button"
+                                          >
+                                            Cancel
+                                          </AlertDialogAction>
+                                          <AlertDialogAction
+                                            onClick={() =>
+                                              handleDeleteRating(val._id)
+                                            }
+                                            type="button"
+                                            className="bg-teal-500 hover:bg-teal-500"
+                                          >
+                                            Continue
+                                          </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                      </AlertDialogContent>
+                                    </AlertDialog>
+                                  </div>
+                                </div>
+                                <div className="text-sm my-2">
+                                  <div>
+                                    {val.stars}
+                                    <i className="bi bi-star-fill text-yellow-600"></i>{" "}
+                                    {labels[`${val.stars}`]}
+                                  </div>
+                                  {val.review}
+                                </div>
+                                <p className="text-black font-medium text-xs">
+                                  {" "}
+                                  {moment(val.updatedAt).calendar()}
+                                </p>
                               </div>
                             </div>
-                          ))}
-                        </div>
+                          ))
+                        ) : (
+                          <div className=" border">
+                            <div className="m-3">no reviwes</div>
+                          </div>
+                        )}
                       </div>
-                      <ScrollBar orientation="horizontal" />
-                    </ScrollArea>
-                  </CardBody>
-                </Card>
-              </Tab>
-            </Tabs>
-          </div>
+                    </div>
+                  </ScrollArea>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            <TabsContent value="Subscriptions">
+              <Card className="mx-3">
+                <CardContent>
+                  <ScrollArea>
+                    <div className="relative flex">
+                      <div className="flex  mx-5 my-4 gap-3 m-auto ">
+                        {subscriptions.map((value, index) => (
+                          <div
+                            key={index}
+                            className="border w-full h-[300px] rounded-1"
+                          >
+                            <h4 className=" underline">Personal Plan</h4>
+                            <div className="  m-1">
+                              <div className="flex flex-col items-center justify-center h-[210px]">
+                                <div>
+                                  {value.plan == "Monthly"
+                                    ? `Rs : ${value.price}/- per Month`
+                                    : `Rs : ${value.price}/- per Year`}
+                                </div>
+                                <div className="text-xs">
+                                  {value.plan == "Monthly"
+                                    ? `Billed monthly.`
+                                    : `Billed annually.`}
+                                </div>
+                                <div className="space-y-3 m-3">
+                                  {value.description.map((val, index) => (
+                                    <li className="text-xs" key={index}>
+                                      {val}
+                                    </li>
+                                  ))}
+                                </div>
+                              </div>
+
+                              {plans.length > 0 ? (
+                                (() => {
+                                  let customerId: string;
+                                  const isSubscribed = subscriptions.some(
+                                    (sub) =>
+                                      plans.some((plan) => {
+                                        if (
+                                          sub._id === plan.subscriptionId._id
+                                        ) {
+                                          customerId = plan.customerId;
+                                          return true;
+                                        }
+                                      })
+                                  );
+                                  return isSubscribed ? (
+                                    <Button
+                                      type="button"
+                                      onClick={() => goToDetailes(customerId)}
+                                      className="w-full"
+                                    >
+                                      View detailes
+                                    </Button>
+                                  ) : (
+                                    <Button
+                                      onClick={() => subscribe(value._id)}
+                                      type="button"
+                                      className="w-full bg-teal-500 hover:bg-teal-500 text-white"
+                                    >
+                                      Start Subscription
+                                    </Button>
+                                  );
+                                })()
+                              ) : (
+                                <>
+                                  <Button
+                                    onClick={() => subscribe(value._id)}
+                                    type="button"
+                                    className="w-full bg-teal-500 hover:bg-teal-500 text-white"
+                                  >
+                                    Start Subscription
+                                  </Button>
+                                </>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <ScrollBar orientation="horizontal" />
+                  </ScrollArea>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
       <Footer />

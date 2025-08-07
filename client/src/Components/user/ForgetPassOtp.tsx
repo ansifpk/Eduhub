@@ -11,8 +11,8 @@ import {
 } from "../ui/card";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import useRequest from "@/hooks/useRequest";
-import userRoutes from "@/service/endPoints/userEndPoints";
+import useRequest from "../../hooks/useRequest";
+import userRoutes from "../../service/endPoints/userEndPoints";
 
 interface ForgetPassOtpProps {
   sucessCheckOTP: React.Dispatch<React.SetStateAction<boolean | null>>;
@@ -28,7 +28,6 @@ const ForgetPassOtp: React.FC<ForgetPassOtpProps> = ({
   const [otp, setOtp] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
   const {doRequest,errors} = useRequest();
 
@@ -58,7 +57,7 @@ const ForgetPassOtp: React.FC<ForgetPassOtpProps> = ({
         body:{email:email.toString(),otp},
         method:"post",
         onSuccess:()=>{
-          setSuccess(true);
+    
           sucessCheckOTP(true);
           setOtp("");
           setIsLoading(false);
@@ -67,11 +66,15 @@ const ForgetPassOtp: React.FC<ForgetPassOtpProps> = ({
   };
 
   const resentOTP = async () => {
+    setIsLoading(true)
     doRequest({
       url:userRoutes.resentOtp,
       body:{email:email.toString()},
       method:"post",
       onSuccess:()=>{
+        setSecond(59);
+        setMinute(1);
+        setIsLoading(false)
         return toast.success("Resnt OTP Sent to Your Mail");
       }
     })
@@ -123,8 +126,8 @@ const ForgetPassOtp: React.FC<ForgetPassOtpProps> = ({
 
             <Button
               type="button"
-              className="w-full"
-              disabled={second > 0 || minutes > 0}
+              className="w-full bg-teal-400 hover:bg-teal-600"
+              disabled={second > 0 || minutes > 0 || isLoading}
               onClick={resentOTP}
             >
               Resent OTP
@@ -132,7 +135,7 @@ const ForgetPassOtp: React.FC<ForgetPassOtpProps> = ({
             </Button>
             <Button
               type="submit"
-              className="w-full"
+              className="w-full bg-teal-400 hover:bg-teal-600"
               disabled={!validateOtp(otp) || isLoading}
             >
               {isLoading ? (

@@ -1,8 +1,8 @@
-import AdminAside from "@/Components/admin/AdminAside";
-import { Card } from "@/Components/ui/card";
+import AdminAside from "../../components/admin/AdminAside";
+import { Card } from "../../components/ui/card";
 import { useEffect, useState } from "react";
-import { Button } from "@/Components/ui/button";
-import { createReport } from "@/Api/admin";
+import { Button } from "../../components/ui/button";
+import { createReport } from "../../Api/admin";
 
 import {
   Table,
@@ -11,7 +11,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/Components/ui/table";
+} from "../../components/ui/table";
 import moment from "moment";
 import {
   Select,
@@ -20,11 +20,11 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/Components/ui/select";
-import { IOrder } from "@/@types/orderTypes";
-import { Label } from "@/Components/ui/label";
-import adminRoutes from "@/service/endPoints/adminEndPoints";
-import useRequest from "@/hooks/useRequest";
+} from "../../components/ui/select";
+import { IOrder } from "../../@types/orderTypes";
+import { Label } from "../../components/ui/label";
+import adminRoutes from "../../service/endPoints/adminEndPoints";
+import useRequest from "../../hooks/useRequest";
 import toast from "react-hot-toast";
 const months = [
   "January",
@@ -81,8 +81,8 @@ const SalesReports = () => {
     <div className="flex gap-2">
       <AdminAside />
       <div className="w-full mr-3">
-        <div className="w-full mx-auto mt-2 rounded-lg p-2  text-white bg-purple-600">
-          <h1>Welcome back, Admin</h1>
+      <div className="w-full mx-auto mt-2 rounded-lg p-5  text-white bg-purple-600">
+          <span className="text-3xl">Welcome back, Admin</span>
         </div>
         <div className="w-full">
           <div className="flex justify-between my-3 ">
@@ -90,7 +90,7 @@ const SalesReports = () => {
               <h1 className="text-lg font-bold"> {report} Report</h1>
               <div className="flex">
                 {report == "Yearly" ? (
-                  <div className="">
+                  <div className="flex gap-5 items-center">
                     <label className="text-sm">Enter a Year</label>
                     <input
                       id="year"
@@ -98,7 +98,7 @@ const SalesReports = () => {
                       type="number"
                       name="year"
                       onChange={(e) => setYear(e.target.value)}
-                      className="form-control"
+                      className="form-control border rounded-lg p-2"
                       min="2023"
                       max="2100"
                     />
@@ -106,7 +106,7 @@ const SalesReports = () => {
                 ) : (
                   <div className="flex gap-3">
                     <div>
-                      <div className="">
+                      <div className=" flex gap-3 items-center">
                         <label className="text-sm">Enter a Year</label>
                         <input
                           id="year"
@@ -114,7 +114,7 @@ const SalesReports = () => {
                           type="number"
                           name="year"
                           onChange={(e) => setYear(e.target.value)}
-                          className="form-control"
+                           className="form-control border rounded-lg p-2"
                           min="2023"
                           max="2100"
                         />

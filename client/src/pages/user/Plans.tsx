@@ -1,11 +1,11 @@
-import { IUserSubscribe } from '@/@types/userSubscribe'
-import { User } from '@/@types/userType'
-import { userPlans, viewDetailes } from '@/Api/user'
-import Footer from '@/Components/Footer/Footer'
-import Header from '@/Components/Header/Header'
-import ProfileNavbar from '@/Components/Header/ProfileNavbar'
-import { Button } from '@/Components/ui/button'
-import { Card, CardContent, CardDescription } from '@/Components/ui/card'
+import { IUserSubscribe } from '../../@types/userSubscribe'
+import { User } from '../../@types/userType'
+import { userPlans, viewDetailes } from '../../Api/user'
+import Footer from '../../components/Footer/Footer'
+import Header from '../../components/Header/Header'
+import ProfileNavbar from '../../components/Header/ProfileNavbar'
+import { Button } from '../../components/ui/button'
+import { Card, CardContent, CardDescription } from '../../components/ui/card'
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useSelector } from 'react-redux'
@@ -100,10 +100,10 @@ const Plans = () => {
           </div>
         ) : (
           <>
-            <div className=" h-full flex justify-center items-center">
+            <div className=" h-full flex justify-center items-center mt-5">
               <Card className="w-1/2 h-[200px] d-flex justify-center items-center">
                 <CardContent className="d-flex items-center">
-                  <CardDescription>No courses available</CardDescription>
+                  <CardDescription>You Dont have any active plans...! </CardDescription>
                 </CardContent>
               </Card>
             </div>

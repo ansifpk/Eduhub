@@ -9,6 +9,7 @@ export function UserRouter(router: Router) {
   router.get(
     "/courses",
     async (req: Request, res: Response, next: NextFunction) => {
+    
       userController.fetchCourses(req, res, next);
     }
   );
@@ -20,8 +21,7 @@ export function UserRouter(router: Router) {
   );
   router.get(
     "/courseDetailes/:courseId",
-    isAuth,
-    
+    // isAuth,
     async (req: Request, res: Response, next: NextFunction) => {
       userController.courseDetailes(req, res, next);
     }
@@ -57,7 +57,7 @@ export function UserRouter(router: Router) {
 
   router.get(
     "/rating/:courseId",
-    isAuth,
+    // isAuth,
     async (req: Request, res: Response, next: NextFunction) => {
       userController.getRatings(req, res, next);
     }
@@ -70,7 +70,7 @@ export function UserRouter(router: Router) {
     }
   );
   router.patch(
-    "/rating",
+    "/rating/:_id",
     isAuth,
     async (req: Request, res: Response, next: NextFunction) => {
       userController.updateRating(req, res, next);
@@ -95,7 +95,7 @@ export function UserRouter(router: Router) {
   );
 
   router.get(
-    "/coupons/:couponCode",
+    "/coupons/:couponCode/:userId",
     isAuth,
     async (req: Request, res: Response, next: NextFunction) => {;
       

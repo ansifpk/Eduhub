@@ -9,8 +9,8 @@ export interface IAdminUseCase{
     getSubscriptions():Promise<ISubcription[]|void>
     deleteSubscription(subscriptionId:string,next:NextFunction):Promise<ISubcription|void>
     editSubscription(subscriptionId:string,price:number,next:NextFunction):Promise<ISubcription|void>
-    getOrders(report:string,year:string,month:string,next:NextFunction):Promise<IOrder[]|void>
-    getOrdersForChart():Promise<IOrder[]|void>
+    getOrders(start:string,end:string,next:NextFunction):Promise<IOrder[]|void>
+    getOrdersForChart(filter:string):Promise<IOrder[]|void>
     createReport(report:string,year:string,month:string,next:NextFunction):Promise<exceljs.Workbook|void>
     
 }

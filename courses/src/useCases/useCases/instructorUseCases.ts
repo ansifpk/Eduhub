@@ -7,7 +7,8 @@ import { ICloudinary } from "../interfaces/service/Icloudinery";
 import { ISection } from "../../entities/section";
 import { ISentEmail } from "../interfaces/service/ISentMail";
 import { ITest } from "../../entities/test";
-import {  NotFoundError, StatusCodes } from "@eduhublearning/common";
+import {  BadRequestError, NotFoundError, StatusCodes } from "@eduhublearning/common";
+import { Iuser } from "../../entities/user";
 interface FileData {
   fieldname: string;
   originalname: string;
@@ -41,6 +42,26 @@ export class InstructorUseCase implements IInstructorUseCase {
     private sendMail: ISentEmail,
     
   ) {}
+  async courseDetailes(courseId: string, next: NextFunction): Promise<ICourse | void> {
+    try {
+      const course = await this.instructorRepository.findById(courseId);
+      if(course){
+        return course;
+      }
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  }
+ async getStudents(instructorId: string, search: string, sort: string,next:NextFunction): Promise<Iuser[] | void> {
+    try {
+      const students = await this.instructorRepository.findStudents(instructorId,search,sort)
+      return students;
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  }
 
  
   async editTest(testId: string, testData: ITest, next: NextFunction): Promise<ITest | void> {
@@ -61,7 +82,7 @@ export class InstructorUseCase implements IInstructorUseCase {
 
  async addTest(courseId: string, testData: ITest, next: NextFunction): Promise<ITest | void> {
     try {
-     
+ 
       const course = await this.instructorRepository.findById(courseId);
       if(!course){
         throw new NotFoundError("Course not Found")
@@ -77,6 +98,18 @@ export class InstructorUseCase implements IInstructorUseCase {
       console.error(error)
     }
   }
+  async testDetailes(testId: string): Promise<ITest | void> {
+    try {
+         
+          const test =  await this.instructorRepository.findTest(testId)
+
+          if(test){
+             return test;
+          }
+    } catch (error) {
+      console.error(error)
+    }
+ }
   async editSection(sectionData: ReqUp, next: NextFunction): Promise<Boolean | void> {
       
       const files = sectionData.fileData as
@@ -175,9 +208,9 @@ export class InstructorUseCase implements IInstructorUseCase {
     console.error(error)
    }
   }
-  async fetchCourses(instructorId: string,search : string,sort:string): Promise<ICourse[] | void> {
+  async fetchCourses(instructorId: string,search : string,sort:string,page:number): Promise<ICourse[] | void> {
       try {
-         const courses = await this.instructorRepository.find(instructorId,search,sort);
+         const courses = await this.instructorRepository.find(instructorId,search,sort,page);
          if(courses){
          
           
@@ -229,7 +262,7 @@ export class InstructorUseCase implements IInstructorUseCase {
     const files = courseData.fileData as
       | { [fieldname: string]: Express.Multer.File[] }
       | undefined;
-     
+
     if(files){
       for(let key in files){
         if(key == "courseImage"){
@@ -244,7 +277,7 @@ export class InstructorUseCase implements IInstructorUseCase {
       }
       //! Adding 10% extra to the instrecture provided amound
       courseData.bodyData.price = courseData.bodyData.price*1 
-      let adminPrice = (courseData.bodyData.price*10/100);
+      let adminPrice = Math.floor(courseData.bodyData.price*10/100);
       courseData.bodyData.price = courseData.bodyData.price + adminPrice
      
       const course = await this.instructorRepository.create(courseData.bodyData)
@@ -298,15 +331,24 @@ export class InstructorUseCase implements IInstructorUseCase {
  
   async listCourse(courseId: string, next: NextFunction): Promise<ICourse | void> {
     
-    const course = await this.instructorRepository.findById(courseId);
-   
-    if(!course){
-      throw new NotFoundError("Course not Found")
-    }
+   try {
+     const course = await this.instructorRepository.findById(courseId);
     
-    const listedCourse = await this.instructorRepository.list(courseId,course.isListed)
-    if(listedCourse){
-       return listedCourse
-    }
+     if(!course){
+       throw new NotFoundError("Course not Found")
+     }
+     if(course.sections.length == 0){
+       throw new BadRequestError("You cannot list this course becouse the video uploading is still processing...")
+     }
+     console.log("ivss");
+     
+     const listedCourse = await this.instructorRepository.list(courseId,course.isListed)
+     if(listedCourse){
+        return listedCourse
+     }
+   } catch (error) {
+    console.error(error)
+    next(error)
+   }
   }
 }

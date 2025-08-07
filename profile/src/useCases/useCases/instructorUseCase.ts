@@ -49,8 +49,9 @@ export class InstructorUseCase implements IInstructorUseCase{
        }
     }
     async register(userData:Req,next:NextFunction): Promise<Iuser | void> {
-        
-        const user = await this.instructorRepository.findByEmail(userData.bodyData.email)
+        try {
+           
+            const user = await this.instructorRepository.findByEmail(userData.bodyData.email)
         if(!user){
             throw new  NotFoundError("user not registered")
             
@@ -96,8 +97,8 @@ export class InstructorUseCase implements IInstructorUseCase{
              }
                 
             }
+        } catch (error) {
+            next(error);
+        }
     }
-
-
-    
 }

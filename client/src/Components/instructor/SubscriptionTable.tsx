@@ -1,4 +1,3 @@
-
 import {
   Table,
   TableBody,
@@ -12,14 +11,16 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
 
 import { useSelector } from "react-redux";
 import { FormEvent, useEffect, useState } from "react";
-import { User } from "@/@types/userType";
-import {  editSubscription, getInstructorSubscriptions } from "@/Api/instructor";
+import { User } from "../../@types/userType";
+import {
+  editSubscription,
+  getInstructorSubscriptions,
+} from "../../Api/instructor";
 import toast from "react-hot-toast";
 import { Separator } from "../ui/separator";
 import { useNavigate } from "react-router-dom";
@@ -31,83 +32,70 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-
-
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "../ui/dialog";
-
-import { Modal ,ModalBody,ModalContent,ModalFooter,ModalHeader,useDisclosure} from "@heroui/react";
-
 import { Label } from "../ui/label";
-import { ISubcription } from "@/@types/subscriptionType";
+import { ISubcription } from "../../@types/subscriptionType";
 import { MoreHorizontal } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from "../ui/sheet";
 
 export function SubscriptionTable() {
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [subscriptions, setSubscriptions] = useState([]);
-  const [search, setSearch] = useState("");
+  // const [search, setSearch] = useState("");
   const [sort, setSort] = useState("");
   const instructorId = useSelector((state: User) => state.id);
-
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [price,setPrice] = useState("")
-  const [subscriptionId,setSubscriptionId] = useState("")
+  const [price, setPrice] = useState("");
+  const [subscriptionId, setSubscriptionId] = useState("");
 
   const navigate = useNavigate();
- 
+
   useEffect(() => {
     const res = async () => {
       const data = await getInstructorSubscriptions(instructorId);
       if (data.success) {
         setSubscriptions(data.subscriptions);
-      }else if(data.status == 403){
-        toast.error("You are blocked by admin")
-        return navigate("/instructor/login")
-      }else{
-        return toast.error(data.response.data.message)
+      } else if (data.status == 403) {
+        toast.error("You are blocked by admin");
+        return navigate("/instructor/login");
+      } else {
+        return toast.error(data.response.data.message);
       }
     };
     res();
   }, [sort]);
-  
-  
-  const handleEdit = async (e:FormEvent<HTMLFormElement>) => {
+
+  const handleEdit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-  
-     
-   const response = await editSubscription(subscriptionId,parseInt(price));
-   if (response.success) {
-    const data = await getInstructorSubscriptions(instructorId);
-    if (data.success) {
-      onClose()
-      setSubscriptions(data.subscriptions);
-      return toast.success("successfully edited.");
-    }else if(data.status == 403){
-      toast.error("You are blocked by admin")
-      return navigate("/instructor/login")
-    }else{
-      return toast.error(data.response.data.message)
+
+    const response = await editSubscription(subscriptionId, parseInt(price));
+    if (response.success) {
+      const data = await getInstructorSubscriptions(instructorId);
+      if (data.success) {
+        setSubscriptions(data.subscriptions);
+        return toast.success("successfully edited.");
+      } else if (data.status == 403) {
+        toast.error("You are blocked by admin");
+        return navigate("/instructor/login");
+      } else {
+        return toast.error(data.response.data.message);
+      }
+    } else if (response.status == 403) {
+      toast.error(response.response.data.message);
+      return navigate("/instructor/login");
+    } else {
+      return toast.error(response.response.data.message);
     }
-     
-   }else if(response.status == 403){
-     toast.error(response.response.data.message);
-    return navigate("/instructor/login")
-   }else {
-     return toast.error(response.response.data.message);
-   }
- };
-  
-  
+  };
+
   return (
     <>
-      <div className="flex items-center justify-between space-y-2 w-full">
+      <div className="flex  items-center justify-between space-y-2 w-full">
         <div>
           <div className="text-white">
             <h2 className="text-2xl font-bold tracking-tight">Welcome back!</h2>
@@ -122,7 +110,7 @@ export function SubscriptionTable() {
               <Input
                 type="search"
                 placeholder="Search..."
-                onChange={(e) => setSearch(e.target.value)}
+                // onChange={(e) => setSearch(e.target.value)}
                 className="md:w-[100px] lg:w-[300px] bg-black text-white"
               />
             </div>
@@ -156,156 +144,40 @@ export function SubscriptionTable() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Price</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Plan</TableHead>
-                <TableHead>Created At</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead className="text-white">Price</TableHead>
+                <TableHead className="text-white">Description</TableHead>
+                <TableHead className="text-white">Plan</TableHead>
+                <TableHead className="text-white">Created At</TableHead>
+                <TableHead className="text-white">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody className="text-white">
               {subscriptions.length > 0 ? (
-                subscriptions.map((val: ISubcription, index) => (
-                  <TableRow key={index}>
+                subscriptions.map((val: ISubcription) => (
+                  <TableRow>
                     <TableCell>{val.price}</TableCell>
                     <TableCell>{val.description.join(",")}</TableCell>
                     <TableCell>{val.plan}</TableCell>
                     <TableCell>{val.createdAt.slice(0, 10)}</TableCell>
                     <TableCell align="center">
-                          <Dialog>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger>
-                                <MoreHorizontal />
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent>
-                                <DropdownMenuItem onClick={() => {
-                                  setPrice(val.price.toString())
-                                  setSubscriptionId(val._id)
-                                  onOpen()
-                                  }}>
-                                  Edit
-                                </DropdownMenuItem>
-
-                                <DropdownMenuSeparator />
-                                <DialogTrigger asChild>
-                                  <DropdownMenuItem>Delete</DropdownMenuItem>
-                                </DialogTrigger>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-
-                            <Modal
-                              isOpen={isOpen}
-                              size={"sm"}
-                              onClose={onClose}
-                            >
-                              <ModalContent>
-                                {(onClose) => (
-                                  <>
-                                    <ModalHeader className="flex flex-col gap-1">
-                                      Edit Subcription
-                                    </ModalHeader>
-                                    <ModalBody>
-                                      <form onSubmit={(e)=>handleEdit(e)}>
-                                        <div className="grid gap-4 py-4">
-                                          <div className="grid grid-cols-4 items-center gap-4">
-                                            <Label
-                                              htmlFor="name"
-                                              className="text-right"
-                                            >
-                                              Price
-                                            </Label>
-                                            <Input
-                                              type="number"
-                                              onChange={(e)=>setPrice(e.target.value)}
-                                              id="name"
-                                              value={price}
-                                              className="col-span-3"
-                                            />
-                                          </div>
-                                          <ModalFooter >
-                                            <Button
-                                              type="submit"
-                                              className="bg-purple-500 hover:bg-purple-500"
-                                              onClick={onClose}
-                                            >
-                                              Save
-                                            </Button>
-                                          </ModalFooter>
-                                        </div>
-                                      </form>
-                                    </ModalBody>
-                                  </>
-                                )}
-                              </ModalContent>
-                            </Modal>
-
-                            <DialogContent>
-                              <DialogHeader>
-                                <DialogTitle>
-                                  Are you absolutely sure?
-                                </DialogTitle>
-                                <DialogDescription>
-                                  Are you absolutly sure you want to Delete this
-                                  coupon? this action cannot be un done.
-                                </DialogDescription>
-                              </DialogHeader>
-                              <DialogFooter>
-                                <DialogClose asChild>
-                                  <Button
-                                    type="button"
-                                    className="bg-black text-white"
-                                  >
-                                    Cancel
-                                  </Button>
-                                </DialogClose>
-                                <DialogClose asChild>
-                                  <Button
-                                    type="button"
-                                    // onClick={() =>
-                                    //   handleSubscription(value._id)
-                                    // }
-                                    className="bg-black text-white"
-                                  >
-                                    Continue
-                                  </Button>
-                                </DialogClose>
-                              </DialogFooter>
-                            </DialogContent>
-
-                            <DialogContent>
-                              <DialogHeader>
-                                <DialogTitle>
-                                  Are you absolutely sure?
-                                </DialogTitle>
-                                <DialogDescription>
-                                  Are you absolutly sure you want to Delee this
-                                  coupon? this action cannot be un done.
-                                </DialogDescription>
-                              </DialogHeader>
-                              <DialogFooter>
-                                <DialogClose asChild>
-                                  <Button
-                                    type="button"
-                                    className="bg-black text-white"
-                                  >
-                                    Cancel
-                                  </Button>
-                                </DialogClose>
-                                <DialogClose asChild>
-                                  <Button
-                                    type="button"
-                                    // onClick={() =>
-                                    //   handleSubscription(value._id)
-                                    // }
-                                    className="bg-black text-white"
-                                  >
-                                    Continue
-                                  </Button>
-                                </DialogClose>
-                              </DialogFooter>
-                            </DialogContent>
-                          </Dialog>
-                        </TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger>
+                          <MoreHorizontal />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                          <DropdownMenuItem
+                          
+                            onClick={() => {
+                              setPrice(val.price.toString());
+                              setSubscriptionId(val._id);
+                              setIsSheetOpen(true)
+                            }}
+                          >
+                            Edit
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
                   </TableRow>
                 ))
               ) : (
@@ -317,6 +189,41 @@ export function SubscriptionTable() {
               )}
             </TableBody>
           </Table>
+          <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+            <SheetContent className="h-screen" side="bottom">
+              <SheetHeader>
+                <SheetTitle>Edit Subscription</SheetTitle>
+                <SheetDescription>
+                  Manage your subscription and payment methods.
+                </SheetDescription>
+              </SheetHeader>
+              <form onSubmit={(e) => handleEdit(e)}>
+                <div className="grid gap-4 py-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="name" className="text-right">
+                      Price
+                    </Label>
+                    <Input
+                      type="number"
+                      onChange={(e) => setPrice(e.target.value)}
+                      id="name"
+                      value={price}
+                      className="col-span-3"
+                    />
+                  </div>
+                  <SheetFooter className="flex justify-center">
+                  <Button
+                    type="submit"
+                    className="bg-purple-500 w-50 cursor-pointer hover:bg-purple-500"
+                  >
+                    Save
+                  </Button>
+                  </SheetFooter>
+                  
+                </div>
+              </form>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </>

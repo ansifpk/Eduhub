@@ -1,8 +1,8 @@
-import { ISubcription } from '@/@types/subscriptionType'
-import { User } from '@/@types/userType'
-import { getSubscriptions, purchaseSubscription } from '@/Api/instructor'
-import { Button } from '@/Components/ui/button'
-import { Separator } from '@/Components/ui/separator'
+import { ISubcription } from '../../@types/subscriptionType'
+import { User } from '../../@types/userType'
+import { getSubscriptions, purchaseSubscription } from '../../Api/instructor'
+import { Button } from '../../components/ui/button'
+import { Separator } from '../../components/ui/separator'
 import { loadStripe } from '@stripe/stripe-js'
 import  { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux'
 const Subscriptions = () => {
     const [subscriptions,setSubscriptions] = useState<ISubcription[]>([]);
     const instructorId  = useSelector((state:User)=>state.id);
+    
     useEffect(()=>{
       const fetching = async () => {
         const response = await getSubscriptions();
@@ -37,7 +38,7 @@ const Subscriptions = () => {
         }
     }
   return (
-    <div className="bg-black h-[100vh]">
+    <div className="bg-black h-screen">
       <div className="hidden space-y-6 p-10 pb-16 md:block">
         <div className="space-y-0.5">
           <h2 className="text-white text-2xl font-bold tracking-tight">Edu Hub</h2>
@@ -48,7 +49,7 @@ const Subscriptions = () => {
         <Separator className="my-6" />
         <div className="flex justify-center lg:flex-row lg:space-x-12 lg:space-y-0">
            {subscriptions.map((value,ind)=>(
-            <div key={ind} className='border w-25 h-[300px] rounded-1' >
+            <div key={ind} className='border w-50 h-[300px] rounded-1' >
                 <h4 className='text-white underline'>Personal Plan</h4>
                 <div className=' text-white m-1'>
                  <div className='flex flex-col items-center justify-center h-[210px]'>

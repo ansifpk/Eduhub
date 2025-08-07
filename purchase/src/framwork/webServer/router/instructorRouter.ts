@@ -31,7 +31,7 @@ export function InstructorRouter(router:Router){
     router.get("/order",async(req,res,next)=>{
         instructorController.getOrders(req,res,next);
     })
-    router.get("/order/:userId",async(req,res,next)=>{
+    router.get("/order/:instructorId/:filter",async(req,res,next)=>{
         instructorController.instructorOrders(req,res,next);
     })
     router.get("/salesReports",async(req,res,next)=>{

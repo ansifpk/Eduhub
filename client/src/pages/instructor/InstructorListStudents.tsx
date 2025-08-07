@@ -1,18 +1,11 @@
-import {  Studentstable } from "@/Components/Studentstable";
-import InstructorAside from "@/Components/instructor/InstructorAside";
-import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
-import { Separator } from "@/Components/ui/separator";
-import { Pagination, Stack } from "@mui/material";
-import { useState } from "react";
+import InstructorAside from "../../components/instructor/InstructorAside";
+import { Studentstable } from "../../components/instructor/Studentstable";
+import { Separator } from "../../components/ui/separator";
 
 export default function InstructorHome() {
-    const [page, setPage] = useState(1);
-    const [totalPage, setTotalPage] = useState(0);
-    const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
-      setPage(value);
-    };
+
   return (
-    <div className="bg-black">
+    <div className="bg-black h-screen" >
       <div className="md:hidden">
         <img
           src="/examples/forms-light.png"
@@ -39,12 +32,7 @@ export default function InstructorHome() {
               Manage your instructor account students and courses.
             </p>
           </div>
-          <div>
-            <Avatar className="h-9 w-9">
-              <AvatarImage src="/avatars/03.png" alt="@shadcn" />
-              <AvatarFallback>SC</AvatarFallback>
-            </Avatar>
-          </div>
+          
         </div>
 
         <Separator className="my-6" />
@@ -53,9 +41,8 @@ export default function InstructorHome() {
             <InstructorAside />
    
           <div className="flex-1 lg:max-w-full ">
-            <div className="space-y-6">
+            <div >
               <Studentstable />
-              
             </div>
           </div>
         </div>

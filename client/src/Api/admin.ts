@@ -1,7 +1,7 @@
-import { loginType } from "@/@types/loginType";
-import ApiGatway from "@/service/axios";
+// import { loginType } from "@/@types/loginType";
+import ApiGatway from "../service/axios";
 
-import adminRoutes from "@/service/endPoints/adminEndPoints";
+import adminRoutes from "../service/endPoints/adminEndPoints";
 
 
 interface ICategory{
@@ -12,14 +12,14 @@ interface ICategory{
 
 }
 
-export const adminLogin = async (loginData:loginType) =>{
-    try {
-        const response = await ApiGatway.post(adminRoutes.login,loginData);       
-        return response.data
-    } catch (error) {
-        return error 
-    }
-}
+// export const adminLogin = async (loginData:loginType) =>{
+//     try {
+//         const response = await ApiGatway.post(adminRoutes.login,loginData);       
+//         return response.data
+//     } catch (error) {
+//         return error 
+//     }
+// }
 
 export const logoutAdmin = async () =>{
     try {

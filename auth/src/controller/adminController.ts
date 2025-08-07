@@ -4,7 +4,6 @@ import kafkaWrapper from "../framework/webServer/config/kafka/kafkaWrapper";
 import { Producer } from "kafkajs";
 import { ForbiddenError, UserBlcokedPublisher } from "@eduhublearning/common";
 
-
 export class AdminController{
     private adminUsecase: IadminUsecase;
     constructor(adminUsecase:IadminUsecase){
@@ -59,10 +58,10 @@ export class AdminController{
         
         
         if(user){
-          await new UserBlcokedPublisher(kafkaWrapper.producer as Producer).produce({
-            _id: user._id!,
-            isBlock: user.isBlock!
-          })
+          // await new UserBlcokedPublisher(kafkaWrapper.producer as Producer).produce({
+          //   _id: user._id!,
+          //   isBlock: user.isBlock!
+          // })
           res.send({success:true,data:user})
         }
        

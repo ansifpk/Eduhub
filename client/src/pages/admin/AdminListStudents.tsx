@@ -1,5 +1,5 @@
-import AdminAside from "@/Components/admin/AdminAside";
-import { Card,  } from "@/Components/ui/card";
+import AdminAside from "../../components/admin/AdminAside";
+import { Card,  } from "../../components/ui/card";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import {
@@ -9,7 +9,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/Components/ui/table";
+} from "../../components/ui/table";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -19,10 +19,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/Components/ui/alert-dialog";
+} from "../../components/ui/alert-dialog";
 import moment from "moment";
-import { IUser } from "@/@types/chatUser";
-import { Input } from "@/Components/ui/input";
+import { IUser } from "../../@types/chatUser";
+import { Input } from "../../components/ui/input";
 import {
   Select,
   SelectContent,
@@ -31,11 +31,11 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/Components/ui/select";
-import { useSocket } from "@/context/socketContext";
-import useRequest from "@/hooks/useRequest";
-import adminRoutes from "@/service/endPoints/adminEndPoints";
-import { Pagination, PaginationContent,  PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/Components/ui/pagination";
+} from "../../components/ui/select";
+import { useSocket } from "../../context/socketContext";
+import useRequest from "../../hooks/useRequest";
+import adminRoutes from "../../service/endPoints/adminEndPoints";
+import { Pagination, PaginationContent,  PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "../../components/ui/pagination";
 
 const AdminListStudents = () => {
   const [student, setStudents] = useState([]);
@@ -103,8 +103,8 @@ const AdminListStudents = () => {
     <div className="flex gap-2">
       <AdminAside />
       <div className="w-full mr-3">
-        <div className="w-full mx-auto mt-2 rounded-lg p-2  text-white bg-purple-600">
-          <h1>Welcome back, Admin</h1>
+        <div className="w-full mx-auto mt-2 rounded-lg p-5   text-white bg-purple-600">
+        <span className="text-3xl">Welcome back, Admin</span>
         </div>
         <div className="w-full">
             <div className="flex justify-between my-3 ">
@@ -150,16 +150,19 @@ const AdminListStudents = () => {
                     student.map((value: IUser, index) => (
                       <TableRow key={index}>
                         <TableCell className="font-medium">
-                          {" "}
+                         {
+                          value.avatar.avatar_url?
                           <img
                             src={
                               value.avatar.avatar_url
-                                ? value.avatar.avatar_url
-                                : "https://github.com/shadcn.png"
                             }
                             alt="Profile Picture"
-                            className="rounded-full"
+                            className="rounded-full w-10"
                           />
+                          :
+                         <i className="bi bi-person-circle text-4xl"></i>
+                         }
+                          
                         </TableCell>
                         <TableCell>{value.name}</TableCell>
                         <TableCell>{value.email}</TableCell>
@@ -228,21 +231,21 @@ const AdminListStudents = () => {
               </Table>
               <div>
               <Pagination>
-                <PaginationContent >
+                <PaginationContent className="gap-5">
                   <PaginationItem>
-                    <PaginationPrevious  onClick={()=>{
-                      if(page>1){
-                        setPage((prev)=>prev-=1)
+                    <PaginationPrevious  onClick={() => {
+                      if (page > 1) {
+                        setPage((prev) => prev -= 1);
                       }
-                    }} className={`text-black ${page>1?"cursor-pointer":""} `} />
+                    } } className={`text-black ${page > 1 ? "cursor-pointer" : ""} `} size={undefined} />
                   </PaginationItem>
                   <PaginationItem>
-                    <PaginationLink className="text-black"  isActive>
+                    <PaginationLink size={undefined} className="text-black"  isActive>
                       {page}
                     </PaginationLink>
                   </PaginationItem>
                   <PaginationItem>
-                    <PaginationNext  onClick={()=>{
+                    <PaginationNext size={undefined}  onClick={()=>{
                        if(page !==totalPage){
                         setPage((prev)=>prev+=1)
                       }

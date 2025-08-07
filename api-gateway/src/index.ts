@@ -14,6 +14,7 @@ const service = {
     message:process.env.MESSAGEURL
 
 }
+
 app.use('/auth',createProxyMiddleware({target:service.auth,changeOrigin:true}))
 app.use('/category',createProxyMiddleware({target:service.category,changeOrigin:true}))
 app.use('/course',createProxyMiddleware({target:service.course,changeOrigin:true}))

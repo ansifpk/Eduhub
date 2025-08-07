@@ -1,11 +1,11 @@
-import AdminAside from "@/Components/admin/AdminAside";
-import { Card, CardContent, CardHeader } from "@/Components/ui/card";
+import AdminAside from "../../components/admin/AdminAside";
+import { Card, CardContent, CardHeader } from "../../components/ui/card";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Input } from "@/Components/ui/input";
-import { Label } from "@/Components/ui/label";
-import { Textarea } from "@/Components/ui/textarea";
-import { Button } from "@/Components/ui/button";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
+import { Textarea } from "../../components/ui/textarea";
+import { Button } from "../../components/ui/button";
 import toast from "react-hot-toast";
 
 import {
@@ -18,9 +18,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/Components/ui/alert-dialog";
-import useRequest from "@/hooks/useRequest";
-import adminRoutes from "@/service/endPoints/adminEndPoints";
+} from "../../components/ui/alert-dialog";
+import useRequest from "../../hooks/useRequest";
+import adminRoutes from "../../service/endPoints/adminEndPoints";
 
 const AdminAddCoupon: React.FC = () => {
   const [title, setTitle] = useState("");
@@ -49,6 +49,8 @@ useEffect(()=>{
   errors?.map((err)=>toast.error(err.message))
 },[errors])
   const handleCoupon = async () => {
+    console.log("ji");
+    
     if (title.length < 3 || title.length > 20) {
       setErrors((prev) => ({
         ...prev,
@@ -136,18 +138,20 @@ useEffect(()=>{
       },
     });
   };
-
+  useEffect(()=>{
+    errors?.map((err)=>toast.error(err.message))
+  },[errors])
   return (
     <div className="flex gap-2">
       <AdminAside />
       <div className="w-full mr-2">
-        <div className="w-full mx-auto mt-2 rounded-lg p-2  text-white bg-purple-600">
-          <h1>Welcome back, Admin</h1>
+      <div className="w-full mx-auto mt-2 rounded-lg p-5  text-white bg-purple-600">
+          <span className="text-3xl">Welcome back, Admin</span>
         </div>
-        <div className="w-full">
+        <div className="w-full flex justify-center">
           <Card>
             <CardHeader>
-              <div className="d-flex justify-content-between">
+              <div className="flex justify-between">
                 <h2 className="text-lg font-semibold">Add New Coupon</h2>
               </div>
             </CardHeader>
@@ -158,7 +162,7 @@ useEffect(()=>{
                     <div>
                       <Label
                         htmlFor="Title"
-                        className={error.title ? "text-danger" : ""}
+                        className={error.title ? "text-red-500" : ""}
                       >
                         Title
                       </Label>
@@ -182,7 +186,7 @@ useEffect(()=>{
                         placeholder="Title"
                       />
                       {error.title ? (
-                        <p className="text-danger font-medium text-xs text-muted-foreground">
+                        <p className="text-red-500 font-medium text-xs ">
                           Title length should be in between 3 and 20.
                         </p>
                       ) : (
@@ -195,7 +199,7 @@ useEffect(()=>{
 
                     <Label
                       htmlFor="Deacription"
-                      className={error.description ? "text-danger" : ""}
+                      className={error.description ? "text-red-500" : ""}
                     >
                       Deacription
                     </Label>
@@ -218,7 +222,7 @@ useEffect(()=>{
                       placeholder="Add your Deacription here."
                     />
                     {error.description ? (
-                      <p className="text-danger font-medium text-xs text-muted-foreground">
+                      <p className="text-red-500 font-medium text-xs ">
                         Description length should be in between 3 and 50.
                       </p>
                     ) : (
@@ -232,7 +236,7 @@ useEffect(()=>{
                     <div className="space-4">
                       <div className="w-full max-w-sm items-center space-x-2">
                         <Label
-                          className={error.offer ? "text-danger" : "text-black"}
+                          className={error.offer ? "text-red-500" : "text-black"}
                         >
                           Offer
                         </Label>
@@ -254,7 +258,7 @@ useEffect(()=>{
                           placeholder="Offer"
                         />
                         {error.offer ? (
-                          <p className="text-danger font-medium text-xs text-muted-foreground">
+                          <p className="text-red-500 font-medium text-xs ">
                             Offer should be in between 20% and 70%.
                           </p>
                         ) : (
@@ -268,7 +272,7 @@ useEffect(()=>{
                         <div className="space-y-1">
                           <Label
                             className={
-                              error.statringDate ? "text-danger " : "text-black"
+                              error.statringDate ? "text-red-500 " : "text-black"
                             }
                           >
                             Starting Date
@@ -277,7 +281,7 @@ useEffect(()=>{
                             value={startingDate}
                             className={
                               error.statringDate
-                                ? "border text-danger border-danger"
+                                ? "border text-red-500 border-red-500"
                                 : "text-black"
                             }
                             type="date"
@@ -295,7 +299,7 @@ useEffect(()=>{
                             <Label
                               className={
                                 error.startingTime
-                                  ? " text-danger "
+                                  ? " text-red-500 "
                                   : " text-black"
                               }
                             >
@@ -304,7 +308,7 @@ useEffect(()=>{
                             <Input
                               className={
                                 error.startingTime
-                                  ? "border border-danger "
+                                  ? "border border-red-500 "
                                   : "border border-black"
                               }
                               type="time"
@@ -323,7 +327,7 @@ useEffect(()=>{
                         <div className="space-y-1">
                           <Label
                             className={
-                              error.expiryDate ? "text-danger " : "text-black"
+                              error.expiryDate ? "text-red-500 " : "text-black"
                             }
                           >
                             Expiring Date
@@ -331,7 +335,7 @@ useEffect(()=>{
                           <Input
                             value={expiryDate}
                             className={
-                              error.expiryDate ? "text-danger " : "text-black"
+                              error.expiryDate ? "text-red-500 " : "text-black"
                             }
                             type="date"
                             onChange={(e) => {
@@ -352,7 +356,7 @@ useEffect(()=>{
                           <div>
                             <Label
                               className={
-                                error.expiryTime ? "text-danger" : "text-black"
+                                error.expiryTime ? "text-red-500" : "text-black"
                               }
                             >
                               Expiring Time
@@ -361,7 +365,7 @@ useEffect(()=>{
                               type="time"
                               className={
                                 error.expiryTime
-                                  ? "border border-danger "
+                                  ? "border border-red-500 "
                                   : "border border-black"
                               }
                               onChange={(e) => {
@@ -380,7 +384,7 @@ useEffect(()=>{
                       <div className="w-full max-w-sm items-center space-x-2">
                         <Label
                           className={
-                            error.couponCode ? "text-danger" : "text-black"
+                            error.couponCode ? "text-red-500" : "text-black"
                           }
                         >
                           coupon code
@@ -403,7 +407,7 @@ useEffect(()=>{
                           placeholder="enter coupon ID"
                         />
                         {error.couponCode ? (
-                          <p className="text-danger font-medium text-xs text-muted-foreground">
+                          <p className="text-red-500 font-medium text-xs ">
                             Coupon ID length should be in between 50 and 10.
                           </p>
                         ) : (
@@ -416,7 +420,7 @@ useEffect(()=>{
                     </div>
                   </div>
                 </div>
-                <div className="d-flex justify-content-center gap-10">
+                <div className="flex justify-center gap-10">
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button className="bg-purple-600 text-white hover:bg-purple-600">

@@ -54,13 +54,10 @@ export const isAdmin = async (req:Request,res:Response,next:NextFunction)=>{
     try {
      
       if(!req.cookies){
-        console.log("1");
         throw new NotAuthorizedError()
         
        } 
       if(!req.cookies.accessAdminToken){
-        console.log("illaa");
-        
         throw new NotAuthorizedError()
    
        } 

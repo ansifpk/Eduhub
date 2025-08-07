@@ -1,14 +1,13 @@
-import { IOrder } from "@/@types/orderTypes";
-import { User } from "@/@types/userType";
-import { createReport, getSalesReports } from "@/Api/instructor";
-import InstructorAside from "@/Components/instructor/InstructorAside"
-import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar"
-import { Button } from "@/Components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Components/ui/card"
-import { Label } from "@/Components/ui/label";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/Components/ui/select";
-import { Separator } from "@/Components/ui/separator"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/Components/ui/table";
+import { IOrder } from "../../@types/orderTypes";
+import { User } from "../../@types/userType";
+import { createReport, getSalesReports } from "../../Api/instructor";
+import InstructorAside from "../../components/instructor/InstructorAside"
+import { Button } from "../../components/ui/button";
+import { Card } from "../../components/ui/card"
+import { Label } from "../../components/ui/label";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select";
+import { Separator } from "../../components/ui/separator"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../components/ui/table";
 import moment from "moment";
 import {useEffect, useState} from 'react';
 import { useSelector } from "react-redux";
@@ -29,7 +28,7 @@ const months = [
   ];
 
 export default function SalesReports() {
-     const [report, setReport] = useState("Yearly");
+      const [report, setReport] = useState("Yearly");
       const [orders, setOrders] = useState([]);
       const date = new Date();
       const [year, setYear] = useState(date.getFullYear().toString());
@@ -43,6 +42,8 @@ export default function SalesReports() {
               year,
               months.indexOf(month)
             );
+            console.log(response);
+            
             if (response.success) {
               setOrders(response.orders);
             }
@@ -79,17 +80,17 @@ export default function SalesReports() {
               <InstructorAside  />
               
        
-          <div className="flex-1 lg:max-w-full">
+          <div className="flex-1 lg:max-w-full h-screen">
           <div className="grid grid-cols-1">
             <div className="d-flex  justify-content-between mb-2">
               <div>
                 <h1 className="text-lg text-white font-bold">
                   {report} Report
                 </h1>
-                <div className="flex gap-3">
+                <div className="flex gap-3 ">
                
                   {report == "Yearly" ? (
-                    <div className="">
+                    <div className="flex gap-5 mb-5 items-center">
                       <label className="text-sm text-white">Enter a Year</label>
                       <input
                         id="year"
@@ -97,7 +98,7 @@ export default function SalesReports() {
                         type="number"
                         name="year"
                         onChange={(e) => setYear(e.target.value)}
-                        className="form-control bg-black text-white"
+                        className="form-control border rounded-lg p-2 bg-black text-white"
                         min="2023"
                         max="2100"
                       />
@@ -105,7 +106,7 @@ export default function SalesReports() {
                   ) : (
                     <div className="flex gap-3">
                       <div>
-                        <div className="text-white">
+                        <div className="flex gap-5 mb-5 items-center text-white">
                           <label className="text-sm">Enter a Year</label>
                           <input
                             id="year"
@@ -113,7 +114,7 @@ export default function SalesReports() {
                             type="number"
                             name="year"
                             onChange={(e) => setYear(e.target.value)}
-                             className="form-control bg-black text-white"
+                             className="form-control p-2 border rounded-lg bg-black text-white"
                             min="2023"
                             max="2100"
                           />

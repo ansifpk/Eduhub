@@ -2,14 +2,14 @@ const userRoutes = {
     
  // auth servic end poin
  signUp:'/auth/user/register',
- login:'/auth/user/login',
+ login:'/auth/auth/user/login',
  googleLogin:'/auth/user/googleLogin',
  verifyOtp:'/auth/user/createUser',
  resentOtp:"/auth/user/resentOtp",
- verifyEmail:"/user/forgetPassword",
- verifyPassOtp:"/user/verifyOtp",
- newPassword:"/user/newPassword",
- resetPassword:"/user/resetPassword",
+ verifyEmail:"/auth/user/forgetPassword",
+ verifyPassOtp:"/auth/user/verifyOtp",
+ newPassword:"/auth/user/newPassword",
+ resetPassword:"/auth/user/resetPassword",
  logout:'/auth/user/logout',
 
  // user servic end points
@@ -28,7 +28,7 @@ const userRoutes = {
 
 
  // purchase
- createOrder:"/purchase/user/createOrder",
+ createOrder:"/profile/user/createOrder",
 
  addToCart:"/profile/user/Cart",
  Cart:"/profile/user/Cart",
@@ -51,7 +51,7 @@ const userRoutes = {
  subscriptions:"/purchase/user/subscription",
  plans:"/purchase/user/subscribe",
  customer:"/purchase/user/customer",
- tocken:"/auth/user/refresh-token",
+ tocken:"/auth/auth/user/refresh-token",
 
 }
 

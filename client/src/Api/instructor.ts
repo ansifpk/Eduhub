@@ -1,6 +1,6 @@
-import ApiGatway from "@/service/axios";
-import instructorRoutes from "@/service/endPoints/instructorEndPoints";
-import imageCompression from 'browser-image-compression'
+import ApiGatway from "../service/axios";
+import instructorRoutes from "../service/endPoints/instructorEndPoints";
+// import imageCompression from 'browser-image-compression'
  
 
 interface Iuser {
@@ -41,13 +41,13 @@ export const register = async (instructorData:Iuser) =>{
         formData.append("certificate",img1.name)
         formData.append("cv",img2.name)
         if (instructorData.certificate.certificate_url instanceof File) {
-            const newCertificate = await imageCompression(instructorData.certificate.certificate_url, { maxSizeMB: 1, maxWidthOrHeight: 800, useWebWorker: true })
+            const newCertificate = instructorData.certificate.certificate_url
             formData.append("certificateImage",newCertificate)
             
           }
           
           if (instructorData.cv.cv_url instanceof File) {
-            const newCv = await imageCompression(instructorData.cv.cv_url, { maxSizeMB: 1, maxWidthOrHeight: 800, useWebWorker: true })
+            const newCv = instructorData.cv.cv_url
 
             formData.append("cvImage",newCv)
           }
@@ -85,7 +85,6 @@ export const createCourse = async (data:object) =>{
     try {
         const response = await ApiGatway.post(instructorRoutes.createCourse,data,{
             headers:{
-
                 'Content-Type':"multipart/form-data"
             }
         });       
@@ -97,8 +96,6 @@ export const createCourse = async (data:object) =>{
 
 export const getCourses = async(instructorId:string,search:string="",sort:string="")=>{
     try {
-        // console.log("",filter,instructorId);
-        
         const response = await ApiGatway.get(`${instructorRoutes.getCourses}?instructorId=${instructorId}&&search=${search}&&sort=${sort}`);
         return response.data;
     } catch (error) {

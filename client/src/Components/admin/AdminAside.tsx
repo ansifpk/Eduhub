@@ -1,10 +1,10 @@
-import { removeUser } from "@/redux/authSlice";
+import { removeUser } from "../../redux/authSlice";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { NavLink } from "react-router-dom";
-import useRequest from "@/hooks/useRequest";
-import adminRoutes from "@/service/endPoints/adminEndPoints";
-import { cn } from "@/lib/utils";
+import useRequest from "../../hooks/useRequest";
+import adminRoutes from "../../service/endPoints/adminEndPoints";
+import { cn } from "../../lib/utils";
 import { buttonVariants } from "../ui/button";
 const arr = [
   {
@@ -82,7 +82,7 @@ const AdminAside = () => {
                 cn(
                   buttonVariants({ variant: "ghost" }),
                   isActive
-                    ? "bg-white hover:bg-white text-black w-75 no-underline"
+                    ? "bg-white hover:bg-white text-black w-50 no-underline"
                     : "hover:bg-transparent hover:underline text-white no-underline",
                   "justify-start mx-1"
                 )

@@ -1,7 +1,7 @@
-import AdminAside from "@/Components/admin/AdminAside";
-import { Card } from "@/Components/ui/card";
+import AdminAside from "../../components/admin/AdminAside";
+import { Card } from "../../components/ui/card";
 import { useEffect, useState } from "react";
-import { Button } from "@/Components/ui/button";
+import { Button } from "../../components/ui/button";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
@@ -11,7 +11,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/Components/ui/table";
+} from "../../components/ui/table";
 import {
   AlertDialogHeader,
   AlertDialogFooter,
@@ -21,10 +21,10 @@ import {
   AlertDialogTitle,
   AlertDialogDescription,
   AlertDialogAction,
-} from "@/Components/ui/alert-dialog";
-import { Badge } from "@/Components/ui/badge";
-import useRequest from "@/hooks/useRequest";
-import adminRoutes from "@/service/endPoints/adminEndPoints";
+} from "../../components/ui/alert-dialog";
+import { Badge } from "../../components/ui/badge";
+import useRequest from "../../hooks/useRequest";
+import adminRoutes from "../../service/endPoints/adminEndPoints";
 
 interface ICategory {
   _id?: string;
@@ -79,12 +79,12 @@ const AdminCategory = () => {
     <div className="flex gap-2">
       <AdminAside />
       <div className="w-full mr-3">
-        <div className="w-full mx-auto mt-2 rounded-lg p-2  text-white bg-purple-600">
-          <h1>Welcome back, Admin</h1>
+      <div className="w-full mx-auto mt-2 rounded-lg p-5  text-white bg-purple-600">
+          <span className="text-3xl">Welcome back, Admin</span>
         </div>
         <div className="w-full">
           <div className="flex justify-between my-3 ">
-            <h1 className="text-lg font-bold">Instructors</h1>
+            <h1 className="text-lg font-bold">Categories</h1>
              <Button onClick={() => navigate("/admin/addCategory")}>
                 Add Category
               </Button>
@@ -116,7 +116,7 @@ const AdminCategory = () => {
                         <TableCell className="text-center space-x-2">
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
-                              <Button className={value.isListed ? "border-success" : "border-danger"} variant="outline" type="button">
+                              <Button className={value.isListed ? "border-green-500" : "border-red-500"} variant="outline" type="button">
                                 {value.isListed ? "UnList" : "List"}
                               </Button>
                             </AlertDialogTrigger>
@@ -153,7 +153,7 @@ const AdminCategory = () => {
                             onClick={() =>
                               navigate(`/admin/editCategory/${value._id}`)
                             }
-                            className=" border-primary"
+                            className=" border-blue-600"
                             variant="outline"
                           >
                             Edit

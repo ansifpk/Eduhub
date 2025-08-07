@@ -42,6 +42,7 @@ export class UserUseCases implements IUserUseCase {
     }
    } catch (error) {
      console.error(error)
+     next(error)
    }
   }
 
@@ -57,6 +58,7 @@ export class UserUseCases implements IUserUseCase {
      }
    } catch (error) {
     console.error(error)
+    next(error)
    }
   }
   
@@ -77,6 +79,7 @@ export class UserUseCases implements IUserUseCase {
        }
     } catch (error) {
       console.error(error)
+      next(error)
     }
   }
   async getRating(instructorId: string, next: NextFunction): Promise<IRating[] | void> {
@@ -93,6 +96,7 @@ export class UserUseCases implements IUserUseCase {
 
     } catch (error) {
       console.error(error)
+      next(error)
     }
   }
   async editRating(ratingId: string, review: string, stars: number, next: NextFunction): Promise<IRating | void> {
@@ -108,6 +112,7 @@ export class UserUseCases implements IUserUseCase {
       } 
     } catch (error) {
       console.error(error)
+      next(error)
     }
   }
   async deleteRating(ratingId: string, next: NextFunction): Promise<IRating | void> {
@@ -123,6 +128,7 @@ export class UserUseCases implements IUserUseCase {
       } 
     } catch (error) {
       console.error(error)
+      next(error)
     }
   }
 
@@ -143,6 +149,7 @@ export class UserUseCases implements IUserUseCase {
       }
     } catch (error) {
       console.error(error);
+      next(error)
     }
   }
 
@@ -167,6 +174,7 @@ export class UserUseCases implements IUserUseCase {
        
       }
       const checkCart = await this.userRepository.findCart(userId);
+      
       if (checkCart) {
         if (checkCart.courses.some((value:ICourse)=>value._id == courseId)) {
          
@@ -191,6 +199,7 @@ export class UserUseCases implements IUserUseCase {
       }
     } catch (error) {
       console.error(error);
+      next(error)
     }
   }
   //cart
@@ -238,6 +247,7 @@ export class UserUseCases implements IUserUseCase {
       }
     } catch (error) {
       console.error(error);
+      next(error)
     }
   }
 
@@ -257,6 +267,7 @@ export class UserUseCases implements IUserUseCase {
 
     } catch (error) {
       console.error(error);
+      next(error)
     }
   }
 }

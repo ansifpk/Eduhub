@@ -29,7 +29,7 @@ export class UseruseCase implements IUserUseCase{
         const user  = await this.userRepository.findUserById(recipientId);
 
         if(!user){
-            throw new   NotFoundError("User Not Found")
+            throw new NotFoundError("User Not Found")
         }
         const notifications = await this.userRepository.findAllNotification(recipientId);
         if(notifications){
@@ -37,6 +37,7 @@ export class UseruseCase implements IUserUseCase{
         }
      } catch (error) {
          console.error(error)
+         next(error)
      }
     }
     async createNotifications(recipientId: string, senderId: string, next: NextFunction): Promise<INotification | void> {
@@ -47,7 +48,7 @@ export class UseruseCase implements IUserUseCase{
             }
             const user2  = await this.userRepository.findUserById(senderId);
             if(!user2){
-               throw new   NotFoundError("User Not Found")
+               throw new NotFoundError("User Not Found")
             }
             const notifications = await this.userRepository.createNotification(recipientId,senderId);
             if(notifications){
@@ -55,6 +56,7 @@ export class UseruseCase implements IUserUseCase{
             }
          } catch (error) {
              console.error(error)
+             next(error)
          }
     }
  
@@ -82,6 +84,7 @@ export class UseruseCase implements IUserUseCase{
 
         } catch (error) {
             console.error(error)
+            next(error)
         }
     }
     async fetchChats(userId: string,next:NextFunction): Promise<IChat[] | void> {
@@ -89,21 +92,21 @@ export class UseruseCase implements IUserUseCase{
            const user  = await this.userRepository.findUserById(userId);
            const userChats = await this.userRepository.find(userId)
            if(!user){
-              throw new   NotFoundError("User Not Found")
+              throw new NotFoundError("User Not Found")
            }
            if(userChats){
             return userChats;
            }
         } catch (error) {
             console.error(error)
+            next(error)
         }
     }
     async privetChat(chatId:string,next:NextFunction): Promise<IChat | void> {
         try {
      
            const chat = await this.userRepository.findChatById(chatId);
-           console.log("bur",chat,chatId);
-           
+         
            if(!chat){
 
             throw new NotFoundError("Chat Not Found")
@@ -115,6 +118,7 @@ export class UseruseCase implements IUserUseCase{
     
         } catch (error) {
             console.error(error)
+            next(error)
         }
     }
 
@@ -122,9 +126,7 @@ export class UseruseCase implements IUserUseCase{
 
     async fetchMessages(chatId: string): Promise<IMessage[] | void> {
         try {
-           const messages = await this.userRepository.findAllMessages(chatId);
-           
-            
+           const messages = await this.userRepository.findAllMessages(chatId);  
            if(messages){
             return messages
            }

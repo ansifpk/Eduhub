@@ -50,6 +50,7 @@ export class UserUseCase implements IUserUseCase{
        }
    } catch (error) {
       console.error(error)
+      next(error)
      }
    }
 
@@ -63,6 +64,7 @@ export class UserUseCase implements IUserUseCase{
          }
          } catch (error) {
             console.error(error)
+            next(error)
          }
    }
   async submitTest(userId:string,testId: string,mark:number,next: NextFunction): Promise<ITest | void> {
@@ -77,6 +79,7 @@ export class UserUseCase implements IUserUseCase{
          
          } catch (error) {
             console.error(error)
+            next(error)
          }
    }
    
@@ -93,6 +96,7 @@ export class UserUseCase implements IUserUseCase{
       }
       } catch (error) {
          console.error(error)
+         next(error)
       }
    }
 
@@ -114,22 +118,33 @@ export class UserUseCase implements IUserUseCase{
       }
    }
 
-   async couponDetailes(couponCode: string, next: NextFunction): Promise<ICoupon | void> {
+   async couponDetailes(couponCode: string,userId:string, next: NextFunction): Promise<ICoupon | void> {
 
-      const coupons  = await this.userRepository.findByCouponCode(couponCode);
-      console.log();
+     try {
+       const today = new Date();
+       const coupons  = await this.userRepository.findByCouponCode(couponCode);
+
       
-      if(coupons){
-
-         //* return the coupon detailes
-          return coupons
-
-      }else{
-
-         //! coupon not fund error
-
-         throw new NotFoundError("Invalid coupon code.")
-      }
+       if(!coupons){
+          //! coupon not fund error
+          throw new BadRequestError("Invalid coupon code!.")
+         }
+         
+       if(coupons.users.includes(userId)){
+         throw new BadRequestError("Already used this coupon code!.")
+       }
+      
+       if(new Date(coupons.expiryDate)<today ){
+         throw new BadRequestError("Coupon expired!.")
+       }
+       
+       if(coupons){
+          //* return the coupon detailes
+           return coupons
+       }
+     } catch (error) {
+      next(error);
+     }
    }
 
     //TODO Ratings
@@ -148,6 +163,7 @@ export class UserUseCase implements IUserUseCase{
 
      } catch (error) {
       console.error(error)
+      next(error)
      }
    }
 
@@ -155,13 +171,14 @@ export class UserUseCase implements IUserUseCase{
       try {
           const rating = await this.userRepository.findRating(ratingId);
           if(!rating){
-            throw new NotFoundError("Rating not Found")
+            throw new BadRequestError("Rating not Found")
           }
           const updatedRating = await this.userRepository.editRating(ratingId,review,stars);
           if(updatedRating){
             return updatedRating;
           }
       } catch (error) {
+         next(error)
          console.error(error)
       }
    }
@@ -170,7 +187,7 @@ export class UserUseCase implements IUserUseCase{
       try {
          const course = await this.userRepository.findById(courseId);
          if(!course){
-            throw new NotFoundError("Course not Found")
+            throw new BadRequestError("Course not Found")
          }
          const ratings = await this.userRepository.ratings(courseId);
          if(ratings){
@@ -178,6 +195,7 @@ export class UserUseCase implements IUserUseCase{
          }
       } catch (error) {
          console.error(error)
+         next(error)
       }
    }
 
@@ -199,6 +217,7 @@ export class UserUseCase implements IUserUseCase{
             }
       } catch (error) {
         console.error(error)
+        next(error)
       }
    }
 
@@ -212,6 +231,7 @@ export class UserUseCase implements IUserUseCase{
          }
        } catch (error) {
         console.error(error)
+        
        }
     }
 
@@ -229,22 +249,23 @@ export class UserUseCase implements IUserUseCase{
     async fetchCourses(category:string,topic:string,level:string,search:string, sort : string,page:number): Promise<{courses:ICourse[],pages:number}|void> {
         try {
            
-    
+         
+          
           const count = await this.userRepository.getPages( 
             search,
             category,
             level,
             topic,
             sort);
-            console.log(count);
+           
             const pages = count as number 
             const courses = await this.userRepository.find({
-                page:page,
                 search,
                 category,
                 level,
                 topic,
-                sort
+                sort,
+                page
             })
             if(courses && pages>=0) {
                return {courses,pages}

@@ -15,7 +15,7 @@ import { UserProfileUpdatedConsumer } from './framework/webServer/config/kafka/c
 // import { errMiddleware } from '@eduhublearning/common';
 import { Server, Socket } from 'socket.io';
 import {createServer} from 'http';
-import { errorHandler } from '@eduhublearning/common';
+import { errorHandler, NotFoundError } from '@eduhublearning/common';
 
 dotenv.config();
 const app = express()
@@ -40,12 +40,17 @@ UserRoute(userRouter);
 AdminRoute(adminRouter);
 InstructorRouter(instructorRouter);
 
-
+app.use((req,res,next)=>{
+    console.log("jiji")
+    next()
+})
 // Apply the separate routers to different paths
 app.use('/auth/user',userRouter);
 app.use('/auth/admin',adminRouter);
 app.use('/auth/instructor',instructorRouter);
-
+app.use("*",(req,res)=>{
+     throw new NotFoundError("Path Not Found.") 
+})
 app.use(errorHandler as any)
 
 let onlineUsers:{userId:string,socketId:string}[] = [];
@@ -53,7 +58,6 @@ let onlineUsers:{userId:string,socketId:string}[] = [];
 const io = new Server(httpServer,{
     cors:{
         origin: ['http://client-srv:5173', 'http://localhost:5173',"https://www.eduhublearning.online"],
-        methods: ["*"],
         credentials:true
     },
       path: '/auth/socket.io',
@@ -87,17 +91,17 @@ const io = new Server(httpServer,{
 const start = async () => {
     try {
         
-        await kafkaWrapper.connect();
-        const consumer = await kafkaWrapper.createConsumer("auth-instructor-aproved-group")
-        const consumer2 = await kafkaWrapper.createConsumer("auth-profile-updated-group")
-        const consumer3 = await kafkaWrapper.createConsumer("email-changed-group")
-        consumer.connect()
-        consumer2.connect()
-        consumer3.connect()
+        // await kafkaWrapper.connect();
+        // const consumer = await kafkaWrapper.createConsumer("auth-instructor-aproved-group")
+        // const consumer2 = await kafkaWrapper.createConsumer("auth-profile-updated-group")
+        // const consumer3 = await kafkaWrapper.createConsumer("email-changed-group")
+        // consumer.connect()
+        // consumer2.connect()
+        // consumer3.connect()
 
-        await new InstructorAprovedConsumer(consumer).listen()
-        await new UserProfileUpdatedConsumer(consumer2).listen()
-        await new EmailChangedConsumer(consumer3).listen()
+        // await new InstructorAprovedConsumer(consumer).listen()
+        // await new UserProfileUpdatedConsumer(consumer2).listen()
+        // await new EmailChangedConsumer(consumer3).listen()
 
         await connectDB();
         httpServer.listen(process.env.PORT, () => console.log(`the server is running in http://localhost:${process.env.PORT}/auth for auth`))

@@ -1,5 +1,5 @@
-import AdminAside from "@/Components/admin/AdminAside";
-import { Card } from "@/Components/ui/card";
+import AdminAside from "../../components/admin/AdminAside";
+import { Card } from "../../components/ui/card";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import {
@@ -9,8 +9,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/Components/ui/table";
-import { Button } from "@/Components/ui/button";
+} from "../../components/ui/table";
+import { Button } from "../../components/ui/button";
 import { useNavigate } from "react-router-dom";
 import {
   AlertDialog,
@@ -21,10 +21,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/Components/ui/alert-dialog";
+} from "../../components/ui/alert-dialog";
 import { useSelector } from "react-redux";
-import { IUser } from "@/@types/chatUser";
-import { User } from "@/@types/userType";
+import { IUser } from "../../@types/chatUser";
+import { User } from "../../@types/userType";
 import {
   Select,
   SelectContent,
@@ -33,11 +33,11 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/Components/ui/select";
-import { Input } from "@/Components/ui/input";
-import { useSocket } from "@/context/socketContext";
-import useRequest from "@/hooks/useRequest";
-import adminRoutes from "@/service/endPoints/adminEndPoints";
+} from "../../components/ui/select";
+import { Input } from "../../components/ui/input";
+import { useSocket } from "../../context/socketContext";
+import useRequest from "../../hooks/useRequest";
+import adminRoutes from "../../service/endPoints/adminEndPoints";
 import {
   Pagination,
   PaginationContent,
@@ -45,7 +45,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/Components/ui/pagination";
+} from "../../components/ui/pagination";
 
 const AdminListInstructors = () => {
   const [instructor, setInstructors] = useState([]);
@@ -158,11 +158,11 @@ const AdminListInstructors = () => {
     <div className="flex gap-2">
       <AdminAside />
       <div className="w-full mr-3">
-        <div className="w-full mx-auto mt-2 rounded-lg p-2  text-white bg-purple-600">
-          <h1>Welcome back, Admin</h1>
+      <div className="w-full mx-auto mt-2 rounded-lg p-5  text-white bg-purple-600">
+          <span className="text-3xl">Welcome back, Admin</span>
         </div>
         <div className="w-full">
-          <div className="flex justify-between my-3 ">
+          <div className="flex justify-between my-3">
             <h1 className="text-lg font-bold">Instructors</h1>
             <div className="flex">
               <Input
@@ -218,16 +218,18 @@ const AdminListInstructors = () => {
                   instructor.map((value: IUser, index) => (
                     <TableRow key={index}>
                       <TableCell className="font-medium">
-                        {" "}
-                        <img
-                          src={
-                            value.avatar.avatar_url
-                              ? value.avatar.avatar_url
-                              : "https://github.com/shadcn.png"
-                          }
-                          alt="Profile Picture"
-                          className="rounded-full w-10 h-10"
-                        />
+                      {
+                          value.avatar.avatar_url?
+                          <img
+                            src={
+                              value.avatar.avatar_url
+                            }
+                            alt="Profile Picture"
+                            className="rounded-full w-10"
+                          />
+                          :
+                         <i className="bi bi-person-circle text-4xl"></i>
+                         }
                       </TableCell>
                       <TableCell>{value.name}</TableCell>
                       <TableCell>{value.email}</TableCell>
@@ -244,7 +246,7 @@ const AdminListInstructors = () => {
                           <AlertDialogTrigger asChild>
                             <Button
                               className={`rounded-full ${
-                                value.isBlock ? "bg-danger" : "bg-success-500"
+                                value.isBlock ? "bg-red-500" : "bg-green-500"
                               }`}
                             >
                               {value.isBlock ? "UnBlock" : "BLock"}
@@ -296,23 +298,22 @@ const AdminListInstructors = () => {
                 <PaginationContent>
                   <PaginationItem>
                     <PaginationPrevious
+                    
                       onClick={() => {
                         if (page > 1) {
                           setPage((prev) => (prev -= 1));
                         }
-                      }}
-                      className={`text-black ${
-                        page > 1 ? "cursor-pointer" : ""
-                      } `}
-                    />
+                      } }
+                      className={`text-black ${page > 1 ? "cursor-pointer" : ""} `} size={undefined}                    />
                   </PaginationItem>
                   <PaginationItem>
-                    <PaginationLink className="text-black" isActive>
+                    <PaginationLink size={undefined} className="text-black" isActive>
                       {page}
                     </PaginationLink>
                   </PaginationItem>
                   <PaginationItem>
                     <PaginationNext
+                    size={undefined}
                       onClick={() => {
                         if (page !== totalPage) {
                           setPage((prev) => (prev += 1));

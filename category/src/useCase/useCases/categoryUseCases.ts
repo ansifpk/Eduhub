@@ -18,36 +18,25 @@ export class CategoryUseCase implements ICategoryUserCase {
       const currentCategory = await this.categoryRepository.findById(
         categoryId
       );
-      if (currentCategory) {
-        const checkCategory = await this.categoryRepository.findOne(title);
-        if (checkCategory) {
-          if (
-            checkCategory._id?.toString() === currentCategory._id?.toString()
-          ) {
-            const updatedCategory = await this.categoryRepository.update(
+   
+      if(!currentCategory){
+         throw new  NotFoundError("Category Not Fount")
+      }
+      const checkCategory = await this.categoryRepository.findOne(title);
+
+      if(checkCategory && checkCategory._id?.toString() !== currentCategory._id?.toString()){
+          throw new  BadRequestError("This Category Already Exists")
+      }
+      console.log("add akkam");
+       const updatedCategory = await this.categoryRepository.update(
               categoryId,
               title,
               description,
               topics
             );
             return updatedCategory;
-          } else {
-           throw new  BadRequestError("This Category Already Exists")
-           
-          }
-        } else {
-          const updatedCategory = await this.categoryRepository.update(
-            categoryId,
-            title,
-            description,
-            topics
-          );
-          return updatedCategory;
-        }
-      } else {
-        throw new  NotFoundError("Category Not Fount")
-        
-      }
+   
+   
     } catch (error) {
       console.error(error);
       next(error)

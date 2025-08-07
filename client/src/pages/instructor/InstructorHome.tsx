@@ -1,20 +1,22 @@
-import { ICourse } from "@/@types/courseType";
-import { IRating } from "@/@types/ratingType";
-import { User } from "@/@types/userType";
-import { getRecentRatings, getTop5Courses, getTop5RatedCourses } from "@/Api/instructor";
-import  Chart  from "@/Components/instructor/Chart";
-import InstructorAside from "@/Components/instructor/InstructorAside";
+import { ICourse } from "../../@types/courseType";
+import { IRating } from "../../@types/ratingType";
+import { User } from "../../@types/userType";
+import { getRecentRatings, getTop5Courses, getTop5RatedCourses } from "../../Api/instructor";
+import  Chart  from "../../components/instructor/Chart";
+// import InstructorAside from "../../components/instructor/InstructorAside";
 import {
   Card,
   CardContent,
   CardHeader,
   
-} from "@/Components/ui/card";
-import { Separator } from "@/Components/ui/separator";
-import { Rating } from "@mui/material";
+} from "../../components/ui/card";
+import { Separator } from "../../components/ui/separator";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
+import InstructorAside from "../../components/instructor/InstructorAside";
+import useRequest from "../../hooks/useRequest";
+import instructorRoutes from "../../service/endPoints/instructorEndPoints";
 
 export default function InstructorHome() {
 
@@ -35,27 +37,39 @@ export default function InstructorHome() {
   const [topCourses, setTopCourses] = useState<ICourse[]>([]);
   const [ratings, setRatings] = useState<IRating[]>([]);
   const userId = useSelector((state: User) => state.id);
+  const {doRequest,errors} = useRequest();
+
+  useEffect(()=>{
+    errors?.map((err)=>toast.error(err.message))
+  },[errors]);
 
   useEffect(() => {
-    const fetching = async () => {
-      const response = await getTop5Courses(userId);
-      if(response.success){
+     doRequest({
+      url:`${instructorRoutes.top5Courses}/${userId}`,
+      method:"get",
+      body:{},
+      onSuccess:(response)=>{
         setCourses(response.courses)
-      }else{
-         return toast.error(response.response.data.message);
       }
-      const data = await getTop5RatedCourses(userId);
-      if (data.success) {
-        setTopCourses(data.courses);
+     })
+     doRequest({
+      url:`${instructorRoutes.top5RatedCourses}/${userId}`,
+      method:"get",
+      body:{},
+      onSuccess:(response)=>{
+        console.log(response);
+        
+        // setTopCourses(response.courses);
       }
-      const res = await getRecentRatings(userId);
-      if (res.success) {
-        setRatings(res.ratings);
+     });
+     doRequest({
+      url:`${instructorRoutes.ratings}/${userId}`,
+      method:"get",
+      body:{},
+      onSuccess:(response)=>{
+        setRatings(response.ratings);
       }
-     
-    };
-
-    fetching();
+     });
   }, []);
  
 
@@ -101,12 +115,7 @@ export default function InstructorHome() {
                               <div className="text-xs ">
                                 <div className="text-xs">
                                
-                                  <Rating
-                                    name="customized-10"
-                                    defaultValue={1}
-                                    max={1}
-                                    size="small"
-                                  />{" "}
+                         
                                   {review.stars} {labels[`${review.stars}`]}
                                 </div>
                                 {review.review}

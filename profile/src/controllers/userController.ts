@@ -26,10 +26,10 @@ export class UserController{
         const {name,thumbnail,aboutMe} = req.body;
          const userProfile =  await this.userUseCase.editProfile(userId,name,thumbnail,aboutMe,next)
          if(userProfile){
-            await new  UserProfileUpdatedPublisher(kafkaWrapper.producer as Producer).produce({
-               _id: userProfile._id,
-               name: userProfile.name
-            })
+            // await new  UserProfileUpdatedPublisher(kafkaWrapper.producer as Producer).produce({
+            //    _id: userProfile._id,
+            //    name: userProfile.name
+            // })
             res.send({success:true,user:userProfile})
          }
     }
@@ -46,15 +46,17 @@ export class UserController{
         const {courseId,userId} = req.params;
          const cart =  await this.userUseCase.removeFromCart(courseId,userId,next)
          if(cart){
-            return res.send({success:true,cart:cart})
+            const cartTotal = cart.courses.reduce((acc,cur)=>acc+cur.price,0)
+            return res.send({success:true,cart:cart,cartTotal})
          }
     }
 
     async Cart(req:Request,res:Response,next:NextFunction){
         const {userId} = req.params;
-         const cart =  await this.userUseCase.Cart(userId,next)
+         const cart =  await this.userUseCase.Cart(userId,next);
          if(cart){
-            return res.send({success:true,cart:cart})
+            const cartTotal = cart.courses.reduce((acc,cur)=>acc+cur.price,0)
+            return res.send({success:true,cart:cart,cartTotal})
          }
     }
 

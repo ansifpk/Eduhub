@@ -44,31 +44,38 @@ export class InstructorUseCase implements IInstructorInterface{
     }
    
     async editProfile(instructorId: string, email: string, name: string, next: NextFunction): Promise<Iuser | void> {
-       const currentUser = await this.instructorRepository.findById(instructorId)
-       if(currentUser){
-          const checkUser = await this.instructorRepository.findByEmail(email)
-          if(checkUser){
-              if(checkUser._id?.toString() === currentUser._id?.toString()){
-                 const updatedUser = await this.instructorRepository.update(instructorId,email,name)
-                 return updatedUser;
-              }else{
-                throw new BadRequestError( "Email Already Registered")
-                // return next(new ErrorHandler(StatusCodes.CONFLICT,"Email Already Registered"))
-              }
-          }else{
-            const updatedUser = await this.instructorRepository.update(instructorId,email,name)
-            return updatedUser;
-        }
-       }else{
-        throw new BadRequestError("User Not Fount" )
-        // return next(new ErrorHandler(StatusCodes.NOT_FOUND,"User Not Fount"))
-       }
+      try {
+         const currentUser = await this.instructorRepository.findById(instructorId)
+         if(currentUser){
+            const checkUser = await this.instructorRepository.findByEmail(email)
+            if(checkUser){
+                if(checkUser._id?.toString() === currentUser._id?.toString()){
+                   const updatedUser = await this.instructorRepository.update(instructorId,email,name)
+                   return updatedUser;
+                }else{
+                  throw new BadRequestError( "Email Already Registered")
+                  // return next(new ErrorHandler(StatusCodes.CONFLICT,"Email Already Registered"))
+                }
+            }else{
+              const updatedUser = await this.instructorRepository.update(instructorId,email,name)
+              return updatedUser;
+          }
+         }else{
+          throw new BadRequestError("User Not Fount" )
+          // return next(new ErrorHandler(StatusCodes.NOT_FOUND,"User Not Fount"))
+         }
+      } catch (error) {
+        next(error)
+      }
     }
 
     async instructorLogin(email: string, password: string, next: NextFunction): Promise<{ instructor: Iuser; token: IToken; } | void> {
        try {
         const instructor = await this.instructorRepository.findByEmail(email);
         if(instructor){
+           if(instructor.isBlock){
+             throw new ForbiddenError();
+           }
            const hashPassword = await this.encrypt.comparePassword(password,instructor.password)
            if(hashPassword){
               if(instructor.isInstructor){

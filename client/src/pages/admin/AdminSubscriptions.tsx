@@ -1,7 +1,7 @@
-import { Card, CardHeader } from "@/Components/ui/card";
-import AdminAside from "../../Components/admin/AdminAside";
+import { Card, CardContent, CardHeader } from "../../components/ui/card";
+import AdminAside from "../../components/admin/AdminAside";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/Components/ui/button";
+import { Button } from "../../components/ui/button";
 import {
   Table,
   TableBody,
@@ -9,94 +9,119 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/Components/ui/table";
+} from "../../components/ui/table";
 import { FormEvent, useEffect, useState } from "react";
-import { ISubcription } from "@/@types/subscriptionType";
-import { deleteSubscription, editSubscription, getSubscriptions } from "@/Api/admin";
+import { ISubcription } from "../../@types/subscriptionType";
+import {
+  getSubscriptions,
+} from "../../Api/admin";
 import { MoreHorizontal } from "lucide-react";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from "@/Components/ui/dialog";
+  
+} from "../../components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/Components/ui/dropdown-menu";
+} from "../../components/ui/dropdown-menu";
 import toast from "react-hot-toast";
-import { Modal,ModalBody,ModalContent ,ModalFooter,ModalHeader,useDisclosure} from "@heroui/react";
-import { Input } from "@/Components/ui/input";
-import { Label } from "@/Components/ui/label";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../../components/ui/alert-dialog";
+import useRequest from "../../hooks/useRequest";
+import adminRoutes from "../../service/endPoints/adminEndPoints";
 
 const AdminSubscriptions = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [price,setPrice] = useState("")
-  const [subscriptionId,setSubscriptionId] = useState("")
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [price, setPrice] = useState("");
+  const {doRequest,errors} = useRequest();
+  
+  const [subscriptionId, setSubscriptionId] = useState("");
   const navigate = useNavigate();
   const [subscriptions, setSubscriptions] = useState<ISubcription[]>([]);
   useEffect(() => {
-    const fetch = async () => {
-      const response = await getSubscriptions();
-      if (response.success) {
+    doRequest({
+      url:adminRoutes.subscription,
+      body:{},
+      method:"get",
+      onSuccess:(response)=>{
         setSubscriptions(response.subscriptions);
       }
-    };
-    fetch();
+    });
   }, []);
 
-  const handleSubscription = async (subscriptionId: string) => {
-    const response = await deleteSubscription(subscriptionId);
-    if (response.success) {
-      const respo = await getSubscriptions();
-      setSubscriptions(respo.subscriptions);
-      return toast.success("successfully deleted.");
-    } else {
-      return toast.error(response.response.data.message);
-    }
+  const handleSubscription = async () => {
+    
+    doRequest({
+      url:`${adminRoutes.subscription}/${subscriptionId}`,
+      body:{},
+      method:"delete",
+      onSuccess:()=>{
+        setSubscriptions(subscriptions.filter((sub)=>sub._id !== subscriptionId));
+        return toast.success("successfully deleted.");
+      }
+    });
   };
+   
+  useEffect(()=>{
+    errors?.map((err)=>toast.error(err.message))
+  },[errors]);
 
-  const handleEdit = async (e:FormEvent<HTMLFormElement>) => {
-     e.preventDefault();
-
-    const response = await editSubscription(subscriptionId,parseInt(price));
-    if (response.success) {
-      const respo = await getSubscriptions();
-      setSubscriptions(respo.subscriptions);
-      onClose()
-      return toast.success("successfully edited.");
-    } else {
-      return toast.error(response.response.data.message);
-    }
+  const handleEdit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    doRequest({
+      url:`${adminRoutes.subscription}/${subscriptionId}`,
+      body:{price},
+      method:"patch",
+      onSuccess:async(response)=>{
+        console.log(response,"responseresponseresponse");
+        const respo = await getSubscriptions();
+        setSubscriptions(respo.subscriptions);
+        return toast.success("successfully edited.");
+      }
+    });
   };
 
   return (
-    <div className="container-fluid ">
-      <div className="row">
-        <AdminAside />
-        <div className="col-md-10">
-          <div className="welcome mt-4 mb-4 bg-purple-600">
-            <h1>Welcome back, Admin</h1>
-          </div>
+    <div className="flex gap-3">
+      <AdminAside />
+      <div className="w-full mr-3">
+        <div className="w-full mx-auto mt-2 rounded-lg p-5  text-white bg-purple-600">
+          <span className="text-3xl">Welcome back, Admin</span>
+        </div>
+        <div className="w-full">
+          <Card>
+            <CardHeader>
+              <div className="flex justify-between">
+                <span className="text-2xl font-semibold">Subscriptions</span>
 
-          <div className="grid grid-cols-1">
-            <Card>
-              <CardHeader>
-                <div className="flex justify-between">
-                  <h2>Subscriptions</h2>
-
-                  <Button onClick={() => navigate("/admin/addSubscription")}>
-                    Add Subscription
-                  </Button>
-                </div>
-              </CardHeader>
+                <Button
+                  className="bg-purple-600 hover:bg-purple-400"
+                  onClick={() => navigate("/admin/addSubscription")}
+                >
+                  Add Subscription
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -123,139 +148,31 @@ const AdminSubscriptions = () => {
                         </TableCell>
 
                         <TableCell align="center">
-                          <Dialog>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger>
-                                <MoreHorizontal />
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent>
-                                <DropdownMenuItem onClick={() => {
-                                  setPrice(value.price.toString())
-                                  setSubscriptionId(value._id)
-                                  onOpen()
-                                  }}>
-                                  Edit
-                                </DropdownMenuItem>
-
-                                <DropdownMenuSeparator />
-                                <DialogTrigger asChild>
-                                  <DropdownMenuItem>Delete</DropdownMenuItem>
-                                </DialogTrigger>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-
-                            <Modal
-                              isOpen={isOpen}
-                              size={"sm"}
-                              onClose={onClose}
-                            >
-                              <ModalContent>
-                                {(onClose) => (
-                                  <>
-                                    <ModalHeader className="flex flex-col gap-1">
-                                      Edit Subcription
-                                    </ModalHeader>
-                                    <ModalBody>
-                                      <form onSubmit={(e)=>handleEdit(e)}>
-                                        <div className="grid gap-4 py-4">
-                                          <div className="grid grid-cols-4 items-center gap-4">
-                                            <Label
-                                              htmlFor="name"
-                                              className="text-right"
-                                            >
-                                              Price
-                                            </Label>
-                                            <Input
-                                              type="number"
-                                              onChange={(e)=>setPrice(e.target.value)}
-                                              id="name"
-                                              value={price}
-                                              className="col-span-3"
-                                            />
-                                          </div>
-                                          <ModalFooter >
-                                            <Button
-                                              type="submit"
-                                              className="bg-purple-500 hover:bg-purple-500"
-                                              onClick={onClose}
-                                            >
-                                              Save
-                                            </Button>
-                                          </ModalFooter>
-                                        </div>
-                                      </form>
-                                    </ModalBody>
-                                  </>
-                                )}
-                              </ModalContent>
-                            </Modal>
-
-                            <DialogContent>
-                              <DialogHeader>
-                                <DialogTitle>
-                                  Are you absolutely sure?
-                                </DialogTitle>
-                                <DialogDescription>
-                                  Are you absolutly sure you want to Delete this
-                                  coupon? this action cannot be un done.
-                                </DialogDescription>
-                              </DialogHeader>
-                              <DialogFooter>
-                                <DialogClose asChild>
-                                  <Button
-                                    type="button"
-                                    className="bg-black text-white"
-                                  >
-                                    Cancel
-                                  </Button>
-                                </DialogClose>
-                                <DialogClose asChild>
-                                  <Button
-                                    type="button"
-                                    onClick={() =>
-                                      handleSubscription(value._id)
-                                    }
-                                    className="bg-black text-white"
-                                  >
-                                    Continue
-                                  </Button>
-                                </DialogClose>
-                              </DialogFooter>
-                            </DialogContent>
-
-                            <DialogContent>
-                              <DialogHeader>
-                                <DialogTitle>
-                                  Are you absolutely sure?
-                                </DialogTitle>
-                                <DialogDescription>
-                                  Are you absolutly sure you want to Delee this
-                                  coupon? this action cannot be un done.
-                                </DialogDescription>
-                              </DialogHeader>
-                              <DialogFooter>
-                                <DialogClose asChild>
-                                  <Button
-                                    type="button"
-                                    className="bg-black text-white"
-                                  >
-                                    Cancel
-                                  </Button>
-                                </DialogClose>
-                                <DialogClose asChild>
-                                  <Button
-                                    type="button"
-                                    onClick={() =>
-                                      handleSubscription(value._id)
-                                    }
-                                    className="bg-black text-white"
-                                  >
-                                    Continue
-                                  </Button>
-                                </DialogClose>
-                              </DialogFooter>
-                            </DialogContent>
-                          </Dialog>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger>
+                              <MoreHorizontal />
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                onClick={() => {
+                                  setPrice(value.price.toString());
+                                  setSubscriptionId(value._id);
+                                  setIsSheetOpen(true);
+                                }}
+                              >
+                                Edit
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => {
+                                  setSubscriptionId(value._id);
+                                  setIsAlertOpen(true);
+                                }}
+                              >
+                                Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </TableCell>
                       </TableRow>
                     ))
@@ -268,9 +185,65 @@ const AdminSubscriptions = () => {
                   )}
                 </TableBody>
               </Table>
-            </Card>
-          </div>
+            </CardContent>
+          </Card>
         </div>
+
+        <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle> Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you absolutly sure you want to Delete this subscription? this
+                action cannot be un done.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={() => handleSubscription()}>
+                Confirm
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        <Dialog open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Edit Subscription</DialogTitle>
+              <DialogDescription>
+                Make changes to your subscription here. Click save when you're
+                done.
+              </DialogDescription>
+            </DialogHeader>
+            <form onSubmit={(e) => handleEdit(e)}>
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="name" className="text-right">
+                    Price
+                  </Label>
+                  <Input
+                    type="number"
+                    onChange={(e) => setPrice(e.target.value)}
+                    id="name"
+                    value={price}
+                    className="col-span-3"
+                  />
+                </div>
+                <DialogFooter>
+                <Button
+                    type="submit"
+                    className="bg-purple-500 hover:bg-purple-500"
+                    onClick={()=>setIsSheetOpen(false)}
+                  >
+                    Save
+                  </Button>
+            </DialogFooter> 
+              </div>
+            </form>
+            
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
