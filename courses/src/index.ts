@@ -60,7 +60,7 @@ app.use(express.json({ limit: "50mb"}));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(cors({credentials:true,
     origin: process.env.NODE_ENV === 'production'
-      ? 'https://www.eduhublearning.online'
+      ? ['https://www.eduhublearning.online',"https://eduhub-s2po.vercel.app"]
       : ['http://client-srv:5173', 'http://localhost:5173']}));
 
 const adminRoute = express.Router();
