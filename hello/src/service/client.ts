@@ -6,9 +6,15 @@ import adminRoutes from "./endPoints/adminEndPoints";
 import instructorRoutes from "./endPoints/instructorEndPoints";
 
 
+
+const ApiGatway = axios.create({
+  baseURL: import.meta.env.VITE_APIGATEWAY,
+  withCredentials: true,
+});
+
 export const tocken = async () => {
   try {
-    const response = await ApiGatway.post(userRoutes.tocken);
+    const response = await ApiGatway.post(userRoutes.tocken,{},{withCredentials:true});
     return response.data;
   } catch (error) {
     return error;
@@ -16,7 +22,7 @@ export const tocken = async () => {
 };
 export const tockenAdmin = async () => {
   try {
-    const response = await ApiGatway.post(adminRoutes.tocken);
+    const response = await ApiGatway.post(adminRoutes.tocken,{},{withCredentials:true});
     return response.data;
   } catch (error) {
     return error;
@@ -24,18 +30,12 @@ export const tockenAdmin = async () => {
 };
 export const tockenInstructor = async () => {
   try {
-    const response = await ApiGatway.post(instructorRoutes.tocken);
+    const response = await ApiGatway.post(instructorRoutes.tocken,{},{withCredentials:true});
     return response.data;
   } catch (error) {
     return error;
   }
 };
-
-const ApiGatway = axios.create({
-  baseURL: import.meta.env.VITE_APIGATEWAY,
-  withCredentials: true,
-});
-
 ApiGatway.interceptors.response.use(
   (response) => response,
   async function (error) {
@@ -48,7 +48,8 @@ ApiGatway.interceptors.response.use(
       originalRequest._retry = true;
       try {
         let undPoints = originalRequest?.url?.split("/");
- 
+         console.log(undPoints,"undPoints");
+         
         if (undPoints?.includes("admin")) {
           await tockenAdmin()
         } else if (undPoints?.includes("user")) {

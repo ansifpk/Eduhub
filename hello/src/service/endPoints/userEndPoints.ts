@@ -2,7 +2,7 @@ const userRoutes = {
     
  // auth servic end poin
  signUp:'/auth/user/register',
- login:'/auth/user/login',
+ login:'/auth/auth/user/login',
  googleLogin:'/auth/user/googleLogin',
  verifyOtp:'/auth/user/createUser',
  resentOtp:"/auth/user/resentOtp",
@@ -10,7 +10,7 @@ const userRoutes = {
  verifyPassOtp:"/auth/user/verifyOtp",
  newPassword:"/auth/user/newPassword",
  resetPassword:"/auth/user/resetPassword",
- logout:'/auth/user/logout',
+ logout:'/auth/auth/user/logout',
 
  // user servic end points
  editUser:'/profile/user/profile',
