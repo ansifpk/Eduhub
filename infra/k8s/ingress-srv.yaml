@@ -6,19 +6,19 @@ metadata:
     nginx.ingress.kubernetes.io/use-regex: 'true'
     nginx.ingress.kubernetes.io/proxy-body-size: "50m"
     nginx.ingress.kubernetes.io/proxy-buffer-size: '16m'
-    # cert-manager.io/cluster-issuer: letsencrypt-prod
-    nginx.ingress.kubernetes.io/cors-allow-origin: "https://www.eduhublearning.online"
-    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, PUT, DELETE, OPTIONS"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/cors-allow-origin: ".*"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST,PATCH, PUT, DELETE, OPTIONS"
     nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
 spec:
   ingressClassName: nginx
-#   tls:
-#     - hosts:
-#         - eduhublearning.online
-#         - www.eduhublearning.online
-#       secretName: my-tls-secret
+  tls:
+    - hosts:
+        - api.eduhublearning.online
+      secretName: api-eduhub-tls
   rules:
-    - host: "www.eduhublearning.online"
+    - host: "api.eduhublearning.online"
       http:
         paths:
           - path: /auth/(.*)
@@ -63,10 +63,3 @@ spec:
                 name: message-srv
                 port:
                   number: 3006
-          # - path: /
-          #   pathType: ImplementationSpecific
-          #   backend:
-          #     service:
-          #       name: client-srv
-          #       port:
-          #         number: 5173

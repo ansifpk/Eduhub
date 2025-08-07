@@ -57,7 +57,7 @@ let onlineUsers:{userId:string,socketId:string}[] = [];
 
 const io = new Server(httpServer,{
     cors:{
-        origin: ['http://client-srv:5173', 'http://localhost:5173',"https://www.eduhublearning.online"],
+        origin: ['http://client-srv:5173', 'http://localhost:5173',"https://www.eduhublearning.online","https://api.eduhublearning.online","https://eduhub-s2po.vercel.app"],
         credentials:true
     },
       path: '/auth/socket.io',
