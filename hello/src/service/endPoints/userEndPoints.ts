@@ -49,6 +49,7 @@ const userRoutes = {
  //*subscriptions
  subscriptions:"/purchase/user/subscription",
  plans:"/purchase/user/customer",
+ customer:"/purchase/user/customer",
  tocken:"/auth/user/refresh-token",
 
 }
