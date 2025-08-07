@@ -1,54 +1,6 @@
 
-import type { ICourse } from "@/@types/courseType";
-import type { IUserProfile } from "@/@types/userProfile";
-// import type { ICourses } from "@/@types/courseType";
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import useRequest from "@/hooks/useRequest";
-import moment from "moment";
-import React, { useState } from "react";
+import React, { } from "react";
 
-// interface Props {
-//   categories: ICategory[];
-//   onsendcourse: (courses: ICourse[]) => void;
-//   onsendpages: (pages: number) => void;
-//   page: number;
-// }
 
 type Column<T> = {
   label:string;
@@ -60,11 +12,11 @@ type TableProps<T> = {
 }
 
 const InstructorTable = <T extends object>({ colums, data }: TableProps<T>) => {
-  const [search, setSearch] = useState("");
-  const [debouns, setDebouns] = useState("");
-  const [sort, setSort] = useState("");
-  const [page, setPage] = useState(1);
-  const [totalPage, setTotalPage] = useState(0);
+  // const [search, setSearch] = useState("");
+  // const [debouns, setDebouns] = useState("");
+  // const [sort, setSort] = useState("");
+  // const [page, setPage] = useState(1);
+  // const [totalPage, setTotalPage] = useState(0);
 
     console.log("table",colums);
     console.log("table",data);

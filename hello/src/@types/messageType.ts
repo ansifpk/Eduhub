@@ -1,5 +1,3 @@
-import type { IChat } from "./chatType";
-
 
 
 export interface IMessage{

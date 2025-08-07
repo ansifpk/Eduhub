@@ -1,9 +1,7 @@
-import type { ICourse } from "@/@types/courseType";
-import type { IUser } from "@/@types/userType";
 import AdminChart from "@/components/admin/AdminChart";
 import useRequest from "@/hooks/useRequest";
 import adminRoutes from "@/service/endPoints/adminEndPoints";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import toast from "react-hot-toast";
 
 
@@ -11,9 +9,9 @@ export const description = "An interactive area chart";
 
 
 const Dashboard = () => {
-  const [users, setUsers] = useState<IUser[]>([]);
-  const [courses, setCourses] = useState<ICourse[]>([]);
-  const [topCourses, setTopCourses] = useState<ICourse[]>([]);
+  // const [users, setUsers] = useState<IUser[]>([]);
+  // const [courses, setCourses] = useState<ICourse[]>([]);
+  // const [topCourses, setTopCourses] = useState<ICourse[]>([]);
   const { doRequest, err } = useRequest();
 
   useEffect(() => {
@@ -21,24 +19,24 @@ const Dashboard = () => {
       url: adminRoutes.course,
       method: "get",
       body: {},
-      onSuccess: (response) => {
-        setCourses(response);
+      onSuccess: () => {
+        // setCourses(response);
       },
     });
     doRequest({
       url: adminRoutes.top5Instructors,
       method: "get",
       body: {},
-      onSuccess: (response) => {
-        setUsers(response);
+      onSuccess: () => {
+        // setUsers(response);
       },
     });
     doRequest({
       url: adminRoutes.top5RatedCourse,
       method: "get",
       body: {},
-      onSuccess: (response) => {
-        setTopCourses(response);
+      onSuccess: () => {
+        // setTopCourses(response);
       },
     });
   }, []);
@@ -64,4 +62,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default React.memo(Dashboard);

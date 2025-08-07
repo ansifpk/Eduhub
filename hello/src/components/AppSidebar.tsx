@@ -1,5 +1,4 @@
-import React from "react";
-import { Calendar, Home, Inbox, Search, Settings,PersonStanding,BookAIcon,ContactIcon } from "lucide-react";
+import {  Home, Inbox, BookAIcon,ContactIcon } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -7,7 +6,6 @@ import {
   SidebarGroupContent,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { NavLink } from "react-router-dom";

@@ -113,6 +113,7 @@ const AdminListCategory = () => {
       body: {},
       onSuccess: (response) => {
         setCategories(response);
+        setTotalPage(3)
       },
     });
   }, [search,sort]);

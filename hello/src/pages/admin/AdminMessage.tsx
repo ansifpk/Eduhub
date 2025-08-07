@@ -191,6 +191,10 @@ const AdminMessage = () => {
     });
   };
 
+  useEffect(()=>{
+    err?.map((err)=>toast.error(err.message));
+  },[err])
+
   return (
     <div className="w-[80%] ml-auto">
       <div className="px-5 flex flex-col space-y-5">

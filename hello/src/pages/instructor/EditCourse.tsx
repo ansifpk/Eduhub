@@ -1,5 +1,5 @@
 import type { ICategory } from "@/@types/categoryType";
-import type { IUser } from "@/@types/userType";
+// import type { IUser } from "@/@types/userType";
 import AppSidebar from "@/components/AppSidebar";
 import {
   AlertDialog,
@@ -30,7 +30,7 @@ import { Loader2, Plus } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 const EditCourse = () => {
   const [select, setSelect] = useState("Course landing page");
@@ -41,7 +41,7 @@ const EditCourse = () => {
   const { doRequest, err } = useRequest();
   const navigate = useNavigate();
   const {courseId} = useParams();
-  const instructorId = useSelector((state: IUser) => state._id);
+  // const instructorId = useSelector((state: IUser) => state._id);
 
   const {
     register,

@@ -383,7 +383,7 @@ const PlayCourse = () => {
                         </p>
                         <div>
                           <h6 className="font-bold">Tests</h6>
-                          <div>
+                          {/* <div>
                             {course?.test ? (
                               course.test.students.some(
                                 (val) => val.user == userId
@@ -431,7 +431,7 @@ const PlayCourse = () => {
                             ) : (
                               "No Tests Available for this Course."
                             )}
-                          </div>
+                          </div> */}
                         </div>
                       </div>
                     </div>

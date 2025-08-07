@@ -10,7 +10,7 @@ import { CheckIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
-import Plan from "../user/Plan";
+// import Plan from "../user/Plan";
 import {
   Dialog,
   DialogClose,
@@ -59,6 +59,7 @@ const InstructorSubscriptions = () => {
       method: "get",
       onSuccess: (data) => {
         setSubscriptions(data.subscriptions);
+        setPlans([])
       },
     });
     

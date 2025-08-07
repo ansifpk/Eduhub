@@ -1,15 +1,14 @@
-import React, { useEffect, useState } from "react";
+
+
+
+
+import React, {  useState } from "react";
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { Card, CardContent } from "../ui/card";
-import useRequest from "@/hooks/useRequest";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useDispatch } from "react-redux";
 import { loginSchema, type LoginFormInputs } from "@/util/schemas/loginSchema";
-import toast from "react-hot-toast";
-import { setUser } from "@/redux/authSlice";
-import instructorRoutes from "@/service/endPoints/instructorEndPoints";
 import std from "../../assets/home-page/teacher-home.jpg";
 
 const InstructorRegisterForm = () => {
@@ -133,4 +132,4 @@ const InstructorRegisterForm = () => {
   );
 };
 
-export default InstructorRegisterForm;
+export default React.memo(InstructorRegisterForm);

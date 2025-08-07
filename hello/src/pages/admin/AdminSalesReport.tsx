@@ -18,8 +18,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import type { IOrder } from "@/@types/orderType";
 import moment from "moment";
 import adminRoutes from "@/service/endPoints/adminEndPoints";
@@ -44,6 +42,7 @@ const AdminSalesReport = () => {
       body: {},
       onSuccess: (response) => {
         setOrders(response.orders);
+        setTotalPage(23)
       },
     });
   }, []);
@@ -62,7 +61,7 @@ const AdminSalesReport = () => {
     });
   };
   
-   const handleReport = async () => {
+  //  const handleReport = async () => {
     // const response = await createReport(report, year, months.indexOf(month));
     // const blob = new Blob([response], {
     //   type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -72,7 +71,7 @@ const AdminSalesReport = () => {
     // anchor.href = url;
     // anchor.click();
     // window.URL.revokeObjectURL(url);
-  };
+  // };
 
   useEffect(() => {
     err?.map((err) => toast.error(err.message));

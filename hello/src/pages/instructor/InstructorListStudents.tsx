@@ -1,7 +1,7 @@
-import type { IUserProfile } from "@/@types/userProfile";
+// import type { IUserProfile } from "@/@types/userProfile";
 import type { IUser } from "@/@types/userType";
 import AppSidebar from "@/components/AppSidebar";
-import InstructorTable from "@/components/intructor/InstructorTable";
+// import InstructorTable from "@/components/intructor/InstructorTable";
 import {
   Select,
   SelectContent,
@@ -10,20 +10,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import useRequest from "@/hooks/useRequest";
-import instructorRoutes from "@/service/endPoints/instructorEndPoints";
-import React, { useEffect, useMemo, useState } from "react";
-import toast from "react-hot-toast";
+// import useRequest from "@/hooks/useRequest";
+// import instructorRoutes from "@/service/endPoints/instructorEndPoints";
+import React, { useEffect,  useState } from "react";
+// import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 
-const headers = ["image","name","email"];
+
 
 const InstructorListStudents = () => {
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("");
-  const [students, setStudents] = useState<IUserProfile[]>([]);
+  // const [students, setStudents] = useState<IUserProfile[]>([]);
   const userId = useSelector((state: IUser) => state._id);
-  const { doRequest, err } = useRequest();
+  // const { doRequest, err } = useRequest();
  
   useEffect(() => {
     // doRequest({
@@ -39,9 +39,9 @@ const InstructorListStudents = () => {
   console.log("list studne");
 
 
-  useEffect(()=>{
-    err?.map((err)=>toast.error(err.message));
-  },[err]);
+  // useEffect(()=>{
+  //   err?.map((err)=>toast.error(err.message));
+  // },[err]);
 
   return (
     <SidebarProvider>
