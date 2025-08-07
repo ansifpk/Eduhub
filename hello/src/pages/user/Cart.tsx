@@ -51,7 +51,7 @@ const Cart = () => {
       onSuccess: (data) => {
         setCart(data.cart);
         setCartTotal(data.cartTotal);
-        return toast.success("item removed from your cart");
+        return toast.success("item removed from your cart!");
       },
     });
   };
