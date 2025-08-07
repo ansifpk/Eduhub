@@ -18,7 +18,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import adminRoutes from "@/service/endPoints/adminEndPoints";
 import useRequest from "@/hooks/useRequest";
 import toast from "react-hot-toast";
 import instructorRoutes from "@/service/endPoints/instructorEndPoints";

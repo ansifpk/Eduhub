@@ -12,14 +12,6 @@ import {
 } from "../../components/ui/table";
 import moment from "moment";
 import type { IOrder } from "@/@types/orderType";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { PlusCircle } from "lucide-react";
 import { useSelector } from "react-redux";
 import type { IUser } from "@/@types/userType";
 import useRequest from "@/hooks/useRequest";
@@ -43,7 +35,6 @@ const InstructorDashboard = () => {
     register,
     watch,
     handleSubmit,
-    setValue,
     formState: { errors },
   } = useForm<DateFormInputs>({
     resolver: zodResolver(dateRangeScheema),
@@ -65,6 +56,8 @@ const InstructorDashboard = () => {
   }, [instructorId]);
 
   const handleDate = (data: DateFormInputs) => {
+    console.log(data);
+    
     doRequest({
       url: `${
         instructorRoutes.order

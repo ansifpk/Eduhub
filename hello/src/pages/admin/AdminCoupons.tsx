@@ -1,5 +1,5 @@
 import useRequest from "@/hooks/useRequest";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import {
   Select,
@@ -27,52 +27,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 import moment from "moment";
 import adminRoutes from "@/service/endPoints/adminEndPoints";
-import type { ICategory } from "@/@types/categoryType";
-import { Loader2Icon, MoreHorizontal } from "lucide-react";
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { useForm } from "react-hook-form";
-import {
-  categorySchema,
-  type CategoryFormInputs,
-} from "@/util/schemas/categoryScheema";
-import { zodResolver } from "@hookform/resolvers/zod";
+import {  MoreHorizontal } from "lucide-react";
 import type { ICoupon } from "@/@types/couponType";
 
 const AdminCoupons = () => {
   const [coupons, setCoupons] = useState<ICoupon[]>([]);
-  const [couponId, setCouponId] = useState("");
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("");
   const [page, setPage] = useState(1);
@@ -88,29 +50,31 @@ const AdminCoupons = () => {
       body: {},
       onSuccess: (response) => {
         setCoupons(response.coupon);
+        // setCouponId("123")
+        setTotalPage(2)
       },
     });
   }, [search, sort]);
 
-  const handleCoupon = async () => {
-    doRequest({
-      url: `${adminRoutes.coupon}/${couponId}`,
-      method: "delete",
-      body: {},
-      onSuccess: () => {
-        doRequest({
-          url: adminRoutes.coupon,
-          method: "get",
-          body: {},
-          onSuccess: (response) => {
-            setCoupons(response.coupon);
-          },
-        });
-      },
-    });
-  };
+  // const handleCoupon = async () => {
+  //   doRequest({
+  //     url: `${adminRoutes.coupon}/${couponId}`,
+  //     method: "delete",
+  //     body: {},
+  //     onSuccess: () => {
+  //       doRequest({
+  //         url: adminRoutes.coupon,
+  //         method: "get",
+  //         body: {},
+  //         onSuccess: (response) => {
+  //           setCoupons(response.coupon);
+  //         },
+  //       });
+  //     },
+  //   });
+  // };
 
-  const editCouponHandler = () => {};
+  // const editCouponHandler = () => {};
 
   useEffect(() => {
     const intervel = setTimeout(() => {
