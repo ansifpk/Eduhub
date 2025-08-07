@@ -1,8 +1,8 @@
 const userRoutes = {
     
  // auth servic end poin
- signUp:'/auth/auth/user/register',
- login:'/auth/auth/user/login',
+ signUp:'/auth/user/register',
+ login:'/auth/user/login',
  googleLogin:'/auth/user/googleLogin',
  verifyOtp:'/auth/auth/user/createUser',
  resentOtp:"/auth/user/resentOtp",
