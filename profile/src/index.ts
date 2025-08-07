@@ -36,7 +36,9 @@ const instructorRouter = express.Router()
 UserRouter(userRouter);
 AdminRouter(adminRouter);
 InstructorRouter(instructorRouter);
-
+app.use((req,res,next)=>{
+    console.log("cokiees",req.cookies);
+})
 // Apply the separate routers to different paths
 app.use('/profile/user',userRouter);
 app.use('/profile/admin',adminRouter);
