@@ -75,9 +75,12 @@ export const isAdmin = async (req:Request,res:Response,next:NextFunction)=>{
 export const isInstructor = async (req:Request,res:Response,next:NextFunction)=>{
 
         try {
+           console.log("req.cookies1",req.cookies);
           if(!req.cookies){
             throw new NotAuthorizedError()
            } 
+           console.log("req.cookies2",req.cookies);
+           
           if(!req.cookies.accessInstructorToken){
             throw new NotAuthorizedError()
            } 

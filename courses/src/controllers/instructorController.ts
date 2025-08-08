@@ -79,6 +79,8 @@ export class InstructorController{
     async getCourses(req:Request,res:Response,next:NextFunction){
         const {instructorId,search,sort} = req.query;
         let page = Number(req.query.page) 
+         
+        
         const courses = await this.instructorUseCases.fetchCourses(instructorId as string,search as string,sort as string,page)
         if(courses){
              res.send({success:true,courses:courses})

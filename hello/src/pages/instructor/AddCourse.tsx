@@ -135,12 +135,15 @@ const AddCourse = () => {
         }
       }
 
+      setLoading(true)
+
       doRequest({
         url: instructorRoutes.createCourse,
         body: formData,
         method: "post",
         onSuccess: (res) => {
-          console.log(res);
+          console.log(res,"crested");
+          setLoading(false)
           navigate(-1);
         },
       });

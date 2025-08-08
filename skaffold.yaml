@@ -20,47 +20,48 @@ build:
         manual:
           - src: "src/**/*.ts"
             dest: .
-    - image: pkansif/eduhub-category
-      context: category
-      docker:
-        dockerfile: Dockerfile
-      sync:
-        manual:
-          - src: "src/**/*.ts"
-            dest: .
-    - image: pkansif/eduhub-profile
-      context: profile
-      docker:
-        dockerfile: Dockerfile
-      sync:
-        manual:
-          - src: "src/**/*.ts"
-            dest: .
-    - image: pkansif/eduhub-purchase
-      context: purchase
-      docker:
-        dockerfile: Dockerfile
-      sync:
-        manual:
-          - src: "src/**/*.ts"
-            dest: .
-    - image: pkansif/eduhub-message
-      context: message
-      docker:
-        dockerfile: Dockerfile
-      sync:
-        manual:
-          - src: "src/**/*.ts"
-            dest: .
-    - image: pkansif/eduhub-client2
-      context: client
-      docker:
-        dockerfile: Dockerfile
-      sync:
-        manual:
-          - src: "src/**/*.tsx"
-            dest: .
+    # - image: pkansif/eduhub-category
+    #   context: category
+    #   docker:
+    #     dockerfile: Dockerfile
+    #   sync:
+    #     manual:
+    #       - src: "src/**/*.ts"
+    #         dest: .
+    # - image: pkansif/eduhub-profile
+    #   context: profile
+    #   docker:
+    #     dockerfile: Dockerfile
+    #   sync:
+    #     manual:
+    #       - src: "src/**/*.ts"
+    #         dest: .
+    # - image: pkansif/eduhub-purchase
+    #   context: purchase
+    #   docker:
+    #     dockerfile: Dockerfile
+    #   sync:
+    #     manual:
+    #       - src: "src/**/*.ts"
+    #         dest: .
+    # - image: pkansif/eduhub-message
+    #   context: message
+    #   docker:
+    #     dockerfile: Dockerfile
+    #   sync:
+    #     manual:
+    #       - src: "src/**/*.ts"
+    #         dest: .
+    # - image: pkansif/eduhub-client2
+    #   context: client
+    #   docker:
+    #     dockerfile: Dockerfile
+    #   sync:
+    #     manual:
+    #       - src: "src/**/*.tsx"
+    #         dest: .
 deploy:
   kubectl:
     manifests:
-      - ./infra/k8s/*
+      - ./infra/k8s/auth-depl.yaml
+      - ./infra/k8s/course-depl.yaml

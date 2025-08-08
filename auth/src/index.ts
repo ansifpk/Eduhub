@@ -21,7 +21,11 @@ const app = express()
 const httpServer = createServer(app);
 app.set('trust proxy',true);
 const allowedOrgins =  JSON.parse(process.env.ORGINS!)
-
+ app.use((req,res,next)=>{
+    console.log("ji jhejfioejfieofheiufheriuheriu");
+    next()
+    
+ })
 app.use(cors({
     origin: allowedOrgins,
     credentials:true,

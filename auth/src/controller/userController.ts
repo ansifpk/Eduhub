@@ -84,7 +84,7 @@ export class UserController {
       res.cookie('refreshToken',user.tokens.refreshToken,{
         httpOnly:true,
         secure:process.env.NODE_ENV !== 'development',
-        sameSite:'strict',
+        sameSite:process.env.NODE_ENV == 'development'?'strict':"none",
         maxAge:30 * 24 * 60 * 60 * 1000
      });
       
@@ -107,17 +107,17 @@ export class UserController {
         res.cookie('accessToken',userAndTokens.token.accessToken,{
           httpOnly:true,
           secure:process.env.NODE_ENV !== 'development',
-          sameSite:process.env.NODE_ENV == "none",
+          sameSite:process.env.NODE_ENV == 'development'?'strict':"none",
+          path:"/",
           maxAge: 15 * 60 * 1000,
        });
         res.cookie('refreshToken',userAndTokens.token.refreshToken,{
           httpOnly:true,
           secure:process.env.NODE_ENV !== 'development',
-          sameSite:"none",
+          sameSite:process.env.NODE_ENV == 'development'?'strict':"none",
+          path:"/",
           maxAge:30 * 24 * 60 * 60 * 1000,
        });
-        console.log("success");
-        
         res.send(userAndTokens);
       }
     } catch (err) {

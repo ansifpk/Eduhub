@@ -24,17 +24,21 @@ export class InstructorController{
         async instructorLogin( req:Request,res:Response ,next: NextFunction) {
            try {
             const instructorAndToken = await this.instructorUseCase.instructorLogin(req.body.email,req.body.password,next);
+            console.log("instructro login instructorAndToken",instructorAndToken);
+            
             if(instructorAndToken){
               res.cookie('accessInstructorToken',instructorAndToken.token.accessToken,{
                 httpOnly:true,
                 secure:process.env.NODE_ENV !== 'development',
-                sameSite:'strict',
+                sameSite:process.env.NODE_ENV == 'development'?'strict':"none",
+                path:"/",
                 maxAge: 15 * 60 * 1000
              });
               res.cookie('refreshInstructorToken',instructorAndToken.token.refreshToken,{
                 httpOnly:true,
                 secure:process.env.NODE_ENV !== 'development',
-                sameSite:'strict',
+                sameSite:process.env.NODE_ENV == 'development'?'strict':"none",
+                path:"/",
                 maxAge:30 * 24 * 60 * 60 * 1000
              });
               
@@ -45,7 +49,7 @@ export class InstructorController{
            }
         }
     async getStudnets(req:Request,res:Response,next:NextFunction){
-
+       
         const createdUser = await this.instructorUseCase.fetchStudents()
         if(createdUser){
             return res.send({success:true,user:createdUser})

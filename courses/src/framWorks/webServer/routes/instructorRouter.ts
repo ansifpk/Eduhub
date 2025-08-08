@@ -26,6 +26,7 @@ export function InstructorRouter(router:Router){
       ); 
     router.get("/getCourses",isInstructor,async(req:Request,res:Response,next:NextFunction)=>{
         try { 
+            console.log("get courses success3");
            instructorController.getCourses(req,res,next)
         } catch (error) {
         console.error(error)          
@@ -42,6 +43,7 @@ export function InstructorRouter(router:Router){
     }) 
     router.get("/students",isInstructor,async(req:Request,res:Response,next:NextFunction)=>{
         try { 
+            console.log("get students success");
            instructorController.getStudents(req,res,next)
         } catch (error) {
         console.error(error)          

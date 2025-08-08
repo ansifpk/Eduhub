@@ -212,8 +212,6 @@ export class InstructorUseCase implements IInstructorUseCase {
       try {
          const courses = await this.instructorRepository.find(instructorId,search,sort,page);
          if(courses){
-         
-          
           return courses
          }
       } catch (error) {
