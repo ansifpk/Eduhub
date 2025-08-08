@@ -24,7 +24,10 @@ app.use(cors({credentials:true,
     origin: allowedOrgins
     }));
 app.use(cookieParser());
-
+app.use((req,res,next)=>{
+    console.log("cokieess",req.cookies);
+    next()
+})
 // Separate routers for user and admin
 const userRouter = express.Router()
 const adminRouter = express.Router()
