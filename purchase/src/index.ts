@@ -1,7 +1,7 @@
 import { connectDB } from "./framwork/webServer/config/config";
-import express, { json, urlencoded } from 'express';
-import cors from 'cors'
-import cookieSession from 'cookie-session'
+import express, { json, urlencoded } from "express";
+import cors from "cors";
+import cookieSession from "cookie-session";
 import { UserRouter } from "./framwork/webServer/router/userRouter";
 import { InstructorRouter } from "./framwork/webServer/router/instructorRouter";
 import kafkaWrapper from "./framwork/webServer/config/kafka/kafkaWrapper";
@@ -18,8 +18,8 @@ import { AdminRouter } from "./framwork/webServer/router/adminRouter";
 import { errorHandler, NotFoundError } from "@eduhublearning/common";
 import cookieParser from "cookie-parser";
 
-async function start(){
-    try {
+async function start() {
+  try {
     //    await kafkaWrapper.connect()
     //   const consumerUser = await kafkaWrapper.createConsumer("purchase-user-profile-created-group")
     //   const consumerCourse = await kafkaWrapper.createConsumer("purchase-course-created-group")
@@ -51,32 +51,30 @@ async function start(){
     //    await listenerCourseListed.listen()
     //    await listenerInstructor.listen()
     //    await blockUser.listen()
-       await connectDB();
-       app.listen(3003,()=>console.log("purchase service running at localhost:3003 !!!!!"))
-    } catch (error) {
-        console.error(error)
-    }
-    
+    await connectDB();
+    app.listen(3003, () =>
+      console.log("purchase service running at localhost:3003 !!!!!")
+    );
+  } catch (error) {
+    console.error(error);
+  }
 }
 
-
 const app = express();
-app.set('trust proxy',true);
+app.set("trust proxy", true);
 
-app.use(cors({credentials:true,
-    origin: process.env.NODE_ENV === 'production'
-      ? ['https://www.eduhublearning.online',"https://eduhub-s2po.vercel.app"]
-      : ['http://client-srv:5173', 'http://localhost:5173']}));
+const allowedOrgins = process.env.ORGINS;
+app.use(cors({ credentials: true, origin: allowedOrgins }));
 
-app.use(cookieParser())
+app.use(cookieParser());
 const webHook = express.Router();
 
-//! its placed here other wise the express.raw will not works for webHook 
+//! its placed here other wise the express.raw will not works for webHook
 webHookRouter(webHook);
-app.use("/purchase/webHook",webHook)
+app.use("/purchase/webHook", webHook);
 
-app.use(json())
-app.use(urlencoded({extended:true}))
+app.use(json());
+app.use(urlencoded({ extended: true }));
 
 const userRouter = express.Router();
 const instructorRouter = express.Router();
@@ -86,12 +84,12 @@ UserRouter(userRouter);
 InstructorRouter(instructorRouter);
 AdminRouter(adminRouter);
 
-app.use("/purchase/user",userRouter)
-app.use("/purchase/instructor",instructorRouter)
-app.use("/purchase/admin",adminRouter)
-app.use("*",(req,res)=>{
-    throw new NotFoundError("Path Not Found.") 
-})
+app.use("/purchase/user", userRouter);
+app.use("/purchase/instructor", instructorRouter);
+app.use("/purchase/admin", adminRouter);
+app.use("*", (req, res) => {
+  throw new NotFoundError("Path Not Found.");
+});
 app.use(errorHandler as any);
 
 start();

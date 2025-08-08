@@ -12,20 +12,21 @@ import { InstructorAprovedConsumer } from './framework/webServer/config/kafka/co
 import cookieParser from 'cookie-parser';
 import { EmailChangedConsumer } from './framework/webServer/config/kafka/consumer/email-changed-consumer';
 import { UserProfileUpdatedConsumer } from './framework/webServer/config/kafka/consumer/user-profile-updated-consumer';
-// import { errMiddleware } from '@eduhublearning/common';
 import { Server, Socket } from 'socket.io';
 import {createServer} from 'http';
-import { errorHandler, NotFoundError } from '@eduhublearning/common';
+import { errorHandler, ForbiddenError, NotFoundError } from '@eduhublearning/common';
 
 dotenv.config();
 const app = express()
 const httpServer = createServer(app);
 app.set('trust proxy',true);
-app.use(cors({credentials:true,
-    origin: process.env.NODE_ENV === 'production'
-      ? 'https://www.eduhublearning.online'
-      : ['http://client-srv:5173', 'http://localhost:5173']
-    }));
+const allowedOrgins =  JSON.parse(process.env.ORGINS!)
+
+app.use(cors({
+    origin: allowedOrgins,
+    credentials:true,
+    }
+));
 app.use(json())
 app.use(urlencoded({ extended: true }))
 app.use(cookieParser())
@@ -40,10 +41,7 @@ UserRoute(userRouter);
 AdminRoute(adminRouter);
 InstructorRouter(instructorRouter);
 
-app.use((req,res,next)=>{
-    console.log("jiji")
-    next()
-})
+
 // Apply the separate routers to different paths
 app.use('/auth/user',userRouter);
 app.use('/auth/admin',adminRouter);
@@ -57,10 +55,10 @@ let onlineUsers:{userId:string,socketId:string}[] = [];
 
 const io = new Server(httpServer,{
     cors:{
-        origin: ['http://client-srv:5173', 'http://localhost:5173',"https://www.eduhublearning.online","https://api.eduhublearning.online","https://eduhub-s2po.vercel.app"],
+        origin: allowedOrgins,
         credentials:true
     },
-      path: '/auth/socket.io',
+      path: process.env.SOCKET_PATH,
     })
     
     io.on("connect",(socket:Socket)=>{

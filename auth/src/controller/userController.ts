@@ -116,6 +116,7 @@ export class UserController {
           sameSite:"strict",
           maxAge:30 * 24 * 60 * 60 * 1000,
        });
+        console.log("success");
         
         res.send(userAndTokens);
       }

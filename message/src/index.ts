@@ -32,14 +32,13 @@ MessageRoute(messageRouter);
 ChatRoute(chatRouter);
 NotificationRoute(notificationRouter)
 
+const allowedOrgins =  JSON.parse(process.env.ORGINS!)
 
 
 
 app.use(cors({credentials:true,
-    origin: process.env.NODE_ENV === 'production'
-      ? ['https://www.eduhublearning.online',"https://eduhub-s2po.vercel.app"]
-      : ['http://client-srv:5173', 'http://localhost:5173']
-    ,methods: ['GET', 'POST','PATCH'],}));
+    origin: allowedOrgins
+}));
 
 
 app.use(bodyParser.json({limit: '50mb'}));
@@ -59,10 +58,10 @@ let onlineUsers:{userId:string,socketId:string}[] = [];
 
 const io = new Server(httpServer,{
 cors:{
-    origin: ['http://client-srv:5173', 'http://localhost:5173',"https://www.eduhublearning.online"],
+    origin: allowedOrgins,
     credentials:true
 },
-  path: '/message/socket.io',
+  path: process.env.SOCKET_PATH,
 })
 
 io.on("connect",(socket:Socket)=>{
@@ -76,8 +75,7 @@ io.on("connect",(socket:Socket)=>{
         userId,
         socketId:socket.id
       })
-      // console.log('onlineUsers',onlineUsers);
-      
+    
       io.emit("getOnlineUsers",onlineUsers)
     })
 
@@ -85,7 +83,6 @@ io.on("connect",(socket:Socket)=>{
     socket.on("sendMessage",(message)=>{
 
       const user = onlineUsers.find((user)=>user.userId == message.recipientId);
-      const user2 = onlineUsers.find((user)=>user.userId == message.senderId);
      
        if(user){
         io.to(user.socketId).emit("getMessage",message);
@@ -96,16 +93,13 @@ io.on("connect",(socket:Socket)=>{
           date:new Date()
         });
        }
-       if(user2){
-        //  io.to(user2.socketId).emit("markAsRead",message);
-       }
+       
     })
 
     //* mark seen message
     socket.on("seenMsg",(res)=>{
       const user = onlineUsers.find((user)=>user.userId == res.senter);
-      console.log(user,"user");
-      
+
        if(user){
         io.to(user.socketId).emit("markSeenMessage");
        }

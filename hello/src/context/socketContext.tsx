@@ -21,7 +21,7 @@ export const SocketProvider: React.FC<{children: React.ReactNode}> = ({children}
     useEffect(()=>{
         if(userId){
             const newSocket = io(import.meta.env.VITE_APIGATEWAY,{
-                path: '/auth/auth/socket.io',
+                path: '/auth/socket.io',
                 query:{
                     userId
                 }
@@ -30,7 +30,7 @@ export const SocketProvider: React.FC<{children: React.ReactNode}> = ({children}
             newSocket.on(`block:${userId}`,()=>{
               toast.error("Access blocked by Admin")
               dispatch(removeUser())
-              navigate("/users/login");
+              navigate("/signIn");
             })
             return ()=>{
                 newSocket.disconnect();
