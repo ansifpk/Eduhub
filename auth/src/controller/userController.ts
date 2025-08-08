@@ -107,17 +107,14 @@ export class UserController {
         res.cookie('accessToken',userAndTokens.token.accessToken,{
           httpOnly:true,
           secure:process.env.NODE_ENV !== 'development',
-          sameSite:process.env.NODE_ENV == 'development'?'strict':"none",
+          sameSite:process.env.NODE_ENV == "strict",
           maxAge: 15 * 60 * 1000,
-          domain:process.env.DOMAIN
        });
         res.cookie('refreshToken',userAndTokens.token.refreshToken,{
           httpOnly:true,
           secure:process.env.NODE_ENV !== 'development',
-          sameSite:process.env.NODE_ENV == 'development'?'strict':"none",
+          sameSite:"strict",
           maxAge:30 * 24 * 60 * 60 * 1000,
-          path:'/',
-          domain:process.env.DOMAIN
        });
         
         res.send(userAndTokens);

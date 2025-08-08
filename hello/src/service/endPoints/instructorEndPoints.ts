@@ -15,8 +15,8 @@ const instructorRoutes = {
     editProfile:"/instructor/editProfile", 
     currentUser:"/instructor/currentUser", 
     googleLogin:"/instructor/googleLogin", 
-    register:"/profile/profile/instructor/register", 
-    getCategoryies:"/category/category/instructor/category", 
+    register:"/profile/instructor/register", 
+    getCategoryies:"/category/instructor/category", 
     ratings:"/profile/instructor/ratings", 
     
     //*auth
