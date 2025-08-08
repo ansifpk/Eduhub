@@ -116,6 +116,7 @@ export class UserController {
           secure:process.env.NODE_ENV !== 'development',
           sameSite:process.env.NODE_ENV == 'development'?'strict':"none",
           maxAge:30 * 24 * 60 * 60 * 1000,
+          path:'/',
           domain:process.env.DOMAIN
        });
         
