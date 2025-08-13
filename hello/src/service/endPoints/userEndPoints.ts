@@ -10,7 +10,7 @@ const userRoutes = {
  verifyPassOtp:"/auth/user/verifyOtp",
  newPassword:"/auth/user/newPassword",
  resetPassword:"/auth/user/resetPassword",
- logout:'/auth/logout',
+ logout:'/auth/user/logout',
 
  // user servic end points
  editUser:'/profile/user/profile',
