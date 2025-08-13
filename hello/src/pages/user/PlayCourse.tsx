@@ -64,7 +64,7 @@ const labels: { [index: string]: string } = {
 
 const PlayCourse = () => {
   const [course, setCourse] = useState<ICourse>();
-  const [chapter, setChapter] = useState("");
+  const [chapter, setChapter] = useState<string|File>("");
   const [ratingId, setRatingId] = useState("");
   const [editAlertOpen, setEditAlertOpen] = useState(false);
   const [reportAlertOpen, setReportAlertOpen] = useState(false);
@@ -265,7 +265,7 @@ const PlayCourse = () => {
               <div className="p-3">
                 <h6 className="text-s">{course?.title}</h6>
                 <p className="font-medium text-xs text-muted-foreground">
-                  {course?.sections.length} contents
+                  {course?.sections.sections.length} contents
                 </p>
               </div>
               <Dialog
@@ -341,7 +341,7 @@ const PlayCourse = () => {
           <div className="m-2">
             {chapter ? (
               <video
-                src={chapter}
+                src={chapter as string}
                 autoPlay
                 controls
                 muted={false}
@@ -1147,7 +1147,7 @@ const PlayCourse = () => {
               <p className="font-bold">Course contents</p>
 
               {course &&
-                course.sections.map((section, index) => (
+                course.sections.sections.map((section, index) => (
                   <Accordion
                     key={index}
                     type="multiple"

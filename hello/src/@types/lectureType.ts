@@ -1,8 +1,8 @@
 export interface ILecture{
-        id:string,
+        _id:string,
         content:{
             _id:string,
-            video_url:string
+            video_url:string|File
         },
         duration:string,
         title:string,
