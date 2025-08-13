@@ -26,7 +26,7 @@ export function InstructorRouter(router:Router){
       ); 
     router.get("/getCourses",isInstructor,async(req:Request,res:Response,next:NextFunction)=>{
         try { 
-            console.log("get courses success3");
+            
            instructorController.getCourses(req,res,next)
         } catch (error) {
         console.error(error)          
@@ -43,7 +43,7 @@ export function InstructorRouter(router:Router){
     }) 
     router.get("/students",isInstructor,async(req:Request,res:Response,next:NextFunction)=>{
         try { 
-            console.log("get students success");
+            
            instructorController.getStudents(req,res,next)
         } catch (error) {
         console.error(error)          
@@ -67,7 +67,7 @@ export function InstructorRouter(router:Router){
         }
     
     }) 
-    router.patch("/editCourse",isInstructor,upload,async(req:Request,res:Response,next:NextFunction)=>{
+    router.patch("/editCourse/:courseId",isInstructor,upload,async(req:Request,res:Response,next:NextFunction)=>{
         try { 
            instructorController.editCourse(req,res,next)
         } catch (error) {
@@ -98,6 +98,7 @@ export function InstructorRouter(router:Router){
         console.error(error)          
         }
     }) 
+   
     router.get("/topRated/:userId",isInstructor,upload,async(req:Request,res:Response,next:NextFunction)=>{
         try {   
           instructorController.topRated(req,res,next)

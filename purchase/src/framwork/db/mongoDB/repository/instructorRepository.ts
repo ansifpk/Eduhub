@@ -76,6 +76,24 @@ export class InstructorRepository implements IInstructorRepository {
       console.error(error);
     }
   }
+  async checkSubscription(
+    plan: string,
+    instructorId: string
+  ): Promise<IUserSubcription | void> {
+    try {
+      console.log(instructorId, "weuihwuie");
+      const subscriptions = await this.userSubscriptionModels.findOne({
+        plan,
+        instructorId,
+      });
+
+      if (subscriptions) {
+        return subscriptions;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   async subscriptionCreate(
     userId: string,
@@ -229,7 +247,8 @@ export class InstructorRepository implements IInstructorRepository {
 
   async userFindById(userId: string): Promise<Iuser | void> {
     try {
-      const user = await this.userModels.findById({ _id: userId });
+      const user = await this.userModels.findById({ _id: new mongoose.Types.ObjectId(userId) });
+
       if (user) {
         return user;
       }
@@ -270,7 +289,9 @@ export class InstructorRepository implements IInstructorRepository {
     end: string
   ): Promise<IOrder[] | void> {
     try {
-      let query ;
+      let query;
+   
+    
       if (start && end) {
         query = {
           "course.instructorId": new mongoose.Types.ObjectId(instructorId),
@@ -279,49 +300,48 @@ export class InstructorRepository implements IInstructorRepository {
             $lte: new Date(end),
           },
         };
-      }else{
-         query = {
+      } else {
+        query = {
           "course.instructorId": new mongoose.Types.ObjectId(instructorId),
-          
         };
       }
 
-      const course = await this.orderMedels.find(query).sort({createdAt:1}).populate("user");
+      const course = await this.orderMedels
+        .find(query)
+        .sort({ createdAt: 1 })
+        .populate("user");
 
-     
       return course;
     } catch (error) {
       console.error(error);
     }
   }
-  async instrutcorOrders(instructorId: string,filter:string): Promise<IOrder[] | void> {
+  async instrutcorOrders(
+    instructorId: string,
+    start: Date,
+    end: Date
+  ): Promise<IOrder[] | void> {
     try {
-      let group;
-      if(filter == "Yearly"){
-         group = {
-            _id: { $year: "$createdAt" },
-            delivered: { $sum: 1 },
-          }
-      }else{
-        group =   {
-            _id: { $month: "$createdAt" },
-            delivered: { $sum: 1 },
-          }
-      }
       const orders = await OrderModel.aggregate([
         {
           $match: {
             "course.instructorId": new mongoose.Types.ObjectId(instructorId),
+            createdAt: {
+              $gte: start,
+              $lte: end,
+            },
           },
         },
         {
-          $group: group,
-        },
-        {
-          $sort: { _id: 1 },
+          $group: {
+            _id: {
+              $dateTrunc: { date: "$createdAt", unit: "day" },
+            },
+            delivered: { $sum: 1 },
+          },
         },
       ]);
-
+console.log(orders)
       if (orders) {
         return orders;
       }

@@ -57,83 +57,81 @@ export class UserController {
   async placeOrder(req: Request, res: Response, next: NextFunction) {
     const { course, userId, couponCode } = req.body;
     
-    let coupon:ICoupon = {
-      _id: "",
-      title: "",
-      couponCode: "",
-      description: "",
-      offer: 0,
-      expiryDate: "",
-      startingDate: "",
-      users: [],
-      createdAt: "",
-      updatedAt: "",
-      expiryTime: "",
-      startingTime: ""
-    }
-    let offer = 0;
-    if(couponCode){
-       coupon = await this.userUseCase.findCouponByCode(couponCode, next) as ICoupon;
-       if (!coupon) throw new NotFoundError("Invalid coupon code")
+    // let coupon:ICoupon = {
+    //   _id: "",
+    //   title: "",
+    //   couponCode: "",
+    //   description: "",
+    //   offer: 0,
+    //   // expiryDate: "",
+    //   // startingDate: "",
+    //   users: [],
+    //   // createdAt: "",
+    //   // updatedAt: "",
+    // }
+    // let offer = 0;
+    // if(couponCode){
+    //    coupon = await this.userUseCase.findCouponByCode(couponCode, next) as ICoupon;
+    //    if (!coupon) throw new NotFoundError("Invalid coupon code")
       
-      offer = coupon.offer
-      await this.userUseCase.addUserToCoupon(coupon._id,userId,next)
-    }
+    //   offer = coupon.offer
+    //   await this.userUseCase.addUserToCoupon(coupon._id,userId,next)
+    // }
 
-    const customer = await stripe.customers.create({
-      name: "ansif",
-      address: {
-        line1: "123 Street Name",
-        city: "City Name",
-        country: "AE",
-        postal_code: "12345",
-      },
-    });
-    let courseIds:string[] = []
+    // const customer = await stripe.customers.create({
+    //   name: "ansif",
+    //   address: {
+    //     line1: "123 Street Name",
+    //     city: "City Name",
+    //     country: "AE",
+    //     postal_code: "12345",
+    //   },
+    // });
+    // let courseIds:string[] = []
    
-    let lineItems:any = [];
-      course.map((value: ICourse) => {
-            let discountPercentage = coupon?coupon.offer:0
-            courseIds.push(value._id!)
-            let amount = value.price;
-            if(discountPercentage){
-              amount = value.price - (value.price*discountPercentage)/100
-            }
+    // let lineItems:any = [];
+    //   course.map((value: ICourse) => {
+    //         let discountPercentage = coupon?coupon.offer:0
+    //         courseIds.push(value._id!)
+    //         let amount = value.price;
+    //         if(discountPercentage){
+    //           amount = value.price - (value.price*discountPercentage)/100
+    //         }
 
 
-         lineItems.push({price_data: {
-        currency: "INR",
-        product_data: {
-          name: value.title,
-          images: [value.image.image_url],
-        },
-        unit_amount: Math.round(amount * 100),
-      },
-      quantity: 1,})
-    });
+    //      lineItems.push({price_data: {
+    //     currency: "INR",
+    //     product_data: {
+    //       name: value.title,
+    //       images: [value.image.image_url],
+    //     },
+    //     unit_amount: Math.round(amount * 100),
+    //   },
+    //   quantity: 1,})
+    // });
 
     
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
-      line_items: lineItems,
-      mode: "payment",
-      customer: customer.id,
-      metadata: {
-        userId: userId,
-        courseIds:JSON.stringify(courseIds),
-        couponOffer:offer,
-        couponId:JSON.stringify(coupon._id)
-      },
-      success_url: "https://www.eduhublearning.online/user/success",
-      cancel_url: "https://www.eduhublearning.online/user/faile",
-    });
+    // const session = await stripe.checkout.sessions.create({
+    //   payment_method_types: ["card"],
+    //   line_items: lineItems,
+    //   mode: "payment",
+    //   customer: customer.id,
+    //   metadata: {
+    //     userId: userId,
+    //     courseIds:JSON.stringify(courseIds),
+    //     couponOffer:offer,
+    //     couponId:JSON.stringify(coupon._id)
+    //   },
+    //   success_url: "https://www.eduhublearning.online/user/success",
+    //   cancel_url: "https://www.eduhublearning.online/user/faile",
+    // });
      
-    console.log("going to check out1");
+    // console.log("going to check out1");
     
-    if (session) {
-      console.log("going to check out2");
-      res.send({ id: session.id });
-    }
+    // if (session) {
+    //   console.log("going to check out2");
+    //   res.send({ id: session.id });
+    // }
   }
 
 

@@ -100,12 +100,7 @@ const InstructorRegisterForm = () => {
                   ></i>
                 </button>
               </div>
-              <a
-                href="#"
-                className="ml-auto text-sm underline-offset-2 my-2 hover:underline"
-              >
-                Forgot your password?
-              </a>
+            
               <button
                 type="submit"
                 className={`w-full bg-teal-500 py-1 font-bold text-white rounded hover:bg-teal-300 cursor-pointer`}

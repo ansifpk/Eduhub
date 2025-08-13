@@ -2,7 +2,6 @@ import Header from "@/components/user/Header";
 import ProfileNavbar from "../../components/user/ProfileNavbar";
 import Footer from "@/components/user/Footer";
 import React, { useEffect, useRef, useState } from "react";
-// import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import useRequest from "@/hooks/useRequest";
 import userRoutes from "@/service/endPoints/userEndPoints";
@@ -27,14 +26,17 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dispatch = useDispatch();
   const userId = useSelector((state: IUser) => state._id);
   const { doRequest, err } = useRequest();
-  const [user,setUser] = useState("")
+  const navigate = useNavigate();
+  const [user, setUser] = useState("");
   const [edit, setEdit] = useState(false);
+  // const [loading,setLoading] = useState(false);
   const [image, setImage] = useState({
     id: "" as string,
     avatar_url: "" as string | File,
@@ -60,7 +62,7 @@ const Profile = () => {
       method: "get",
       body: {},
       onSuccess: (response) => {
-        setUser(response.userData.name);
+        setUser(response.userData.email);
         setValue("name", response.userData.name);
         setValue("aboutMe", response.userData.about || "");
         setValue("thumbnail", response.userData.thumbnail || "");
@@ -70,16 +72,18 @@ const Profile = () => {
         });
       },
     });
-  }, [userId]);
+  }, [userId,edit]);
 
   const changeImage = async (file: File) => {
     const formData = new FormData();
     formData.append("profileImage", file);
+    // setLoading(true);
     doRequest({
       url: `${userRoutes.profileImage}/${userId}`,
       method: "patch",
       body: formData,
       onSuccess: () => {
+        // setLoading(false);
         setFileToBase(file);
         toast.success("Successfully updated your profile...");
       },
@@ -112,7 +116,6 @@ const Profile = () => {
         setEdit(!edit);
         toast.success("Profile updated succesffuly");
         dispatch(profileUpdated(response.user.name));
-       
       },
     });
   };
@@ -122,6 +125,7 @@ const Profile = () => {
   };
 
   useEffect(() => {
+    // setLoading(false);
     err?.map((err) => toast.error(err.message));
   }, [err]);
 
@@ -164,7 +168,7 @@ const Profile = () => {
                   >
                     change profile
                   </div>
-                  <div className="cursor-pointer rounded-lg text-center bg-teal-500 text-white md:text-sm text-xs md:px-3 px-2 py-1 rounded-2 ">
+                  <div onClick={()=>navigate("/user/changeEmail")} className="cursor-pointer rounded-lg text-center bg-teal-500 text-white md:text-sm text-xs md:px-3 px-2 py-1 rounded-2 ">
                     change email
                   </div>
                 </div>
@@ -194,7 +198,6 @@ const Profile = () => {
                       className="shadow-lg px-4 py-2 border border-teal-400 rounded-full md:w-full text-xs w-70"
                       readOnly
                     />
-                    
                   </div>
                 </div>
 
@@ -224,6 +227,7 @@ const Profile = () => {
                     </p>
                   )}
                 </div>
+
                 <button
                   onClick={() => setEdit(!edit)}
                   type="button"
@@ -233,38 +237,55 @@ const Profile = () => {
                 >
                   Edit
                 </button>
-                <AlertDialog>
-                  <AlertDialogTrigger
-                    type="button"
-                    className={`m-2 cursor-pointer  py-2 px-4 text-white rounded font-semibold text-xs bg-teal-500 hover:bg-teal-300 ${
-                      edit ? "block" : "hidden"
-                    }`}
-                  >
-                    Save
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        Are you absolutely sure?
-                      </AlertDialogTitle>
-                      <AlertDialogDescription>
-                        This action cannot be undone. This will permanently save
-                        this information to our database.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel className="text-white bg-teal-500 hover:bg-teal-300 hover:text-white">
-                        Cancel
-                      </AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={() => handleSubmit(handleEdit)()}
-                        className="bg-teal-500 hover:bg-teal-300"
-                      >
-                        Continue
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                <div className="flex">
+                  {edit && (
+                    <button
+                      onClick={() => {
+                        setEdit(!edit);
+                        setValue("name", "");
+                        setValue("aboutMe", "");
+                        setValue("thumbnail", "");
+                      }}
+                      type="button"
+                      className={`m-2 cursor-pointer  py-2 px-4 text-white rounded font-semibold text-xs bg-teal-500 hover:bg-teal-300`}
+                    >
+                      cancell
+                    </button>
+                  )}
+
+                  <AlertDialog>
+                    <AlertDialogTrigger
+                      type="button"
+                      className={`m-2 cursor-pointer  py-2 px-4 text-white rounded font-semibold text-xs bg-teal-500 hover:bg-teal-300 ${
+                        edit ? "block" : "hidden"
+                      }`}
+                    >
+                      Save
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you absolutely sure?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently
+                          save this information to our database.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel className="text-white bg-teal-500 hover:bg-teal-300 hover:text-white">
+                          Cancel
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => handleSubmit(handleEdit)()}
+                          className="bg-teal-500 hover:bg-teal-300"
+                        >
+                          Continue
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
               </form>
             </div>
           </div>

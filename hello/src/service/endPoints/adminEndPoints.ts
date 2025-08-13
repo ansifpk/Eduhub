@@ -1,5 +1,7 @@
 const adminRoutes = {
   //*auth
+   
+  
     login:'/auth/admin/login',
     blockUser:'/auth/admin/blockUser',
     blockInstructor:'/auth/admin/blockinstructor',

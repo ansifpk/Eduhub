@@ -8,19 +8,21 @@ import userRoutes from "@/service/endPoints/userEndPoints";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 
 const Plan = () => {
   const [plans, setPlans] = useState<IUserSubscribe[]>([]);
   const userId = useSelector((state: IUser) => state._id);
-  const navigate = useNavigate();
+  
   const { doRequest, err } = useRequest();
+  console.log("wuehiu")
+
   useEffect(() => {
     doRequest({
-      url: `${userRoutes.plans}/${userId}`,
+      url: `${userRoutes.subscribe}/${userId}`,
       body: {},
       method: "get",
       onSuccess: (response) => {
+        console.log('response',response);
         setPlans(response.plans);
       },
     });
@@ -41,6 +43,8 @@ const Plan = () => {
       }
      });
   }
+
+  
 
   return (
     <div>
@@ -95,7 +99,7 @@ const Plan = () => {
             <div className="h-[60vh] flex justify-center items-center gap-5 ">
               <strong>No Active plans</strong>
               <button
-                onClick={() => navigate("/user/courses")}
+                // onClick={() => navigate("/user/courses")}
                 className="text-indigo-700 cursor-pointer underline font-bold"
               >
                 Purchase plan

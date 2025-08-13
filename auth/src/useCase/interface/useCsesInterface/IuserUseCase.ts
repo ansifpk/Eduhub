@@ -11,7 +11,7 @@ export interface IuserUseCase{
     sentOtp(email:string,next:NextFunction):Promise <boolean|void>
     verifyEmail(email:string,next:NextFunction):Promise <any|void>
     verifyOtp(email:string,otp:string,next:NextFunction):Promise <any|void>
-    changePassword(email:string,password:string,next:NextFunction):Promise <any|void>
+    changePassword(email:string,password:string,confirmPassword:string,next:NextFunction):Promise <any|void>
     resetPassword(userId:string,password:string,newPassword:string,conPassword:string,next:NextFunction):Promise <Iuser|void>
     editUser(userId:string,name:string,email:string,next:NextFunction):Promise <Iuser|void>
     verifyNewEmail(userId:string,email:string,next:NextFunction):Promise <string|void>

@@ -21,7 +21,7 @@ const ChangeEmail = () => {
     const [email,setEmail] = useState("");
     const [otp,setOTP] = useState("");
     const [page,setPage] = useState(1);
-    const {doRequest,errors} = useRequest();
+    const {doRequest,err} = useRequest();
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate()
     const dispatch = useDispatch()
@@ -64,8 +64,8 @@ const ChangeEmail = () => {
     
    
   useEffect(()=>{
-    errors?.map((err)=>toast.error(err.message))
-  },[errors]);
+    err?.map((err)=>toast.error(err.message))
+  },[err]);
 
 
   return (

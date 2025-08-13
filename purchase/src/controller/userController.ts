@@ -1,12 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { IUserUseCase } from "../useCases/interfaces/useCases/IUserUseCase";
-import Stripe from "stripe";
 import dotenv from "dotenv";
 dotenv.config();
 
-const stripe = new Stripe(process.env.STRIPE_SECRET!, {
-  apiVersion: "2025-01-27.acacia",
-});
 
 
 export class UserController{
@@ -51,6 +47,7 @@ export class UserController{
       const {customerId} = req.params;
       const sessionId =  await this.userUseCase.subscriptionDetailes(customerId,next)
       if (sessionId) {
+         console.log(sessionId)
           res.send({success:true, url:sessionId });
         }
       } catch (error) {

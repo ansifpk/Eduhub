@@ -1,6 +1,5 @@
 import { Suspense ,lazy} from "react"
 import type { IUser } from "@/@types/userType"
-import AdminAside from "@/components/admin/AdminAside"
 import { SocketProvider } from "@/context/socketContext"
 const AdminCoupons = lazy(()=>import("@/pages/admin/AdminCoupons"))
 const AdminListCategory = lazy(()=> import("@/pages/admin/AdminListCategory"))
@@ -13,6 +12,9 @@ const AdminSubscription = lazy(()=>import("@/pages/admin/AdminSubscription"))
 const Dashboard = lazy(()=>import("@/pages/admin/Dashboard"))
 const InstructorsRequests = lazy(()=>import("@/pages/admin/InstructorsRequests"))
 const Login  = lazy(()=>import("@/pages/admin/Login"))
+const AdminCreateCoupon = lazy(()=>import("@/pages/admin/AdminCreateCoupon"))
+const AdminAddCategory = lazy(()=>import("@/pages/admin/AdminAddCategory"))
+const AdminAside = lazy(()=>import("@/components/admin/AdminAside"))
 import { useSelector } from "react-redux"
 import { Route, Routes } from "react-router-dom"
 
@@ -31,27 +33,12 @@ const AdminRouter = () => {
               <Route path="/salesReport"  element={isAdmin?<AdminSalesReport/>:<Login/>} />
               <Route path="/courses"  element={isAdmin?<AdminListCourses/>:<Login/>} />
               <Route path="/category"  element={isAdmin?<AdminListCategory/>:<Login/>} />
+              <Route path="/createCategory"  element={isAdmin?<AdminAddCategory/>:<Login/>} />
               <Route path="/coupon"  element={isAdmin?<AdminCoupons/>:<Login/>} />
+              <Route path="/createCoupon"  element={isAdmin?<AdminCreateCoupon/>:<Login/>} />
               <Route path="/mesage"  element={isAdmin?<AdminMessage/>:<Login/>} />
               <Route path="/subscriptions"  element={isAdmin?<AdminSubscription />:<Login/>} />
           </Route>
-         
-     {/* <Route path='/login' element={isAdmin?<AdminHome/>:<AdminLogin/>} />
-         <Route path='/home' element={isAdmin?<AdminHome/>:<AdminLogin />} />
-         <Route path='/students' element={isAdmin?<AdminListStudents/>:<AdminLogin />} />
-         <Route path='/instructors' element={isAdmin?<AdminListInstructors/>:<AdminLogin />} />
-         <Route path="/instructorRequests" element={isAdmin?<AdminInstructorRequests/>:<AdminLogin />} />
-         <Route path='/reports' element={isAdmin?<SalesReports/>:<AdminLogin />} />
-         <Route path='/courses' element={isAdmin?<AdminListCourses/>:<AdminLogin />} />
-         <Route path='/category' element={isAdmin?<AdminCategory/>:<AdminLogin />} />
-         <Route path='/addCategory' element={isAdmin?<AddCategory/>:<AdminLogin />} />
-         <Route path='/editCategory/:id' element={isAdmin?<EditCategory/>:<AdminLogin />} />
-         <Route path='/subscriptions' element={isAdmin?<AdminSubscriptions/>:<AdminLogin />} />
-         <Route path='/addSubscription' element={isAdmin?<AddSubscription/>:<AdminLogin />} /> 
-         <Route path='/messages' element={isAdmin?<AdminMessage/>:<AdminLogin />} />
-         <Route path='/coupon' element={isAdmin?<AdminListCoupon/>:<AdminLogin />} />
-         <Route path='/addCoupon' element={isAdmin?<AdminAddCoupon/>:<AdminLogin />} />
-         <Route path='*' element={<ErrorPage/>} /> */}
       </Routes>
      </Suspense>
           

@@ -22,6 +22,6 @@ export interface ICourse{
     },
     students?:Iuser[],
     createdAt:string,
-    sections:string[],
+    sections:ISection,
 }
 

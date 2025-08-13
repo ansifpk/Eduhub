@@ -2,7 +2,7 @@ import { Response, Request, NextFunction } from "express";
 import { IuserUseCase } from "../useCase/interface/useCsesInterface/IuserUseCase";
 import kafkaWrapper from "../framework/webServer/config/kafka/kafkaWrapper";
 import { Producer } from "kafkajs";
-import { ForbiddenError, NotAuthorizedError, UserCreatedPublisher } from "@eduhublearning/common";
+import { EmailChangedPublisher, ForbiddenError, NotAuthorizedError, UserCreatedPublisher } from "@eduhublearning/common";
 
 export class UserController {
   private userUseCase: IuserUseCase;
@@ -17,7 +17,8 @@ export class UserController {
           httpOnly:true,
           secure:process.env.NODE_ENV !== 'development',
           sameSite:'strict',
-          maxAge:30 * 24 * 60 * 60 * 1000
+           path:"/",
+          maxAge:30 * 24 * 60 * 60 * 1000,
          });
         res.status(200).json({
           succes: true,
@@ -60,33 +61,35 @@ export class UserController {
       );
  
       if (user) {
-      //  await new UserCreatedPublisher(kafkaWrapper.producer as Producer).produce({
-      //    _id: user.user._id! as string,
-      //    name: user.user.name as string,
-      //    email: user.user.email as string,
-      //    isInstructor: user.user.isInstructor! as boolean,
-      //    password: user.user.password,
-      //    createdAt: user.user.createdAt!,
-      //  })
+       await new UserCreatedPublisher(kafkaWrapper.producer as Producer).produce({
+         _id: user.user._id! as string,
+         name: user.user.name as string,
+         email: user.user.email as string,
+         isInstructor: user.user.isInstructor! as boolean,
+         password: user.user.password,
+         createdAt: user.user.createdAt!,
+       })
   
        res.cookie('verificationToken','',{
         httpOnly:true,
+        path:"/",
         expires:new Date(0)
        });
 
        res.cookie('accessToken',user.tokens.accessToken,{
-        httpOnly:true,
-        secure:process.env.NODE_ENV !== 'development',
-        sameSite:process.env.NODE_ENV == 'development'?'strict':"none",
-        maxAge: 15 * 60 * 1000
+          httpOnly:true,
+          secure:process.env.NODE_ENV !== 'development',
+          sameSite:process.env.NODE_ENV == 'development'?'strict':"none",
+          path:"/",
+          maxAge: 15 * 60 * 1000,
        });
-
-      res.cookie('refreshToken',user.tokens.refreshToken,{
-        httpOnly:true,
-        secure:process.env.NODE_ENV !== 'development',
-        sameSite:process.env.NODE_ENV == 'development'?'strict':"none",
-        maxAge:30 * 24 * 60 * 60 * 1000
-     });
+        res.cookie('refreshToken',user.tokens.refreshToken,{
+          httpOnly:true,
+          secure:process.env.NODE_ENV !== 'development',
+          sameSite:process.env.NODE_ENV == 'development'?'strict':"none",
+          path:"/",
+          maxAge:30 * 24 * 60 * 60 * 1000,
+       });
       
       res.send({ succusse: true, user: user });
       }
@@ -196,10 +199,11 @@ export class UserController {
   async changePassword(req: Request, res: Response, next: NextFunction) {
 
     try {
-      const {email,password} = req.body;
+      const {email,password,confirmPassword} = req.body;
       const data = await this.userUseCase.changePassword(
         email,
         password,
+        confirmPassword,
         next
       );
       if (data) {
@@ -259,7 +263,12 @@ export class UserController {
       const   {email,otp}= req.body
       const user  = await this.userUseCase.changeEmail(userId,email,otp,next)
       if(user){
+        await new EmailChangedPublisher(kafkaWrapper.producer as Producer).produce({
+          _id: user._id!,
+          email: user.email
+        })
         return res.send({success:true,user:user});
+
       }
     } catch (error) {
       console.error(error);

@@ -21,11 +21,7 @@ const app = express()
 const httpServer = createServer(app);
 app.set('trust proxy',true);
 const allowedOrgins =  JSON.parse(process.env.ORGINS!)
- app.use((req,res,next)=>{
-    console.log("ji jhejfioejfieofheiufheriuheriu");
-    next()
-    
- })
+
 app.use(cors({
     origin: allowedOrgins,
     credentials:true,
@@ -93,17 +89,17 @@ const io = new Server(httpServer,{
 const start = async () => {
     try {
         
-        // await kafkaWrapper.connect();
-        // const consumer = await kafkaWrapper.createConsumer("auth-instructor-aproved-group")
-        // const consumer2 = await kafkaWrapper.createConsumer("auth-profile-updated-group")
-        // const consumer3 = await kafkaWrapper.createConsumer("email-changed-group")
-        // consumer.connect()
-        // consumer2.connect()
-        // consumer3.connect()
+        await kafkaWrapper.connect();
+        const consumer = await kafkaWrapper.createConsumer("auth-instructor-aproved-group")
+        const consumer2 = await kafkaWrapper.createConsumer("auth-profile-updated-group")
+        const consumer3 = await kafkaWrapper.createConsumer("email-changed-group")
+        consumer.connect()
+        consumer2.connect()
+        consumer3.connect()
 
-        // await new InstructorAprovedConsumer(consumer).listen()
-        // await new UserProfileUpdatedConsumer(consumer2).listen()
-        // await new EmailChangedConsumer(consumer3).listen()
+        await new InstructorAprovedConsumer(consumer).listen()
+        await new UserProfileUpdatedConsumer(consumer2).listen()
+        await new EmailChangedConsumer(consumer3).listen()
 
         await connectDB();
         httpServer.listen(process.env.PORT, () => console.log(`the server is running in http://localhost:${process.env.PORT}/auth for auth`))

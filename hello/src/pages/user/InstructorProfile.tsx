@@ -44,6 +44,7 @@ import {
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loadStripe } from "@stripe/stripe-js";
+import type { IUserProfile } from "@/@types/userProfile";
 const stripe = await loadStripe(import.meta.env.VITE_PUBLISH_SECRET);
 
 const labels: { [index: string]: string } = {
@@ -63,7 +64,7 @@ const InstructorProfile = () => {
   const { err, doRequest } = useRequest();
   const { instructorId } = useParams();
   const userId = useSelector((state: IUser) => state._id);
-  const [user, setUser] = useState<IUser>();
+  const [user, setUser] = useState<IUserProfile>();
   const [courses, setCourses] = useState<ICourse[]>([]);
   const [cart, setCart] = useState<ICart>();
   const [reviews, setReviews] = useState<IInstructorRating[]>([]);
@@ -105,6 +106,7 @@ const InstructorProfile = () => {
       method: "get",
       body: {},
       onSuccess: (res) => {
+        console.log(res.courses);
         setCourses(res.courses);
       },
     });
@@ -147,9 +149,6 @@ const InstructorProfile = () => {
   useEffect(() => {
     err?.map((err) => toast.error(err.message));
   }, [err]);
-
-  let wr =
-    "Hi everyone, I’m Ansif, a student on EduHub, and I’m thrilled to be here! This platform has been incredibly helpful in my learning journey. The variety of courses available, taught by expert instructors, has allowed me to dive deep into new areas and build valuable skills. What I love most about EduHub is the supportive community of like-minded learners who share the same passion for growth. With flexible learning options and expert guidance, EduHub makes it easy for anyone to improve their skills. I’m excited to continue learning and growing here, and I hope you are too!";
 
   const handleCart = (_id: string) => {};
 
@@ -264,7 +263,7 @@ const InstructorProfile = () => {
               <span>{user?.name}</span>
               <div>
                 <span className="font-semibold">About me : </span>
-                {wr}
+                {user?.about}
               </div>
               <div>
                 <i className="bi bi-star-fill text-yellow-600"></i>2 instructor
@@ -868,12 +867,22 @@ const InstructorProfile = () => {
                             {reviews.find((rev) => rev.userId._id == userId) ? (
                               ""
                             ) : (
-                              <DialogTrigger
-                                className="cursor-pointer underline"
-                                onClick={() => setAddOpenAlert(true)}
-                              >
-                                Add Review
-                              </DialogTrigger>
+                              <>
+                                {courses.find((course) =>
+                                  course.students.some(
+                                    (stu) => stu._id == userId
+                                  )
+                                ) ? (
+                                  <DialogTrigger
+                                    className="cursor-pointer underline"
+                                    onClick={() => setAddOpenAlert(true)}
+                                  >
+                                    Add Review
+                                  </DialogTrigger>
+                                ) : (
+                                  ""
+                                )}
+                              </>
                             )}
 
                             <DialogContent className="sm:max-w-[425px]">
@@ -977,12 +986,10 @@ const InstructorProfile = () => {
                         {subscriptions.map((value, index) => (
                           <div
                             key={index}
-                            className="border w-full h-[300px] rounded border-teal-500"
+                            className="border w-full h-[273px] rounded border-teal-500"
                           >
-                            <h4 className=" underline text-center">
-                              Personal Plan
-                            </h4>
-                            <div className="  m-1">
+                            <strong>Personal Plan</strong>
+                            <div>
                               <div className="flex flex-col items-center justify-center h-[210px]">
                                 <div>
                                   {value.plan == "Monthly"
@@ -1003,51 +1010,126 @@ const InstructorProfile = () => {
                                 </div>
                               </div>
 
-                              {plans.length > 0 ? (
-                                (() => {
-                                  let customerId: string;
-                                  const isSubscribed = subscriptions.some(
-                                    (sub) =>
-                                      plans.some((plan) => {
-                                        if (
-                                          sub._id === plan.subscriptionId._id
-                                        ) {
-                                          customerId = plan.customerId;
-                                          return true;
-                                        }
-                                      })
-                                  );
-                                  return isSubscribed ? (
-                                    <button
-                                      type="button"
-                                      onClick={() => goToDetailes(customerId)}
-                                      className="w-full bg-teal-500 hover:bg-teal-300 text-white font-semibold cursor-pointer py-2 rounded"
-                                    >
-                                      View detailes
-                                    </button>
-                                  ) : (
+                              <div className="flex justify-end">
+                                {plans.length > 0 ? (
+                                  (() => {
+                                    let customerId: string;
+                                    const isSubscribed = subscriptions.some(
+                                      (sub) =>
+                                        plans.some((plan) => {
+                                          if (
+                                            sub._id === plan.subscriptionId._id
+                                          ) {
+                                            customerId = plan.customerId;
+                                            return true;
+                                          }
+                                        })
+                                    );
+                                    return isSubscribed ? (
+                                      <button
+                                        type="button"
+                                        onClick={() => goToDetailes(customerId)}
+                                        className="w-full bg-teal-500  hover:bg-teal-300 text-white  font-semibold py-2 rounded cursor-pointer"
+                                      >
+                                        View detailes
+                                      </button>
+                                    ) : (
+                                      <button
+                                        onClick={() => subscribe(value._id)}
+                                        type="button"
+                                        className="w-full bg-teal-500  font-bold py-2 rounded cursor-pointer hover:bg-teal-500 text-white"
+                                      >
+                                        Start Subscription
+                                      </button>
+                                    );
+                                  })()
+                                ) : (
+                                  <>
                                     <button
                                       onClick={() => subscribe(value._id)}
                                       type="button"
-                                      className="w-full bg-teal-500 hover:bg-teal-500 text-white"
+                                      className="w-full bg-teal-500 py-2 rounded cursor-pointer hover:bg-teal-500 text-white"
                                     >
                                       Start Subscription
                                     </button>
-                                  );
-                                })()
-                              ) : (
-                                <>
-                                  <button
-                                    onClick={() => subscribe(value._id)}
-                                    type="button"
-                                    className="w-full bg-teal-500 hover:bg-teal-500 text-white"
-                                  >
-                                    Start Subscription
-                                  </button>
-                                </>
-                              )}
+                                  </>
+                                )}
+                              </div>
                             </div>
                           </div>
+                          // <div
+                          //   key={index}
+                          //   className="border w-full h-[300px] rounded border-teal-500"
+                          // >
+                          //   <h4 className=" underline text-center">
+                          //     Personal Plan
+                          //   </h4>
+                          //   <div className="  m-1">
+                          //     <div className="flex flex-col items-center justify-center h-[210px]">
+                          //       <div>
+                          //         {value.plan == "Monthly"
+                          //           ? `Rs : ${value.price}/- per Month`
+                          //           : `Rs : ${value.price}/- per Year`}
+                          //       </div>
+                          //       <div className="text-xs">
+                          //         {value.plan == "Monthly"
+                          //           ? `Billed monthly.`
+                          //           : `Billed annually.`}
+                          //       </div>
+                          //       <div className="space-y-3 m-3">
+                          //         {value.description.map((val, index) => (
+                          //           <li className="text-xs" key={index}>
+                          //             {val}
+                          //           </li>
+                          //         ))}
+                          //       </div>
+                          //     </div>
+
+                          // {plans.length > 0 ? (
+                          //   (() => {
+                          //     let customerId: string;
+                          //     const isSubscribed = subscriptions.some(
+                          //       (sub) =>
+                          //         plans.some((plan) => {
+                          //           if (
+                          //             sub._id === plan.subscriptionId._id
+                          //           ) {
+                          //             customerId = plan.customerId;
+                          //             return true;
+                          //           }
+                          //         })
+                          //     );
+                          //     return isSubscribed ? (
+                          //       <button
+                          //         type="button"
+                          //         onClick={() => goToDetailes(customerId)}
+                          //         className="w-full bg-teal-500 hover:bg-teal-300 text-white font-semibold cursor-pointer py-2 rounded"
+                          //       >
+                          //         View detailes
+                          //       </button>
+                          //     ) : (
+                          //       <button
+                          //         onClick={() => subscribe(value._id)}
+                          //         type="button"
+                          //         className="w-full bg-teal-500 hover:bg-teal-500 text-white"
+                          //       >
+                          //         Start Subscription
+                          //       </button>
+                          //     );
+                          //   })()
+                          // ) : (
+                          //   <>
+                          //     <button
+                          //       onClick={() => subscribe(value._id)}
+                          //       type="button"
+                          //       className="w-full bg-teal-500 hover:bg-teal-500 text-white"
+                          //     >
+                          //       Start Subscription
+                          //     </button>
+                          //   </>
+                          // )}
+                          //   </div>
+                          // </div>
                         ))}
                       </div>
                     </div>

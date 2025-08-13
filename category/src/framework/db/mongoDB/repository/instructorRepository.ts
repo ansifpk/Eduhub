@@ -17,5 +17,12 @@ export class InstructorRepository implements IInstructorRepository{
             console.error(error)
         }
     }
+    async findTop5(): Promise< ICategory[] | void> {
+        try {
+            
+        } catch (error) {
+            console.error(error)
+        }
+    }
    
 }

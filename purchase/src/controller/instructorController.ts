@@ -8,8 +8,8 @@ export class InstructorController{
     
     async editSubscription(req:Request,res:Response,next:NextFunction){
         const {subscriptionId} = req.params;
-        const {price} = req.body;
-        const subscription = await this.instructorUseCase.editSubscription(subscriptionId,price,next)
+        const {price,plan,instructorId} = req.body;
+        const subscription = await this.instructorUseCase.editSubscription(subscriptionId,price,plan[0],instructorId,next)
         if(subscription){
             return res.send({success:true})
         }
@@ -84,7 +84,7 @@ export class InstructorController{
     async getOrders(req:Request,res:Response,next:NextFunction){
         try {
          const {instructorId,start,end}  = req.query ;
-        
+          
           const orders = await this.instructorUseCase.getOrders(instructorId as string,start as string,end as string,next)
           if(orders){
               return res.send({success:true,orders});
@@ -96,14 +96,15 @@ export class InstructorController{
 
     async salesReports(req:Request,res:Response,next:NextFunction){
         try {
-           const {userId,report,year,month}  = req.query 
-      
-           const workbook = await this.instructorUseCase.createReport(userId as string,report as string,year as string,month as string,next)
-         if(workbook){
-            workbook.xlsx.writeBuffer().then((data) => {
+           const {instructorId,start,end}  = req.query ;
+            const orders = await this.instructorUseCase.createReport(instructorId as string,start as string,end as string,next)
+            console.log("cw",orders)
+          if(orders){
+               orders.xlsx.writeBuffer().then((data) => {
              res.status(200).send(data);
              })
-           }
+          }
+       
          
         } catch (error) {
          console.error(error)
@@ -112,10 +113,10 @@ export class InstructorController{
 
     async instructorOrders(req:Request,res:Response,next:NextFunction){
         try {
-           const {instructorId,filter}  = req.params 
-           const orders = await this.instructorUseCase.instructorOrders(instructorId,filter,next)
+           const {instructorId,start,end}  = req.params 
+           const orders = await this.instructorUseCase.instructorOrders(instructorId,new Date(start),new Date(end),next)
            if(orders){
-           
+             
              res.send({success:true,orders:orders});
            }
          

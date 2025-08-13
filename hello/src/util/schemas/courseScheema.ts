@@ -8,32 +8,41 @@ export const courseSchema = z.object({
   thumbnail: z.string().min(1, { message: "This Field is Required" }),
   description: z.string().min(1, { message: "This Field is Required" }),
   price: z.string().min(1, { message: "This Field is Required" }),
-  courseImage: z
-    .instanceof(File, { message: "This Field is Required" })
-    .refine((file) => file.type.startsWith("image/"), {
-      message: "File must be an image",
-    }),
-  sections: z.array(
-    z.object({
-      sectionTitle: z.string().min(1, { message: "This Field is Required" }),
-      lectures: z.array(
-        z.object({
-          title: z
-            .string()
-            .min(1, { message: "This Field is Required" }),
-          duration: z.string().min(1, { message: "This Field is Required" }),
-          content: z.union([
-            z.instanceof(File,{message:"This Field is Required"})
-            .refine((file) => file.type.startsWith("video/"), {
-              message: "File must be an image",
+  image: z.object({
+    _id: z.string(),
+    image_url: z.union([
+      z
+        .instanceof(File, { message: "This Field is Required" })
+        .refine((file) => file.type.startsWith("image/"), {
+          message: "File must be an image",
+        }),
+      z.string().min(1, { message: "This Field is Required" }),
+    ]),
+  }),
+  sections: z.object({
+    sections: z.array(
+      z.object({
+        sectionTitle: z.string().min(1, { message: "This Field is Required" }),
+        lectures: z.array(
+          z.object({
+            title: z.string().min(1, { message: "This Field is Required" }),
+            duration: z.string().min(1, { message: "This Field is Required" }),
+            content: z.object({
+              _id: z.string(),
+              video_url: z.union([
+                z
+                  .instanceof(File, { message: "This Field is Required" })
+                  .refine((file) => file.type.startsWith("video/"), {
+                    message: "File must be an video",
+                  }),
+                z.string().min(1, { message: "This Field is Required" }),
+              ]),
             }),
-            z.string().min(1,{message:"This Field is Required"})
-          ])
-            ,
-        })
-      ),
-    })
-  ),
+          })
+        )
+      })
+    ).min(1,{message:"Atleae one section is required"}),
+  }),
 });
 
 export type CourseFormInputs = z.infer<typeof courseSchema>;

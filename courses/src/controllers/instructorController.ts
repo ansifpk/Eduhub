@@ -10,32 +10,30 @@ export class InstructorController{
         
     }
     async createCourse(req:Request,res:Response,next:NextFunction){
-   
+    
         
         const course = await this.instructorUseCases.createCourse({bodyData:req.body,fileData:req.files},next)
         if(course){    
            
-            // await new CourseCreatedPublisher(kafkaWrapper.producer as Producer).produce({
-            //     _id: course._id!,
-            //     title: course.title,
-            //     price: course.price,
-            //     isListed: course.isListed,
-            //     thumbnail: course.thumbnail,
-            //     description: course.description,
-            //     instructorId: course.instructorId!,
-            //     category: course.category,
-            //     subCategory: course.subCategory,
-            //     level: course.level,
-            //     image: course.image,
-            //     sections: course.sections,
-            //     createdAt: course.createdAt,
-            //     subscription: course.subscription
-            // })
-            
-            res.send({success:true,course:course}) ;
-            
-           
-            await this.instructorUseCases.uploadVideo({courseId:course._id,bodyData:req.body.sectionsVideos,fileData:req.files},next)
+            await new CourseCreatedPublisher(kafkaWrapper.producer as Producer).produce({
+                _id: course._id!,
+                title: course.title,
+                price: course.price,
+                isListed: course.isListed,
+                thumbnail: course.thumbnail,
+                description: course.description,
+                instructorId: course.instructorId!,
+                category: course.category,
+                subCategory: course.subCategory,
+                level: course.level,
+                image: course.image,
+                sections: course.sections,
+                createdAt: course.createdAt,
+                subscription: course.subscription
+            })
+
+            this.instructorUseCases.uploadVideo({courseId:course._id,bodyData:req.body.sectionsVideos,fileData:req.files},next)
+            return res.send({success:true,course:course}) ;
           
         }
     }
@@ -54,26 +52,24 @@ export class InstructorController{
       }
     }
     async editCourse(req:Request,res:Response,next:NextFunction){
+        const {courseId}=req.params
         const files = req.files  as { [fieldname: string]: Express.Multer.File[] } | undefined;
-        const course = await this.instructorUseCases.editCourse({bodyData:req.body,fileData:req.files as { [fieldname: string]: Express.Multer.File[] } | undefined},next)
+        const course = await this.instructorUseCases.editCourse(courseId,{bodyData:req.body,fileData:req.files as { [fieldname: string]: Express.Multer.File[] } | undefined},next)
         if(course){         
-       
-          
-            res.send({success:true,course:course}) ;
-            // await new CourseUpdatedPublisher(kafkaWrapper.producer as Producer).produce({
-            //     _id: course._id!,
-            //     title: course.title,
-            //     category: course.category,
-            //     subCategory: course.subCategory,
-            //     level: course.level,
-            //     thumbnail: course.thumbnail,
-            //     description: course.description,
-            //     price: course.price,
-            //     image: course.image,
-            //     sections: course.sections
-            // })
-            await this.instructorUseCases.editSection({courseId:req.body._id,bodyData:req.body.sections,fileData:files},next)
+            await new CourseUpdatedPublisher(kafkaWrapper.producer as Producer).produce({
+                _id: course._id!,
+                title: course.title,
+                category: course.category,
+                subCategory: course.subCategory,
+                level: course.level,
+                thumbnail: course.thumbnail,
+                description: course.description,
+                price: course.price,
+                image: course.image,
+            })
             
+            this.instructorUseCases.editSection({courseId:courseId,bodyData:req.body.sections,fileData:files},next)
+            res.send({success:true,course:course}) ;
         }
     }
     async getCourses(req:Request,res:Response,next:NextFunction){
@@ -81,14 +77,15 @@ export class InstructorController{
         let page = Number(req.query.page) 
          
         
-        const courses = await this.instructorUseCases.fetchCourses(instructorId as string,search as string,sort as string,page)
-        if(courses){
+        const courses = await this.instructorUseCases.fetchCourses(instructorId as string,search as string,sort as string,page,next)
+                if(courses){
              res.send({success:true,courses:courses})
         }
     }
     async getStudents(req:Request,res:Response,next:NextFunction){
         const {instructorId,search,sort,page} = req.query;
-        const students = await this.instructorUseCases.getStudents(instructorId as string,search as string,sort as string,next)
+        console.log(req.query);
+        const students = await this.instructorUseCases.getStudents(instructorId as string,search as string,sort as string,page as string,next)
          if(students){
              res.send({success:true,students})
         }
@@ -104,10 +101,10 @@ export class InstructorController{
        const {courseId} = req.params;
       const course =  await this.instructorUseCases.listCourse(courseId,next)
       if(course){
-        // await new CourseListedPublisher(kafkaWrapper.producer as Producer).produce({
-        //     _id: course._id!,
-        //     isListed: course.isListed
-        // })
+        await new CourseListedPublisher(kafkaWrapper.producer as Producer).produce({
+            _id: course._id!,
+            isListed: course.isListed
+        })
         return res.send({success:true,course:course});
       }
     }
@@ -139,11 +136,12 @@ export class InstructorController{
       }
     }
 
+  
     async topRated(req:Request,res:Response,next:NextFunction){
           const {userId} = req.params;
-          const courses =  await this.instructorUseCases.topRated(userId,next)
-      if(courses){
-        return res.send({success:true,courses});
+          const ratings =  await this.instructorUseCases.topRated(userId,next)
+      if(ratings){
+        return res.send({success:true,ratings});
       }
     }
 

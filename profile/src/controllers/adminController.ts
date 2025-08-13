@@ -9,7 +9,6 @@ export class AdminController{
     async fetchInstructors(req:Request,res:Response,next:NextFunction){
       try {
         const { search,sort,page } = req.query
-        console.log(req.query,"instru");
        const instructors =  await this.adminUseCase.fetchInstructors(search as string, sort as string,parseInt(page as string),next)
        if(instructors){
 

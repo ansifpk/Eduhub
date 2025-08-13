@@ -2,9 +2,9 @@
 import { z } from "zod";
 
 export const registerSchema = z.object({
-  email: z.string().trim().min(1, { message: "This firld is Required" }).email({ message: "Invalid email address" }),
+  email: z.string().trim().min(1, { message: "This field is Required" }).email({ message: "Invalid email address" }),
   password: z.string().min(6, { message: "Password must be at least 6 characters" }).max(12, { message: "Password must be max 12 characters"  }),
-  name: z.string().trim().min(2, { message: "Invalid Name" }),
+  name: z.string().trim().min(1, { message: "This field is Required"  }),
   mobile: z.string().trim().min(10, { message: "Mobile must be 10 Digits" }).max(10, { message: "Mobile must be 10 Digits" }),
 });
 

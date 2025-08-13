@@ -1,4 +1,5 @@
 import type { IRating } from "./ratingType"
+import type { ISection } from "./sectionType"
 import type { ITest } from "./testType"
 import type { IUser } from "./userType"
 
@@ -29,17 +30,5 @@ export interface ICourse{
     courseReviews:IRating[],
     students:IUser[],
     createdAt:string,
-    sections:{
-        _id:string,
-        sectionTitle:string,
-        lectures:[{
-            id:string,
-            content:{
-                _id:string,
-                video_url:string
-            },
-            duration:string,
-            title:string,
-        }]
-    }[],
+    sections:ISection,
 }

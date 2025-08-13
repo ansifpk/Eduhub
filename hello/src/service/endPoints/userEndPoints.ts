@@ -10,12 +10,12 @@ const userRoutes = {
  verifyPassOtp:"/auth/user/verifyOtp",
  newPassword:"/auth/user/newPassword",
  resetPassword:"/auth/user/resetPassword",
- logout:'/auth/user/logout',
+ logout:'/auth/auth/logout',
 
  // user servic end points
  editUser:'/profile/user/profile',
- changeEmailVeryfy:'/user/verifyEmail',
- changeEmail:'/auth/changeEmail',
+ changeEmailVeryfy:'/auth/user/verifyEmail',
+ changeEmail:'/auth/user/changeEmail',
 
  getCourses:"/course/user/courses",
  fetchCourses:"/course/user/getCourses",
@@ -48,6 +48,7 @@ const userRoutes = {
 
  //*subscriptions
  subscriptions:"/purchase/user/subscription",
+ subscribe:"/purchase/user/subscribe",
  plans:"/purchase/user/customer",
  customer:"/purchase/user/customer",
  tocken:"/auth/user/refresh-token",

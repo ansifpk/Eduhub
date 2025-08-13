@@ -25,7 +25,7 @@ const sendMail = new SentEmail()
 // instructor
 const s3bucketrepository = new S3bucket()
 const cloudinery = new CloudinaryV2()
-const instructorRepository = new InstructorRepository(Course,SectionModel,testModel)
+const instructorRepository = new InstructorRepository(Course,SectionModel,testModel,ratingModel)
 const instructorUseCase = new InstructorUseCase(instructorRepository,cloudinery,sendMail);
 const instructorController = new InstructorController(instructorUseCase)
 

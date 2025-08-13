@@ -5,16 +5,33 @@ import { IAdminRepository } from "../interfaces/repository/IAdminRepository";
 import { IAdminUseCase } from "../interfaces/useCases/IadminUseCase";
 import { IReport } from "../../entities/report";
 import { ISection } from "../../entities/section";
-import { NotFoundError, StatusCodes } from "@eduhublearning/common";
+import { BadRequestError, NotFoundError, StatusCodes } from "@eduhublearning/common";
 
 export class AdminUseCase implements IAdminUseCase{
     constructor(private adminRepository:IAdminRepository,){}
 
    
 
-    async createCoupon(title: string, description: string, offer: number, startingDate:string, startingTime:string, expiryDate:string, expiryTime:string, couponCode: string, next: NextFunction): Promise<ICoupon | void> {
+    async createCoupon(title: string, description: string, offer: number, startingDate:string, expiryDate:string,couponCode: string, next: NextFunction): Promise<ICoupon | void> {
        try {
-        const coupon = await this.adminRepository.createCoupon(title,description,offer,startingDate,startingTime,expiryDate,expiryTime,couponCode);
+          if(title.length < 1){
+                throw new BadRequestError("Pleaseprovide a valid title")
+             }
+             if(description.length < 1){
+                throw new BadRequestError("Pleaseprovide a valid description")
+             }
+            if(expiryDate < startingDate){
+                throw new BadRequestError("expiry Date date must be greaterthan Starting Date")
+            }
+            const today = new Date().toISOString().slice(0, 16);
+            if(today > startingDate){
+                throw new BadRequestError("Please set the starting date as today or day that is grater than today")
+            }
+
+            if(offer < 5 || offer > 15){
+                throw new BadRequestError("Offer rate must be in betwwen 5% - 20% ")
+            }
+        const coupon = await this.adminRepository.createCoupon(title,description,offer,startingDate,expiryDate,couponCode);
         if(coupon){
             return coupon
         }
@@ -23,23 +40,39 @@ export class AdminUseCase implements IAdminUseCase{
        }
 
     }
-    async editCoupon(couponId: string, title: string, description: string, offer: number, startingDate:string, startingTime:string, expiryDate:string, expiryTime:string, couponCode: string, next: NextFunction): Promise<ICoupon[] | void> {
+    async editCoupon(couponId: string, title: string, description: string, offer: number, startingDate:string,expiryDate:string, couponCode: string, next: NextFunction): Promise<ICoupon | void> {
         try {
             const couponCheck = await this.adminRepository.findCouponById(couponId);
-
+             if(title.length < 1){
+                throw new BadRequestError("Pleaseprovide a valid title")
+             }
+             if(description.length < 1){
+                throw new BadRequestError("Pleaseprovide a valid description")
+             }
             if(!couponCheck){
-                throw new NotFoundError("Coupon Not found")
-                
+                throw new BadRequestError("Coupon Not found")
             }
+            if(expiryDate < startingDate){
+                throw new BadRequestError("expiry Date date must be greaterthan Starting Date")
+            }
+            const today = new Date().toISOString().slice(0, 16);
+            if(today > startingDate){
+                throw new BadRequestError("Please set the starting date as today or day that is grater than today")
+            }
+
+            if(offer < 5 || offer > 15){
+                throw new BadRequestError("Offer rate must be in betwwen 5% - 20% ")
+            }
+
                 
-            const coupon = await this.adminRepository.editCoupon(couponId,title,description,offer,startingDate,startingTime,expiryDate,expiryTime,couponCode);
+            const coupon = await this.adminRepository.editCoupon(couponId,title,description,offer,startingDate,expiryDate,couponCode);
           
             if(coupon){
-                const coupons = await this.adminRepository.coupons();
-                return coupons
+                return coupon
             }
            } catch (error) {
             console.error(error)
+            next(error);
            }
     
     }
@@ -88,9 +121,9 @@ export class AdminUseCase implements IAdminUseCase{
            }
     
     }
-    async getCoupons(next: NextFunction): Promise<ICoupon[] | void> {
+    async getCoupons(search:string,sort:string,page:string,next: NextFunction): Promise<ICoupon[] | void> {
         try {
-            const coupon = await this.adminRepository.coupons();
+            const coupon = await this.adminRepository.coupons(search,sort,page);
             if(coupon){
                 return coupon
             }

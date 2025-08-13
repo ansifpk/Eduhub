@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { IUserUseCase } from "../useCases/interfaces/useCasesInterfaces/IuserUseCases";
 import kafkaWrapper from "../framwork/webServer/config/kafka/kafkaWrapper";
 import { Producer } from "kafkajs";
-import { UserProfileUpdatedPublisher } from "@eduhublearning/common";
+import { ProfilePictureUpdatedPublisher, UserProfileUpdatedPublisher } from "@eduhublearning/common";
 
 
 export class UserController{
@@ -26,10 +26,10 @@ export class UserController{
         const {name,thumbnail,aboutMe} = req.body;
          const userProfile =  await this.userUseCase.editProfile(userId,name,thumbnail,aboutMe,next)
          if(userProfile){
-            // await new  UserProfileUpdatedPublisher(kafkaWrapper.producer as Producer).produce({
-            //    _id: userProfile._id,
-            //    name: userProfile.name
-            // })
+            await new  UserProfileUpdatedPublisher(kafkaWrapper.producer as Producer).produce({
+               _id: userProfile._id,
+               name: userProfile.name
+            })
             res.send({success:true,user:userProfile})
          }
     }
@@ -120,6 +120,10 @@ export class UserController{
 
          const user =await this.userUseCase.profileImage(userId,files,next);
           if(user){
+             await new  ProfilePictureUpdatedPublisher(kafkaWrapper.producer as Producer).produce({
+               _id: user._id,
+               avatar: user.avatar
+            });
             return res.send({success:true,user})
           }
       } catch (error) {

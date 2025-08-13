@@ -68,12 +68,12 @@ const courseScheema = new mongoose.Schema({
             ref: 'User',
         }
     ],
-    sections:[
+    sections:
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Section',
         }
-    ],
+    
 },{
     timestamps:true,
     toJSON: {

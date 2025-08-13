@@ -57,15 +57,18 @@ const InstructorListCourses = () => {
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(0);
   const [search, setSearch] = useState("");
+  const [debouns, setDebouns] = useState("");
   const [sort, setSort] = useState("");
   const [courseId, setCourseId] = useState("");
   const [listAlert, setListAlert] = useState(false);
+  const [check, setCheck] = useState(false);
   const [courses, setCourses] = useState<ICourse[]>([]);
   const [subscriptions, setSubscriptions] = useState<ISubcription[]>([]);
   const instructorId = useSelector((state: IUser) => state._id);
   const { doRequest, err } = useRequest();
   const navigate = useNavigate();
   useEffect(() => {
+    
     doRequest({
       url: `${instructorRoutes.getCourses}?instructorId=${instructorId}&&search=${search}&&sort=${sort}&&page=${page}`,
       method: "get",
@@ -83,7 +86,7 @@ const InstructorListCourses = () => {
         setSubscriptions(response.plans);
       },
     });
-  }, [instructorId, search, sort, page]);
+  }, [instructorId, search, sort, page,check]);
 
   const checkSubscription = (course: ICourse) => {
     if (subscriptions.length > 0) {
@@ -92,6 +95,15 @@ const InstructorListCourses = () => {
       navigate("/instructor/purchaseSubscription");
     }
   };
+
+  useEffect(() => {
+        const intervel = setTimeout(() => {
+          setSearch(debouns);
+        }, 600);
+        return () => {
+          clearTimeout(intervel);
+        };
+    }, [debouns]);
 
   const handleListCourse = () => {
     doRequest({
@@ -143,14 +155,14 @@ const InstructorListCourses = () => {
                 <input
                   type="search"
                   placeholder="Search..."
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="md:w-[100px]  lg:w-[300px] border border-black py-1 px-2 rounded  text-muted-foreground"
+                  onChange={(e) => setDebouns(e.target.value)}
+                  className=" border border-black py-1 px-2 rounded  text-muted-foreground"
                 />
               </div>
               <Select onValueChange={(value) => setSort(value)}>
                 <SelectTrigger
                   id="framework"
-                  className=" border-black w-[50px] lg:w-[150px] text-black"
+                  className=" border-black  text-black"
                 >
                   <SelectValue placeholder="Sort" />
                 </SelectTrigger>
@@ -158,6 +170,8 @@ const InstructorListCourses = () => {
                   <SelectItem value="All">All</SelectItem>
                   <SelectItem value="New">New</SelectItem>
                   <SelectItem value="Old">Old</SelectItem>
+                  <SelectItem value="Price Low-High">Price Low-High</SelectItem>
+                  <SelectItem value="Price High-Low">Price High-Low</SelectItem>
                   <SelectItem value="Name A-Z">Name A-Z</SelectItem>
                   <SelectItem value="Name Z-A">Name Z-A</SelectItem>
                 </SelectContent>
@@ -266,7 +280,14 @@ const InstructorListCourses = () => {
                           <MoreVertical />
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
-                          <DropdownMenuItem onClick={()=>navigate(`/instructor/editCourse/${course._id}`)} >Edit</DropdownMenuItem>
+                          <DropdownMenuItem onClick={()=>{
+                             if(!course.sections){
+                               toast.error("You cannot Edit this course becouse the video uploading is still processing...")
+                               setCheck(!check);
+                             }else{
+                               navigate(`/instructor/editCourse/${course._id}`)
+                             }
+                          }}>Edit</DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => {
                               setCourseId(course?._id);

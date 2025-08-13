@@ -29,7 +29,6 @@ const FilterHeader: React.FC<Props> = ({
 }) => {
   const [topics, setTopics] = useState<string[]>([]);
   const [categories, setCategories] = useState<ICategory[]>([]);
-//   const [topics, setTopics] = useState<string[]>([]);
   const [category, setCategory] = useState("");
   const [topic, setTopic] = useState("");
   const [level, setLevel] = useState("");

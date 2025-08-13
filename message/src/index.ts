@@ -15,6 +15,7 @@ import { UserProfileUpdatedConsumer } from './framwork/webServer/config/kafka/co
 import { NotificationRoute } from './framwork/webServer/routers/notificationRouter';
 import { errorHandler, NotFoundError } from '@eduhublearning/common';
 import cookieParser from 'cookie-parser';
+import { ProfilePictureUpdatedConsumer } from './framwork/webServer/config/kafka/consumer/picture-updated-consumer';
 
 dotenv.config();
 const PORT = process.env.PORT
@@ -116,23 +117,30 @@ io.on("connect",(socket:Socket)=>{
 const start = async () => {
     try {
       
-        // await kafkaWrapper.connect();
-        // const userCreatedConsumer = await kafkaWrapper.createConsumer('message-user-created-group')
-        // const consumser = await kafkaWrapper.createConsumer('message-instructor-approved-group')
-        // const consumser2 = await kafkaWrapper.createConsumer('message-user-blocked-group')
-        // const consumser3 = await kafkaWrapper.createConsumer('message-profile-updated-group')
-        // userCreatedConsumer.connect();
-        // consumser.connect();
-        // consumser2.connect();
-        // consumser3.connect();
-        // const listener1 = new UserProfileCreatedConsumer(userCreatedConsumer)
-        // const listener2 = new InstructorAprovalConsumer(consumser)
-        // const listener3 = new UserBlockedConsumer(consumser2)
-        // const listener4 = new UserProfileUpdatedConsumer(consumser3)
-        // await listener1.listen();
-        // await listener2.listen();
-        // await listener3.listen();
-        // await listener4.listen();
+        await kafkaWrapper.connect();
+        const userCreatedConsumer = await kafkaWrapper.createConsumer('message-user-created-group')
+        const consumser = await kafkaWrapper.createConsumer('message-instructor-approved-group')
+        const consumser2 = await kafkaWrapper.createConsumer('message-user-blocked-group')
+        const consumser3 = await kafkaWrapper.createConsumer('message-profile-updated-group')
+        const pictureUpdatedConsumer = await kafkaWrapper.createConsumer("profile-picture-updated-group")
+        const emailChangeConsumer = await kafkaWrapper.createConsumer("message-email-changed-group")
+        userCreatedConsumer.connect();
+        consumser.connect();
+        consumser2.connect();
+        consumser3.connect();
+        pictureUpdatedConsumer.connect();
+        emailChangeConsumer.connect();
+        const listener1 = new UserProfileCreatedConsumer(userCreatedConsumer)
+        const listener2 = new InstructorAprovalConsumer(consumser)
+        const listener3 = new UserBlockedConsumer(consumser2)
+        const listener4 = new UserProfileUpdatedConsumer(consumser3)
+        const pictureUpdatedListener = new ProfilePictureUpdatedConsumer(pictureUpdatedConsumer)
+        await new ProfilePictureUpdatedConsumer(emailChangeConsumer).listen()
+        await listener1.listen();
+        await listener2.listen();
+        await listener3.listen();
+        await listener4.listen();
+        await pictureUpdatedListener.listen();
         await connectDB();
 
         httpServer.listen(PORT, () => console.log(`the Message server is running in http://localhost:${PORT} for message!!!!!!!!`))

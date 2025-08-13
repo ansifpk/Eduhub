@@ -79,8 +79,8 @@ export class UserUseCase implements IUserUseCase{
                 subscriptionId:JSON.stringify(subscription._id),
                 edited:''
             },
-            success_url: "https://www.eduhublearning.online/user/success",
-            cancel_url: "https://www.eduhublearning.online/user/faile",
+            success_url: process.env.success_url,
+            cancel_url: process.env.failed_url,
         })
    
         return session.id;
@@ -146,7 +146,7 @@ export class UserUseCase implements IUserUseCase{
               const portalSession = await stripe.billingPortal.sessions.create({
                 customer:customerId,
                 
-                return_url:`https://www.eduhublearning.online/users/courses`
+                return_url:`${process.env.CLIENT_URL}/user/courses`
               })
              
               if(portalSession){

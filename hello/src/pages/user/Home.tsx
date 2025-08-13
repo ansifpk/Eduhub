@@ -48,12 +48,11 @@ const Home = () => {
           <span className="md:font-bold md:text-2xl font-semibold text-xl ">
             FOR INSTRUCTORS
           </span>
-           <Button type='button' onClick={() => navigate("/users/courses")} className={
+           <Button type='button' onClick={() => navigate("/instructor/login")} className={
               "bg-gray-500/50 rounded-pill text-white mt-3  cursor-pointer"
             }>
            Start a class today
           </Button>
-        
         </div>
         <div
           className="bg-local rounded-2 text-white flex flex-col items-center justify-center md:w-1/3 h-[250px]"
@@ -69,7 +68,7 @@ const Home = () => {
           <span className="md:font-bold font-semibold text-xl md:text-2xl">
             FOR STUDENTS
           </span>
-          <Button type='button' onClick={() => navigate("/users/courses")} className={
+          <Button type='button' onClick={() =>navigate("/user/courses")} className={
               "bg-gray-500/50 rounded-pill text-white mt-3  cursor-pointer"
             }>
             Explore our Courses

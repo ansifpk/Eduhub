@@ -7,7 +7,7 @@ import { IInstructorSubscribe } from "../../../entities/instructorSubscribe";
 
 export interface IInstructorRepository{
     orders(instructorId:string,end:string,start:string):Promise<IOrder[]|void>
-    instrutcorOrders(instructorId: string,filter:string): Promise<IOrder[] | void>
+    instrutcorOrders(instructorId: string,start:Date,end:Date): Promise<IOrder[] | void>
     userFindById(userId:string):Promise<Iuser|void>
     findSubscriptions():Promise<ISubcription[]|void>
     subscribeInstructor(method:string):Promise<ISubcription|void>
@@ -21,6 +21,7 @@ export interface IInstructorRepository{
     checkSubscribe(customerId:string):Promise<IInstructorSubscribe|void>
     findInstructorSubscriptions(userId:string):Promise<IUserSubcription[]|void>
     userSubscriptionFindByPlan(plan:string):Promise<IUserSubcription|void>
+    checkSubscription(plan:string,instructorId:string):Promise<IUserSubcription|void>
     userSubscriptionFindById(subscriptionId:string):Promise<IUserSubcription|void>
     userSubscriptionFindByAndUpdate(subscriptionId:string,price:number):Promise<IUserSubcription|void>
     setPriceId(subscriptionId:string,priceId:string):Promise<IUserSubcription|void>

@@ -129,14 +129,14 @@ const Courses = () => {
                             onClick={() =>
                               navigate(`/user/courseDetailes/${course._id}`)
                             }
-                          className="bg-teal-500  text-sm w-full text-white hover:bg-teal-300 "
+                          className="bg-teal-500 cursor-pointer text-sm w-full text-white hover:bg-teal-300 "
                         >
                           View Details
                         </Button>
                         <Button
                           type="button"
                           onClick={()=>course.students.some((student)=>student._id == userId) || plans.some((sub)=>sub.subscriptionId.instructorId._id == course.instructorId._id)? navigate(`/user/playCourse/${course._id}`):cart?.courses.some((cour)=>cour._id == course._id )?navigate('/user/cart'):handleCart(course._id)}
-                          className="bg-teal-500 text-sm w-full text-white hover:bg-teal-300"
+                          className="bg-teal-500 cursor-pointer  text-sm w-full text-white hover:bg-teal-300"
                           >
                           {course.students.some((student)=>student._id == userId) || plans.some((sub)=>sub.subscriptionId.instructorId._id == course.instructorId._id)?"Go To Class":cart?.courses.some((cour)=>cour._id == course._id )?"Go To Cart":"Add To Cart"}
                         </Button>

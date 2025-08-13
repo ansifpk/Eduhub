@@ -1,5 +1,4 @@
 import type { ICategory } from "@/@types/categoryType";
-// import type { IUser } from "@/@types/userType";
 import AppSidebar from "@/components/AppSidebar";
 import {
   AlertDialog,
@@ -17,6 +16,15 @@ import {
   CardDescription,
   CardHeader,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import useRequest from "@/hooks/useRequest";
@@ -30,18 +38,18 @@ import { Loader2, Plus } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-// import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 const EditCourse = () => {
   const [select, setSelect] = useState("Course landing page");
   const [loading, setLoading] = useState(false);
+  const [videoOpen, setVideoOpen] = useState(false);
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [topics, setTopics] = useState<string[]>([]);
   const [previeImage, setPreview] = useState("");
+  const [content, setContent] = useState("");
   const { doRequest, err } = useRequest();
   const navigate = useNavigate();
-  const {courseId} = useParams();
-  // const instructorId = useSelector((state: IUser) => state._id);
+  const { courseId } = useParams();
 
   const {
     register,
@@ -59,19 +67,26 @@ const EditCourse = () => {
       thumbnail: "",
       description: "",
       price: "",
-      courseImage: undefined,
-      sections: [
-        {
-          sectionTitle: "",
-          lectures: [
-            {
-              title: "",
-              duration: "",
-              content: "",
-            },
-          ],
-        },
-      ],
+      image: {
+        _id: "1",
+        image_url: "",
+      },
+      sections: {
+        sections: [
+          {
+            sectionTitle: "",
+            lectures: [
+              {
+                duration: "",
+                content: {
+                  _id: "1",
+                  video_url: "",
+                },
+              },
+            ],
+          },
+        ],
+      },
     },
   });
 
@@ -81,29 +96,68 @@ const EditCourse = () => {
       body: {},
       method: "get",
       onSuccess: (res) => {
-        setValue("title",res.course.title);
-        setValue("category",res.course.category);
-        setValue("subCategory",res.course.subCategory);
-        setValue("level",res.course.level);
-        setValue("thumbnail",res.course.thumbnail);
-        setValue("description",res.course.description);
-        setValue("sections",res.course.sections);
-        setPreview(res.course.image.image_url)
-        console.log(res.course.sections);
-      },
-    });
-    doRequest({
-      url: `${instructorRoutes.getCategoryies}`,
-      body: {},
-      method: "get",
-      onSuccess: (res) => {
-        setCategories(res);
+        setValue("title", res.course.title);
+        setValue("price", `${res.course.price}`);
+        setValue("category", res.course.category);
+        setValue("subCategory", res.course.subCategory);
+        setValue("level", res.course.level);
+        setValue("thumbnail", res.course.thumbnail);
+        setValue("description", res.course.description);
+        setValue("sections", res.course.sections);
+        setValue("image.image_url", res.course.image.image_url);
+        setPreview(res.course.image.image_url);
+        doRequest({
+          url: `${instructorRoutes.getCategoryies}`,
+          body: {},
+          method: "get",
+          onSuccess: (res) => {
+            setCategories(res);
+            setTopics(
+              res.find((cate: ICategory) => cate.title == watch("category"))
+                .topics
+            );
+          },
+        });
       },
     });
   }, []);
 
   const handleEditCourse = (data: CourseFormInputs) => {
-    console.log("data",data);
+    // console.log("whiweiw",data);
+    // return;
+    const formData = new FormData();
+    formData.append("title", data.title);
+    formData.append("courseImage", data.image.image_url);
+    formData.append("thumbnail", data.thumbnail);
+    formData.append("description", data.description);
+    formData.append("category", data.category);
+    formData.append("subCategory", data.subCategory);
+    formData.append("level", data.level);
+    formData.append("price", data.price);
+    formData.append("sections", JSON.stringify(data.sections));
+    for (let i = 0; i < data.sections.sections.length; i++) {
+      for (let j = 0; j < data.sections.sections[i].lectures.length; j++) {
+        let video = data.sections.sections[i].lectures[j].content.video_url;
+        if (typeof video !== "string") {
+          formData.append(
+            "courseVideo",
+            video,
+            `section${i}_lecture${j}_${video.name}`
+          );
+        }
+      }
+    }
+    setLoading(true)
+    doRequest({
+      url: `${instructorRoutes.editCourse}/${courseId}`,
+      body: formData,
+      method: "patch",
+      onSuccess: () => {
+        navigate(-1)
+        toast.success("Successfully Edited.");
+        setLoading(false)
+      },
+    });
   };
 
   const previewFile = async (
@@ -130,7 +184,7 @@ const EditCourse = () => {
     const files = event.target.files;
     if (files && files.length > 0) {
       previewFile(event);
-      setValue("courseImage", files[0]);
+      setValue("image.image_url", files[0]);
     }
   };
   const handleVideoFileChange = (
@@ -141,20 +195,23 @@ const EditCourse = () => {
     const files = event.target.files;
     if (files && files.length > 0) {
       setValue(
-        `sections.${sectionIdx}.lectures.${lectureIsx}.content`,
+        `sections.sections.${sectionIdx}.lectures.${lectureIsx}.content.video_url`,
         files[0]
       );
     }
   };
   const addSection = () => {
     const sections = watch("sections");
-    sections.push({
+    sections?.sections?.push({
       sectionTitle: "",
       lectures: [
         {
           title: "",
           duration: "",
-          content: "",
+          content: {
+            _id: "1",
+            video_url: "",
+          },
         },
       ],
     });
@@ -162,10 +219,10 @@ const EditCourse = () => {
   };
   const deleteSection = (index: number) => {
     const sections = watch("sections");
-    if (sections.length == 1) {
+    if (sections.sections.length == 1) {
       return toast.error("Add Atleast one section");
     }
-    sections.splice(index, 1);
+    sections.sections.splice(index, 1);
     setValue("sections", sections);
   };
 
@@ -173,6 +230,8 @@ const EditCourse = () => {
     setLoading(false);
     err?.map((err) => toast.error(err.message));
   }, [err]);
+
+  // console.log("errors", errors);
 
   return (
     <SidebarProvider>
@@ -278,18 +337,16 @@ const EditCourse = () => {
                         <input
                           className="border border-black rounded p-2"
                           type="file"
-                          accept="img/*"
+                          accept="image/*"
                           onChange={handleFileChange}
                         />
-                        {errors.courseImage && (
-                          <p className="text-red-500">
-                            {errors.courseImage.message}
-                          </p>
+                        {errors.image && (
+                          <p className="text-red-500">{errors.image.message}</p>
                         )}
                       </div>
                       <div className="grid w-full items-center gap-1.5">
                         <label className=" my-2">videos Section</label>
-                        {watch("sections").map((_, ind) => (
+                        {watch("sections.sections")?.map((_, ind) => (
                           <div
                             key={ind}
                             className="border-2 rounded p-2 space-y-5"
@@ -303,7 +360,9 @@ const EditCourse = () => {
                               </label>
                               <div className="flex items-center-safe w-full gap-2">
                                 <input
-                                  {...register(`sections.${ind}.sectionTitle`)}
+                                  {...register(
+                                    `sections.sections.${ind}.sectionTitle`
+                                  )}
                                   type="text"
                                   placeholder="section title"
                                   className="border p-2 w-full rounded border-black"
@@ -314,10 +373,13 @@ const EditCourse = () => {
                                 ></i>
                               </div>
                               <p className="text-red-500">
-                                {errors.sections?.[ind]?.sectionTitle?.message}
+                                {
+                                  errors.sections?.sections?.[ind]?.sectionTitle
+                                    ?.message
+                                }
                               </p>
                             </div>
-                            {watch(`sections.${ind}.lectures`).map(
+                            {watch(`sections.sections.${ind}.lectures`)?.map(
                               (_, index) => (
                                 <div
                                   key={`${index + ind}`}
@@ -333,7 +395,7 @@ const EditCourse = () => {
                                     <input
                                       type="text"
                                       {...register(
-                                        `sections.${ind}.lectures.${index}.title`
+                                        `sections.sections.${ind}.lectures.${index}.title`
                                       )}
                                       placeholder="lecture title"
                                       className="border p-2 w-full rounded border-black"
@@ -342,11 +404,14 @@ const EditCourse = () => {
                                       className="bi bi-trash-fill cursor-pointer text-red-500"
                                       onClick={() => {
                                         const lectures = watch(
-                                          `sections.${ind}.lectures`
+                                          `sections.sections.${ind}.lectures`
                                         );
+                                        if(lectures.length == 1){
+                                          return toast.error("Atleast one lecture is required");
+                                        }
                                         lectures.splice(index, 1);
                                         setValue(
-                                          `sections.${ind}.lectures`,
+                                          `sections.sections.${ind}.lectures`,
                                           lectures
                                         );
                                       }}
@@ -354,63 +419,83 @@ const EditCourse = () => {
                                   </div>
                                   <p className="text-red-500">
                                     {
-                                      errors.sections?.[ind]?.lectures?.[index]
-                                        ?.title?.message
+                                      errors.sections?.sections?.[ind]
+                                        ?.lectures?.[index]?.title?.message
                                     }
                                   </p>
-                                  <div className="grid grid-cols-2">
-                                    <div>
-                                      <label
-                                        htmlFor="sectionTitle"
-                                        className="font-bold"
-                                      >
-                                        Content video
-                                      </label>
-                                      <div className="flex items-center-safe  gap-2">
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <div className="flex items-end-safe space-x-2">
+                                      <div className="grid grid-cols-1 space-y-2">
+                                        <label
+                                          htmlFor="Content video"
+                                          className="font-bold"
+                                        >
+                                          Content video
+                                        </label>
                                         <input
                                           onChange={(e) =>
                                             handleVideoFileChange(e, ind, index)
                                           }
-                                          accept="video/*"
                                           type="file"
-                                          className="border p-2  rounded border-black"
+                                          accept="video/*"
+                                          className="border rounded p-2 border-black"
                                         />
+                                        {errors.sections?.sections?.[ind]
+                                          ?.lectures?.[index]?.content
+                                          ?.video_url && (
+                                          <p className="text-red-500">
+                                            {
+                                              errors.sections?.sections?.[ind]
+                                                ?.lectures?.[index]?.content
+                                                ?.video_url?.message
+                                            }
+                                          </p>
+                                        )}
                                       </div>
-                                      <p className="text-red-500">
-                                        {
-                                          errors.sections?.[ind]?.lectures?.[
-                                            index
-                                          ]?.content?.message
-                                        }
-                                      </p>
-                                    </div>
-                                    <div>
-                                      <label
-                                        htmlFor="sectionTitle"
-                                        className="font-bold"
-                                      >
-                                        Duration
-                                      </label>
-                                      <div className="flex items-center-safe gap-2">
-                                        <input
-                                          type="text"
-                                          {...register(
-                                            `sections.${ind}.lectures.${index}.duration`
-                                          )}
-                                          placeholder="content length"
-                                          className="border p-2  rounded border-black"
-                                        />
-                                      </div>
-                                      {errors.sections?.[ind]?.lectures?.[index]
-                                        ?.duration && (
-                                        <p className="text-red-500">
-                                          {
-                                            errors.sections?.[ind]?.lectures?.[
-                                              index
-                                            ]?.duration?.message
+                                      <span
+                                        onClick={()=>{
+                                          if(watch(`sections.sections.${ind}.lectures.${index}.content.video_url`) && typeof watch(`sections.sections.${ind}.lectures.${index}.content.video_url`) == "string"){
+                                             setContent(watch(`sections.sections.${ind}.lectures.${index}.content.video_url`) as string);
+                                             setVideoOpen(true)
+                                          }else if(watch(`sections.sections.${ind}.lectures.${index}.content.video_url`)){
+                                            const videoURL = URL.createObjectURL(watch(`sections.sections.${ind}.lectures.${index}.content.video_url`) as File);
+                                            setContent(videoURL);
+                                            setVideoOpen(true)
                                           }
-                                        </p>
-                                      )}
+                                          
+                                        }}
+                                        className="bg-black text-white cursor-pointer p-2 rounded hover:bg-white hover:text-black font-semibold hover:border-black border"
+                                      >
+                                        view
+                                      </span>
+                                    </div>
+                                    <div className="flex items-end-safe space-x-2">
+                                      <div className="grid grid-cols-1 space-y-2">
+                                        <label
+                                          htmlFor="Duration"
+                                          className="font-bold"
+                                        >
+                                          Duration
+                                        </label>
+                                        <input
+                                          {...register(
+                                            `sections.sections.${ind}.lectures.${index}.duration`
+                                          )}
+                                          type="text"
+                                          placeholder="enter duration"
+                                          className="border rounded p-2 border-black"
+                                        />
+                                        {errors.sections?.sections?.[ind]
+                                          ?.lectures?.[index]?.duration && (
+                                          <p className="text-red-500">
+                                            {
+                                              errors.sections?.sections?.[ind]
+                                                ?.lectures?.[index]?.duration
+                                                ?.message
+                                            }
+                                          </p>
+                                        )}
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
@@ -420,14 +505,20 @@ const EditCourse = () => {
                               type="button"
                               onClick={() => {
                                 const lectures = watch(
-                                  `sections.${ind}.lectures`
+                                  `sections.sections.${ind}.lectures`
                                 );
                                 lectures.push({
                                   title: "",
                                   duration: "",
-                                  content: "",
+                                  content: {
+                                    _id: "1",
+                                    video_url: "",
+                                  },
                                 });
-                                setValue(`sections.${ind}.lectures`, lectures);
+                                setValue(
+                                  `sections.sections.${ind}.lectures`,
+                                  lectures
+                                );
                               }}
                               className="bg-black p-2 border cursor-pointer rounded hover:bg-white text-white hover:text-black hover:border hover:border-black"
                             >
@@ -443,6 +534,32 @@ const EditCourse = () => {
                           <Plus size={20} /> Add New Section
                         </button>
                       </div>
+                      <Dialog open={videoOpen} onOpenChange={()=>{
+                        if(videoOpen){
+                          setContent("")
+                        }
+                        setVideoOpen(!videoOpen)
+                        }}>
+                        <div>
+                          <DialogContent className="sm:max-w-[425px]">
+                            <DialogHeader>
+                              <DialogTitle></DialogTitle>
+                              <DialogDescription></DialogDescription>
+                            </DialogHeader>
+                            <div className="grid gap-4">
+                              <video width="640" height="360" controls>
+                                {content&&<source src={content} type="video/mp4" />}
+                                Your browser does not support the video tag.
+                              </video>
+                            </div>
+                            <DialogFooter>
+                              <DialogClose onClick={()=>setContent("")} className="bg-black rounded text-white p-2 cursor-pointer">
+                                Close
+                              </DialogClose>
+                            </DialogFooter>
+                          </DialogContent>
+                        </div>
+                      </Dialog>
                     </CardContent>
                   </Card>
                 ) : select === "Course landing page" ? (
@@ -640,7 +757,7 @@ const EditCourse = () => {
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       </div>
                     ) : (
-                      <>Create</>
+                      <>Save</>
                     )}
                   </AlertDialogTrigger>
                   <AlertDialogContent>

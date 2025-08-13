@@ -27,54 +27,144 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
 import moment from "moment";
 import adminRoutes from "@/service/endPoints/adminEndPoints";
-import {  MoreHorizontal } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import type { ICoupon } from "@/@types/couponType";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  couponSchema,
+  type CouponFormInputs,
+} from "@/util/schemas/couponSchema";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useNavigate } from "react-router-dom";
 
 const AdminCoupons = () => {
   const [coupons, setCoupons] = useState<ICoupon[]>([]);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("");
   const [page, setPage] = useState(1);
+  const [editOpen, setEditOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [deleteConfirm, setDeleteConfim] = useState(false);
   const [totalPage, setTotalPage] = useState(0);
   const { doRequest, err } = useRequest();
   const [debouns, setDebouns] = useState("");
+  const [couponId, setCouponId] = useState("");
   const todaydate = new Date();
+  const navigate = useNavigate();
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<CouponFormInputs>({
+    resolver: zodResolver(couponSchema),
+  });
 
   useEffect(() => {
     doRequest({
-      url: adminRoutes.coupon,
+      url: `${adminRoutes.coupon}?search=${search}&&sort=${sort}&&page=${page}`,
       method: "get",
       body: {},
       onSuccess: (response) => {
-        setCoupons(response.coupon);
-        // setCouponId("123")
-        setTotalPage(2)
+        setCoupons(response.coupon[0].data);
+        setTotalPage(response.coupon[0].totalPage);
       },
     });
-  }, [search, sort]);
+  }, [search, sort, page]);
 
-  // const handleCoupon = async () => {
-  //   doRequest({
-  //     url: `${adminRoutes.coupon}/${couponId}`,
-  //     method: "delete",
-  //     body: {},
-  //     onSuccess: () => {
-  //       doRequest({
-  //         url: adminRoutes.coupon,
-  //         method: "get",
-  //         body: {},
-  //         onSuccess: (response) => {
-  //           setCoupons(response.coupon);
-  //         },
-  //       });
-  //     },
-  //   });
-  // };
+  useEffect(() => {
+    const intervel = setTimeout(() => {
+      setSearch(debouns);
+    }, 600);
+    return () => {
+      clearTimeout(intervel);
+    };
+  }, [debouns]);
 
-  // const editCouponHandler = () => {};
+  const handleCoupon = async () => {
+    setDeleteConfim(false);
+
+    doRequest({
+      url: `${adminRoutes.coupon}/${couponId}`,
+      method: "delete",
+      body: {},
+      onSuccess: () => {
+        doRequest({
+          url: `${adminRoutes.coupon}?search=${search}&&sort=${sort}&&page=${page}`,
+          method: "get",
+          body: {},
+          onSuccess: (response) => {
+            setCouponId("");
+            setCoupons(response.coupon[0].data);
+            setTotalPage(response.coupon[0].totalPage);
+            return toast.success("Edited successfully");
+          },
+        });
+      },
+    });
+  };
+
+  const editCouponHandler = (data: CouponFormInputs) => {
+    setLoading(true)
+    doRequest({
+      url: `${adminRoutes.coupon}/${couponId}`,
+      body: {
+        title: data.title,
+        description: data.description,
+        offer: data.offer,
+        expiryDate: data.expiryDate,
+        startingDate: data.startingDate,
+        couponCode: data.couponCode,
+      },
+      method: "patch",
+      onSuccess: () => {
+        setEditOpen(false);
+        doRequest({
+          url: `${adminRoutes.coupon}?search=${search}&&sort=${sort}&&page=${page}`,
+          method: "get",
+          body: {},
+          onSuccess: (response) => {
+            setCouponId("");
+            setLoading(false)
+            setCoupons(response.coupon[0].data);
+            setTotalPage(response.coupon[0].totalPage);
+            return toast.success("Edited successfully");
+          },
+        });
+      },
+    });
+  };
 
   useEffect(() => {
     const intervel = setTimeout(() => {
@@ -86,8 +176,10 @@ const AdminCoupons = () => {
   }, [debouns]);
 
   useEffect(() => {
+    setLoading(false)
     err?.map((err) => toast.error(err.message));
   }, [err]);
+  
   return (
     <div className="w-[80%] ml-auto">
       <div className="px-5 flex flex-col space-y-5">
@@ -119,6 +211,12 @@ const AdminCoupons = () => {
                   </SelectGroup>
                 </SelectContent>
               </Select>
+              <button
+                className="bg-purple-600 px-2 text-white cursor-pointer rounded"
+                onClick={() => navigate("/admin/createCoupon")}
+              >
+                create coupon
+              </button>
             </div>
           </div>
 
@@ -195,10 +293,10 @@ const AdminCoupons = () => {
                       {moment(new Date(coupon.createdAt)).calendar()}
                     </TableCell>
                     <TableCell className="text-center ">
-                      {coupon.startingDate}
+                      {new Date(coupon.startingDate).toLocaleDateString()}
                     </TableCell>
                     <TableCell className="text-center ">
-                      {coupon.expiryDate}
+                      {new Date(coupon.expiryDate).toLocaleDateString()}
                     </TableCell>
                     <TableCell className="text-center ">
                       <span
@@ -214,7 +312,47 @@ const AdminCoupons = () => {
                       </span>
                     </TableCell>
                     <TableCell className="flex justify-center-safe">
-                      <MoreHorizontal />
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <MoreHorizontal className="h-4 w-4" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            onClick={() => {
+                              setEditOpen(true);
+                              setCouponId(coupon._id!);
+                              setValue("description", coupon.description);
+                              setValue("offer", coupon.offer.toString());
+                              setValue("title", coupon.title);
+                              setValue(
+                                "startingDate",
+                                new Date(coupon.startingDate)
+                                  .toISOString()
+                                  .slice(0, 16)
+                              );
+                              setValue(
+                                "expiryDate",
+                                new Date(coupon.expiryDate)
+                                  .toISOString()
+                                  .slice(0, 16)
+                              );
+                              setValue("couponCode", coupon.couponCode);
+                            }}
+                          >
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => {
+                              setDeleteConfim(true);
+                              setCouponId(coupon._id!);
+                            }}
+                          >
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </TableCell>
                   </TableRow>
                 ))
@@ -227,6 +365,199 @@ const AdminCoupons = () => {
               )}
             </TableBody>
           </Table>
+
+          <Sheet
+            open={editOpen}
+            onOpenChange={() => {
+              if (editOpen) {
+                setCouponId("");
+                setValue("description", "");
+                setValue("offer", "");
+                setValue("title", "");
+                setValue("startingDate", "");
+                setValue("expiryDate", "");
+                setValue("couponCode", "");
+              }
+              setEditOpen(!editOpen);
+            }}
+          >
+            <SheetContent side="bottom" className="h-screen">
+              <SheetHeader>
+                <SheetTitle>Are you absolutely sure?</SheetTitle>
+                <SheetDescription>
+                  This action cannot be undone. This will permanently delete
+                  your account and remove your data from our servers.
+                </SheetDescription>
+              </SheetHeader>
+              <div className="w-[75%] mx-auto border grid grid-cols-2 p-2 gap-4">
+                <div className="space-y-3">
+                  <div className="grid grid-row ">
+                    <label htmlFor="title">Title</label>
+                    <input
+                      {...register("title")}
+                      type="text"
+                      placeholder="enter title"
+                      className="border-purple-600 rounded border p-2"
+                    />
+                    {errors.title && (
+                      <p className="text-red-500">{errors.title.message}</p>
+                    )}
+                  </div>
+                  <div className="grid grid-row">
+                    <label htmlFor="Description">Description</label>
+                    <input
+                      {...register("description")}
+                      type="textarea"
+                      placeholder="enter decription"
+                      className="border-purple-600 rounded border h-[150px] p-2"
+                    />
+                    {errors.description && (
+                      <p className="text-red-500">
+                        {errors.description.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="grid grid-row">
+                    <label htmlFor="Offer">Offer</label>
+                    <input
+                      {...register("offer")}
+                      type="number"
+                      placeholder="enter title"
+                      className="border-purple-600 rounded border p-2"
+                    />
+                    {errors.offer && (
+                      <p className="text-red-500">{errors.offer.message}</p>
+                    )}
+                  </div>
+                  <div className="flex gap-1">
+                    <div className="grid grid-row">
+                      <label htmlFor="Starting Date">Starting Date</label>
+                      <input
+                        {...register("startingDate")}
+                        type="datetime-local"
+                        placeholder="enter decription"
+                        className="border-purple-600 rounded border p-2"
+                      />
+                      {errors.startingDate && (
+                        <p className="text-red-500">
+                          {errors.startingDate.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="grid grid-row">
+                      <label htmlFor="Ending Date">Ending Date</label>
+                      <input
+                        {...register("expiryDate")}
+                        type="datetime-local"
+                        placeholder="enter decription"
+                        className="border-purple-600 rounded border p-2"
+                      />
+                      {errors.expiryDate && (
+                        <p className="text-red-500">
+                          {errors.expiryDate.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="grid grid-row">
+                    <label htmlFor="Coupon code">Coupon code</label>
+                    <input
+                      {...register("couponCode")}
+                      type="text"
+                      placeholder="enter Coupon code"
+                      className="border-purple-600 rounded border p-2"
+                    />
+                    {errors.couponCode && (
+                      <p className="text-red-500">
+                        {errors.couponCode.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <SheetFooter className="border">
+                <div className="flex gap-2 justify-end-safe">
+                  <AlertDialog>
+                    <AlertDialogTrigger disabled={loading} asChild>
+                      <button
+                        disabled={loading}
+                        className="bg-purple-600 rounded cursor-pointer p-2 text-white font-bold"
+                        type="button"
+                      >
+                        Save changes
+                      </button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you absolutely sure?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently
+                          save the data from our servers.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel className="bg-purple-600 text-white cursor-pointer">
+                          Cancel
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                          type="submit"
+                          onClick={() => handleSubmit(editCouponHandler)()}
+                          className="bg-purple-600 text-white cursor-pointer hover:bg-purple-500 "
+                        >
+                          Continue
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+
+                  <SheetClose asChild>
+                    <button
+                      type="button"
+                      className="bg-purple-600 rounded  cursor-pointer p-2 text-white font-bold"
+                    >
+                      Close
+                    </button>
+                  </SheetClose>
+                </div>
+              </SheetFooter>
+            </SheetContent>
+          </Sheet>
+
+          <AlertDialog
+            open={deleteConfirm}
+            onOpenChange={() => {
+              if (deleteConfirm) {
+                setCouponId("");
+              }
+              setDeleteConfim(!deleteConfirm);
+            }}
+          >
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete
+                  coupon and remove your data from our servers.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className="bg-purple-600 text-white cursor-pointer">
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  className="bg-purple-600 text-white cursor-pointer"
+                  onClick={handleCoupon}
+                >
+                  Continue
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
     </div>

@@ -16,7 +16,7 @@ export class EmailChangedConsumer extends KafkaConsumer<EmailChangedEvent>{
     
     async onMessage(data: { _id: string; email: string; }): Promise<void> {
         try {
-           await userModel.findByIdAndUpdate({_id:data._id},{$set:{email:data.email}},{new:true})
+           await userModel.findByIdAndUpdate({_id:data._id},{$set:{email:data.email}})
         } catch (error) {
             console.error(error)
         }

@@ -23,12 +23,20 @@ import {
   type DateFormInputs,
 } from "@/util/schemas/dateRangeScheema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import type { ICourse } from "@/@types/courseType";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type { IRating } from "@/@types/ratingType";
+import type { IInstructorRating } from "@/@types/instructorRatingType";
+import { createReport } from "@/Api/instructorAPi";
 
 const InstructorDashboard = () => {
   const [orders, setOrders] = useState<IOrder[]>([]);
+  const [top5Courses, setTop5Courses] = useState<ICourse[]>([]);
+  const [ratings, setRatings] = useState<IRating[]>([]);
+  const [instructorRatings, setInstructorRatings] = useState<
+    IInstructorRating[]
+  >([]);
   const instructorId = useSelector((state: IUser) => state._id);
-  // const [start,setStart] = useState("");
-  // const [end,setEnd] = useState("");
   const { doRequest, err } = useRequest();
 
   const {
@@ -53,11 +61,33 @@ const InstructorDashboard = () => {
         setOrders(res.orders);
       },
     });
+    doRequest({
+      url: `${instructorRoutes.top5Courses}/${instructorId}`,
+      body: {},
+      method: "get",
+      onSuccess: (res) => {
+        setTop5Courses(res.courses);
+      },
+    });
+    doRequest({
+      url: `${instructorRoutes.top5RatedCourses}/${instructorId}`,
+      method: "get",
+      body: {},
+      onSuccess: (response) => {
+        setRatings(response.ratings);
+      },
+    });
+    doRequest({
+      url: `${instructorRoutes.ratings}/${instructorId}`,
+      method: "get",
+      body: {},
+      onSuccess: (response) => {
+        setInstructorRatings(response.ratings);
+      },
+    });
   }, [instructorId]);
 
-  const handleDate = (data: DateFormInputs) => {
-    console.log(data);
-    
+  const handleDate = (_data: DateFormInputs) => {
     doRequest({
       url: `${
         instructorRoutes.order
@@ -72,6 +102,21 @@ const InstructorDashboard = () => {
     });
   };
 
+  const handleReportDownload = async() => {
+    const start = watch("start");
+    const end = watch("end");
+    const res = await createReport(instructorId,start,end);
+        const blob = new Blob([res], {
+          type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        });
+        const url = window.URL.createObjectURL(blob);
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.click();
+        window.URL.revokeObjectURL(url);
+   
+  };
+
   useEffect(() => {
     err?.map((err) => toast.error(err.message));
   }, [err]);
@@ -82,6 +127,100 @@ const InstructorDashboard = () => {
       <div className="w-full p-2">
         <SidebarTrigger />
         <InstructorChart />
+        <div className="grid grid-cols-3 gap-2 my-5">
+          <div className="border rounded border-black p-2 space-y-1">
+            <strong className="text-center">Your Top 5 Courses</strong>
+            {top5Courses.length > 0 ? (
+              top5Courses.map((course) => (
+                <div
+                  key={course._id}
+                  className="flex items-center-safe gap-2 border rounded p-2 font-semibold"
+                >
+                  <Avatar>
+                    <AvatarImage
+                      src={course.image.image_url}
+                      alt="@courseImage"
+                    />
+                    <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>
+                  <span>{course.title}</span>
+                </div>
+              ))
+            ) : (
+              <div className="flex items-center-safe text-center gap-2 border justify-center-safe rounded p-2 font-semibold">
+                <strong className="text-center">No Courses</strong>
+              </div>
+            )}
+          </div>
+          <div className="border rounded border-black p-2 space-y-1">
+            <strong className="text-center">Your Top 5 Rated Courses</strong>
+            {ratings.length > 0 ? (
+              ratings.map((rating) => (
+                <div
+                  key={rating._id}
+                  className="flex items-center-safe gap-2 border rounded p-2 font-semibold"
+                >
+                  <Avatar>
+                    <AvatarImage
+                      src={rating.userId.avatar.avatar_url}
+                      alt="userImage"
+                    />
+                    <AvatarFallback>
+                      <i className="bi bi-person-circle text-3xl"></i>
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="grid grid-rows-1">
+                    <span className="text-sm">{rating.userId.name}</span>
+                    <span className="text-xs">
+                      {rating.stars}{" "}
+                      <i className="bi bi-star-fill text-orange-500"></i>
+                    </span>
+                    <span className="text-xs">{rating.review}</span>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="flex items-center-safe text-center gap-2 border justify-center-safe rounded p-2 font-semibold">
+                <strong className="text-center">No Ratings</strong>
+              </div>
+            )}
+          </div>
+          <div className="border rounded border-black p-2 space-y-1">
+            <strong className="text-center">Your Top 5 Ratings</strong>
+            {instructorRatings.length > 0 ? (
+              instructorRatings.map((instructorRating) => (
+                <div
+                  key={instructorRating._id}
+                  className="flex items-center-safe gap-2 border rounded p-2 font-semibold"
+                >
+                  <Avatar>
+                    <AvatarImage
+                      src={instructorRating.userId.avatar.avatar_url}
+                      alt="userImage"
+                    />
+                    <AvatarFallback>
+                      <i className="bi bi-person-circle text-3xl"></i>
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="grid grid-rows-1">
+                    <span className="text-sm">
+                      {instructorRating.userId.name}
+                    </span>
+                    <span className="text-xs">
+                      {instructorRating.stars}{" "}
+                      <i className="bi bi-star-fill text-orange-500"></i>
+                    </span>
+                    <span className="text-xs">{instructorRating.review}</span>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="flex items-center-safe text-center gap-2 border justify-center-safe rounded p-2 font-semibold">
+                <strong className="text-center">No Ratings</strong>
+              </div>
+            )}
+          </div>
+        </div>
         <div className="space-y-5">
           <form
             onSubmit={handleSubmit(handleDate)}
@@ -91,9 +230,7 @@ const InstructorDashboard = () => {
               <h2 className="text-2xl font-bold tracking-tight underline">
                 Sales report
               </h2>
-              <p className="text-muted-foreground">
-                Here is the list of sales
-              </p>
+              <p className="text-muted-foreground">Here is the list of sales</p>
             </div>
             <div className="flex gap-5 items-end-safe">
               <div className="grid grid-cols-1 space-y-2 font-semibold">
@@ -133,7 +270,10 @@ const InstructorDashboard = () => {
           </form>
           <div className="flex justify-end-safe ">
             {orders.length > 0 && (
-              <button className="bg-black text-white p-2 rounded cursor-pointer">
+              <button
+                onClick={handleReportDownload}
+                className="bg-black text-white p-2 rounded cursor-pointer"
+              >
                 Download report <i className="bi bi-printer-fill"></i>
               </button>
             )}

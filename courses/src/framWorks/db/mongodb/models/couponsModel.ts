@@ -20,19 +20,11 @@ description:{
     require:true
  },
   expiryDate:{
-    type:String,
+    type:Date,
     require:true
  },
  startingDate:{
-    type:String,
-    require:true
- },
-  expiryTime:{
-    type:String,
-    require:true
- },
- startingTime:{
-    type:String,
+    type:Date,
     require:true
  },
  users:[

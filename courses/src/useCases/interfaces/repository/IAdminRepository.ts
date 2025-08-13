@@ -15,11 +15,11 @@ export interface IAdminRepository{
     getPages(search:string,sort:string):Promise<number|void>
     findReportsByUrl(lectureUrl:string):Promise<DeleteResult |void>
     // coupon
-     createCoupon(title:string,description:string,offer:number,startingDate:string,startingTime:string,expiryDate:string,expiryTime:string,couponCode:string):Promise<ICoupon|void>
+     createCoupon(title:string,description:string,offer:number,startingDate:string,expiryDate:string,couponCode:string):Promise<ICoupon|void>
      findCouponById(couponId:string):Promise<ICoupon|void>
      deleteCoupon(couponId:string):Promise<ICoupon|void>
-     editCoupon(couponId:string,title:string,description:string,offer:number,startingDate:string,startingTime:string,expiryDate:string,expiryTime:string,couponCode:string):Promise<ICoupon|void>
-     coupons():Promise<ICoupon[]|void>
+     editCoupon(couponId:string,title:string,description:string,offer:number,startingDate:string,expiryDate:string,couponCode:string):Promise<ICoupon|void>
+     coupons(search:string,sort:string,page:string):Promise<ICoupon[]|void>
      findReports(): Promise<IReport[] | void>
 
     }

@@ -12,8 +12,19 @@ export class InstructorController{
        try {
          const categories = await this.instructorUseCase.getAllCategories();
          if(categories){
-       
-            
+             return res.send(categories);
+         }
+       } catch (error) {
+        console.error(error)
+       }
+    }
+   
+    async topCategories(req:Request,res:Response,next:NextFunction){
+       try {
+        console.log("12");
+        
+         const categories = await this.instructorUseCase.topCategories();
+         if(categories){
              return res.send(categories);
          }
        } catch (error) {

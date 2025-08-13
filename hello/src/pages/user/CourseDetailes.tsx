@@ -38,22 +38,30 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useEffect,  useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useRequest from "@/hooks/useRequest";
 import userRoutes from "@/service/endPoints/userEndPoints";
 import toast from "react-hot-toast";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import type { ICourse } from "@/@types/courseType";
 import type { IRating } from "@/@types/ratingType";
 import { useSelector } from "react-redux";
 import type { IUser } from "@/@types/userType";
+import type { IUserSubscribe } from "@/@types/userSubscribe";
+import type { ICart } from "@/@types/cartType";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type { IUserProfile } from "@/@types/userProfile";
 const CourseDetailes = () => {
   const [course, setCourse] = useState<ICourse>();
+  const [instructor, setInstructor] = useState<IUserProfile>();
   const [star, setStar] = useState<number>(0);
   const [ratings, setRatings] = useState<IRating[]>([]);
   const { doRequest, err } = useRequest();
   const { _id } = useParams();
   const userId = useSelector((state: IUser) => state._id);
+  const [plans, setPlans] = useState<IUserSubscribe[]>([]);
+  const [cart, setCart] = useState<ICart>();
+  const navigate = useNavigate();
   const ratingRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -63,6 +71,14 @@ const CourseDetailes = () => {
       body: {},
       onSuccess: (data) => {
         setCourse(data.course);
+        doRequest({
+          url: `${userRoutes.profile}?userId=${data.course.instructorId._id}`,
+          method: "get",
+          body: {},
+          onSuccess: (data) => {
+            setInstructor(data.userData);
+          },
+        });
       },
     });
 
@@ -74,29 +90,63 @@ const CourseDetailes = () => {
         setRatings(data.rating);
       },
     });
+    doRequest({
+      url: `${userRoutes.plans}/${userId}`,
+      method: "get",
+      body: {},
+      onSuccess: (data) => {
+        setPlans(data.plans);
+      },
+    });
+    doRequest({
+      url: `${userRoutes.Cart}/${userId}`,
+      method: "get",
+      body: {},
+      onSuccess: (data) => {
+        setCart(data.cart);
+      },
+    });
   }, [_id]);
 
   useEffect(() => {
     err?.map((err) => toast.error(err.message));
   }, [err]);
 
-  const handleEditRatings = (_id:string) => {
-   doRequest({
+  const handleEditRatings = (_id: string) => {
+    doRequest({
       url: `${userRoutes.ratingCourse}/${_id}`,
       method: "patch",
-      body: {review:ratingRef.current!.value,stars:star},
+      body: { review: ratingRef.current!.value, stars: star },
       onSuccess: () => {
-          doRequest({
-            url: `${userRoutes.ratingCourse}/${_id}`,
-            method: "get",
-            body: {},
-            onSuccess: (data) => {
-              setRatings(data.rating);
-            },
-          });
+        doRequest({
+          url: `${userRoutes.ratingCourse}/${_id}`,
+          method: "get",
+          body: {},
+          onSuccess: (data) => {
+            setRatings(data.rating);
+          },
+        });
       },
-   });
-  }
+    });
+  };
+  const handleCart = (courseId: string) => {
+    doRequest({
+      url: userRoutes.addToCart,
+      method: "post",
+      body: { courseId, userId },
+      onSuccess: () => {
+        doRequest({
+          url: `${userRoutes.Cart}/${userId}`,
+          method: "get",
+          body: {},
+          onSuccess: (data) => {
+            setCart(data.cart);
+            toast.success("Item Added to cart");
+          },
+        });
+      },
+    });
+  };
 
   return (
     <>
@@ -154,17 +204,20 @@ const CourseDetailes = () => {
               <span className="font-bold text-2xl">Course Contents</span>
               <div className="border border-gray-300 my-5">
                 <Accordion type="single" collapsible>
-                  {course?.sections.map((section, index) => (
-                    <AccordionItem key={section._id} value="item-1">
-                      <AccordionTrigger className=" px-2">
+                  {course?.sections.sections.map((section, index) => (
+                    <AccordionItem
+                      key={section.sectionTitle + index}
+                      value="item-1"
+                    >
+                      <AccordionTrigger className=" px-2 cursor-pointer">
                         <div className="flex justify-between w-full">
                           <span>Section {index + 1} </span>
                           <span>{section.sectionTitle} </span>
                         </div>
                       </AccordionTrigger>
-                      {section.lectures.map((lecture) => (
+                      {section.lectures.map((lecture, idx) => (
                         <AccordionContent
-                          key={lecture.id}
+                          key={lecture.title + index + idx}
                           className="flex justify-between px-2"
                         >
                           <p>{lecture.title}</p>
@@ -188,12 +241,16 @@ const CourseDetailes = () => {
                   <div key={rating._id} className="border-2 space-y-2 p-4">
                     <div className="flex justify-between">
                       <div className="flex items-center gap-3">
-                        <img
-                          src={course?.image.image_url}
-                          alt="user image"
-                          className="rounded-full h-5 w-5"
-                        />
-                        {/* {rating.userId.avatar.avatar_url?<img src={rating.userId.avatar.avatar_url} className="rounded-full h-5 w-5" alt="user image" />:<i className="bi bi-person-circle"></i>} */}
+                        <Avatar>
+                          <AvatarImage
+                            src={rating.userId.avatar.avatar_url}
+                            alt="userImage"
+                          />
+                          <AvatarFallback>
+                            {" "}
+                            <i className="bi bi-person-circle"></i>
+                          </AvatarFallback>
+                        </Avatar>
                         <strong className="text-xs font-extralight ">
                           {rating.userId.name}
                         </strong>
@@ -202,7 +259,10 @@ const CourseDetailes = () => {
                         <div className="flex gap-5">
                           <Dialog>
                             <form>
-                              <DialogTrigger onClick={()=>setStar(rating.stars)} asChild>
+                              <DialogTrigger
+                                onClick={() => setStar(rating.stars)}
+                                asChild
+                              >
                                 <i className="bi bi-pencil-square cursor-pointer"></i>
                               </DialogTrigger>
                               <DialogContent className="sm:max-w-[425px] ">
@@ -213,13 +273,19 @@ const CourseDetailes = () => {
                                   <DialogDescription> </DialogDescription>
                                 </DialogHeader>
                                 <div className="flex">
-                                   {[1,2,3,4,5].map((_,index)=>{
-                                    
+                                  {[1, 2, 3, 4, 5].map((_, index) => {
                                     return (
-                                       <i key={index} onMouseEnter={()=>setStar(index+1)} className={`bi ${(index+1)<=star?"bi-star-fill":"bi-star"}`}></i>
+                                      <i
+                                        key={index}
+                                        onMouseEnter={() => setStar(index + 1)}
+                                        className={`bi ${
+                                          index + 1 <= star
+                                            ? "bi-star-fill"
+                                            : "bi-star"
+                                        }`}
+                                      ></i>
                                     );
-
-                                   })}
+                                  })}
                                 </div>
                                 <textarea
                                   id="ratingEdit"
@@ -232,7 +298,12 @@ const CourseDetailes = () => {
 
                                 <DialogFooter>
                                   <DialogClose asChild>
-                                    <button onClick={()=>handleEditRatings(rating._id)} className="bg-teal-500 hover:bg-teal-300 cursor-pointer  bottom-10  px-1 py-2 mb-2 mr-2 text-white text-xs rounded">
+                                    <button
+                                      onClick={() =>
+                                        handleEditRatings(rating._id)
+                                      }
+                                      className="bg-teal-500 hover:bg-teal-300 cursor-pointer  bottom-10  px-1 py-2 mb-2 mr-2 text-white text-xs rounded"
+                                    >
                                       Save changes
                                     </button>
                                   </DialogClose>
@@ -271,7 +342,7 @@ const CourseDetailes = () => {
                     </div>
                     <div className="flex items-center ">
                       <i className="bi bi-star-fill text-xs"></i>
-                      <strong className="text-xs font-extralight ">5</strong>
+                      <strong className="text-xs font-extralight ">{rating.stars}</strong>
                     </div>
                     <div className="text-xs font-extralight">
                       {rating.review}
@@ -296,41 +367,26 @@ const CourseDetailes = () => {
                     <SheetDescription asChild>
                       <ScrollArea className=" rounded-md border h-screen">
                         <div className="grid grid-cols-3 gap-5 p-4">
-                          {[
-                            1,
-                            2,
-                            3,
-                            4,
-                            2,
-                            2,
-                            2,
-                            2,
-                            2,
-                            2,
-                            2,
-                            2,
-                            2,
-                            2,
-                            2,
-                            2,
-                            2,
-                            ,
-                            2,
-                            2,
-                            2,
-                            2,
-                            2,
-                            ,
-                            2,
-                            2,
-                            2,
-                          ].map((value) => (
-                            <div key={value} className="border-2 space-y-2 p-4">
+                          {ratings.map((value) => (
+                            <div
+                              key={value._id}
+                              className="border-2 space-y-2 p-4"
+                            >
                               <div className="flex justify-between">
                                 <div className="flex items-center gap-3">
-                                  <i className="bi bi-person-circle"></i>
+                                  <Avatar>
+                                    <AvatarImage
+                                      src={value.userId.avatar.avatar_url}
+                                      alt="userImage"
+                                    />
+                                    <AvatarFallback>
+                                      {" "}
+                                      <i className="bi bi-person-circle"></i>
+                                    </AvatarFallback>
+                                  </Avatar>
+
                                   <strong className="text-xs font-extralight ">
-                                    Andrew Alfred
+                                    {value.userId.avatar.avatar_url}
                                   </strong>
                                 </div>
                                 <div className="flex gap-5">
@@ -397,11 +453,11 @@ const CourseDetailes = () => {
                               <div className="flex items-center ">
                                 <i className="bi bi-star-fill text-xs"></i>
                                 <strong className="text-xs font-extralight ">
-                                  5
+                                  {value.stars}
                                 </strong>
                               </div>
                               <div className="text-xs font-extralight">
-                                huiwshnfefiovwwejieuweuoieurer weruwer w0eu
+                                {value.review}
                               </div>
                             </div>
                           ))}
@@ -414,19 +470,26 @@ const CourseDetailes = () => {
             </TabsContent>
             <TabsContent value="Instructor">
               <div className="bg-white">
-                <div className="mx-auto grid max-w-7xl space-y-5 px-6 lg:px-8 xl:grid-cols-3">
+                <div className="mx-auto grid max-w-7xl space-y-5 px-6 lg:px-8 ">
                   <div className="flex items-center gap-x-6">
-                    <div>
-                      {/* <img
-                            alt=""
-                            src={data}
-                            className="h-20 w-30 rounded-full outline-1 -outline-offset-1 outline-black/5"
-                          /> */}
-                      <i className="bi bi-person-circle text-3xl rounded-full outline-1 -outline-offset-1 outline-black/5"></i>
-                    </div>
+                    <Avatar
+                      onClick={() =>
+                        navigate(`/user/instructorProfile/${instructor?._id}`)
+                      }
+                      className="h-20 w-20 cursor-pointer"
+                    >
+                      <AvatarImage
+                        src={instructor?.avatar.avatar_url}
+                        alt="@shadcn"
+                      />
+                      <AvatarFallback>
+                        <i className="bi bi-person-circle text-7xl rounded-full outline-1 -outline-offset-1 outline-black/5"></i>
+                      </AvatarFallback>
+                    </Avatar>
+
                     <div className="w-full">
                       <h3 className=" font-semibold tracking-tight text-gray-900">
-                        name: Leslie Alexander
+                        name: {instructor?.name}
                       </h3>
                     </div>
                   </div>
@@ -436,25 +499,11 @@ const CourseDetailes = () => {
                       Meet our Instructor
                     </h2>
                     <p className="mt-6 text-sm font-light text-gray-600 indent-8 line-clamp-8">
-                      We're a dynamic group of individuals who are passionate
-                      about what we do and dedicated to delivering the best
-                      results for our clients. We're a dynamic group of
-                      individuals who are passionate about what we do and
-                      dedicated to delivering the best results for our clients.
-                      We're a dynamic group of individuals who are passionate
-                      about what we do and dedicated to delivering the best
-                      results for our clients. We're a dynamic group of
-                      individuals who are passionate about what we do and
-                      dedicated to delivering the best results for our clients.
-                      We're a dynamic group of individuals who are passionate
-                      about what we do and dedicated to delivering the best
-                      results for our clients. We're a dynamic group of
-                      individuals who are passionate about what we do and
-                      dedicated to delivering the best results for our clients.
+                      {instructor?.about}
                     </p>
-                    <span className="font-extralight text-indigo-500 underline">
+                    {/* <span className="font-extralight text-indigo-500 underline">
                       see more...
-                    </span>
+                    </span> */}
                     <div className="space-x-5">
                       <span className="font-light">students : 8</span>
                       <span className="font-light">courses : 8</span>
@@ -474,14 +523,40 @@ const CourseDetailes = () => {
           </Tabs>
         </div>
         <div className="basis-1/3  border-4 ">
-          <img className="h-48 w-96 rounded object-fill" src={course?.image.image_url} />
+          <img
+            className="h-48 w-96 rounded object-fill"
+            src={course?.image.image_url}
+          />
           <div className="grid p-5 gap-3">
             <p>
-              <span className="font-bold">Rs:500/- </span>
-              <span className="text-xs">10%</span>
+              <span className="font-bold">{course?.price}/- </span>
+              {/* <span className="text-xs">10%</span> */}
             </p>
-            <button className="bg-teal-500 py-2 rounded text-white text-xs cursor-pointer font-semibold hover:bg-teal-300 hover:text-white">
-              Add to Cart
+            <button
+              onClick={() =>
+                course?.students.some((student) => student._id == userId) ||
+                plans.some(
+                  (sub) =>
+                    sub.subscriptionId.instructorId._id ==
+                    course?.instructorId._id
+                )
+                  ? navigate(`/user/playCourse/${course?._id}`)
+                  : cart?.courses.some((cour) => cour._id == course?._id)
+                  ? navigate("/user/cart")
+                  : handleCart(course?._id!)
+              }
+              className="bg-teal-500 py-2 rounded text-white text-xs cursor-pointer font-semibold hover:bg-teal-300 hover:text-white"
+            >
+              {course?.students.some((student) => student._id == userId) ||
+              plans.some(
+                (sub) =>
+                  sub.subscriptionId.instructorId._id ==
+                  course?.instructorId._id
+              )
+                ? "Go To Class"
+                : cart?.courses.some((cour) => cour._id == course?._id)
+                ? `Go To Cart`
+                : "Add To Cart"}
             </button>
             <button className="bg-teal-500 py-2 rounded text-white text-xs font-semibold cursor-pointer hover:bg-teal-300 hover:text-white">
               Purchase

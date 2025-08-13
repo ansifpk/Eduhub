@@ -43,9 +43,10 @@ const LoginForm = () => {
   }
 
 useEffect(()=>{
-    setLoading(false);
-     err?.map((err)=>toast.error(err.message))
-  },[err])
+  setLoading(false);
+  err?.map((err)=>toast.error(err.message))
+},[err])
+
 
   return (
     <div className={"flex flex-col gap-6"}>
@@ -97,12 +98,12 @@ useEffect(()=>{
                     <i className={`bi ${show?" bi-eye-slash-fill":"bi bi-eye-fill"}  relative z-50`}></i>
                 </button>
               </div>
-               <a
-                    href="#"
-                    className="ml-auto text-sm underline-offset-2 my-2 hover:underline"
+               <span
+                    onClick={()=>navigate('/forgetPassword')}
+                    className="ml-auto text-sm underline-offset-2 my-2 cursor-pointer hover:underline"
                   >
                     Forgot your password?
-                  </a>
+                  </span>
               <Button type="submit" className={`w-full bg-teal-400 hover:bg-teal-400 cursor-pointer`} disabled={loading?true:false}>
                 
                 {

@@ -1,5 +1,4 @@
 import type { IUserProfile } from "@/@types/userProfile";
-import InstructorSubscriptions from "@/pages/instructor/InstructorSubscriptions";
 import { lazy } from "react";
 import { useSelector } from "react-redux";
 import { Navigate, Route, Routes } from "react-router-dom";
@@ -16,19 +15,19 @@ const InstructorPlans = lazy(()=>import("@/pages/instructor/InstructorPlans"))
 const InstructorRegister = lazy(()=>import("@/pages/instructor/InstructorRegister"))
 const Success = lazy(()=>import("@/pages/instructor/Success"))
 const Faile = lazy(()=>import("@/pages/instructor/Faile"))
+const InstructorSubscriptions = lazy(()=>import("@/pages/instructor/InstructorSubscriptions"));
 const InstructorErrorPage = lazy(()=>import("@/pages/instructor/InstructorErrorPage"));
 
 
 
 const InstructorRouter = () => {
   const isInstructor = useSelector((state:IUserProfile)=>state.isInstructor);
-  
   return (
     <>
           <Routes>
-            <Route path="/login" element={<InstructorLogin />} />
-            <Route path="/" element={<InstructorDashboard />} />
-            <Route path="/register" element={<InstructorRegister />} />
+            <Route path="/login" element={ isInstructor ?  <Navigate to={"/instructor"} replace /> : <InstructorLogin />} />
+            <Route path="/" element={ isInstructor ? <InstructorDashboard />  : <Navigate to={"/instructor/login"} replace /> } />
+            <Route path="/register" element={ isInstructor ?  <Navigate to={"/instructor"} replace /> : <InstructorRegister />  } />
             <Route path="/students" element={ isInstructor ? <InstructorListStudents /> : <Navigate to={"/instructor/login"} replace /> } />
             <Route path="/courses" element={ isInstructor ? <InstructorListCourses /> : <Navigate to={"/instructor/login"} replace /> } />
             <Route path="/addTest/:courseId" element={ isInstructor ? <InstructorAddTest /> : <Navigate to={"/instructor/login"} replace /> } />
@@ -42,17 +41,6 @@ const InstructorRouter = () => {
             <Route path="/faile" element={ isInstructor ? <Faile /> : <Navigate to={"/instructor/login"} replace /> } />
             <Route path="*" element={ isInstructor ? <InstructorErrorPage /> : <Navigate to={"/instructor/login"} replace /> } />
           </Routes>
-      {/* <Routes>
-        
- 
-        
-       
-       
-        <Route
-          path="/reports"
-          element={isInstructor ? <SalesReports /> : <InstructorLogin />}
-        />
-      </Routes> */}
     </>
   );
 };

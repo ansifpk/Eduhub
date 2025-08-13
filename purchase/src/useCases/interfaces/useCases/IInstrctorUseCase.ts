@@ -13,7 +13,7 @@ export interface IInstructorUseCase{
     getPlans(userId:string,next:NextFunction):Promise<IInstructorSubscribe[]|void>
     instructorSubscriptions(userId:string,next:NextFunction):Promise<IUserSubcription[]|void>
     createSubscription(userId:string,plan:string,price:number,description:string[],next:NextFunction):Promise<IUserSubcription|void>
-    editSubscription(subscriptionId:string,price:number,next:NextFunction):Promise<IUserSubcription|void>
-    createReport(userId:string,report:string,year:string,month:string,next:NextFunction):Promise<exceljs.Workbook|void>
-    instructorOrders(instructorId: string,filter:string,next:NextFunction):Promise<IOrder[]|void>
+    editSubscription(subscriptionId:string,price:number,plan:string,instructorId:string,next:NextFunction):Promise<IUserSubcription|void>
+    createReport(instructorId:string,start:string,end:string,next:NextFunction):Promise<exceljs.Workbook|void>
+    instructorOrders(instructorId: string,start:Date,end:Date,next:NextFunction):Promise<IOrder[]|void>
 }

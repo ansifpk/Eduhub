@@ -8,51 +8,84 @@ import { Course } from "../mongodb/models/courseModel";
 import { SectionModel } from "../mongodb/models/sectionModel";
 import { testModel } from "../mongodb/models/testModel";
 import mongoose from "mongoose";
+import { ratingModel } from "../mongodb/models/ratingModel";
+import { IRating } from "../../../entities/ratings";
 
 export class InstructorRepository implements IInstructorrepository {
   constructor(
     private courseModel: typeof Course,
     private sectionModel: typeof SectionModel,
-    private testModels: typeof testModel
+    private testModels: typeof testModel,
+    private ratingModels: typeof ratingModel
   ) {}
   async findStudents(
     instructorId: string,
     search: string,
-    sort: string
+    sort: string,
+    page: number,
   ): Promise<Iuser[] | void> {
     try {
+      let sortQuery:any = {};
+      switch (sort) {
+        case "Name A-Z":
+          sortQuery.name = 1;
+          break;
+        case "Name Z-A":
+          sortQuery.name = -1;
+          break;
+        case "Old":
+          sortQuery.createdAt = 1;
+          break;
+        case "New":
+          sortQuery.createdAt = -1;
+          break;
+        default:
+          sortQuery.createdAt = -1;
+          break;
+      }
+   
+      const limit = 5;
+      const skip = (page - 1) * limit;
       const students = await this.courseModel.aggregate([
-        { $match: { instructorId: new mongoose.Types.ObjectId(instructorId) } },
         {
           $lookup: {
             from: "users",
             localField: "students",
             foreignField: "_id",
-            as: "allStudents",
+            as: "students",
           },
         },
-        { $unwind: "$allStudents" },
+        { $unwind: "$students" },
+        { $match: { instructorId: new mongoose.Types.ObjectId(instructorId) } },
         {
           $group: {
-            _id: "$allStudents._id",
-            name: { $first: "$allStudents.name" },
-            email: { $first: "$allStudents.email" },
-            avatar: { $first: "$allStudents.avatar" },
-            createdAt: { $first: "$allStudents.createdAt" },
+            _id: "$students",
           },
         },
+        { $replaceRoot: { newRoot: "$_id" } },
         {
           $facet: {
-            data: [],
+            data: [
+              {$match:{name:{$regex:search,$options:"i"}}},
+              { $sort: sortQuery},
+              { $skip: skip },
+              { $limit: limit },
+            ],
             count: [{ $count: "total" }],
           },
         },
+        {
+          $project: {
+            data: 1,
+            totalPage: {
+              $ceil: {
+                $divide: [{ $arrayElemAt: ["$count.total", 0] }, limit],
+              },
+            },
+          },
+        },
       ]);
-      console.log(students);
-
-      //   if (students) {
-      //     return students;
-      //   }
+      return students;
     } catch (error) {
       console.error(error);
     }
@@ -97,9 +130,7 @@ export class InstructorRepository implements IInstructorrepository {
   }
 
   async creatTest(testData: ITest): Promise<ITest | void> {
-    try { 
-   
-      
+    try {
       const test = await this.testModels.create({
         test: testData,
       });
@@ -118,7 +149,7 @@ export class InstructorRepository implements IInstructorrepository {
     try {
       const course = await this.courseModel.findOneAndUpdate(
         { _id: courseId },
-        { $push: { sections: sectionId } },
+        { $set: { sections: sectionId } },
         { new: true }
       );
       if (course) {
@@ -128,16 +159,19 @@ export class InstructorRepository implements IInstructorrepository {
       console.error(error);
     }
   }
-  async editSecton(sectionData: ISection): Promise<ISection | void> {
+  async editSecton(
+    sectionId: string,
+    sectionData: ISection
+  ): Promise<ISection | void> {
     try {
       const section = await this.sectionModel.findOneAndUpdate(
-        { _id: sectionData._id },
+        { _id: sectionId },
         {
           $set: {
-            sectionTitle: sectionData.sectionTitle,
-            lectures: sectionData.lectures,
+            sections: sectionData.sections,
           },
-        }
+        },
+        { new: true }
       );
       if (section) {
         return section;
@@ -182,14 +216,17 @@ export class InstructorRepository implements IInstructorrepository {
       const skip = (page - 1) * limit;
       let sortQuery: any = {};
       switch (sort) {
-        case "All":
-          sortQuery.createdAt = -1;
-          break;
         case "Name A-Z":
           sortQuery.name = 1;
           break;
         case "Name Z-A":
           sortQuery.name = -1;
+          break;
+        case "Price Low-High":
+          sortQuery.price = 1;
+          break;
+        case "Price High-Low":
+          sortQuery.price = -1;
           break;
         case "Old":
           sortQuery.createdAt = 1;
@@ -202,12 +239,13 @@ export class InstructorRepository implements IInstructorrepository {
           break;
       }
 
-    
       const courses = await this.courseModel.aggregate([
-        { $match: {
-          instructorId:  new mongoose.Types.ObjectId(instructorId),
-          title: { $regex: search, $options: "i" },
-        } },
+        {
+          $match: {
+            instructorId: new mongoose.Types.ObjectId(instructorId),
+            title: { $regex: search, $options: "i" },
+          },
+        },
         {
           $lookup: {
             from: "users",
@@ -225,17 +263,9 @@ export class InstructorRepository implements IInstructorrepository {
           },
         },
         {
-          $lookup: {
-            from: "sections",
-            localField: "sections",
-            foreignField: "_id",
-            as: "sections",
-          },
-        },
-        {
           $facet: {
             data: [
-              { $sort: { createdAt: -1 } },
+              { $sort: sortQuery },
               { $skip: skip },
               { $limit: limit },
             ],
@@ -247,14 +277,13 @@ export class InstructorRepository implements IInstructorrepository {
             data: 1,
             totalPage: {
               $ceil: {
-                $divide: [{ $arrayElemAt: ["$count.total", 0] }, 5],
+                $divide: [{ $arrayElemAt: ["$count.total", 0] }, limit],
               },
             },
           },
         },
       ]);
-     
-
+       
       if (courses) {
         return courses;
       }
@@ -263,6 +292,19 @@ export class InstructorRepository implements IInstructorrepository {
     }
   }
   async findById(courseId: string): Promise<ICourse | void> {
+    try {
+      const course = await this.courseModel
+        .findById({ _id: courseId })
+        .populate("instructorId")
+        .populate("students");
+      if (course) {
+        return course;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  async findByIdWthPopulate(courseId: string): Promise<ICourse | void> {
     try {
       const course = await this.courseModel
         .findById({ _id: courseId })
@@ -278,7 +320,13 @@ export class InstructorRepository implements IInstructorrepository {
   }
   async findTop5(userId: string): Promise<ICourse[] | void> {
     try {
-      const course = await this.courseModel.find({ instructorId: userId });
+      const course = await this.courseModel.aggregate([
+        { $match: { instructorId: new mongoose.Types.ObjectId(userId) } },
+        { $addFields: { skillsCount: { $size: "$students" } } },
+        { $sort: { skillsCount: -1 } },
+        { $project: { skillsCount: 0 } },
+        // { $limit: 5 },
+      ]);
       if (course) {
         return course;
       }
@@ -286,20 +334,31 @@ export class InstructorRepository implements IInstructorrepository {
       console.error(error);
     }
   }
-  async findTopRated(userId: string): Promise<ICourse[] | void> {
+  async findTopRated(userId: string): Promise<IRating[] | void> {
     try {
-      const course = await this.courseModel.aggregate([
+      const ratings = await this.ratingModels.aggregate([
         {
           $lookup: {
-            from: "ratings",
-            localField: "_id",
-            foreignField: "courseId",
-            as: "courseReviews",
+            from: "courses",
+            localField: "courseId",
+            foreignField: "_id",
+            as: "courseId",
           },
         },
+        {$unwind:"$courseId"},
+        {
+          $lookup: {
+            from: "users",
+            localField: "userId",
+            foreignField: "_id",
+            as: "userId",
+          },
+        },
+        {$unwind:"$userId"},
+        {$match:{"courseId.instructorId":new mongoose.Types.ObjectId(userId),stars:{$gt:2}}},
       ]);
-      if (course) {
-        return course;
+      if (ratings) {
+        return ratings;
       }
     } catch (error) {
       console.error(error);
@@ -319,14 +378,12 @@ export class InstructorRepository implements IInstructorrepository {
 
   async list(courseId: string, isListed: boolean): Promise<ICourse | void> {
     try {
-    
-      
       const course = await this.courseModel.findByIdAndUpdate(
         { _id: courseId },
         { $set: { isListed: !isListed } },
         { new: true }
       );
-   
+
       if (course) {
         return course;
       }
@@ -345,10 +402,11 @@ export class InstructorRepository implements IInstructorrepository {
         description,
         price,
         image,
+        _id,
       } = courseData;
 
       const course = await this.courseModel.findByIdAndUpdate(
-        { _id: courseData._id },
+        { _id },
         {
           $set: {
             title,

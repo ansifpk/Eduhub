@@ -17,7 +17,8 @@ export class InstructorUseCase implements IInstructorUseCase {
   constructor(private instructorRepository: IInstructorRepository) {}
   async instructorOrders(
     instructorId: string,
-    filter: string,
+    start: Date,
+    end: Date,
     next: NextFunction
   ): Promise<IOrder[] | void> {
     try {
@@ -25,7 +26,11 @@ export class InstructorUseCase implements IInstructorUseCase {
       if (!user) {
         throw new NotFoundError("user Not found");
       }
-      const orders = await this.instructorRepository.instrutcorOrders(instructorId,filter);
+      const orders = await this.instructorRepository.instrutcorOrders(
+        user.id,
+        new Date(start),
+        new Date(end)
+      );
       if (orders) {
         return orders;
       }
@@ -38,44 +43,63 @@ export class InstructorUseCase implements IInstructorUseCase {
   async editSubscription(
     subscriptionId: string,
     price: number,
+    plan: string,
+    instructorId: string,
     next: NextFunction
   ): Promise<IUserSubcription | void> {
     try {
-      const Subscription =
+      const subscription =
         await this.instructorRepository.userSubscriptionFindById(
           subscriptionId
         );
-      if (!Subscription) {
-        throw new NotFoundError("Subscription Not found");
+      if (!subscription) {
+        throw new BadRequestError("Subscription Not found");
       }
-      const subscriptions = await stripe.subscriptions.list();
+      const checkSubscription =
+        await this.instructorRepository.checkSubscription(plan, instructorId);
+      if (
+        checkSubscription &&
+        checkSubscription._id.toString() !== subscription._id.toString()
+      ) {
+        throw new BadRequestError(
+          "You already have an subscription for this plan methode choose another plan method please!."
+        );
+      }
 
-      // const subscriptions  = await this.instructorRepository.userSubscriptionFindByAndUpdate(subscriptionId,price)
-      // if(subscriptions){
-      const productPrices = await stripe.prices.list({
-        product: Subscription.productId,
-      });
+      const subscriptions =
+        await this.instructorRepository.userSubscriptionFindByAndUpdate(
+          subscriptionId,
+          price
+        );
+      if (subscriptions) {
+        const productPrices = await stripe.prices.list({
+          product: subscription.productId,
+        });
+        if (productPrices) {
+          for (let price of productPrices.data) {
+            if (price.active) {
+              await stripe.prices.update(price.id, { active: false });
+            }
+          }
 
-      //   if(productPrices){
+          const stripePrice = await stripe.prices.create({
+            unit_amount: price * 100,
+            currency: "inr",
+            recurring: { interval: "month" },
+            product: subscription.productId,
+          });
+          await this.instructorRepository.setPriceId(
+            subscriptionId,
+            stripePrice.id
+          );
+          return subscriptions;
+        }
+      }
 
-      // for (let price of productPrices.data) {
-      //    if (price.active) {
-      //      await stripe.prices.update(price.id, { active: false });
-      //    }
-      //  }
-      //    const stripePrice = await stripe.prices.create({
-      //      unit_amount: price * 100,
-      //      currency: 'inr',
-      //      recurring: { interval: 'month' },
-      //      product: Subscription.productId,
-      //  });
-      //  await this.instructorRepository.setPriceId(subscriptionId,stripePrice.id);
-      //  return subscriptions;
-      //   }
-
-      // }
+     
     } catch (error) {
       console.error(error);
+      next(error);
     }
   }
 
@@ -125,7 +149,7 @@ export class InstructorUseCase implements IInstructorUseCase {
         customer: customerId,
         return_url: process.env.success_url,
       });
-  
+
       if (portalSession) {
         return portalSession.url;
       }
@@ -239,12 +263,12 @@ export class InstructorUseCase implements IInstructorUseCase {
       if (!user) {
         throw new NotFoundError("user Not found");
       }
-      const checkSUbscription =
-        await this.instructorRepository.userSubscriptionFindByPlan(plan);
-      if (checkSUbscription) {
+      const checkSubscription =
+        await this.instructorRepository.checkSubscription(plan, user.id);
+
+      if (checkSubscription) {
         throw new BadRequestError("This Plan Already Exists");
       }
-
       const product = await stripe.products.create({
         name: plan,
         description: description.join(","),
@@ -269,6 +293,7 @@ export class InstructorUseCase implements IInstructorUseCase {
       }
     } catch (error) {
       console.error(error);
+      next(error);
     }
   }
 
@@ -279,19 +304,21 @@ export class InstructorUseCase implements IInstructorUseCase {
     next: NextFunction
   ): Promise<IOrder[] | void> {
     try {
-      
       const checkUser = await this.instructorRepository.userFindById(
         instructorId
       );
       if (!checkUser) {
         throw new BadRequestError("user Not found");
       }
+      if ((start && !end) || (!start && end)) {
+        throw new BadRequestError("PLease select starting and ending dates!");
+      }
       const orders = await this.instructorRepository.orders(
-        instructorId,
+        checkUser.id,
         start,
         end
       );
-    
+
       return orders;
     } catch (error) {
       console.error(error);
@@ -300,85 +327,66 @@ export class InstructorUseCase implements IInstructorUseCase {
   }
 
   async createReport(
-    userId: string,
-    report: string,
-    year: string,
-    month: string,
+    instructorId: string,
+    start: string,
+    end: string,
     next: NextFunction
   ): Promise<exceljs.Workbook | void> {
     try {
-      // const checkUser = await this.instructorRepository.userFindById(userId);
-      // if (!checkUser) {
-      //   throw new NotFoundError("user Not found");
-      // }
+ 
+      const checkUser = await this.instructorRepository.userFindById(
+        instructorId
+      );
+      if (!checkUser) {
+        throw new BadRequestError("user Not found");
+      }
+      if ((start && !end) || (!start && end)) {
+        throw new BadRequestError("PLease select starting and ending dates!");
+      }
 
-      // const orders = await this.instructorRepository.instrutcorOrders(userId);
+      const orders = await this.instructorRepository.orders(
+        instructorId,
+        start,
+        end
+      );
+      if (orders) {
+        const workbook = new exceljs.Workbook();
+        const worksheet = workbook.addWorksheet("Orders");
+        worksheet.columns = [
+          { header: "S no.", key: "s_no", width: 20 },
+          { header: "Order Id", key: "orderId", width: 20 },
+          { header: "User Name", key: "userName", width: 20 },
+          { header: "Course Name", key: "courseName", width: 20 },
+          { header: "Course Price", key: "coursePrice", width: 20 },
+          { header: "Order Date", key: "orderDate", width: 20 },
+          { header: "Total", key: "total", width: 20 },
+        ];
+        let datas = {
+          s_no: 0,
+          orderId: "",
+          userName: "",
+          courseName: "",
+          coursePrice: 0,
+          orderDate: new Date(),
+          total: 0,
+        };
 
-      // const workbook = new exceljs.Workbook();
-      // const worksheet = workbook.addWorksheet("Orders");
-      // worksheet.columns = [
-      //   { header: "S no.", key: "s_no", width: 20 },
-      //   { header: "User Name", key: "userName", width: 20 },
-      //   { header: "Course Name", key: "courseName", width: 20 },
-      //   { header: "Course Price", key: "coursePrice", width: 20 },
-      //   { header: "Order Date", key: "orderDate", width: 20 },
-      //   { header: "Total", key: "total", width: 20 },
-      // ];
-      // const months = [
-      //   "01",
-      //   "02",
-      //   "03",
-      //   "04",
-      //   "05",
-      //   "06",
-      //   "07",
-      //   "08",
-      //   "09",
-      //   "10",
-      //   "11",
-      //   "12",
-      // ];
+        orders?.map((order, index) => {
+          datas.s_no = index + 1;
+          datas.orderId = order._id;
+          datas.userName = order.user.name;
+          datas.courseName = order.course.title;
+          datas.coursePrice = order.course.price;
+          datas.orderDate = order.createdAt;
+          datas.total = order.course.price;
+          worksheet.addRow(datas);
+        });
+        worksheet.getRow(1).eachCell((cell) => {
+          cell.font = { bold: true };
+        });
+        return workbook;
+      } 
 
-      // let starting = "";
-      // let ending = "";
-      // if (report == "Monthly") {
-      //   const index = months[parseInt(month)];
-      //   starting = `${year}-${index}-01`;
-      //   ending = `${year}-${index}-30`;
-      // } else {
-      //   starting = `${year}-01-01`;
-      //   ending = `${year}-12-30`;
-      // }
-
-      // if (orders) {
-      //   let datas = {
-      //     s_no: 0,
-      //     userName: "",
-      //     courseName: "",
-      //     coursePrice: 0,
-      //     orderDate: new Date(),
-      //     total: 0,
-      //   };
-
-      //   orders.map((order, index) => {
-      //     if (
-      //       order.createdAt >= new Date(starting) &&
-      //       order.createdAt <= new Date(ending)
-      //     ) {
-      //       datas.s_no = index + 1;
-      //       datas.userName = order.user.name;
-      //       datas.courseName = order.course.title;
-      //       datas.coursePrice = order.course.price;
-      //       datas.orderDate = order.createdAt;
-      //       datas.total = order.course.price;
-      //       worksheet.addRow(datas);
-      //     }
-      //   });
-      //   worksheet.getRow(1).eachCell((cell) => {
-      //     cell.font = { bold: true };
-      //   });
-      //   return workbook;
-      // }
     } catch (error) {
       console.error(error);
     }

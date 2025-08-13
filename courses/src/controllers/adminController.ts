@@ -10,8 +10,9 @@ export class AdminController{
 
     async getCoupons(req:Request,res:Response,next:NextFunction){
         try {
-        
-         const coupon = await this.adminUseCase.getCoupons(next)
+         const {search,sort,page} = req.query;
+                 
+         const coupon = await this.adminUseCase.getCoupons(search as string,sort as string,page as string,next)
          if(coupon){
             return res.send({success:true,coupon:coupon})
          }
@@ -35,11 +36,10 @@ export class AdminController{
       
         const {couponId} = req.params;
        
-        const {title,startingTime,expiryTime,description,offer,startingDate,expiryDate,couponCode} = req.body;
+        const {title,description,offer,startingDate,expiryDate,couponCode} = req.body;
         
-       
-        
-         const coupon = await this.adminUseCase.editCoupon(couponId,title,description,offer,startingDate,startingTime,expiryDate,expiryTime,couponCode,next)
+    
+         const coupon = await this.adminUseCase.editCoupon(couponId,title,description,offer,startingDate,expiryDate,couponCode,next)
          if(coupon){
             return res.send({success:true,coupon:coupon})
          }
@@ -49,10 +49,10 @@ export class AdminController{
     }
     async createCoupons(req:Request,res:Response,next:NextFunction){
         try {
-            const {title,description,startingTime,expiryTime,offer,startingDate,expiryDate,couponCode} = req.body;
-            console.log(offer);
+            const {title,description,offer,startingDate,expiryDate,couponCode} = req.body;
+            console.log(req.body);
             
-         const coupon = await this.adminUseCase.createCoupon(title,description,offer,startingDate,startingTime,expiryDate,expiryTime,couponCode,next)
+         const coupon = await this.adminUseCase.createCoupon(title,description,offer,startingDate,expiryDate,couponCode,next)
          if(coupon){
             return res.send({success:true,coupon:coupon})
          }
@@ -100,6 +100,7 @@ export class AdminController{
     
     async top5Courses(req:Request,res:Response,next:NextFunction){
         try {
+            
             const courses = await this.adminUseCase.top5Courses(next);
             if(courses){
                 return res.send(courses)

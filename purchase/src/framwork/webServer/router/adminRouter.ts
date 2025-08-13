@@ -21,7 +21,7 @@ export function AdminRouter(router:Router){
     router.get("/order",async(req,res,next)=>{
         adminController.getOrders(req,res,next);
     })
-    router.get("/getOrders/:filter",async(req,res,next)=>{
+    router.get("/getOrders/:start/:end",async(req,res,next)=>{
         adminController.getOrdersForChart(req,res,next);
     });
 }

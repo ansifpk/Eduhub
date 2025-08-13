@@ -49,6 +49,7 @@ export class AdminController{
     async getOrders(req:Request,res:Response,next:NextFunction){
        try {
         const {end,start}  = req.query; 
+        
          const orders = await this.adminUseCase.getOrders(start as string,end as string,next)
          if(orders){
              return res.send({success:true,orders});
@@ -59,8 +60,8 @@ export class AdminController{
     }
     async getOrdersForChart(req:Request,res:Response,next:NextFunction){
        try {
-         const {filter} = req.params
-         const orders = await this.adminUseCase.getOrdersForChart(filter)
+         const {start,end} = req.params
+         const orders = await this.adminUseCase.getOrdersForChart(start,end,next)
          if(orders){
              return res.send({success:true,orders});
          }
@@ -70,8 +71,8 @@ export class AdminController{
     }
     async salesReports(req:Request,res:Response,next:NextFunction){
        try {
-          const {report,year,month}  = req.query 
-          const workbook = await this.adminUseCase.createReport(report as string,year as string,month as string,next)
+          const {start,end}  = req.query ;
+          const workbook = await this.adminUseCase.createReport(start as string,end as string,next)
         if(workbook){
            workbook.xlsx.writeBuffer().then((data) => {
             res.status(200).send(data);

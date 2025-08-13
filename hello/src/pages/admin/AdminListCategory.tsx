@@ -75,6 +75,7 @@ import {
   type CategoryFormInputs,
 } from "@/util/schemas/categoryScheema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigate } from "react-router-dom";
 
 const AdminListCategory = () => {
   const [search, setSearch] = useState("");
@@ -89,6 +90,7 @@ const AdminListCategory = () => {
   const [categoryId, setCategoryId] = useState("");
   const topicRef = useRef<HTMLInputElement>(null);
   const { doRequest, err } = useRequest();
+  const navigate = useNavigate();
 
 
   const {
@@ -108,15 +110,15 @@ const AdminListCategory = () => {
 
   useEffect(() => {
     doRequest({
-      url: adminRoutes.category,
+      url: `${adminRoutes.category}?search=${search}&&sort=${sort}&&page=${page}`,
       method: "get",
       body: {},
       onSuccess: (response) => {
         setCategories(response);
-        setTotalPage(3)
+        setTotalPage(1);
       },
     });
-  }, [search,sort]);
+  }, [search,sort,page]);
 
     useEffect(() => {
       const intervel = setTimeout(() => {
@@ -235,6 +237,12 @@ const AdminListCategory = () => {
                 </SelectContent>
               </Select>
             </div>
+            <button
+                className="bg-purple-600 px-2 text-white cursor-pointer rounded"
+                onClick={() => navigate("/admin/createCategory")}
+              >
+                create category
+              </button>
           </div>
 
           <Table className="border-2 table-auto rounded-lg border-purple-600">

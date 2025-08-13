@@ -1,4 +1,4 @@
-import {  Home, Inbox, BookAIcon,ContactIcon } from "lucide-react";
+import { Home, Inbox, BookAIcon, ContactIcon } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -8,47 +8,67 @@ import {
   SidebarMenu,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import instructorRoutes from "@/service/endPoints/instructorEndPoints";
+import useRequest from "@/hooks/useRequest";
+import toast from "react-hot-toast";
+import { removeUser } from "@/redux/authSlice";
+import { useDispatch } from "react-redux";
+import React, { useEffect } from "react";
 const items = [
   {
     title: "Home",
     url: "/instructor",
-    icon: Home,
+    icon: <Home />,
   },
   {
     title: "Students",
     url: "/instructor/students",
-    icon: ContactIcon,
+    icon: <ContactIcon />,
   },
   {
     title: "Courses",
     url: "/instructor/courses",
-    icon: BookAIcon,
+    icon: <BookAIcon />,
   },
   {
     title: "Message",
     url: "/instructor/message",
-    icon: Inbox,
+    icon: <Inbox />,
   },
   {
     title: "Plans",
     url: "/instructor/plans",
-    icon: Inbox,
+    icon: <i className="bi bi-patch-check-fill text-2xl"></i>,
   },
   {
     title: "Subscriptions",
     url: "/instructor/subscriptions",
-    icon: Inbox,
-  },
-  {
-    title: "Settings",
-    url: "/instructor/settings",
-    icon: ContactIcon,
-  },
+    icon: <i className="bi bi-calendar-check me-2 text-2xl"></i>,
+  }
 ];
 
-
 const AppSidebar = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { doRequest, err } = useRequest();
+  const handleLogout = () => {
+
+    doRequest({
+      url: instructorRoutes.logout,
+      body: {},
+      method: "post",
+      onSuccess: () => {
+        toast.success("Logout Succeefully");
+        dispatch(removeUser());
+        navigate("/instructor/login");
+      },
+    });
+  };
+
+  useEffect(()=>{
+    err?.map((err)=>toast.error(err.message));
+  },[err]);
   return (
     <Sidebar>
       <SidebarContent>
@@ -59,24 +79,30 @@ const AppSidebar = () => {
           <SidebarGroupContent>
             <SidebarMenu className="space-y-5">
               {items.map((item) => (
-                <SidebarMenuItem  key={item.title}>
+                <SidebarMenuItem key={item.title}>
                   <NavLink
                     to={item.url}
                     end
                     className={({ isActive }) =>
                       `flex w-full gap-2   px-4 py-2 text-xs items-center-safe  rounded-md ${
-                        isActive
-                          ? "bg-black  text-white"
-                          : " text-black"
+                        isActive ? "bg-black  text-white" : " text-black"
                       }`
                     }
                   >
-                    
-                        <item.icon />
-                        <span>{item.title}</span>
+                    {item.icon}
+                    <span>{item.title}</span>
                   </NavLink>
                 </SidebarMenuItem>
               ))}
+              <SidebarMenuItem>
+                <div
+                  onClick={handleLogout}
+                  className={`flex w-full gap-2 cursor-pointer  px-4 py-2 text-xs items-center-safe  rounded-mdtext-black`}
+                >
+                  <i className="bi bi-power text-red-600 text-2xl "></i>
+                  <span>Log out</span>
+                </div>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -85,4 +111,4 @@ const AppSidebar = () => {
   );
 };
 
-export default AppSidebar;
+export default React.memo(AppSidebar);
