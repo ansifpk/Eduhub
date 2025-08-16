@@ -26,10 +26,7 @@ export class UserRepository implements IUserRepository{
           return user;
       }
     }
-    async signUp(email: string): Promise<string> {
-        
-        return "return a tocken";
-    }
+
     async create(newUser: Iuser): Promise<Iuser | void> {
          const user =  await this.userModels.create(newUser)
          await user.save();

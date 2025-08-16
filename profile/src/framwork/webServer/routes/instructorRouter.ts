@@ -6,7 +6,7 @@ import { isAuth, isInstructor } from "../middlewares/auth";
 
 
 export function InstructorRouter(router:Router){
-   router.patch("/register",isAuth,upload,async(req,res,next)=>{
+   router.patch("/register",upload,async(req,res,next)=>{
           try {
             instructorController.register(req,res,next)
           } catch (error) {

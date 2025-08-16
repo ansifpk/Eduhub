@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { IUserUseCase } from "../useCases/interfaces/useCases/IUserUseCase";
-import dotenv from "dotenv";
-dotenv.config();
+
 
 
 

@@ -278,7 +278,6 @@ export class UserController {
 
   async checkTockens(req: Request, res: Response, next: NextFunction) {
     try {    
-       console.log("hi",req.cookies.refreshToken)
       if(!req.cookies.refreshToken){
         throw new ForbiddenError()
       }

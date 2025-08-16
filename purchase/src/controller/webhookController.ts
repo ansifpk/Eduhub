@@ -1,7 +1,7 @@
 import { NextFunction, Response, Request } from "express";
 import Stripe from "stripe";
 import { IWebhookUseCase } from "../useCases/interfaces/useCases/IWebhookUseCase";
-import { BadRequestError, StatusCodes } from "@eduhublearning/common";
+import { BadRequestError } from "@eduhublearning/common";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET!, {
   apiVersion: "2025-01-27.acacia",

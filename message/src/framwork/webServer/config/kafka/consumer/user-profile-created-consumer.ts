@@ -14,7 +14,6 @@ export class UserProfileCreatedConsumer extends KafkaConsumer<UserProfileCreated
     }
     async onMessage(data: { _id: string; name: string; email: string; isInstructor: boolean; }): Promise<void> {
         try {
-            console.log('Consumer received message user from auth service :', data);
             // Adding userDta to db in course Service
             await userModel.create(data);
         } catch (error) {

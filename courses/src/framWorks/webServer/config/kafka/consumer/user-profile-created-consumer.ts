@@ -14,8 +14,6 @@ export class UserProfileCreateConsumer extends KafkaConsumer<UserProfileCreatedE
 
     async onMessage(data: { _id: string; name: string; email: string; isInstructor: boolean; isBlock: boolean; isAdmin: boolean; createdAt: Date; avatar: { id: string; avatar_url: string; }; }): Promise<void> {
        try {
-          console.log("data from profile serv",data);
-          
           await UserModel.create(data)
        } catch (error) {
         console.error(error)

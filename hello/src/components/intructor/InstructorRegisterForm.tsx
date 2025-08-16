@@ -1,29 +1,86 @@
-
-
-
-
-import React, {  useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "../ui/card";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { loginSchema, type LoginFormInputs } from "@/util/schemas/loginSchema";
 import std from "../../assets/home-page/teacher-home.jpg";
+import useRequest from "@/hooks/useRequest";
+import toast from "react-hot-toast";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+
+import {
+  registerInstructorSchema,
+  type RegisterInstructorFormInputs,
+} from "@/util/schemas/instructorRegisterScheema";
+import { Loader2Icon } from "lucide-react";
+import instructorRoutes from "@/service/endPoints/instructorEndPoints";
 
 const InstructorRegisterForm = () => {
   const [loading, setLoading] = useState(false);
-  const [show, setShow] = useState(false);
+  const navigate = useNavigate();
+  const { doRequest, err } = useRequest();
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
-  } = useForm<LoginFormInputs>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<RegisterInstructorFormInputs>({
+    resolver: zodResolver(registerInstructorSchema),
+    defaultValues: {
+      cv: {
+        id: "1",
+        cv_url: "",
+      },
+      certificate: {
+        id: "1",
+        certificate_url: "",
+      },
+    },
   });
-  const onSubmit = async () => {
+  const onSubmit = async (data: RegisterInstructorFormInputs) => {
+    const formData = new FormData();
+    formData.append("email", data.email);
+    formData.append("qualification", data.qualification);
+    formData.append("experience", data.experience);
+
+    const img1 = data.certificate.certificate_url as File;
+    const img2 = data.cv.cv_url as File;
+    formData.append("certificate_url", img1.name);
+    formData.append("cv", img2.name);
+    if (data.certificate.certificate_url instanceof File) {
+      const newCertificate = data.certificate.certificate_url;
+      formData.append("certificateImage", newCertificate);
+    }
+
+    if (data.cv.cv_url instanceof File) {
+      const newCv = data.cv.cv_url;
+      formData.append("cvImage", newCv);
+    }
     setLoading(true);
+    doRequest({
+      url: instructorRoutes.register,
+      method: "patch",
+      body: formData,
+      onSuccess: () => {
+        setLoading(false);
+        toast.success(`successfully applyed
+      we sent an email after review your informations.`);
+        return navigate("/instructor");
+      },
+    });
   };
+  useEffect(() => {
+    setLoading(false);
+    err?.map((err) => toast.error(err.message));
+  }, [err]);
   return (
     <div className={"flex flex-col gap-6"}>
       <Card className="overflow-hidden p-0">
@@ -56,65 +113,139 @@ const InstructorRegisterForm = () => {
                   </TabsTrigger>
                 </TabsList>
               </Tabs>
-              <div className="grid gap-3">
-                <label
-                  htmlFor="email"
-                  className={errors.email && "text-red-500"}
-                >
-                  {errors.email ? errors.email.message : "Email"}
-                </label>
-                <input
-                  {...register("email")}
-                  id="email"
-                  type="text"
-                  placeholder="please enter your email"
-                  autoComplete="email"
-                  className="border py-1 rounded-full px-2 border-teal-300"
-                />
-              </div>
-              <div className="grid gap-3 relative">
-                <div className="flex items-center">
+
+              <div className="space-y-2">
+                <div className="grid gap-1">
                   <label
-                    htmlFor="password"
-                    className={errors.password && "text-red-500"}
+                    htmlFor="email"
+                    className={`text-sm font-medium text-gray-700 ${
+                      errors.email && "text-red-500"
+                    }`}
                   >
-                    {errors.password ? errors.password.message : "Password"}
+                    {errors.email ? errors.email.message : "Email"}
                   </label>
+                  <input
+                    {...register("email")}
+                    id="email"
+                    type="text"
+                    placeholder="please enter your email"
+                    className="border py-1 rounded-full px-2 border-teal-300"
+                  />
                 </div>
-                <input
-                  {...register("password")}
-                  id="password"
-                  placeholder="please enter your password"
-                  className="border py-1 rounded-full px-2 border-teal-300"
-                  type={show ? "text" : "password"}
-                />
+
+                <div className="grid gap-1">
+                  <label
+                    htmlFor="qualification"
+                    className={`text-sm font-medium text-gray-700 ${
+                      errors.email && "text-red-500"
+                    }`}
+                  >
+                    {errors.qualification
+                      ? errors.qualification.message
+                      : "Qualification"}
+                  </label>
+                  <input
+                    {...register("qualification")}
+                    id="qualification"
+                    type="text"
+                    placeholder="please enter your qualification"
+                    className="border py-1 rounded-full px-2 border-teal-300"
+                  />
+                </div>
+
+                <div className="space-y-2 flex flex-col ">
+                  <label
+                    className={`text-sm font-medium text-gray-700 ${
+                      errors.experience && "text-red-500"
+                    }`}
+                  >
+                    {errors.experience
+                      ? errors.experience.message
+                      : " What kind of teaching have you done before?"}
+                  </label>
+                  <Select onValueChange={(e) => setValue("experience", e)}>
+                    <SelectTrigger className="w-full rounded-full border-1 border-teal-300">
+                      <SelectValue placeholder="Select..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectItem value="In person, Informally">
+                          In person, Informally
+                        </SelectItem>
+                        <SelectItem value="In person, Profesionally">
+                          In person, Profesionally
+                        </SelectItem>
+                        <SelectItem value="Online">Online</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className={`grid w-full max-w-sm items-center gap-1.5`}>
+                  <label
+                    htmlFor="certificate"
+                    className={`text-sm font-medium text-gray-700 ${
+                      errors?.certificate?.certificate_url && "text-red-500"
+                    }`}
+                  >
+                    {errors?.certificate?.certificate_url
+                      ? errors?.certificate?.certificate_url?.message
+                      : "Upload Certificate"}
+                  </label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      setValue("certificate.id", "1");
+                      setValue(
+                        "certificate.certificate_url",
+                        e?.target?.files![0]
+                      );
+                    }}
+                    className="border py-1 rounded-full px-2 border-teal-300"
+                  />
+                </div>
+                <div className={`grid w-full max-w-sm items-center gap-1.5`}>
+                  <label
+                    htmlFor="CV"
+                    className={`text-sm font-medium text-gray-700 ${
+                      errors?.cv?.cv_url && "text-red-500"
+                    }`}
+                  >
+                    {errors?.cv?.cv_url
+                      ? errors?.cv?.cv_url?.message
+                      : "Upload CV"}
+                  </label>
+                  <input
+                    onChange={(e) => {
+                      setValue("cv.cv_url", e?.target?.files![0]);
+                      setValue("cv.id", "1");
+                    }}
+                    type="file"
+                    accept="image/*"
+                    className={`rounded-full border-1 py-1 px-2 border-teal-300`}
+                    id="cv"
+                    placeholder="cv"
+                  />
+                </div>
+
                 <button
-                  type="button"
-                  onClick={() => setShow(!show)}
-                  className="absolute right-3 top-13 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  type="submit"
+                  className={`w-full bg-teal-500 py-1 flex  justify-center-safe font-bold text-white rounded hover:bg-teal-300  ${
+                    loading ? "" : "cursor-pointer"
+                  }`}
+                  disabled={loading ? true : false}
                 >
-                  <i
-                    className={`bi ${
-                      show ? " bi-eye-slash-fill" : "bi bi-eye-fill"
-                    }  relative z-50`}
-                  ></i>
+                  {loading ? (
+                    <>
+                      Loading...
+                      <Loader2Icon className="animate-spin" />
+                    </>
+                  ) : (
+                    "Register"
+                  )}
                 </button>
               </div>
-            
-              <button
-                type="submit"
-                className={`w-full bg-teal-500 py-1 font-bold text-white rounded hover:bg-teal-300 cursor-pointer`}
-                disabled={loading ? true : false}
-              >
-                {loading ? (
-                  <>
-                    Loging...
-                    <i className="bi bi-arrow-repeat animate-spin"></i>
-                  </>
-                ) : (
-                  "Login"
-                )}
-              </button>
             </div>
           </form>
         </CardContent>

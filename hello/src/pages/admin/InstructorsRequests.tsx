@@ -34,7 +34,6 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import toast from "react-hot-toast";
 
@@ -42,6 +41,8 @@ const InstructorsRequests = () => {
   const [instructors, setInstructors] = useState<IUserProfile[]>([]);
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
+  const [url, setUrl] = useState("");
+  const [open, setOpen] = useState(false);
   const [totalPage, setTotalPage] = useState(0);
   const { doRequest, err } = useRequest();
 
@@ -57,7 +58,7 @@ const InstructorsRequests = () => {
     });
   }, []);
 
- const handleApproval = async (email: string, status: string) => {
+  const handleApproval = async (email: string, status: string) => {
     doRequest({
       url: adminRoutes.instructorAprovel,
       method: "patch",
@@ -170,121 +171,79 @@ const InstructorsRequests = () => {
                     <TableCell>{instructor.email}</TableCell>
                     <TableCell>
                       <div className="grid grid-cols-2 gap-2">
-                        <Sheet key={"top"}>
+                        <Sheet>
                           <SheetTrigger asChild>
                             <button
-                              className={"bg-purple-600 hover:bg-purple-600"}
+                              className={"bg-purple-600 text-white rounded py-2 font-semibold hover:bg-purple-600"}
                             >
                               View Detailes
                             </button>
                           </SheetTrigger>
-                          <SheetContent side={"top"}>
+                          <SheetContent side={"top"} className="h-screen">
                             <SheetHeader>
                               <SheetTitle>
                                 User Request to become an Instructor
                               </SheetTitle>
                             </SheetHeader>
-                            <div className="grid gap-4 py-4">
-                              <div className="grid grid-cols-4 items-center gap-4">
-                                <label htmlFor="name" className="text-right">
-                                  Name
-                                </label>
-                                <input
-                                  id="name"
-                                  value={instructor.name}
-                                  className="col-span-3"
-                                  onChange={() => ""}
-                                />
-                              </div>
-                              <div className="grid grid-cols-4 items-center gap-4">
-                                <label
-                                  htmlFor="username"
-                                  className="text-right"
-                                >
-                                  Email
-                                </label>
-                                <input
-                                  onChange={() => ""}
-                                  id="username"
-                                  value={instructor.email}
-                                  className="col-span-3"
-                                />
-                              </div>
-                              <div className="grid grid-cols-4 items-center gap-4">
-                                <label
-                                  htmlFor="username"
-                                  className="text-right"
-                                >
-                                  Qualification
-                                </label>
-                                <input
-                                  onChange={() => ""}
-                                  id="username"
-                                  value={instructor.qualification}
-                                  className="col-span-3"
-                                />
-                              </div>
-                              <div className="grid grid-cols-4 items-center gap-4">
-                                <label
-                                  htmlFor="username"
-                                  className="text-right"
-                                >
-                                  Expirience
-                                </label>
-                                <input
-                                  onChange={() => ""}
-                                  id="username"
-                                  value={instructor.experience}
-                                />
-                                <Dialog>
-                                  <DialogTrigger asChild>
-                                    <button>View Certificate</button>
-                                  </DialogTrigger>
-                                  <DialogTitle>
-                                    <DialogContent className="sm:max-w-[600px]">
-                                      <div className="grid gap-4 py-4">
-                                        <img
-                                          src={
-                                            instructor.certificate
-                                              .certificate_url
-                                          }
-                                          alt="certificate image"
-                                        />
-                                      </div>
-                                    </DialogContent>
-                                  </DialogTitle>
-                                </Dialog>
-                              </div>
-                              <div className="grid grid-cols-4 items-center gap-4">
-                                <label
-                                  htmlFor="username"
-                                  className="text-right"
-                                >
-                                  CV
-                                </label>
-
-                                <Dialog>
-                                  <DialogTrigger asChild>
-                                    <button>View CV</button>
-                                  </DialogTrigger>
-                                  <DialogTitle>
-                                    <DialogContent className="sm:max-w-[600px]">
-                                      <div className="grid gap-4 py-4">
-                                        <img
-                                          src={instructor.cv.cv_url}
-                                          alt="certificate image"
-                                        />
-                                      </div>
-                                    </DialogContent>
-                                  </DialogTitle>
-                                </Dialog>
-                              </div>
-                            </div>
+                            <Table className="border-2 w-[75%] mx-auto rounded-lg border-purple-600">
+                              <TableHeader>
+                                <TableRow>
+                                  <TableHead>Image</TableHead>
+                                  <TableHead>Name</TableHead>
+                                  <TableHead>Email</TableHead>
+                                  <TableHead>Qualification</TableHead>
+                                  <TableHead>Experieance</TableHead>
+                                  <TableHead>CV</TableHead>
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody>
+                                <TableRow>
+                                  <TableCell>
+                                    <Avatar>
+                                      <AvatarImage
+                                        src={instructor.avatar.avatar_url}
+                                        alt="uer_image"
+                                      />
+                                      <AvatarFallback>P</AvatarFallback>
+                                    </Avatar>
+                                  </TableCell>
+                                  <TableCell>{instructor.name}</TableCell>
+                                  <TableCell>{instructor.email}</TableCell>
+                                  <TableCell>
+                                    {instructor.qualification}
+                                  </TableCell>
+                                  <TableCell>
+                                    <button
+                                      className="bg-purple-500 p-2 text-white font-bold  rounded"
+                                      type="button"
+                                      onClick={()=>{
+                                        setOpen(true)
+                                        setUrl(instructor.certificate.certificate_url)
+                                      }}
+                                    >
+                                      View
+                                    </button>
+                                  </TableCell>
+                                  <TableCell>
+                                    <button
+                                      className="bg-purple-500 p-2 text-white font-bold  rounded"
+                                      type="button"
+                                      onClick={()=>{
+                                        setOpen(true)
+                                        setUrl(instructor.cv.cv_url)
+                                      }}
+                                    >
+                                      View
+                                    </button>
+                                  </TableCell>
+                                </TableRow>
+                              </TableBody>
+                            </Table>
                             <SheetFooter>
                               <SheetClose asChild>
                                 <div className="flex gap-4">
                                   <button
-                                    className="bg-red-500"
+                                     className="bg-red-500 p-2 text-white font-bold  rounded"
                                     onClick={() =>
                                       handleApproval(
                                         instructor.email,
@@ -296,7 +255,7 @@ const InstructorsRequests = () => {
                                     Reject
                                   </button>
                                   <button
-                                    className="bg-green-500"
+                                    className="bg-green-500 p-2 text-white font-bold  rounded"
                                     onClick={() =>
                                       handleApproval(
                                         instructor.email,
@@ -312,6 +271,25 @@ const InstructorsRequests = () => {
                             </SheetFooter>
                           </SheetContent>
                         </Sheet>
+
+                        <Dialog open={open} onOpenChange={()=>{
+                          if(open){
+                            setUrl("");
+                          }
+                          setOpen(!open);
+                        }}>
+                          <DialogTitle>
+                            <DialogContent className="sm:max-w-[600px]">
+                              <div className="grid gap-4 py-4">
+                                <img
+                                  src={url}
+                                  alt="certificate_image"
+                                />
+                              </div>
+                            </DialogContent>
+                          </DialogTitle>
+                        </Dialog>
+
                       </div>
                     </TableCell>
                   </TableRow>

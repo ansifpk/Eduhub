@@ -15,7 +15,6 @@ export class CourseCreatedConsumer extends KafkaConsumer<CourseCreateEvent>{
     
     async  onMessage(data: { _id: string; title: string; price: number; isListed: boolean; instructorId: string; category: string; subCategory: string; level: string; image: { _id: string; image_url: string; }; subscription: boolean; }): Promise<void> {
         try {
-            console.log('Consumer received message course :', data);
             // Adding userDta to db in course Service
             await courseModel.create(data)
         } catch (error) {

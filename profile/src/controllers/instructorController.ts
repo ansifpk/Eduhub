@@ -4,11 +4,12 @@ import { InstructorUseCase } from "../useCases/useCases/instructorUseCase";
 export class InstructorController {
   constructor(private instructorUseCases: InstructorUseCase) {}
   async register(req: Request, res: Response, next: NextFunction) {
+   
     let files = req.files as {
       certificateImage?: Express.Multer.File[];
       cvImage?: Express.Multer.File[];
     };
-
+   
     const updatedUser = await this.instructorUseCases.register(
       { bodyData: req.body, fileData: files },
       next

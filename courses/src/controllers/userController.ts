@@ -1,15 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { IUserUseCase } from "../useCases/interfaces/useCases/IUserUseCase";
-import Stripe from "stripe";
-import dotenv from "dotenv";
-import { ICourse } from "../entities/course";
-import { ICoupon } from "../entities/coupon";
-import { NotFoundError, StatusCodes } from "@eduhublearning/common";
-dotenv.config();
 
-const stripe = new Stripe(process.env.STRIPE_SECRET!, {
-  apiVersion: "2024-11-20.acacia",
-});
+
+
+
 
 export class UserController {
   constructor(private userUseCase: IUserUseCase) {}

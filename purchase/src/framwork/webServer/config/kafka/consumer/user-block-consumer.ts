@@ -18,7 +18,7 @@ export class UserBlockedConsumer extends KafkaConsumer<UserBlockedEvent>{
             const { _id,isBlock} = data;
            await UserModel.findByIdAndUpdate({_id:_id},{$set:{isBlock:isBlock}})
         } catch (error) {
-            
+            console.error(error);
         }
     }
 

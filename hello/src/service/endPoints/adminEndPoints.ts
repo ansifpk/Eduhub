@@ -2,10 +2,10 @@ const adminRoutes = {
   //*auth
    
   
-    login:'/auth/admin/login',
+    login:'/auth/auth/admin/login',
     blockUser:'/auth/admin/blockUser',
     blockInstructor:'/auth/admin/blockinstructor',
-    logout:'/auth/admin/logout',
+    logout:'/auth/auth/admin/logout',
     tocken:"/auth/admin/refresh-token",
     //*category
     category:'/category/admin/category',
@@ -15,7 +15,7 @@ const adminRoutes = {
     //*profile
     students:'/profile/admin/students',
     instructors:'/profile/admin/instructors',
-    instructorAprovel:'/profile/admin/instructorAprovel',
+    instructorAprovel:'/profile/profile/admin/instructorAprovel',
 
      //*course
     getCourses:"/course/admin/getCourses",
@@ -40,7 +40,7 @@ const adminRoutes = {
     //  filterChart:"/purchase/admin/filterChart",
      //*top5Instructors
      top5Instructors:"/profile/admin/top5Instructors",
-     instructorRequest:"/profile/admin/instructorRequest",
+     instructorRequest:"/profile/profile/admin/instructorRequest",
    }
 
    

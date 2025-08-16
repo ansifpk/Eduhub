@@ -12,7 +12,6 @@ const service = {
     purchase:process.env.PURCHASEURL,
     profile:process.env.PROFILEURL,
     message:process.env.MESSAGEURL
-
 }
 
 app.use('/auth',createProxyMiddleware({target:service.auth,changeOrigin:true}))

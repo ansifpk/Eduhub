@@ -15,7 +15,6 @@ export class InstructorController{
         }
     }
     async register(req:Request,res:Response,next:NextFunction){
-
         const createdUser = await this.instructorUseCase.instructorRegister(req.body.email,req.body.name,req.body.qualification,req.body.expirience,req.body.certificat,req.body.cv,next)
         if(createdUser){
             return res.send({success:true,user:createdUser})

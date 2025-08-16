@@ -27,7 +27,6 @@ export class InstructorController{
                 subCategory: course.subCategory,
                 level: course.level,
                 image: course.image,
-                sections: course.sections,
                 createdAt: course.createdAt,
                 subscription: course.subscription
             })
