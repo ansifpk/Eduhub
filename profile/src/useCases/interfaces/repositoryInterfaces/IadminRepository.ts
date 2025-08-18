@@ -8,7 +8,7 @@ export interface IAdminRepository{
     getInstructorPages(search:string,sort:string):Promise<number|void>
     findByEmail(email:string):Promise<Iuser|void>
     approveIntructor(email:string,status:string,instructor:boolean):Promise<Iuser|void>
-    findIntructorRequests():Promise<Iuser[]|void>
+    findIntructorRequests(search:string,page:string,sort:string):Promise<Iuser[]|void>
     findTop5Instructors():Promise<Iuser[]|void>
     
 }

@@ -40,6 +40,9 @@ import toast from "react-hot-toast";
 const InstructorsRequests = () => {
   const [instructors, setInstructors] = useState<IUserProfile[]>([]);
   const navigate = useNavigate();
+  const [search, setSearch] = useState("");
+  const [debouns, setDebouns] = useState("");
+  const [sort, setSort] = useState("All");
   const [page, setPage] = useState(1);
   const [url, setUrl] = useState("");
   const [open, setOpen] = useState(false);
@@ -48,15 +51,15 @@ const InstructorsRequests = () => {
 
   useEffect(() => {
     doRequest({
-      url: `${adminRoutes.instructorRequest}`,
+      url: `${adminRoutes.instructorRequest}?page=${page}&&search=${search}&&sort=${sort}`,
       method: "get",
       body: {},
       onSuccess: (response) => {
-        setInstructors(response);
-        setTotalPage(response.pages);
+        setInstructors(response[0].requests);
+        setTotalPage(response[0].totelPages[0].totelPages);
       },
     });
-  }, []);
+  }, [page,search,sort]);
 
   const handleApproval = async (email: string, status: string) => {
     doRequest({
@@ -75,6 +78,16 @@ const InstructorsRequests = () => {
       },
     });
   };
+
+    useEffect(() => {
+      const intervel = setTimeout(() => {
+        setPage(1);
+        setSearch(debouns);
+      }, 600);
+      return () => {
+        clearTimeout(intervel);
+      };
+    }, [debouns]);
 
   useEffect(() => {
     err?.map((err) => toast.error(err.message));
@@ -95,9 +108,19 @@ const InstructorsRequests = () => {
               >
                 <i className="bi bi-arrow-left"></i>
               </button>
-              <h1 className="text-3xl font-bold underline">
+              <h1 className="text-2xl font-bold underline">
                 Instructor Requests
               </h1>
+            </div>
+            <div className="flex gap-2">
+              <input type="search" placeholder="Search..." onChange={(e)=>setDebouns(e.target.value)} className="border border-purple-600 rounded p-2" />
+              <select value={sort} onChange={(value)=>setSort(value.target.value)} className="border border-purple-600 w-[150px] rounded p-2" >
+                <option value="All" >All</option>
+                <option value="New">Latest</option>
+                <option value="Old">old</option>
+                <option value="Name Aa-Zz">Name : Aa-Zz</option>
+                <option value="Name Zz-Aa">Name : Zz-Aa</option>
+              </select>
             </div>
           </div>
           <Table className="border-2 rounded-lg border-purple-600">
@@ -146,17 +169,19 @@ const InstructorsRequests = () => {
             </TableCaption>
             <TableHeader>
               <TableRow>
-                <TableHead>Image</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead className="text-center">SI No</TableHead>
+                <TableHead className="text-center">Image</TableHead>
+                <TableHead className="text-center">Name</TableHead>
+                <TableHead className="text-center">Email</TableHead>
+                <TableHead >Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {instructors.length > 0 ? (
-                instructors.map((instructor) => (
+                instructors.map((instructor,index) => (
                   <TableRow key={instructor._id}>
-                    <TableCell className="font-medium">
+                    <TableCell className="text-center">{index+1}</TableCell>
+                    <TableCell className="font-medium flex justify-center-safe">
                       <Avatar>
                         <AvatarImage
                           src={instructor.avatar.avatar_url}
@@ -167,14 +192,14 @@ const InstructorsRequests = () => {
                         </AvatarFallback>
                       </Avatar>
                     </TableCell>
-                    <TableCell>{instructor.name}</TableCell>
-                    <TableCell>{instructor.email}</TableCell>
-                    <TableCell>
+                    <TableCell className="text-center">{instructor.name}</TableCell>
+                    <TableCell className="text-center">{instructor.email}</TableCell>
+                    <TableCell >
                       <div className="grid grid-cols-2 gap-2">
                         <Sheet>
                           <SheetTrigger asChild>
                             <button
-                              className={"bg-purple-600 text-white rounded py-2 font-semibold hover:bg-purple-600"}
+                              className={"bg-purple-600 text-white rounded p-2 font-semibold hover:bg-purple-600"}
                             >
                               View Detailes
                             </button>

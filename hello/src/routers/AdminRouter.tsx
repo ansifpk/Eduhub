@@ -1,4 +1,4 @@
-import { Suspense ,lazy} from "react"
+import React, { Suspense ,lazy} from "react"
 import type { IUser } from "@/@types/userType"
 import { SocketProvider } from "@/context/socketContext"
 const AdminCoupons = lazy(()=>import("@/pages/admin/AdminCoupons"))
@@ -7,7 +7,6 @@ const AdminListCourses = lazy(()=>import("@/pages/admin/AdminListCourses"))
 const AdminListInstructors = lazy(()=>import("@/pages/admin/AdminListInstructors"))
 const AdminListStudents = lazy(()=>import("@/pages/admin/AdminListStudents"))
 const AdminMessage = lazy(()=>import("@/pages/admin/AdminMessage"))
-const AdminSalesReport =lazy(()=>import("@/pages/admin/AdminSalesReport")) 
 const AdminSubscription = lazy(()=>import("@/pages/admin/AdminSubscription"))
 const Dashboard = lazy(()=>import("@/pages/admin/Dashboard"))
 const InstructorsRequests = lazy(()=>import("@/pages/admin/InstructorsRequests"))
@@ -30,7 +29,6 @@ const AdminRouter = () => {
               <Route path="/students"  element={isAdmin?<AdminListStudents/>:<Login/>} />
               <Route path="/instructors"  element={isAdmin?<AdminListInstructors/>:<Login/>} />
               <Route path="/instructorRequests"  element={isAdmin?<InstructorsRequests/>:<Login/>} />
-              <Route path="/salesReport"  element={isAdmin?<AdminSalesReport/>:<Login/>} />
               <Route path="/courses"  element={isAdmin?<AdminListCourses/>:<Login/>} />
               <Route path="/category"  element={isAdmin?<AdminListCategory/>:<Login/>} />
               <Route path="/createCategory"  element={isAdmin?<AdminAddCategory/>:<Login/>} />
@@ -46,4 +44,4 @@ const AdminRouter = () => {
   )
 }
 
-export default AdminRouter
+export default React.memo(AdminRouter)

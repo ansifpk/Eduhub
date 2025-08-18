@@ -173,12 +173,16 @@ export class AdminRepository implements IAdminRepository {
               {
                 $group: {
                   _id: {
-                    $dateTrunc: { date: "$createdAt", unit: "day" },
+                    $dateToString: {format: "%Y-%m-%d", date: "$createdAt", },
                   },
                   delivered: { $sum: 1 },
                 },
               },
+              {
+                $sort:{_id:1}
+              }
             ]);
+
       if (orders) {
         return orders;
       }

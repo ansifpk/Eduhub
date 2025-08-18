@@ -64,6 +64,7 @@ const ChartAreaInteractive = () => {
       method: "get",
       body: {},
       onSuccess: (res) => {
+        console.log(res.orders)
         setOrders(res.orders);
       },
     });
@@ -161,7 +162,7 @@ const ChartAreaInteractive = () => {
               cursor={false}
               content={
                 <ChartTooltipContent
-                  labelFormatter={(value) => `Year ${value.slice(0, 10)}`}
+                  labelFormatter={(value) => `Year ${value}`}
                   indicator="dot"
                 />
               }

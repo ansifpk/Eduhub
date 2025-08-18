@@ -12,8 +12,7 @@ const instructorRoutes = {
     tests:"/course/instructor/tests", 
     top5Courses:"/course/instructor/course",
     top5RatedCourses:"/course/instructor/topRated",
-    editProfile:"/instructor/editProfile", 
-    register:"/profile/profile/instructor/register", 
+    register:"/profile/instructor/register", 
     getCategoryies:"/category/instructor/category", 
     ratings:"/profile/instructor/ratings", 
     

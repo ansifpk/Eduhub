@@ -9,7 +9,7 @@ export class InstructorController {
       certificateImage?: Express.Multer.File[];
       cvImage?: Express.Multer.File[];
     };
-   
+     
     const updatedUser = await this.instructorUseCases.register(
       { bodyData: req.body, fileData: files },
       next

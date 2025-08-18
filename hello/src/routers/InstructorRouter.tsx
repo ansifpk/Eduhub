@@ -1,5 +1,5 @@
 import type { IUserProfile } from "@/@types/userProfile";
-import { lazy } from "react";
+import { lazy, Suspense } from "react";
 import { useSelector } from "react-redux";
 import { Navigate, Route, Routes } from "react-router-dom";
 const InstructorLogin = lazy(()=>import("@/pages/instructor/InstructorLogin"))
@@ -23,7 +23,7 @@ const InstructorErrorPage = lazy(()=>import("@/pages/instructor/InstructorErrorP
 const InstructorRouter = () => {
   const isInstructor = useSelector((state:IUserProfile)=>state.isInstructor);
   return (
-    <>
+    <Suspense fallback={<>loading....</>}>
           <Routes>
             <Route path="/login" element={ isInstructor ?  <Navigate to={"/instructor"} replace /> : <InstructorLogin />} />
             <Route path="/" element={ isInstructor ? <InstructorDashboard />  : <Navigate to={"/instructor/login"} replace /> } />
@@ -41,7 +41,7 @@ const InstructorRouter = () => {
             <Route path="/faile" element={ isInstructor ? <Faile /> : <Navigate to={"/instructor/login"} replace /> } />
             <Route path="*" element={ isInstructor ? <InstructorErrorPage /> : <Navigate to={"/instructor/login"} replace /> } />
           </Routes>
-    </>
+    </Suspense>
   );
 };
 

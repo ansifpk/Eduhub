@@ -11,8 +11,7 @@ export class AdminController{
         const { search,sort,page } = req.query
        const instructors =  await this.adminUseCase.fetchInstructors(search as string, sort as string,parseInt(page as string),next)
        if(instructors){
-
-        return res.send({instructors:instructors.instructors,pages:instructors.pages})
+        return res.send(instructors)
        }
       } catch (error) {
         console.error(error)
@@ -35,8 +34,8 @@ export class AdminController{
 
     async instructorRequest(req:Request,res:Response,next:NextFunction){
         try {
-           
-            const students = await this.adminUseCase.instructorRequest()
+            const {search,page,sort} = req.query;
+            const students = await this.adminUseCase.instructorRequest(search as string,page as string,sort as string)
             if(students){
             return res.send(students)
           }

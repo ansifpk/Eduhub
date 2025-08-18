@@ -61,17 +61,7 @@ const AdminSalesReport = () => {
     });
   };
   
-  //  const handleReport = async () => {
-    // const response = await createReport(report, year, months.indexOf(month));
-    // const blob = new Blob([response], {
-    //   type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    // });
-    // const url = window.URL.createObjectURL(blob);
-    // const anchor = document.createElement("a");
-    // anchor.href = url;
-    // anchor.click();
-    // window.URL.revokeObjectURL(url);
-  // };
+
 
   useEffect(() => {
     err?.map((err) => toast.error(err.message));

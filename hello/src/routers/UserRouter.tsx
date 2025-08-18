@@ -27,7 +27,7 @@ const UserErrorPage = React.lazy(()=> import('@/pages/user/UserErrorPage'))
 const UserRouter = () => {
   const userId = useSelector((state:IUser)=>state._id)
   return (
-    <>
+ 
      <Suspense fallback={<>loading....</>}>
       <Routes>
           <Route path='/' element={<Home/>} />
@@ -50,7 +50,7 @@ const UserRouter = () => {
           <Route path="*" element={ userId ? <UserErrorPage /> : <Navigate to={"/signIn"} replace /> } />
       </Routes>
      </Suspense>
-    </>
+  
   )
 }
 

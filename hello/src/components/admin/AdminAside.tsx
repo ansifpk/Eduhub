@@ -20,11 +20,6 @@ const arr = [
     to: "/admin/instructors",
     icon: <i className="bi bi-person-video3"></i>,
   },
-  {
-    name: "Reports",
-    to: "salesReport",
-    icon: <i className="bi bi-file-earmark-arrow-down-fill"></i>,
-  },
   { name: "courses", to: "courses", icon: <i className="bi bi-tv"></i> },
   {
     name: "Category",

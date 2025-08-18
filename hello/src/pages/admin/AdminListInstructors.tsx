@@ -62,24 +62,15 @@ const AdminListInstructors = () => {
       body: {},
       method: "get",
       onSuccess: (response) => {
-        const arr = response.instructors.filter(
-          (value: IUserProfile) => value.status == "Approved"
-        );
-        setInstructors(arr);
-        setTotalPage(response.pages);
-        response.instructors.map((value: IUserProfile) => {
-          if (value.status == "pending") {
-            setRequests((prev) => {
-              return prev + 1;
-            });
-          }
-        });
+        setInstructors(response[0].instructors);
+        setTotalPage(response[0].instructorTotalPages[0].totalPages);
+        setRequests(response[0].requests[0].totelRequests);
       },
     });
   }, [search, sort, page]);
-
   useEffect(() => {
     const intervel = setTimeout(() => {
+      setPage(1);
       setSearch(debouns);
     }, 600);
     return () => {
@@ -99,18 +90,9 @@ const AdminListInstructors = () => {
             body: {},
             method: "get",
             onSuccess: (response) => {
-              const arr = response.instructors.filter(
-                (value: IUserProfile) => value.status == "Approved"
-              );
-              setInstructors(arr);
-              setTotalPage(response.pages);
-              response.instructors.map((value: IUserProfile) => {
-                if (value.status == "pending") {
-                  setRequests((prev) => {
-                    return prev + 1;
-                  });
-                }
-              });
+              setInstructors(response[0].instructors);
+              setTotalPage(response[0].instructorTotalPages[0].totalPages);
+              setRequests(response[0].requests[0].totelRequests);
               socket?.emit(`blockUser`, instructorId);
               toast.success("Successfully Block Instructroctor");
             },
@@ -121,18 +103,9 @@ const AdminListInstructors = () => {
             body: {},
             method: "get",
             onSuccess: (response) => {
-              const arr = response.instructors.filter(
-                (value: IUserProfile) => value.status == "Approved"
-              );
-              setInstructors(arr);
-              setTotalPage(response.pages);
-              response.instructors.map((value: IUserProfile) => {
-                if (value.status == "pending") {
-                  setRequests((prev) => {
-                    return prev + 1;
-                  });
-                }
-              });
+              setInstructors(response[0].instructors);
+              setTotalPage(response[0].instructorTotalPages[0].totalPages);
+              setRequests(response[0].requests[0].totelRequests);
               toast.success("Successfully UnBlock Instructroctor");
             },
           });

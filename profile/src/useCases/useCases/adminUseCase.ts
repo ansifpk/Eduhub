@@ -23,15 +23,15 @@ export class AdminUseCase implements IAdminUseCase{
           }
        }
 
-   async fetchInstructors(search:string,sort:string,page:number,next: NextFunction): Promise<{instructors:Iuser[],pages:number}|void> {
+   async fetchInstructors(search:string,sort:string,page:number,next: NextFunction): Promise<Iuser[]|void> {
         try {
-            const count = await this.adminRepository.getInstructorPages(search,sort);
-            const pages = count as number 
+            // const count = await this.adminRepository.getInstructorPages(search,sort);
+            // const pages = count as number 
             let instructors = await this.adminRepository.findInstructors(search,sort,page);
         
         if(instructors){
-            instructors = instructors.filter((user:Iuser)=>user.isInstructor == true || user.status == "pending")
-            return {instructors,pages}
+            // instructors = instructors.filter((user:Iuser)=>user.isInstructor == true || user.status == "pending")
+            return instructors
         }
         
        
@@ -53,9 +53,9 @@ export class AdminUseCase implements IAdminUseCase{
             }
     }
 
-    async instructorRequest(): Promise<Iuser[] | void> {
+    async instructorRequest(search:string,page:string,sort:string): Promise<Iuser[] | void> {
        try {
-          const requests = await this.adminRepository.findIntructorRequests();
+          const requests = await this.adminRepository.findIntructorRequests(search,page,sort);
           return requests
        } catch (error) {
            console.error(error)
@@ -80,6 +80,7 @@ export class AdminUseCase implements IAdminUseCase{
         }
        } catch (error) {
            console.error(error)
+           next(error)
        }
        
     }
