@@ -169,6 +169,7 @@ export class AdminUseCase implements IAdminUseCase {
       }
     } catch (error) {
       console.error(error);
+      next(error);
     }
   }
 
@@ -222,6 +223,7 @@ export class AdminUseCase implements IAdminUseCase {
       }
     } catch (error) {
       console.error(error);
+      next(error);
     }
   }
 

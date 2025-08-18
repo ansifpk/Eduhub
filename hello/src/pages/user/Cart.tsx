@@ -87,6 +87,7 @@ const Cart = () => {
         body: { course: cart?.courses!, userId, couponCode:couponRef.current!.value },
         method: "post",
         onSuccess: async (data) => {
+          console.log(data.id,"stripe kk ponam",data)
           await stripe?.redirectToCheckout({
             sessionId: data.id,
           });

@@ -119,6 +119,7 @@ export class InstructorUseCase implements IInstructorUseCase {
       }
     } catch (error) {
       console.error(error);
+      next(error);
     }
   }
 
@@ -137,6 +138,7 @@ export class InstructorUseCase implements IInstructorUseCase {
       }
     } catch (error) {
       console.error(error);
+      next(error);
     }
   }
 

@@ -25,12 +25,10 @@ export class AdminUseCase implements IAdminUseCase{
 
    async fetchInstructors(search:string,sort:string,page:number,next: NextFunction): Promise<Iuser[]|void> {
         try {
-            // const count = await this.adminRepository.getInstructorPages(search,sort);
-            // const pages = count as number 
+            
             let instructors = await this.adminRepository.findInstructors(search,sort,page);
         
         if(instructors){
-            // instructors = instructors.filter((user:Iuser)=>user.isInstructor == true || user.status == "pending")
             return instructors
         }
         
