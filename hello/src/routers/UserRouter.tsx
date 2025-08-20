@@ -20,6 +20,8 @@ const InstructorProfile = React.lazy(()=> import('@/pages/user/InstructorProfile
 const ChangeEmail = React.lazy(()=> import('@/pages/user/ChangeEmail'))
 const ForgetPassword = React.lazy(()=> import('@/pages/user/ForgetPassword'))
 const UserErrorPage = React.lazy(()=> import('@/pages/user/UserErrorPage'))
+const Faile = React.lazy(()=> import('@/pages/user/Faile'))
+const Success = React.lazy(()=> import('@/pages/user/Success'))
 
 
 
@@ -47,6 +49,8 @@ const UserRouter = () => {
           <Route path='/user/profile/settings' element={userId ? <Settings /> :  <Navigate to={"/signIn"} replace />} /> 
           <Route path="/user/instructorProfile/:instructorId" element={userId?<InstructorProfile/>:<Navigate to={"/signIn"} replace />} />
           <Route path="/user/changeEmail" element={userId?<ChangeEmail/>:<Navigate to={"/signIn"} replace />} />
+          <Route path="/user/success" element={ userId ? <Success /> : <Navigate to={"/signIn"} replace /> } />
+          <Route path="/user/faile" element={ userId ? <Faile /> : <Navigate to={"/signIn"} replace /> } />            
           <Route path="*" element={ userId ? <UserErrorPage /> : <Navigate to={"/signIn"} replace /> } />
       </Routes>
      </Suspense>

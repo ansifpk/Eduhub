@@ -11,6 +11,7 @@ export  interface  IUserUseCase {
     getCourses(instructorId:string,next:NextFunction):Promise<ICourse[]|void>
     courseDetailes(courseId:string):Promise<ICourse|void>
     purchasedCourses(userId:string,next:NextFunction):Promise<ICourse[]|void>
+    placeOrder(course:ICourse[],userId:string,couponCode:string,next:NextFunction):Promise<string|void>
     report(userId:string,report:string,content:string,courseId:string,next:NextFunction):Promise<IReport|void>
     getReports(userId:string,courseId:string,next:NextFunction):Promise<IReport[]|void>
     //rating

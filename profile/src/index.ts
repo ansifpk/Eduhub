@@ -50,45 +50,45 @@ app.use(errorHandler as any);
 
 const start = async () => {
   try {
-    await kafkaWrapper.connect();
-    const userCreatedConsumer = await kafkaWrapper.createConsumer(
-      "profile-user-created-group"
-    );
-    const userBlockedConsumer = await kafkaWrapper.createConsumer(
-      "profile-user-blocked-group"
-    );
-    const consumerCourse = await kafkaWrapper.createConsumer(
-      "profile-course-created-group"
-    );
-    const consumerCourseUpdated = await kafkaWrapper.createConsumer(
-      "profile-course-updated-group"
-    );
-    const consumerCourseListed = await kafkaWrapper.createConsumer(
-      "profile-course-listed-group"
-    );
-    const consumer = await kafkaWrapper.createConsumer(
-      "profile-order-created-group"
-    );
-    const emailChangeConsumer = await kafkaWrapper.createConsumer(
-      "profile-email-changed-group"
-    );
-    consumer.connect();
-    consumerCourse.connect();
-    consumerCourseUpdated.connect();
-    consumerCourseListed.connect();
-    userCreatedConsumer.connect();
-    userBlockedConsumer.connect();
-    emailChangeConsumer.connect();
-    console.log("consumer connect suuccessfully");
-    const listener = new UserCreatedConsumer(userCreatedConsumer);
-    await listener.listen();
-    const listener2 = new UserBlockedConsumer(userBlockedConsumer);
-    await listener2.listen();
-    await new CourseCreatedConsumer(consumerCourse).listen();
-    await new CourseListedConsumer(consumerCourseUpdated).listen();
-    await new CourseUpdatedConsumer(consumerCourseListed).listen();
-    await new OrderCreatedCreateConsumer(consumer).listen();
-    await new EmailChangedConsumer(emailChangeConsumer).listen();
+    // await kafkaWrapper.connect();
+    // const userCreatedConsumer = await kafkaWrapper.createConsumer(
+    //   "profile-user-created-group"
+    // );
+    // const userBlockedConsumer = await kafkaWrapper.createConsumer(
+    //   "profile-user-blocked-group"
+    // );
+    // const consumerCourse = await kafkaWrapper.createConsumer(
+    //   "profile-course-created-group"
+    // );
+    // const consumerCourseUpdated = await kafkaWrapper.createConsumer(
+    //   "profile-course-updated-group"
+    // );
+    // const consumerCourseListed = await kafkaWrapper.createConsumer(
+    //   "profile-course-listed-group"
+    // );
+    // const consumer = await kafkaWrapper.createConsumer(
+    //   "profile-order-created-group"
+    // );
+    // const emailChangeConsumer = await kafkaWrapper.createConsumer(
+    //   "profile-email-changed-group"
+    // );
+    // consumer.connect();
+    // consumerCourse.connect();
+    // consumerCourseUpdated.connect();
+    // consumerCourseListed.connect();
+    // userCreatedConsumer.connect();
+    // userBlockedConsumer.connect();
+    // emailChangeConsumer.connect();
+    // console.log("consumer connect suuccessfully");
+    // const listener = new UserCreatedConsumer(userCreatedConsumer);
+    // await listener.listen();
+    // const listener2 = new UserBlockedConsumer(userBlockedConsumer);
+    // await listener2.listen();
+    // await new CourseCreatedConsumer(consumerCourse).listen();
+    // await new CourseListedConsumer(consumerCourseUpdated).listen();
+    // await new CourseUpdatedConsumer(consumerCourseListed).listen();
+    // await new OrderCreatedCreateConsumer(consumer).listen();
+    // await new EmailChangedConsumer(emailChangeConsumer).listen();
     await connectDB();
     app.listen(3004, () =>
       console.log(

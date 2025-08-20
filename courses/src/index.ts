@@ -21,48 +21,48 @@ dotenv.config();
 
 async function start() {
   try {
-    await kafkaWrapper.connect();
-    const consumer = await kafkaWrapper.createConsumer(
-      "course-user-profile-created-group"
-    );
-    const consumer2 = await kafkaWrapper.createConsumer(
-      "course-order-created-group"
-    );
-    const consumer3 = await kafkaWrapper.createConsumer(
-      "course-user-blocked-group"
-    );
-    const instructorApproved = await kafkaWrapper.createConsumer(
-      "course-instructor-approved-group"
-    );
-    const consumer4 = await kafkaWrapper.createConsumer(
-      "course-email-changed-group"
-    );
-    const consumer5 = await kafkaWrapper.createConsumer(
-      "course-coupon-used-group"
-    );
-    const consumer6 = await kafkaWrapper.createConsumer(
-      "course-profile-updated-group"
-    );
-    const pictureUpdatedConsumer = await kafkaWrapper.createConsumer(
-      "profile-picture-updated-group"
-    );
+    // await kafkaWrapper.connect();
+    // const consumer = await kafkaWrapper.createConsumer(
+    //   "course-user-profile-created-group"
+    // );
+    // const consumer2 = await kafkaWrapper.createConsumer(
+    //   "course-order-created-group"
+    // );
+    // const consumer3 = await kafkaWrapper.createConsumer(
+    //   "course-user-blocked-group"
+    // );
+    // const instructorApproved = await kafkaWrapper.createConsumer(
+    //   "course-instructor-approved-group"
+    // );
+    // const consumer4 = await kafkaWrapper.createConsumer(
+    //   "course-email-changed-group"
+    // );
+    // const consumer5 = await kafkaWrapper.createConsumer(
+    //   "course-coupon-used-group"
+    // );
+    // const consumer6 = await kafkaWrapper.createConsumer(
+    //   "course-profile-updated-group"
+    // );
+    // const pictureUpdatedConsumer = await kafkaWrapper.createConsumer(
+    //   "profile-picture-updated-group"
+    // );
 
-    consumer.connect();
-    consumer2.connect();
-    instructorApproved.connect();
-    consumer3.connect();
-    consumer4.connect();
-    consumer5.connect();
-    consumer6.connect();
-    pictureUpdatedConsumer.connect();
-    await new UserProfileCreateConsumer(consumer).listen();
-    await new OrderCreatedCreateConsumer(consumer2).listen();
-    await new InstructorAprovedConsumer(instructorApproved).listen();
-    await new UserBlockedConsumer(consumer3).listen();
-    await new EmailChangedConsumer(consumer4).listen();
-    await new CouponUsedConsumer(consumer5).listen();
-    await new UserProfileUpdatedConsumer(consumer6).listen();
-    await new ProfilePictureUpdatedConsumer(pictureUpdatedConsumer).listen();
+    // consumer.connect();
+    // consumer2.connect();
+    // instructorApproved.connect();
+    // consumer3.connect();
+    // consumer4.connect();
+    // consumer5.connect();
+    // consumer6.connect();
+    // pictureUpdatedConsumer.connect();
+    // await new UserProfileCreateConsumer(consumer).listen();
+    // await new OrderCreatedCreateConsumer(consumer2).listen();
+    // await new InstructorAprovedConsumer(instructorApproved).listen();
+    // await new UserBlockedConsumer(consumer3).listen();
+    // await new EmailChangedConsumer(consumer4).listen();
+    // await new CouponUsedConsumer(consumer5).listen();
+    // await new UserProfileUpdatedConsumer(consumer6).listen();
+    // await new ProfilePictureUpdatedConsumer(pictureUpdatedConsumer).listen();
 
     await connectDB();
     app.listen(process.env.PORT, () =>

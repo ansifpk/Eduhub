@@ -67,7 +67,7 @@ const Cart = () => {
         body: {},
         onSuccess: (response) => {
            setDiscount(Math.floor((cartTotal * response.coupons.offer) / 100));
-           setCartTotal(cartTotal - Math.floor((cartTotal * response.coupons.offer) / 100));
+          //  setCartTotal(cartTotal - Math.floor((cartTotal * response.coupons.offer) / 100));
            toast.success("Coupon applyied sucessfully");
         },
       });
@@ -84,10 +84,9 @@ const Cart = () => {
       const stripe = await loadStripe(import.meta.env.VITE_PUBLISH_SECRET);
       await doRequest({
         url: userRoutes.stripePurchase,
-        body: { course: cart?.courses!, userId, couponCode:couponRef.current!.value },
+        body: { course: cart?.courses!, userId, couponCode:discount>0?couponRef.current!.value:"" },
         method: "post",
         onSuccess: async (data) => {
-          console.log(data.id,"stripe kk ponam",data)
           await stripe?.redirectToCheckout({
             sessionId: data.id,
           });

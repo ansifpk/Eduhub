@@ -21,5 +21,6 @@ export interface IOrder{
   user:Iuser,
   course:ICourse,
   orderDate:string,
+  discountAmount:number,
   createdAt:Date
 }

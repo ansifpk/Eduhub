@@ -1,3 +1,3 @@
 export interface IStripe{
-    createStripe(courseData:Course):Promise<void>
+    createStripe(lineItems:object[],metadata:object):Promise<string|void>
 }

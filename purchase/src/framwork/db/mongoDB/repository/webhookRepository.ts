@@ -100,9 +100,9 @@ export class WebhookRepository implements IWebhookRepository{
           }
     }
 
-    async create(userId:string,course: ICourse): Promise<ICourse | void> {
+    async create(userId:string,course: ICourse,discountAmount:number): Promise<ICourse | void> {
       try {
-        const order = await this.orderMedels.create({user:userId,course:course})
+        const order = await this.orderMedels.create({user:userId,course:course,discountAmount})
         if(order){
           let check = await this.courseModels.findByIdAndUpdate(
               { _id: course._id! }, 
@@ -110,8 +110,6 @@ export class WebhookRepository implements IWebhookRepository{
               { new: true } 
             )
           if(check){
-            console.log("order",order,check);
-            
             return check
           }
         }

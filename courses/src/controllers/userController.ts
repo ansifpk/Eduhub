@@ -50,7 +50,13 @@ export class UserController {
 
   async placeOrder(req: Request, res: Response, next: NextFunction) {
     const { course, userId, couponCode } = req.body;
-    
+    const sessionId = await this.userUseCase.placeOrder(course,userId,couponCode,next);
+    if (sessionId) {
+      res.send({ id: sessionId });
+    }
+    // if(order){
+      // return order
+    // }
     // let coupon:ICoupon = {
     //   _id: "",
     //   title: "",
@@ -82,7 +88,6 @@ export class UserController {
     //   },
     // });
     // let courseIds:string[] = []
-   
     // let lineItems:any = [];
     //   course.map((value: ICourse) => {
     //         let discountPercentage = coupon?coupon.offer:0

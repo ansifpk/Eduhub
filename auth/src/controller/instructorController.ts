@@ -23,7 +23,6 @@ export class InstructorController{
         async instructorLogin( req:Request,res:Response ,next: NextFunction) {
            try {
             const instructorAndToken = await this.instructorUseCase.instructorLogin(req.body.email,req.body.password,next);
-            console.log("instructro login instructorAndToken",instructorAndToken);
             
             if(instructorAndToken){
               res.cookie('accessInstructorToken',instructorAndToken.token.accessToken,{

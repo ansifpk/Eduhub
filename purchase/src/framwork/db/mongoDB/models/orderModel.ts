@@ -12,6 +12,10 @@ const orderScheema = new mongoose.Schema({
   course:{
     type:Object,
     require:true
+  },
+  discountAmount:{
+    type:Number,
+    require:true
   }
 },{
   timestamps:true,

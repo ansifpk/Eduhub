@@ -13,6 +13,6 @@ export interface IWebhookRepository{
      renewUserSubscribe(customerId:string):Promise<IUserSubscribe|void>
      checkUserSubscribe(customerId:string):Promise<IUserSubscribe|void>
      cancelUserSubscribe(date:number,customerId:string):Promise<IUserSubscribe|void>
-     create(userId:string,course: ICourse): Promise<ICourse | void>
+     create(userId:string,course: ICourse,discountAmount:number): Promise<ICourse | void>
      findById(courseId:string):Promise<ICourse|void>
 }

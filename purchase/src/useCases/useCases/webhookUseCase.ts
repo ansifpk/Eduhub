@@ -33,7 +33,6 @@ export class WebhookUseCase implements IWebhookUseCase {
             session.metadata!.courseIds = JSON.parse(
               session.metadata!.courseIds as string
             );
-        
             for (let i = 0; i < session.metadata!.courseIds.length; i++) {
               const course = await this.webhokkRepository.findById(
                 session.metadata!.courseIds[i]
@@ -49,7 +48,8 @@ export class WebhookUseCase implements IWebhookUseCase {
               );
               const order = await this.webhokkRepository.create(
                 session.metadata!.userId,
-                value
+                value,
+                parseInt(session.metadata!.couponOffer)
               );
               if (order) {
                 await new OrderCreatedPublisher(
