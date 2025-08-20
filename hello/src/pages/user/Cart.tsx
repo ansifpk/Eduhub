@@ -77,6 +77,7 @@ const Cart = () => {
         toast.success("Coupon removed sucessfully");
         setCartTotal(cartTotal - discount);
         setDiscount(0);
+        couponRef.current!.value=""
     }
 
    const handleOrder = async () => {
