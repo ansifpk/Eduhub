@@ -75,8 +75,8 @@ const Cart = () => {
   
     const deleteCoupon = () => {
         toast.success("Coupon removed sucessfully");
+        setCartTotal(cartTotal - discount);
         setDiscount(0);
-        setCartTotal(cartTotal + discount);
     }
 
    const handleOrder = async () => {
