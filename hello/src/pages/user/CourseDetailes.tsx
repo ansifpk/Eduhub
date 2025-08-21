@@ -622,12 +622,12 @@ const CourseDetailes = () => {
                             <SheetTitle> Instructor Subscriptions</SheetTitle>
                             <SheetDescription></SheetDescription>
                           </SheetHeader>
-                          <div className="grid grid-cols-6 mx-2">
+                          <div className="grid grid-cols-5 mx-2">
                             {subscriptions.map((value) => (
                               <div
                                 key={value._id}
                                 className={
-                                  "relative bg-teal-900 shadow-2xl rounded-3xl p-8 border-1 border-gray-900/10 sm:p-10 "
+                                  "relative bg-teal-500 shadow-2xl rounded-3xl p-8 border-1 border-gray-900/10 sm:p-10 "
                                 }
                               >
                                 <h3
