@@ -69,7 +69,6 @@ const Courses = () => {
   },[userId]);
 
   const handleCart = (courseId:string) =>{
-     console.log("courseId",courseId);
      doRequest({
       url:`${userRoutes.addToCart}?courseId=${courseId}`,
       method:"post",
