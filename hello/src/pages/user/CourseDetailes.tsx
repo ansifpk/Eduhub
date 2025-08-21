@@ -534,18 +534,18 @@ const CourseDetailes = () => {
             </p>
             <button
               onClick={() =>
-               
-                   cart?.courses.some((cour) => cour._id == course?._id)
-                  ? navigate("/user/cart")
-                  : handleCart(course?._id!)
-              }
-              className={`bg-teal-500 py-2 rounded text-white text-xs cursor-pointer font-semibold hover:bg-teal-300 hover:text-white ${ course?.students.some((student) => student._id == userId) ||
+                course?.students.some((student) => student._id == userId) ||
                 plans.some(
                   (sub) =>
                     sub.subscriptionId.instructorId._id ==
                     course?.instructorId._id
                 )
-                  ? "hidden" : "block"}`}
+                  ? navigate(`/user/playCourse/${course?._id}`)
+                  : cart?.courses.some((cour) => cour._id == course?._id)
+                  ? navigate("/user/cart")
+                  : handleCart(course?._id!)
+              }
+              className="bg-teal-500 py-2 rounded text-white text-xs cursor-pointer font-semibold hover:bg-teal-300 hover:text-white"
             >
               {course?.students.some((student) => student._id == userId) ||
               plans.some(
@@ -553,23 +553,20 @@ const CourseDetailes = () => {
                   sub.subscriptionId.instructorId._id ==
                   course?.instructorId._id
               )
-                ? ""
+                ? "Go To Class"
                 : cart?.courses.some((cour) => cour._id == course?._id)
                 ? `Go To Cart`
                 : "Add To Cart"}
             </button>
-            <button className="bg-teal-500 py-2 rounded text-white text-xs font-semibold cursor-pointer hover:bg-teal-300 hover:text-white">
-              {course?.students.some((student) => student._id == userId) ||
+            {
               plans.some(
                 (sub) =>
                   sub.subscriptionId.instructorId._id ==
                   course?.instructorId._id
               )
-                ? "Go To Class"
-                
-                : "Purchase"} 
-            </button>
-            <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
+                ?<></>
+                : <>
+                <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
               <span className="bg-card text-muted-foreground relative z-10 px-2">
                 Or
               </span>
@@ -590,6 +587,9 @@ const CourseDetailes = () => {
                 Cancel anytime
               </p>
             </article>
+                </>
+            }
+            
           </div>
         </div>
       </div>
