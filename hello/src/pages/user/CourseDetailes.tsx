@@ -7,14 +7,6 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   AlertDialog,
@@ -27,6 +19,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "../../components/ui/sheet";
 import moment from "moment";
 import {
   Dialog,
@@ -51,11 +51,15 @@ import type { IUserSubscribe } from "@/@types/userSubscribe";
 import type { ICart } from "@/@types/cartType";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { IUserProfile } from "@/@types/userProfile";
+import type { ISubcription } from "@/@types/subscriptionType";
+import { loadStripe } from "@stripe/stripe-js";
+
 const CourseDetailes = () => {
   const [course, setCourse] = useState<ICourse>();
   const [instructor, setInstructor] = useState<IUserProfile>();
   const [star, setStar] = useState<number>(0);
   const [ratings, setRatings] = useState<IRating[]>([]);
+  const [subscriptions, setSubscriptions] = useState<ISubcription[]>([]);
   const { doRequest, err } = useRequest();
   const { _id } = useParams();
   const userId = useSelector((state: IUser) => state._id);
@@ -71,6 +75,14 @@ const CourseDetailes = () => {
       body: {},
       onSuccess: (data) => {
         setCourse(data.course);
+        doRequest({
+          url: `${userRoutes.subscriptions}/${data.course.instructorId._id}`,
+          method: "get",
+          body: {},
+          onSuccess: (subscriptions) => {
+            setSubscriptions(subscriptions.subscriptions);
+          },
+        });
         doRequest({
           url: `${userRoutes.profile}?userId=${data.course.instructorId._id}`,
           method: "get",
@@ -108,10 +120,7 @@ const CourseDetailes = () => {
     });
   }, [_id]);
 
-  useEffect(() => {
-    err?.map((err) => toast.error(err.message));
-  }, [err]);
-
+  
   const handleEditRatings = (_id: string) => {
     doRequest({
       url: `${userRoutes.ratingCourse}/${_id}`,
@@ -147,6 +156,24 @@ const CourseDetailes = () => {
       },
     });
   };
+
+  const subscribe = async (subscriptionId: string) => {
+    const stripe = await loadStripe(import.meta.env.VITE_PUBLISH_SECRET);
+    doRequest({
+      url: `${userRoutes.subscriptions}/${subscriptionId}`,
+      body: { userId },
+      method: "post",
+      onSuccess: async (response) => {
+        await stripe?.redirectToCheckout({
+          sessionId: response.sessionId,
+        });
+      },
+    });
+  };
+
+  useEffect(() => {
+    err?.map((err) => toast.error(err.message));
+  }, [err]);
 
   return (
     <>
@@ -565,8 +592,83 @@ const CourseDetailes = () => {
                   course?.instructorId._id
               )
                 ?<></>
-                : <>
-                <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
+                :
+                 <>
+                 {subscriptions.length > 0 && (
+                      <div>
+                        <h4 className="text-xs">OR</h4>
+                        <div className="space-y-3">
+                          <div className="text-xs">
+                            get access to this course and also all the courses
+                            of this instructor
+                          </div>
+                          <Sheet key={"bottom"}>
+                            <SheetTrigger asChild>
+                              <button className="w-full">subscribe</button>
+                            </SheetTrigger>
+                            <SheetContent side="bottom" className="h-screen">
+                              <SheetHeader>
+                                <SheetTitle>
+                                  {" "}
+                                  Instructor Subscriptions
+                                </SheetTitle>
+                                <SheetDescription>
+                                  {/* Make changes to your profile here. Click save when you're done. */}
+                                </SheetDescription>
+                              </SheetHeader>
+                              <div className="grid grid-cols-6 mx-2">
+                                {subscriptions.map((value, index) => (
+                                  <div
+                                    key={index}
+                                    className="border w-50 h-[300px] rounded-1"
+                                  >
+                                    <h4 className=" underline">
+                                      Personal Plan
+                                    </h4>
+                                    <div className="  m-1">
+                                      <div className="flex flex-col items-center justify-center h-[210px]">
+                                        <div>
+                                          {value.plan == "Monthly"
+                                            ? `Rs : ${value.price}/- per Month`
+                                            : `Rs : ${value.price}/- per Year`}
+                                        </div>
+                                        <div className="text-xs">
+                                          {value.plan == "Monthly"
+                                            ? `Billed monthly.`
+                                            : `Billed annually.`}
+                                        </div>
+                                        <div className="space-y-3 m-3">
+                                          {value.description.map(
+                                            (val, index) => (
+                                              <li
+                                                className="text-xs"
+                                                key={index}
+                                              >
+                                                {val}
+                                              </li>
+                                            )
+                                          )}
+                                        </div>
+                                      </div>
+                                      <div className="flex items-end ">
+                                        <button
+                                          onClick={() => subscribe(value._id)}
+                                          type="button"
+                                          className="w-full bg-teal-500 hover:bg-teal-500 text-white"
+                                        >
+                                          Start Subscription
+                                        </button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </SheetContent>
+                          </Sheet>
+                        </div>
+                      </div>
+                    )}
+                {/* <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
               <span className="bg-card text-muted-foreground relative z-10 px-2">
                 Or
               </span>
@@ -586,7 +688,7 @@ const CourseDetailes = () => {
               <p className="text- text-xs font-extralight text-center">
                 Cancel anytime
               </p>
-            </article>
+            </article> */}
                 </>
             }
             
