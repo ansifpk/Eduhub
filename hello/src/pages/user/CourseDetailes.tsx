@@ -53,6 +53,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { IUserProfile } from "@/@types/userProfile";
 import type { ISubcription } from "@/@types/subscriptionType";
 import { loadStripe } from "@stripe/stripe-js";
+import { CheckIcon } from "lucide-react";
 
 const CourseDetailes = () => {
   const [course, setCourse] = useState<ICourse>();
@@ -622,43 +623,104 @@ const CourseDetailes = () => {
                             <SheetDescription></SheetDescription>
                           </SheetHeader>
                           <div className="grid grid-cols-6 mx-2">
-                            {subscriptions.map((value, index) => (
+                            {subscriptions.map((value) => (
                               <div
-                                key={index}
-                                className="border w-50 h-[300px] rounded-1"
+                                key={value._id}
+                                className={
+                                  "relative bg-teal-900 shadow-2xl rounded-3xl p-8 border-1 border-gray-900/10 sm:p-10 "
+                                }
                               >
-                                <h4 className=" underline">Personal Plan</h4>
-                                <div className="  m-1">
-                                  <div className="flex flex-col items-center justify-center h-[210px]">
-                                    <div>
-                                      {value.plan == "Monthly"
-                                        ? `Rs : ${value.price}/- per Month`
-                                        : `Rs : ${value.price}/- per Year`}
-                                    </div>
-                                    <div className="text-xs">
-                                      {value.plan == "Monthly"
-                                        ? `Billed monthly.`
-                                        : `Billed annually.`}
-                                    </div>
-                                    <div className="space-y-3 m-3">
-                                      {value.description.map((val, index) => (
-                                        <li className="text-xs" key={index}>
-                                          {val}
-                                        </li>
-                                      ))}
-                                    </div>
-                                  </div>
-                                  <div className="flex items-end ">
-                                    <button
-                                      onClick={() => subscribe(value._id)}
-                                      type="button"
-                                      className="w-full bg-teal-500 hover:bg-teal-500 text-white"
-                                    >
-                                      Start Subscription
-                                    </button>
-                                  </div>
-                                </div>
+                                <h3
+                                  id={value._id}
+                                  className={
+                                    "text-base/7 font-semibold text-teal-400"
+                                  }
+                                >
+                                  {value.plan == "Monthly"
+                                    ? `Monthly Plan`
+                                    : `Yearly Plan.`}
+                                </h3>
+                                <p className="mt-4 flex items-baseline gap-x-2">
+                                  <span
+                                    className={
+                                      "text-white text-5xl font-semibold tracking-tight"
+                                    }
+                                  >
+                                    {value.price}
+                                  </span>
+                                  <span className={"text-gray-400 text-base"}>
+                                    /
+                                    {value.plan == "Monthly"
+                                      ? `monthly`
+                                      : `yearly`}
+                                  </span>
+                                </p>
+                                <p className={"mt-6 text-base/7 text-gray-300"}>
+                                  {value.description[0]}
+                                </p>
+                                <ul
+                                  role="list"
+                                  className={
+                                    "mt-8 space-y-3 text-sm/6 sm:mt-10 text-gray-300"
+                                  }
+                                >
+                                  {value.description.map((feature) => (
+                                    <li key={feature} className="flex gap-x-3">
+                                      <CheckIcon
+                                        aria-hidden="true"
+                                        className={
+                                          "h-6 w-5 flex-none text-teal-400"
+                                        }
+                                      />
+                                      {feature}
+                                    </li>
+                                  ))}
+                                </ul>
+                                <a
+                                  onClick={() => subscribe(value._id)}
+                                  className={
+                                    "mt-8 block rounded-md px-3.5 py-2.5 cursor-pointer text-center text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 sm:mt-10 bg-teal-500 text-white shadow-xs hover:bg-teal-400 focus-visible:outline-teal-500"
+                                  }
+                                >
+                                  Start Subscription
+                                </a>
                               </div>
+                              // <div
+                              //   key={index}
+                              //   className="border w-50 h-[300px] rounded-1"
+                              // >
+                              //   <h4 className=" underline">Personal Plan</h4>
+                              //   <div className="  m-1">
+                              //     <div className="flex flex-col items-center justify-center h-[210px]">
+                              //       <div>
+                              //         {value.plan == "Monthly"
+                              //           ? `Rs : ${value.price}/- per Month`
+                              //           : `Rs : ${value.price}/- per Year`}
+                              //       </div>
+                              //       <div className="text-xs">
+                              //         {value.plan == "Monthly"
+                              //           ? `Billed monthly.`
+                              //           : `Billed annually.`}
+                              //       </div>
+                              //       <div className="space-y-3 m-3">
+                              //         {value.description.map((val, index) => (
+                              //           <li className="text-xs" key={index}>
+                              //             {val}
+                              //           </li>
+                              //         ))}
+                              //       </div>
+                              //     </div>
+                              //     <div className="flex items-end ">
+                              //       <button
+                              //         onClick={() => subscribe(value._id)}
+                              //         type="button"
+                              //         className="w-full bg-teal-500 hover:bg-teal-500 text-white"
+                              //       >
+                              //         Start Subscription
+                              //       </button>
+                              //     </div>
+                              //   </div>
+                              // </div>
                             ))}
                           </div>
                         </SheetContent>
