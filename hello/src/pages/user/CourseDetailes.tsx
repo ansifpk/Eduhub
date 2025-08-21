@@ -633,7 +633,7 @@ const CourseDetailes = () => {
                                 <h3
                                   id={value._id}
                                   className={
-                                    "text-base/7 font-semibold text-teal-400"
+                                    "text-base/7 font-semibold text-white"
                                   }
                                 >
                                   {value.plan == "Monthly"
@@ -648,20 +648,18 @@ const CourseDetailes = () => {
                                   >
                                     {value.price}
                                   </span>
-                                  <span className={"text-gray-400 text-base"}>
+                                  <span className={"text-white text-base"}>
                                     /
                                     {value.plan == "Monthly"
                                       ? `monthly`
                                       : `yearly`}
                                   </span>
                                 </p>
-                                <p className={"mt-6 text-base/7 text-gray-300"}>
-                                  {value.description[0]}
-                                </p>
+                              
                                 <ul
                                   role="list"
                                   className={
-                                    "mt-8 space-y-3 text-sm/6 sm:mt-10 text-gray-300"
+                                    "mt-8 space-y-3 text-sm/6 sm:mt-10 text-white"
                                   }
                                 >
                                   {value.description.map((feature) => (
