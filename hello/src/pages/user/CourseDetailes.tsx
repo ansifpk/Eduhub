@@ -120,7 +120,6 @@ const CourseDetailes = () => {
     });
   }, [_id]);
 
-  
   const handleEditRatings = (_id: string) => {
     doRequest({
       url: `${userRoutes.ratingCourse}/${_id}`,
@@ -142,7 +141,7 @@ const CourseDetailes = () => {
     doRequest({
       url: `${userRoutes.addToCart}?courseId=${courseId}`,
       method: "post",
-      body: {userId },
+      body: { userId },
       onSuccess: () => {
         doRequest({
           url: `${userRoutes.Cart}/${userId}`,
@@ -369,7 +368,9 @@ const CourseDetailes = () => {
                     </div>
                     <div className="flex items-center ">
                       <i className="bi bi-star-fill text-xs"></i>
-                      <strong className="text-xs font-extralight ">{rating.stars}</strong>
+                      <strong className="text-xs font-extralight ">
+                        {rating.stars}
+                      </strong>
                     </div>
                     <div className="text-xs font-extralight">
                       {rating.review}
@@ -585,113 +586,91 @@ const CourseDetailes = () => {
                 ? `Go To Cart`
                 : "Add To Cart"}
             </button>
-            {
-              plans.some(
-                (sub) =>
-                  sub.subscriptionId.instructorId._id ==
-                  course?.instructorId._id
-              )
-                ?<></>
-                :
-                 <>
-                 {subscriptions.length > 0 && (
-                      <div>
-                        <h4 className="text-xs">OR</h4>
-                        <div className="space-y-3">
-                          <div className="text-xs">
-                            get access to this course and also all the courses
-                            of this instructor
-                          </div>
-                          <Sheet key={"bottom"}>
-                            <SheetTrigger asChild>
-                              <button className="w-full">subscribe</button>
-                            </SheetTrigger>
-                            <SheetContent side="bottom" className="h-screen">
-                              <SheetHeader>
-                                <SheetTitle>
-                                  {" "}
-                                  Instructor Subscriptions
-                                </SheetTitle>
-                                <SheetDescription>
-                                  {/* Make changes to your profile here. Click save when you're done. */}
-                                </SheetDescription>
-                              </SheetHeader>
-                              <div className="grid grid-cols-6 mx-2">
-                                {subscriptions.map((value, index) => (
-                                  <div
-                                    key={index}
-                                    className="border w-50 h-[300px] rounded-1"
-                                  >
-                                    <h4 className=" underline">
-                                      Personal Plan
-                                    </h4>
-                                    <div className="  m-1">
-                                      <div className="flex flex-col items-center justify-center h-[210px]">
-                                        <div>
-                                          {value.plan == "Monthly"
-                                            ? `Rs : ${value.price}/- per Month`
-                                            : `Rs : ${value.price}/- per Year`}
-                                        </div>
-                                        <div className="text-xs">
-                                          {value.plan == "Monthly"
-                                            ? `Billed monthly.`
-                                            : `Billed annually.`}
-                                        </div>
-                                        <div className="space-y-3 m-3">
-                                          {value.description.map(
-                                            (val, index) => (
-                                              <li
-                                                className="text-xs"
-                                                key={index}
-                                              >
-                                                {val}
-                                              </li>
-                                            )
-                                          )}
-                                        </div>
-                                      </div>
-                                      <div className="flex items-end ">
-                                        <button
-                                          onClick={() => subscribe(value._id)}
-                                          type="button"
-                                          className="w-full bg-teal-500 hover:bg-teal-500 text-white"
-                                        >
-                                          Start Subscription
-                                        </button>
-                                      </div>
+            {plans.some(
+              (sub) =>
+                sub.subscriptionId.instructorId._id == course?.instructorId._id
+            ) ? (
+              <></>
+            ) : (
+              <>
+                {subscriptions.length > 0 && (
+                  <>
+                    <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
+                      <span className="bg-card text-muted-foreground relative z-10 px-2">
+                        Or
+                      </span>
+                    </div>
+                    <article className="space-y-5">
+                      <h2 className="font-bold">Boost your conversion rate</h2>
+                      <p className="line-clamp-3 text-xs font-extralight">
+                        Get this course, plus 26,000+ of our top-rated courses,
+                        with Personal Plan.
+                      </p>
+
+                      <Sheet key={"bottom"}>
+                        <SheetTrigger asChild>
+                          <button
+                            className="bg-teal-500 w-full
+                 py-2 rounded text-white text-xs font-semibold cursor-pointer hover:bg-teal-300 hover:text-white"
+                          >
+                            Purchase
+                          </button>
+                        </SheetTrigger>
+                        <SheetContent side="bottom" className="h-screen">
+                          <SheetHeader>
+                            <SheetTitle> Instructor Subscriptions</SheetTitle>
+                            <SheetDescription></SheetDescription>
+                          </SheetHeader>
+                          <div className="grid grid-cols-6 mx-2">
+                            {subscriptions.map((value, index) => (
+                              <div
+                                key={index}
+                                className="border w-50 h-[300px] rounded-1"
+                              >
+                                <h4 className=" underline">Personal Plan</h4>
+                                <div className="  m-1">
+                                  <div className="flex flex-col items-center justify-center h-[210px]">
+                                    <div>
+                                      {value.plan == "Monthly"
+                                        ? `Rs : ${value.price}/- per Month`
+                                        : `Rs : ${value.price}/- per Year`}
+                                    </div>
+                                    <div className="text-xs">
+                                      {value.plan == "Monthly"
+                                        ? `Billed monthly.`
+                                        : `Billed annually.`}
+                                    </div>
+                                    <div className="space-y-3 m-3">
+                                      {value.description.map((val, index) => (
+                                        <li className="text-xs" key={index}>
+                                          {val}
+                                        </li>
+                                      ))}
                                     </div>
                                   </div>
-                                ))}
+                                  <div className="flex items-end ">
+                                    <button
+                                      onClick={() => subscribe(value._id)}
+                                      type="button"
+                                      className="w-full bg-teal-500 hover:bg-teal-500 text-white"
+                                    >
+                                      Start Subscription
+                                    </button>
+                                  </div>
+                                </div>
                               </div>
-                            </SheetContent>
-                          </Sheet>
-                        </div>
-                      </div>
-                    )}
-                {/* <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
-              <span className="bg-card text-muted-foreground relative z-10 px-2">
-                Or
-              </span>
-            </div>
-            <article className="space-y-5">
-              <h2 className="font-bold">Boost your conversion rate</h2>
-              <p className="line-clamp-3 text-xs font-extralight">
-                Get this course, plus 26,000+ of our top-rated courses, with
-                Personal Plan.
-              </p>
-              <button
-                className="bg-teal-500 w-full
-                 py-2 rounded text-white text-xs font-semibold cursor-pointer hover:bg-teal-300 hover:text-white"
-              >
-                Purchase
-              </button>
-              <p className="text- text-xs font-extralight text-center">
-                Cancel anytime
-              </p>
-            </article> */}
-                </>
-            }
-            
+                            ))}
+                          </div>
+                        </SheetContent>
+                      </Sheet>
+                      <p className="text- text-xs font-extralight text-center">
+                        Cancel anytime
+                      </p>
+                    </article>
+                  </>
+                )}
+              </>
+            )}
           </div>
         </div>
       </div>
