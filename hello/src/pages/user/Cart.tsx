@@ -20,6 +20,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import {loadStripe} from "@stripe/stripe-js";
+import moment from "moment";
 
 const Cart = () => {
 
@@ -67,7 +68,6 @@ const Cart = () => {
         body: {},
         onSuccess: (response) => {
            setDiscount(Math.floor((cartTotal * response.coupons.offer) / 100));
-          //  setCartTotal(cartTotal - Math.floor((cartTotal * response.coupons.offer) / 100));
            toast.success("Coupon applyied sucessfully");
         },
       });
@@ -75,7 +75,6 @@ const Cart = () => {
   
     const deleteCoupon = () => {
         toast.success("Coupon removed sucessfully");
-        // setCartTotal(cartTotal - discount);
         setDiscount(0);
         couponRef.current!.value=""
     }
@@ -101,11 +100,10 @@ const Cart = () => {
   useEffect(() => {
     err?.map((err) => toast.error(err.message));
   }, [err]);
-
   return (
     <div>
       <Header />
-      {cart?.courses.length == 0 ? (
+      {!cart || cart?.courses?.length == 0 ? (
         <div className="h-[75vh] flex justify-center items-center gap-5 ">
           <strong>No Item in Your Cart</strong>
           <button
@@ -139,18 +137,20 @@ const Cart = () => {
                           />
                           <div className="flex flex-col items-start">
                             <span>{course.title}</span>
-                            <span className="text-xs">
+                            {/* <span className="text-xs">
                               4.5 <i className={`bi bi-star-fill`}></i>{" "}
                               <i className={`bi bi-star-fill`}></i>{" "}
                               <i className={`bi bi-star-fill`}></i>
                               <i className={`bi bi-star-fill`}></i> (1000
                               ratings){" "}
-                            </span>
+                            </span> */}
+                            <span className="text-sm">instructor : { course.instructorId.name } </span>
                             <div className="flex gap-5 text-xs">
-                              <li>10 hr</li>
-                              <li>10 videos</li>
+                              {/* <li>10 hr</li>
+                              <li>10 videos</li> */}
                               <li>{course.level}</li>
                             </div>
+                            <span className="flex gap-5 text-xs" >created : {moment(course.createdAt).calendar()}</span>
                           </div>
                         </td>
                         <td>{course.price}</td>

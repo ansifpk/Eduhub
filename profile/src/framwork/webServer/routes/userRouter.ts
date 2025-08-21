@@ -22,7 +22,6 @@ export function UserRouter(router: Router) {
 
   router.post("/Cart", isAuth, async (req, res, next) => {
     try {
-     
       await userController.addToCart(req, res, next);
     } catch (error) {
       console.error(error);
@@ -37,8 +36,6 @@ export function UserRouter(router: Router) {
   });
   router.delete("/Cart/:courseId/:userId", isAuth, async (req, res, next) => {
     try {
-    
-      
       userController.removeFromCart(req, res, next);
     } catch (error) {
       console.error(error);

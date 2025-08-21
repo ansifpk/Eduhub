@@ -189,11 +189,11 @@ export class InstructorUseCase implements IInstructorUseCase {
           }
         }
       }
-     const section =  await this.instructorRepository.editSecton(course?.sections?._id!,sectionData.bodyData)
-     await this.instructorRepository.addSecton(
-          sectionData.courseId,
-          section?._id!
-        );
+      const section =  await this.instructorRepository.editSecton(course?.sections?._id!,sectionData.bodyData)
+      await this.instructorRepository.addSecton(
+        sectionData.courseId,
+        section?._id!
+      );
 
     } catch (error) {
       console.error(error);

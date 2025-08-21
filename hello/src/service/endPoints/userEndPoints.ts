@@ -50,7 +50,7 @@ const userRoutes = {
  subscriptions:"/purchase/user/subscription",
  subscribe:"/purchase/user/subscribe",
  plans:"/purchase/user/customer",
- customer:"/purchase/purchase/user/customer",
+ customer:"/purchase/user/customer",
  tocken:"/auth/user/refresh-token",
 
 }

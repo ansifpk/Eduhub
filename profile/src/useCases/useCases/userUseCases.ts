@@ -70,9 +70,8 @@ export class UserUseCases implements IUserUseCase {
        }
        const checkRating = await this.userRepository.checkingRating(instructorId,userId);
        if(checkRating){
-        throw new BadRequestError("ALready Rated this instructor")
+        throw new BadRequestError("Already Rated this instructor")
        }
-       
        const rating = await this.userRepository.createRating(instructorId, userId, review, stars)
        if(rating){
         return rating
@@ -161,16 +160,14 @@ export class UserUseCases implements IUserUseCase {
     try {
       const checkUser = await this.userRepository.findById(userId);
       if (!checkUser) {
-        throw new NotFoundError("User not found")
+        throw new BadRequestError("User not found")
         
-      }
-      if (checkUser.isBlock) {
-        throw new ForbiddenError()
       }
 
       const course = await this.userRepository.findCourse(courseId);
+      console.log("course",course)
       if (!course) {
-        throw new NotFoundError("Course not found")
+        throw new BadRequestError("Course not found")
        
       }
       const checkCart = await this.userRepository.findCart(userId);
@@ -204,21 +201,6 @@ export class UserUseCases implements IUserUseCase {
   }
   //cart
 
-  async findCourse(courseId: string): Promise<ICourse | void> {
-    try {
-      throw new Error("Method not implemented.");
-    } catch (error) {
-      console.error(error);
-    }
-  }
-  async findCart(userId: string): Promise<ICart | void> {
-    try {
-      throw new Error("Method not implemented.");
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
   async removeFromCart(
     courseId: string,
     userId: string,
@@ -227,23 +209,18 @@ export class UserUseCases implements IUserUseCase {
     try {
       const checkUser = await this.userRepository.findById(userId);
       if (!checkUser) {
-        throw new NotFoundError("User not found")
-       
+        throw new NotFoundError("User not found")       
       }
       if (checkUser.isBlock) {
-        throw new ForbiddenError()
-        
+        throw new ForbiddenError()        
       }
       const course = await this.userRepository.findCourse(courseId);
       if (!course) {
-        throw new NotFoundError("Course not found")
-       
+        throw new NotFoundError("Course not found")       
       }
       const cart = await this.userRepository.removeFromCart(userId,courseId);
       if(cart){
-      
         return cart
-        
       }
     } catch (error) {
       console.error(error);
@@ -252,10 +229,6 @@ export class UserUseCases implements IUserUseCase {
   }
 
   //user
-  createProfile(userData: Iuser, next: NextFunction): Promise<Iuser | void> {
-   
-    throw new Error("Method not implemented.");
-  }
 
   async userProfile(userId: string, next: NextFunction): Promise<Iuser | void> {
     try {

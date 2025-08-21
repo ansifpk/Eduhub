@@ -85,7 +85,6 @@ const io = new Server(httpServer,{
     
 const start = async () => {
     try {
-        
         await kafkaWrapper.connect();
         const consumer = await kafkaWrapper.createConsumer("auth-instructor-aproved-group")
         const consumer2 = await kafkaWrapper.createConsumer("auth-profile-updated-group")

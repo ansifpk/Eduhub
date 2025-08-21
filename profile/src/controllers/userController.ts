@@ -10,9 +10,7 @@ export class UserController{
     constructor(
         private userUseCase:IUserUseCase
     ){ }
-    async createProfile(req:Request,res:Response,next:NextFunction){
-       const user = await this.userUseCase.createProfile(req.body,next)
-    }
+   
     async userProfile(req:Request,res:Response,next:NextFunction){
         const {userId} = req.query
          const userProfile =  await this.userUseCase.userProfile(userId as string,next)
@@ -35,9 +33,13 @@ export class UserController{
     }
 
     async addToCart(req:Request,res:Response,next:NextFunction){
-        const {courseId,userId} = req.body;
-         const cart =  await this.userUseCase.addToCart(courseId,userId,next)
+        const {userId} = req.body;
+        const {courseId} = req.query;
+        console.log("userId",userId,"courseId",courseId)
+       
+         const cart =  await this.userUseCase.addToCart(courseId as string,userId,next)
          if(cart){
+            console.log("success")
             return res.send({success:true,cart:cart})
          }
     }
@@ -89,8 +91,7 @@ export class UserController{
       try {
          
           const {ratingId,review,stars} = req.body
-          console.log(req.body);
-          
+         
           const rating =await this.userUseCase.editRating(ratingId,review,stars,next);
           if(rating){
             return res.send({success:true,rating:rating})

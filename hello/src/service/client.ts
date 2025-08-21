@@ -53,6 +53,7 @@ ApiGatway.interceptors.response.use(
         if (undPoints?.includes("admin")) {
           await tockenAdmin()
         } else if (undPoints?.includes("user")) {
+          console.log("hi")
           await tocken();
         } else if (undPoints?.includes("instructor")) {
 

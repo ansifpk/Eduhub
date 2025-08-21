@@ -19,7 +19,6 @@ export class OrderCreatedCreateConsumer extends KafkaConsumer<OrderCreateEvent>{
                 { $addToSet:{students:data.userId} },
                 { new: true } 
               ) 
-               console.log("update",dt);
                
         } catch (error) {
             

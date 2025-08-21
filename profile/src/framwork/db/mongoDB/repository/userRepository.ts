@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { ICart } from "../../../../entities/cart";
 import { ICourse } from "../../../../entities/course";
 import { IRating } from "../../../../entities/ratings";
@@ -140,10 +141,9 @@ export class UserRepository implements IUserRepository {
     }
   }
 
-  async findCourse(courseId: string): Promise<ICourse | void> {
+  async findCourse(id: string): Promise<ICourse | void> {
     try {
-      const course = await this.courseModels.findById({ _id: courseId });
-
+       const course = await this.courseModels.findById(id);
       if (course) return course;
     } catch (error) {
       console.error(error);

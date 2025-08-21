@@ -12,14 +12,14 @@ build:
     #     manual:
     #       - src: "src/**/*.ts"
     #         dest: .
-    - image: pkansif/eduhub-course
-      context: courses
-      docker:
-        dockerfile: Dockerfile
-      sync:
-        manual:
-          - src: "src/**/*.ts"
-            dest: .
+    # - image: pkansif/eduhub-course
+    #   context: courses
+    #   docker:
+    #     dockerfile: Dockerfile
+    #   sync:
+    #     manual:
+    #       - src: "src/**/*.ts"
+    #         dest: .
     # - image: pkansif/eduhub-category
     #   context: category
     #   docker:
@@ -28,22 +28,22 @@ build:
     #     manual:
     #       - src: "src/**/*.ts"
     #         dest: .
-    # - image: pkansif/eduhub-profile
-    #   context: profile
-    #   docker:
-    #     dockerfile: Dockerfile
-    #   sync:
-    #     manual:
-    #       - src: "src/**/*.ts"
-    #         dest: .
-    - image: pkansif/eduhub-purchase
-      context: purchase
+    - image: pkansif/eduhub-profile
+      context: profile
       docker:
         dockerfile: Dockerfile
       sync:
         manual:
           - src: "src/**/*.ts"
             dest: .
+    # - image: pkansif/eduhub-purchase
+    #   context: purchase
+    #   docker:
+    #     dockerfile: Dockerfile
+    #   sync:
+    #     manual:
+    #       - src: "src/**/*.ts"
+    #         dest: .
     # - image: pkansif/eduhub-message
     #   context: message
     #   docker:
@@ -55,5 +55,4 @@ build:
 deploy:
   kubectl:
     manifests:
-      - ./infra/k8s/course-depl.yaml
-      - ./infra/k8s/purchase-depl.yaml
+      - ./infra/k8s/profile-depl.yaml

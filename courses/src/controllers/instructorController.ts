@@ -66,7 +66,6 @@ export class InstructorController{
                 price: course.price,
                 image: course.image,
             })
-            
             this.instructorUseCases.editSection({courseId:courseId,bodyData:req.body.sections,fileData:files},next)
             res.send({success:true,course:course}) ;
         }

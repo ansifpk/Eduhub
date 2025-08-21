@@ -16,14 +16,13 @@ export class UserController {
         res.cookie('verificationToken',token,{
           httpOnly:true,
           secure:process.env.NODE_ENV !== 'development',
-          sameSite:'strict',
-           path:"/",
+          sameSite:process.env.NODE_ENV == 'development'?'strict':"none",
+          path:"/",
           maxAge:30 * 24 * 60 * 60 * 1000,
          });
         res.status(200).json({
           succes: true,
           message: "verification otp has been send to the Email",
-          verifyToken: token,
         });
       }
     } catch (err) {
@@ -289,13 +288,13 @@ export class UserController {
         res.cookie('accessToken',tockens.accessToken,{
           httpOnly:true,
           secure:process.env.NODE_ENV !== 'development',
-          sameSite:'strict',
+          sameSite:process.env.NODE_ENV == 'development'?'strict':"none",
           maxAge: 15 * 60 * 1000
        });
         res.cookie('refreshToken',tockens.refreshToken,{
           httpOnly:true,
           secure:process.env.NODE_ENV !== 'development',
-          sameSite:'strict',
+          sameSite:process.env.NODE_ENV == 'development'?'strict':"none",
           maxAge:30 * 24 * 60 * 60 * 1000
        });
         return res.send({success:true,tockens});

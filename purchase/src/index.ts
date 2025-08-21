@@ -1,7 +1,7 @@
 import { connectDB } from "./framwork/webServer/config/config";
 import express, { json, urlencoded } from "express";
 import cors from "cors";
-import cookieSession from "cookie-session";
+import dotenv from 'dotenv'
 import { UserRouter } from "./framwork/webServer/router/userRouter";
 import { InstructorRouter } from "./framwork/webServer/router/instructorRouter";
 import kafkaWrapper from "./framwork/webServer/config/kafka/kafkaWrapper";
@@ -18,6 +18,8 @@ import { AdminRouter } from "./framwork/webServer/router/adminRouter";
 import { errorHandler, NotFoundError } from "@eduhublearning/common";
 import cookieParser from "cookie-parser";
 import { ProfilePictureUpdatedConsumer } from "./framwork/webServer/config/kafka/consumer/picture-updated-consumer";
+dotenv.config();
+
 
 async function start() {
   try {

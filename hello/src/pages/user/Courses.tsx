@@ -69,11 +69,11 @@ const Courses = () => {
   },[userId]);
 
   const handleCart = (courseId:string) =>{
-  
+     console.log("courseId",courseId);
      doRequest({
-      url:userRoutes.addToCart,
+      url:`${userRoutes.addToCart}?courseId=${courseId}`,
       method:"post",
-      body:{courseId,userId},
+      body:{userId},
       onSuccess:()=>{ 
         doRequest({
           url:`${userRoutes.Cart}/${userId}`,

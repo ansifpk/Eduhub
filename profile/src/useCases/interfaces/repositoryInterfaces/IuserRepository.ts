@@ -9,7 +9,7 @@ export interface IUserRepository{
     findByIdAndUpdate(userId:string,name:string,thumbnail:string,aboutMe:string,):Promise<Iuser|void>
     uploadProfile(userId:string,avatar:{id:string,avatar_url:string}):Promise<Iuser|void>
      //course
-     findCourse(courseId:string):Promise<ICourse|void>
+     findCourse(id:string):Promise<ICourse|void>
     
      //cart
      findCart(userId:string):Promise<ICart|void>

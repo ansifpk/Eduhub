@@ -15,8 +15,8 @@ import { OrderCreatedCreateConsumer } from "./framwork/webServer/config/kafka/co
 import { errorHandler, NotFoundError } from "@eduhublearning/common";
 import cookieParser from "cookie-parser";
 import dotenv from 'dotenv';
-import { EmailChangedConsumer } from "./framwork/webServer/config/kafka/consumer/email-changed-consumer";
 dotenv.config();
+import { EmailChangedConsumer } from "./framwork/webServer/config/kafka/consumer/email-changed-consumer";
 
 
 const app = express();
@@ -79,7 +79,6 @@ const start = async () => {
     userCreatedConsumer.connect();
     userBlockedConsumer.connect();
     emailChangeConsumer.connect();
-    console.log("consumer connect suuccessfully");
     const listener = new UserCreatedConsumer(userCreatedConsumer);
     await listener.listen();
     const listener2 = new UserBlockedConsumer(userBlockedConsumer);
