@@ -202,7 +202,7 @@ const AdminListCourses = () => {
               <TableRow>
                 <TableHead className="text-center">Image</TableHead>
                 <TableHead className="text-center"> Name</TableHead>
-                <TableHead className="text-center">Thumbnail</TableHead>
+                <TableHead className="text-center">Intsructor Name</TableHead>
                 <TableHead className="text-center">Created At</TableHead>
                 <TableHead className="text-center">Reports</TableHead>
                 <TableHead className="text-center">Students</TableHead>

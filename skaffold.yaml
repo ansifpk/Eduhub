@@ -55,4 +55,4 @@ build:
 deploy:
   kubectl:
     manifests:
-      - ./infra/k8s/auth-depl.yaml
+      - ./infra/k8s/course-depl.yaml

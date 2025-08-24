@@ -37,6 +37,7 @@ export class AdminUseCase implements IAdminUseCase{
         }
        } catch (error) {
         console.error(error)
+        next(error)
        }
 
     }
@@ -92,6 +93,7 @@ export class AdminUseCase implements IAdminUseCase{
             }
            } catch (error) {
             console.error(error)
+            next(error)
            }
     
     }
@@ -107,6 +109,7 @@ export class AdminUseCase implements IAdminUseCase{
             }
            } catch (error) {
             console.error(error)
+            next(error)
            }
     
     }
@@ -129,6 +132,7 @@ export class AdminUseCase implements IAdminUseCase{
             }
            } catch (error) {
             console.error(error)
+            next(error)
            }
     
     }
@@ -154,6 +158,7 @@ export class AdminUseCase implements IAdminUseCase{
             if(courses) return courses
           } catch (error) {
             console.error(error)
+            next(error)
           }
     }
     
@@ -168,6 +173,7 @@ export class AdminUseCase implements IAdminUseCase{
            
           } catch (error) {
             console.error(error)
+            next(error)
           }
     }
 
@@ -181,6 +187,7 @@ export class AdminUseCase implements IAdminUseCase{
             
           } catch (error) {
             console.error(error)
+            next(error)
           }
     }
     
