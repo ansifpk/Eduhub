@@ -37,6 +37,7 @@ export const isAuth = async (req:Request,res:Response,next:NextFunction)=>{
         throw new NotAuthorizedError()
       } 
   } catch (error) {
+    console.error(error)
     next(error)
   }
 }
@@ -44,21 +45,25 @@ export const isAuth = async (req:Request,res:Response,next:NextFunction)=>{
 export const isAdmin = async (req:Request,res:Response,next:NextFunction)=>{
 
     try {
-     
+      console.log("course cookies",req.cookies);
       if(!req.cookies){
         throw new NotAuthorizedError()
        } 
+       console.log("1")
       if(!req.cookies.accessAdminToken){
         throw new NotAuthorizedError()
        } 
+       console.log("2")
       const check = jwt.verify(req.cookies.accessAdminToken,process.env.JWT_ACCESSKEY!) as User;
       if(!check){
         throw new NotAuthorizedError()
       }
+      console.log("3")
       const user = await UserModel.findOne({_id:check.id});
         if(!user){
           throw new NotAuthorizedError()
         }
+        console.log("4")
         if(user.isAdmin){
            next()
         }else{
@@ -66,6 +71,7 @@ export const isAdmin = async (req:Request,res:Response,next:NextFunction)=>{
       
         }
     } catch (error) {
+      console.error(error)
       next(error)
     }
       

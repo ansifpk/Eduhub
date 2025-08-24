@@ -5,8 +5,8 @@ import { isAdmin } from "../midllewares/auth";
 
 export function AdminRouter(router:Router){
      router.get("/getCourses",isAdmin,(req,res,next)=>{
-
-        adminController.getCourses(req,res,next)
+         return;
+      //   adminController.getCourses(req,res,next)
      })
      router.get("/course",isAdmin,(req,res,next)=>{
         adminController.top5Courses(req,res,next)

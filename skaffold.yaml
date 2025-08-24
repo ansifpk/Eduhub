@@ -12,14 +12,14 @@ build:
         manual:
           - src: "src/**/*.ts"
             dest: .
-    # - image: pkansif/eduhub-course
-    #   context: courses
-    #   docker:
-    #     dockerfile: Dockerfile
-    #   sync:
-    #     manual:
-    #       - src: "src/**/*.ts"
-    #         dest: .
+    - image: pkansif/eduhub-course
+      context: courses
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
     # - image: pkansif/eduhub-category
     #   context: category
     #   docker:
@@ -56,3 +56,4 @@ deploy:
   kubectl:
     manifests:
       - ./infra/k8s/auth-depl.yaml
+      - ./infra/k8s/course-depl.yaml

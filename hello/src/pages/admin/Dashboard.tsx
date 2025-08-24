@@ -19,7 +19,7 @@ export const description = "An interactive area chart";
 
 const Dashboard = () => {
   const [users] = useState<IUserProfile[]>([]);
-  const [courses] = useState<ICourse[]>([]);
+  const [courses,setCourses] = useState<ICourse[]>([]);
   const [topCourses] = useState<ICourse[]>([])
   const [orders, setOrders] = useState<IOrder[]>([]);
 
@@ -35,15 +35,14 @@ const Dashboard = () => {
     });
 
   useEffect(() => {
-    //  doRequest({
-    //   url: adminRoutes.course,
-    //   method: "get",
-    //   body: {},
-    //   onSuccess: (response) => {
-    //     setCourses(response);
-         
-    //   },
-    // });
+     doRequest({
+      url: adminRoutes.course,
+      method: "get",
+      body: {},
+      onSuccess: (response) => {
+        setCourses(response);
+      },
+    });
     // doRequest({
     //   url: adminRoutes.top5Instructors,
     //   method: "get",
