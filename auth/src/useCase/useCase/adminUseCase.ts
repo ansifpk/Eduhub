@@ -89,7 +89,6 @@ export class AdminUsecase implements IadminUsecase{
           }
         }else{
          throw new BadRequestError("User Not Found")
-         // return next(new ErrorHandler(StatusCodes.NOT_FOUND,"User Not Found"))
         }
      } catch (error) {
       console.log(error);

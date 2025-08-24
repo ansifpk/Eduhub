@@ -88,11 +88,13 @@ export class AdminController{
         res.cookie('accessAdminToken','',{
           httpOnly:true,
           expires:new Date(0)
-         });
+        });
         res.cookie('refreshAdminToken','',{
           httpOnly:true,
           expires:new Date(0)
-         });
+        });
+        res.clearCookie("accessAdminToken")
+        res.clearCookie("refreshAdminToken")
         res.send({ succuss: true, message: "logout success" });
       } catch (error) {
         console.error(error);
@@ -112,13 +114,15 @@ export class AdminController{
             res.cookie('accessAdminToken',tockens.accessToken,{
               httpOnly:true,
               secure:process.env.NODE_ENV !== 'development',
-              sameSite:'strict',
+              sameSite:process.env.NODE_ENV !== 'development'?'none':'strict',
+              path:"/",
               maxAge: 15 * 60 * 1000
            });
             res.cookie('refreshAdminToken',tockens.refreshToken,{
               httpOnly:true,
               secure:process.env.NODE_ENV !== 'development',
-              sameSite:'strict',
+              sameSite:process.env.NODE_ENV !== 'development'?'none':'strict',
+              path:"/",
               maxAge:30 * 24 * 60 * 60 * 1000
            });
             return res.send({success:true,tockens});

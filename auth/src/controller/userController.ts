@@ -233,6 +233,7 @@ export class UserController {
 
   async logout(req: Request, res: Response, next: NextFunction) {
     try {      
+
       res.cookie('accessToken','',{
         httpOnly:true,
         expires:new Date(0)
@@ -241,6 +242,8 @@ export class UserController {
         httpOnly:true,
         expires:new Date(0)
        });
+       res.clearCookie("accessToken")
+        res.clearCookie("refreshToken")
       res.send({ succuss: true, message: "logout success" });
     } catch (error) {
       console.error(error);

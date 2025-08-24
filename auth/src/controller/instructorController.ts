@@ -48,11 +48,13 @@ export class InstructorController{
         res.cookie('accessInstructorToken','',{
           httpOnly:true,
           expires:new Date(0)
-         });
+        });
         res.cookie('refreshInstructorToken','',{
           httpOnly:true,
           expires:new Date(0)
-         });
+        });
+        res.clearCookie("accessInstructorToken")
+        res.clearCookie("refreshInstructorToken")
         res.send({ succuss: true, message: "logout success" });
       } catch (error) {
         console.error(error);
@@ -72,13 +74,15 @@ export class InstructorController{
             res.cookie('accessInstructorToken',tockens.accessToken,{
               httpOnly:true,
               secure:process.env.NODE_ENV !== 'development',
-              sameSite:'strict',
+              sameSite:process.env.NODE_ENV !== 'development'?'none':'strict',
+              path:"/",
               maxAge: 15 * 60 * 1000
            });
             res.cookie('refreshInstructorToken',tockens.refreshToken,{
               httpOnly:true,
               secure:process.env.NODE_ENV !== 'development',
-              sameSite:'strict',
+              sameSite:process.env.NODE_ENV !== 'development'?'none':'strict',
+              path:"/",
               maxAge:30 * 24 * 60 * 60 * 1000
            });
             return res.send({success:true,tockens});
