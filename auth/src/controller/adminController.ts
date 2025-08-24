@@ -17,13 +17,15 @@ export class AdminController{
           res.cookie('accessAdminToken',adminAndToken.token.accessToken,{
             httpOnly:true,
             secure:process.env.NODE_ENV !== 'development',
-            sameSite:'strict',
+            sameSite:process.env.NODE_ENV !== 'development'?'none':'strict',
+            path:"/",
             maxAge: 15 * 60 * 1000
          });
           res.cookie('refreshAdminToken',adminAndToken.token.refreshToken,{
             httpOnly:true,
             secure:process.env.NODE_ENV !== 'development',
-            sameSite:'strict',
+            sameSite:process.env.NODE_ENV !== 'development'?'none':'strict',
+            path:"/",
             maxAge:30 * 24 * 60 * 60 * 1000
          });
           res.send(adminAndToken)

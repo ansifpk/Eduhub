@@ -81,20 +81,15 @@ export class UserController {
        res.cookie('accessToken',user.tokens.accessToken,{
           httpOnly: true,
           secure: process.env.NODE_ENV !== "development",
-          sameSite: "strict",
+          sameSite:process.env.NODE_ENV !== 'development'?'none':'strict',
+          path:"/",
           maxAge:15 * 60 * 1000,
-
-          // secure:process.env.NODE_ENV !== 'development',
-          // sameSite:process.env.NODE_ENV == 'development'?'strict':"none",
-          // path:"/",
-          // maxAge: 15 * 60 * 1000,
        });
         res.cookie('refreshToken',user.tokens.refreshToken,{
           httpOnly:true,
           secure:process.env.NODE_ENV !== 'development',
-          sameSite: "strict",
-          // sameSite:process.env.NODE_ENV == 'development'?'strict':"none",
-          // path:"/",
+          sameSite:process.env.NODE_ENV !== 'development'?'none':'strict',
+          path:"/",
           maxAge:30 * 24 * 60 * 60 * 1000,
        });
       

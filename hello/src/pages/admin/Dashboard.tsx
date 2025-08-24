@@ -1,15 +1,15 @@
+import React, { useEffect, useState } from "react";
 import type { ICourse } from "@/@types/courseType";
 import type { IOrder } from "@/@types/orderType";
 import type { IUserProfile } from "@/@types/userProfile";
 import { createReport } from "@/Api/adminApi";
-// import AdminChart from "@/components/admin/AdminChart";
+const AdminChart = React.lazy(()=>import("@/components/admin/AdminChart"));
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import useRequest from "@/hooks/useRequest";
 import adminRoutes from "@/service/endPoints/adminEndPoints";
 import { dateRangeScheema, type DateFormInputs } from "@/util/schemas/dateRangeScheema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import moment from "moment";
-import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
@@ -18,9 +18,9 @@ export const description = "An interactive area chart";
 
 
 const Dashboard = () => {
-  const [users] = useState<IUserProfile[]>([]);
+  const [users,setUsers] = useState<IUserProfile[]>([]);
   const [courses,setCourses] = useState<ICourse[]>([]);
-  const [topCourses] = useState<ICourse[]>([])
+  const [topCourses,setTopCourses] = useState<ICourse[]>([])
   const [orders, setOrders] = useState<IOrder[]>([]);
 
   const { doRequest, err } = useRequest();
@@ -43,34 +43,34 @@ const Dashboard = () => {
         setCourses(response);
       },
     });
-    // doRequest({
-    //   url: adminRoutes.top5Instructors,
-    //   method: "get",
-    //   body: {},
-    //   onSuccess: (response) => {
-    //     setUsers(response);
-    //   },
-    // });
-    // doRequest({
-    //   url: adminRoutes.top5RatedCourse,
-    //   method: "get",
-    //   body: {},
-    //   onSuccess: (response) => {
-    //     setTopCourses(response);
-    //   },
-    // });
-    // doRequest({
-    //     url: `${
-    //       adminRoutes.order
-    //     }?start=${watch("start")}&&end=${watch(
-    //       "end"
-    //     )}`,
-    //     body: {},
-    //     method: "get",
-    //     onSuccess: (res) => {
-    //       setOrders(res.orders);
-    //     },
-    //   });
+    doRequest({
+      url: adminRoutes.top5Instructors,
+      method: "get",
+      body: {},
+      onSuccess: (response) => {
+        setUsers(response);
+      },
+    });
+    doRequest({
+      url: adminRoutes.top5RatedCourse,
+      method: "get",
+      body: {},
+      onSuccess: (response) => {
+        setTopCourses(response);
+      },
+    });
+    doRequest({
+        url: `${
+          adminRoutes.order
+        }?start=${watch("start")}&&end=${watch(
+          "end"
+        )}`,
+        body: {},
+        method: "get",
+        onSuccess: (res) => {
+          setOrders(res.orders);
+        },
+      });
   }, []);
 
     const handleDate = (data: DateFormInputs) => {
@@ -115,7 +115,7 @@ const Dashboard = () => {
           <span className="font-bold text-3xl">Welcome back, Admin</span>
         </div>
 
-        {/* <AdminChart /> */}
+        <AdminChart />
 
          <div className="grid md:grid-cols-3 grid-cols-1 gap-2">
             <div className="border rounded-lg">

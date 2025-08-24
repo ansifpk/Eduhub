@@ -17,17 +17,15 @@ export class InstructorController{
               res.cookie('accessInstructorToken',instructorAndToken.token.accessToken,{
                 httpOnly:true,
                 secure:process.env.NODE_ENV !== 'development',
-                // sameSite:process.env.NODE_ENV == 'development'?'strict':"none",
-                // path:"/",
-                sameSite: "strict",
+                sameSite:process.env.NODE_ENV !== 'development'?'none':'strict',
+                path:"/",
                 maxAge: 15 * 60 * 1000
              });
               res.cookie('refreshInstructorToken',instructorAndToken.token.refreshToken,{
                 httpOnly:true,
                 secure:process.env.NODE_ENV !== 'development',
-                // sameSite:process.env.NODE_ENV == 'development'?'strict':"none",
-                // path:"/",
-                sameSite: "strict",
+                sameSite:process.env.NODE_ENV !== 'development'?'none':'strict',
+                path:"/",
                 maxAge:30 * 24 * 60 * 60 * 1000
              });
               
