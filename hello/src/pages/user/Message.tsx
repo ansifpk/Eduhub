@@ -55,7 +55,7 @@ const Message = () => {
   //* initial socket setup
   useEffect(() => {
     const newSocket = io(import.meta.env.VITE_APIGATEWAY, {
-      path: "/message/message/socket.io",
+      path: "/message/socket.io",
     });
     setSocket(newSocket!);
     return () => {
