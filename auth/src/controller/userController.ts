@@ -13,12 +13,15 @@ export class UserController {
     try {
       const token = await this.userUseCase.userSignUp(req.body, next);
       if (token) {
+        
         res.cookie('verificationToken',token,{
-          httpOnly:true,
-          secure:process.env.NODE_ENV !== 'development',
-          sameSite:process.env.NODE_ENV == 'development'?'strict':"none",
-          path:"/",
+          httpOnly: true,
+          secure: process.env.NODE_ENV !== "development",
+          sameSite: "strict",
           maxAge:30 * 24 * 60 * 60 * 1000,
+          // httpOnly:true,
+          // secure:process.env.NODE_ENV !== 'development',
+          // sameSite:process.env.NODE_ENV == 'development'?'strict':"none",
          });
         res.status(200).json({
           succes: true,
@@ -76,17 +79,22 @@ export class UserController {
        });
 
        res.cookie('accessToken',user.tokens.accessToken,{
-          httpOnly:true,
-          secure:process.env.NODE_ENV !== 'development',
-          sameSite:process.env.NODE_ENV == 'development'?'strict':"none",
-          path:"/",
-          maxAge: 15 * 60 * 1000,
+          httpOnly: true,
+          secure: process.env.NODE_ENV !== "development",
+          sameSite: "strict",
+          maxAge:15 * 60 * 1000,
+
+          // secure:process.env.NODE_ENV !== 'development',
+          // sameSite:process.env.NODE_ENV == 'development'?'strict':"none",
+          // path:"/",
+          // maxAge: 15 * 60 * 1000,
        });
         res.cookie('refreshToken',user.tokens.refreshToken,{
           httpOnly:true,
           secure:process.env.NODE_ENV !== 'development',
-          sameSite:process.env.NODE_ENV == 'development'?'strict':"none",
-          path:"/",
+          sameSite: "strict",
+          // sameSite:process.env.NODE_ENV == 'development'?'strict':"none",
+          // path:"/",
           maxAge:30 * 24 * 60 * 60 * 1000,
        });
       

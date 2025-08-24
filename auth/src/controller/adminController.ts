@@ -13,6 +13,7 @@ export class AdminController{
        try {
         const adminAndToken = await this.adminUsecase.adminLogin(req.body.email,req.body.password,next);
         if(adminAndToken){
+
           res.cookie('accessAdminToken',adminAndToken.token.accessToken,{
             httpOnly:true,
             secure:process.env.NODE_ENV !== 'development',
@@ -25,7 +26,6 @@ export class AdminController{
             sameSite:'strict',
             maxAge:30 * 24 * 60 * 60 * 1000
          });
-          
           res.send(adminAndToken)
         }
        } catch (error) {
@@ -103,7 +103,7 @@ export class AdminController{
             throw new ForbiddenError()
           }
           const tocken = req.cookies.refreshAdminToken;
-    
+          
           const tockens  = await this.adminUsecase.checkTockens(tocken,next)
           if(tockens){
            

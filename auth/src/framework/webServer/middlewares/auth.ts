@@ -44,8 +44,8 @@ export const isAuth = async (req:Request,res:Response,next:NextFunction)=>{
 
 export const isAdmin = async (req:Request,res:Response,next:NextFunction)=>{
 
-    try {
-     
+    try { 
+       console.log('req.cookies',req.cookies)
       if(!req.cookies){
         throw new NotAuthorizedError()
         
