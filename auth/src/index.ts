@@ -71,10 +71,11 @@ const io = new Server(httpServer,{
         })
         
         socket.on("blockUser",(userId)=>{
-            const user = onlineUsers.find((user)=>user.userId == userId);
-            if(user){
-                io.to(user.socketId).emit(`block:${userId}`)
-            }
+            console.log("kity",userId)
+            // const user = onlineUsers.find((user)=>user.userId == userId);
+            // if(user){
+            //     io.to(user.socketId).emit(`block:${userId}`)
+            // }
         })
         //*disconnect user when
         socket.on("disconnect",()=>{

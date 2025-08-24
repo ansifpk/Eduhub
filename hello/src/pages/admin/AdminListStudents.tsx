@@ -36,6 +36,7 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const AdminListStudents = () => {
+  
   const [students, setStudents] = useState<IUserProfile[]>([]);
   const [search, setSearch] = useState("");
   const [debouns, setDebouns] = useState("");
@@ -43,6 +44,7 @@ const AdminListStudents = () => {
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(0);
   const socket = useSocket()
+  console.log('socket',socket)
   const { doRequest, err } = useRequest();
 
   const handleBlockStudents = (userId: string) => {

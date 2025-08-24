@@ -28,6 +28,7 @@ export const SocketProvider: React.FC<{children: React.ReactNode}> = ({children}
             })
             setSocket(newSocket);
             newSocket.on(`block:${userId}`,()=>{
+                console.log("user blocked",userId)
               toast.error("Access blocked by Admin")
               dispatch(removeUser())
               navigate("/signIn");
