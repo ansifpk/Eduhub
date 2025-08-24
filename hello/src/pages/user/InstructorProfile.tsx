@@ -248,7 +248,7 @@ const InstructorProfile = () => {
           method: "post",
           body: { userId, recipientId, role: "userToInstructor" },
           onSuccess: (response) => {
-            return navigate(`/profile/message?chatId=${response.chat._id}`);
+            return navigate(`/user/profile/message?chatId=${response.chat._id}`);
           },
         });
       } catch (error) {
@@ -282,10 +282,9 @@ const InstructorProfile = () => {
                 Ratings
               </div>
               <div
-                  onClick={() => createMessageWithUser(user?._id!)}
-                  className="flex items-center cursor-pointer text-primary"
+                  className="flex items-center  text-primary"
                 >
-                  Message <Send className="h-4" />
+                  Message <Send className="cursor-pointer h-4 text-primary" onClick={() => createMessageWithUser(user?._id!)}  />
               </div>
             </div>
           </div>
