@@ -62,31 +62,16 @@ const io = new Server(httpServer,{
     })
     
     io.on("connect",(socket:Socket)=>{
-        console.log("new connection in message srv",socket.id,"onlineUsers",onlineUsers);
-        // const userId = socket.handshake.query.userId as string;
-        socket.on("loginUser",(userId)=>{
-            const check = onlineUsers.find((user)=>user.userId == userId);
-            console.log("userId",userId,"checking",check);
-            if(!check){
-            onlineUsers.push({
-             userId,
-             socketId:socket.id
-            })
-                console.log("illa")
-            }else{
-                console.log("ind")
-            }
-        })
+        const userId = socket.handshake.query.userId as string;
         
-        // !onlineUsers.some((user)=>user.userId == userId)&&
-        // onlineUsers.push({
-        //     userId,
-        //     socketId:socket.id
-        // })
+        !onlineUsers.some((user)=>user.userId == userId)&&
+        onlineUsers.push({
+            userId,
+            socketId:socket.id
+        })
         
         socket.on("blockUser",(userId)=>{
             const user = onlineUsers.find((user)=>user.userId == userId);
-            console.log("user blocked",userId,'user',user,'onlineUsers',onlineUsers);
             if(user){
                 io.to(user.socketId).emit(`block:${userId}`)
             }

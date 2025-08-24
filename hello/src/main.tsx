@@ -20,6 +20,7 @@ createRoot(document.getElementById("root")!).render(
         <PersistGate persistor={persist}>
             <App />
         </PersistGate>
+         <SocketProvider></SocketProvider>
       </Provider>
       {/*
         </GoogleOAuthProvider>
