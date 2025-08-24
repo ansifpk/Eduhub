@@ -4,30 +4,30 @@ build:
   local:
     push: true
   artifacts:
-    # - image: pkansif/eduhub-auth
-    #   context: auth
-    #   docker:
-    #     dockerfile: Dockerfile
-    #   sync:
-    #     manual:
-    #       - src: "src/**/*.ts"
-    #         dest: .
-    # - image: pkansif/eduhub-course
-    #   context: courses
-    #   docker:
-    #     dockerfile: Dockerfile
-    #   sync:
-    #     manual:
-    #       - src: "src/**/*.ts"
-    #         dest: .
-    # - image: pkansif/eduhub-category
-    #   context: category
-    #   docker:
-    #     dockerfile: Dockerfile
-    #   sync:
-    #     manual:
-    #       - src: "src/**/*.ts"
-    #         dest: .
+    - image: pkansif/eduhub-auth
+      context: auth
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
+    - image: pkansif/eduhub-course
+      context: courses
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
+    - image: pkansif/eduhub-category
+      context: category
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
     - image: pkansif/eduhub-profile
       context: profile
       docker:
@@ -36,23 +36,23 @@ build:
         manual:
           - src: "src/**/*.ts"
             dest: .
-    # - image: pkansif/eduhub-purchase
-    #   context: purchase
-    #   docker:
-    #     dockerfile: Dockerfile
-    #   sync:
-    #     manual:
-    #       - src: "src/**/*.ts"
-    #         dest: .
-    # - image: pkansif/eduhub-message
-    #   context: message
-    #   docker:
-    #     dockerfile: Dockerfile
-    #   sync:
-    #     manual:
-    #       - src: "src/**/*.ts"
-    #         dest: .
+    - image: pkansif/eduhub-purchase
+      context: purchase
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
+    - image: pkansif/eduhub-message
+      context: message
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
 deploy:
   kubectl:
     manifests:
-      - ./infra/k8s/profile-depl.yaml
+      - ./infra/k8s/*

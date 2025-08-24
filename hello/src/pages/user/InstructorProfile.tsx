@@ -45,7 +45,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loadStripe } from "@stripe/stripe-js";
 import type { IUserProfile } from "@/@types/userProfile";
-import { CheckIcon } from "lucide-react";
+import { CheckIcon, Send } from "lucide-react";
 const stripe = await loadStripe(import.meta.env.VITE_PUBLISH_SECRET);
 
 const labels: { [index: string]: string } = {
@@ -240,8 +240,22 @@ const InstructorProfile = () => {
       },
     });
   };
-  console.log(reviews);
-  console.log(reviews.find((rev) => rev.userId._id == userId));
+  
+    const createMessageWithUser = async (recipientId: string) => {
+      try {
+        await doRequest({
+          url: userRoutes.chat,
+          method: "post",
+          body: { userId, recipientId, role: "userToInstructor" },
+          onSuccess: (response) => {
+            return navigate(`/profile/message?chatId=${response.chat._id}`);
+          },
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
   useEffect(() => {
     err?.map((err) => toast.error(err.message));
   }, [err]);
@@ -266,6 +280,12 @@ const InstructorProfile = () => {
               <div>
                 <i className="bi bi-star-fill text-yellow-600"></i>2 instructor
                 Ratings
+              </div>
+              <div
+                  onClick={() => createMessageWithUser(user?._id!)}
+                  className="flex items-center cursor-pointer text-primary"
+                >
+                  Message <Send className="h-4" />
               </div>
             </div>
           </div>
