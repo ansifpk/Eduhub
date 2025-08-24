@@ -48,7 +48,6 @@ export class UserUseCase implements IUserUseCase{
             throw new NotFoundError("Subscription not fount")
            
          }
-         console.log(subscription);
          let customer = await stripe.customers.create({
             name: user.name,
             email: user.email,
@@ -79,11 +78,12 @@ export class UserUseCase implements IUserUseCase{
                 subscriptionId:JSON.stringify(subscription._id),
                 edited:''
             },
-            success_url: process.env.success_url,
-            cancel_url: process.env.failed_url,
+            success_url: process.env.subscription_success_user_url,
+            cancel_url: process.env.subscription_failed_user_url,
         })
-   
-        return session.id;
+        if(session){
+           return session.id;
+        }
          
          
       } catch (error) {
@@ -145,8 +145,7 @@ export class UserUseCase implements IUserUseCase{
            try {
               const portalSession = await stripe.billingPortal.sessions.create({
                 customer:customerId,
-                
-                return_url:`${process.env.CLIENT_URL}/user/courses`
+                return_url:`${process.env.CLIENT_URL}/user/profile/plan`
               })
              
               if(portalSession){

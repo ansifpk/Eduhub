@@ -58,7 +58,7 @@ const Otp = () => {
       method:"post",
       body:{email:email},
       onSuccess:()=>{
-        setResendLoading(true)
+        setResendLoading(false)
         setSecond(59);
         setMinute(1);
         toast.success("Resnt OTP Sent to Your Mail")
@@ -82,6 +82,7 @@ const Otp = () => {
       body: { otp: otp },
       onSuccess: (res) => {
         setLoading(false);
+         toast.success("Successfully Registered to Eduhub.")
         dispatch(setUser(res.user.user));
         navigate("/");
       },

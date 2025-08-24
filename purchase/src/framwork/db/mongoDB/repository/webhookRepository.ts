@@ -17,6 +17,7 @@ export class WebhookRepository implements IWebhookRepository{
     ){}
   async createUserSubscribe(userId: string, subscriptionId: string, customerId: string, subscription: string): Promise<IUserSubscribe | void> {
     try {
+  
       const subscribe = await this.subscribeUserModel.create({
         subscriptionId:JSON.parse(subscriptionId),
         customerId,
@@ -32,6 +33,7 @@ export class WebhookRepository implements IWebhookRepository{
   }
   async renewUserSubscribe(customerId: string): Promise<IUserSubscribe | void> {
     try {
+           
       const subscribe = await this.subscribeUserModel.findOneAndUpdate({customerId:customerId},{$unset:{cancel_At:""}},{new:true}) 
           if(subscribe){
             return subscribe
@@ -41,12 +43,14 @@ export class WebhookRepository implements IWebhookRepository{
     }
   }
   async checkUserSubscribe(customerId: string): Promise<IUserSubscribe | void> {
+
     const subscribe = await this.subscribeUserModel.findOne({customerId:customerId}) 
     if(subscribe){
       return subscribe
     }
   }
   async cancelUserSubscribe(date: number, customerId: string): Promise<IUserSubscribe | void> {
+    
     const subscribe = await this.subscribeUserModel.findOneAndUpdate({customerId:customerId},{$set:{cancel_At:new Date(date*1000)}},{new:true}) 
       if(subscribe){
         return subscribe
@@ -54,6 +58,7 @@ export class WebhookRepository implements IWebhookRepository{
   }
     async cancelSubscribe(date: number, customerId: string): Promise<IInstructorSubscribe | void> {
       try {
+   
       const subscribe = await this.subscribeModel.findOneAndUpdate({customerId:customerId},{$set:{cancel_At:new Date(date*1000)}},{new:true}) 
       if(subscribe){
         return subscribe
@@ -65,7 +70,7 @@ export class WebhookRepository implements IWebhookRepository{
     
     async createSubscribe(userId: string, subscriptionId: string, customerId: string, subscription: string): Promise<IInstructorSubscribe | void> {
        try {
-      
+     
         const subscribe = await this.subscribeModel.create({
           subscriptionId:JSON.parse(subscriptionId),
           customerId,
@@ -81,6 +86,7 @@ export class WebhookRepository implements IWebhookRepository{
     }
     async renewSubscribe(customerId: string): Promise<IInstructorSubscribe | void> {
         try {
+          
           const subscribe = await this.subscribeModel.findOneAndUpdate({customerId:customerId},{$unset:{cancel_At:""}},{new:true}) 
           if(subscribe){
             return subscribe
@@ -91,6 +97,7 @@ export class WebhookRepository implements IWebhookRepository{
     }
     async checkSubscribe(customerId: string): Promise<IInstructorSubscribe | void> {
         try {
+         
           const subscribe = await this.subscribeModel.findOne({customerId:customerId}) 
           if(subscribe){
             return subscribe
@@ -102,6 +109,7 @@ export class WebhookRepository implements IWebhookRepository{
 
     async create(userId:string,course: ICourse,discountAmount:number): Promise<ICourse | void> {
       try {
+       
         const order = await this.orderMedels.create({user:userId,course:course,discountAmount})
         if(order){
           let check = await this.courseModels.findByIdAndUpdate(

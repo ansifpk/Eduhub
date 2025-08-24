@@ -10,14 +10,14 @@ const Success = () => {
             <i className="text-9xl  bi bi-check-lg text-yellow-600"></i>
             <h1 className="text-yellow-600 font-extrabold underline">
               {" "}
-              Successfully puchased the subscription
+              Successfully puchased the course
             </h1>
             <p>
               <NavLink
                 className="font-extrabold underline"
                 to={"/user/profile/course"}
               >
-                See your Orders
+               See your orders
               </NavLink>
             </p>
           </div>

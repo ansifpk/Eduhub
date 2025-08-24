@@ -47,6 +47,7 @@ export class Stripe implements IStripe{
           success_url: process.env.success_url,
           cancel_url: process.env.cancel_url
         });
+        console.log(session)
         if(session){
             return session.id
         }

@@ -65,11 +65,9 @@ const authSLice = createSlice({
           state.email = action.payload.email
         },
         changeImage:(state,action)=>{
-          state.image = action.payload.image
+          state.image = action.payload
         },
         removeUser:(state)=>{
-            console.log("removinf");
-            
             state._id = "";
             state.email ="";
             state.name = "";
@@ -82,7 +80,7 @@ const authSLice = createSlice({
     }
 });
 
-export const {setUser,setAdmin,blockUser,setInstructor,removeUser,profileUpdated,changeEmail} = authSLice.actions;
+export const {setUser,setAdmin,blockUser,setInstructor,removeUser,profileUpdated,changeEmail,changeImage} = authSLice.actions;
 export default authSLice.reducer;
 
 

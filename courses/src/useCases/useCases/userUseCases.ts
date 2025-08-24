@@ -266,6 +266,7 @@ export class UserUseCase implements IUserUseCase {
   ): Promise<IRating | void> {
     try {
       const rating = await this.userRepository.findRating(ratingId);
+      
       if (!rating) {
         throw new BadRequestError("Rating not Found");
       }

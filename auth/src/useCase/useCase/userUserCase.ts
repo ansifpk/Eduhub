@@ -16,6 +16,7 @@ import {
 } from "@eduhublearning/common";
 import kafkaWrapper from "../../framework/webServer/config/kafka/kafkaWrapper";
 import { Producer } from "kafkajs";
+import { Iotp } from "../../entities/otp";
 
 export class UserUseCase implements IuserUseCase {
   constructor(
@@ -152,7 +153,7 @@ export class UserUseCase implements IuserUseCase {
       const token = await this.jwtToken.createVerificationJwt({
         name: name,
         email: email,
-        password: password,
+        password: user.password,
       });
       return token;
     } catch (err) {
@@ -165,7 +166,7 @@ export class UserUseCase implements IuserUseCase {
     try {
       const data = await this.otpRepository.deleteOtp(email);
       const otp = await this.otpGenerate.createOtp();
-      console.log("new otp", otp);
+      console.log("new otp", otp,email);
       await this.otpRepository.createOtp(email, otp);
       await this.sentEmail.sentEmailVerification(email, otp);
       return data;
@@ -182,8 +183,7 @@ export class UserUseCase implements IuserUseCase {
     try {
       const decoded = (await this.jwtToken.verifyJwt(token)) as Iuser;
       const result = await this.otpRepository.findOtp(decoded.email);
-      console.log(decoded);
-      console.log(result);
+     
 
       if (!result) {
         throw new BadRequestError("OTP Expired");
@@ -261,11 +261,10 @@ export class UserUseCase implements IuserUseCase {
     email: string,
     otp: string,
     next: NextFunction
-  ): Promise<any | void> {
+  ): Promise<Iotp | void> {
     try {
       const user = await this.otpRepository.findOtp(email);
-      console.log(user?.otp);
-
+      // console.log(user?.otp);
       if (!user) {
         throw new BadRequestError("OTP Expired");
       }
@@ -309,6 +308,7 @@ export class UserUseCase implements IuserUseCase {
       if (compare) {
         throw new BadRequestError("You Cannot Set Old Password Again");
       }
+ 
       const newPassword = await this.encrypt.createHash(password);
       await this.userRepository.updatePassword(user._id!, newPassword);
       await this.otpRepository.deleteOtp(email);
@@ -383,8 +383,8 @@ export class UserUseCase implements IuserUseCase {
 
       const OTP = await this.otpGenerate.createOtp();
       console.log("otp to change email", OTP);
-      await this.otpRepository.createOtp(checkuser.email, OTP);
-      await this.sentEmail.sentEmailVerification(checkuser.email, OTP);
+      await this.otpRepository.createOtp(email, OTP);
+      await this.sentEmail.sentEmailVerification(email, OTP);
       return OTP;
     } catch (error) {
       console.error(error);
@@ -404,7 +404,7 @@ export class UserUseCase implements IuserUseCase {
         throw new BadRequestError("User Not Found");
       }
 
-      const findOTP = await this.otpRepository.findOtp(checkUser.email);
+      const findOTP = await this.otpRepository.findOtp(email);
       if (!findOTP) {
         throw new BadRequestError("OTP expired");
       }
@@ -414,7 +414,7 @@ export class UserUseCase implements IuserUseCase {
 
       const user = await this.userRepository.changeEmail(userId, email);
       if (user) {
-        await this.otpRepository.deleteOtp(checkUser.email);
+        await this.otpRepository.deleteOtp(email);
         return user;
       }
     } catch (error) {

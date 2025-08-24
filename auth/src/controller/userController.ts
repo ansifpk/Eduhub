@@ -181,7 +181,8 @@ export class UserController {
   }
   async verifyOtp(req: Request, res: Response, next: NextFunction) {
     
-    try { const {email,otp} = req.body;
+    try { 
+      const {email,otp} = req.body;
       const data = await this.userUseCase.verifyOtp(
       email,
        otp,
@@ -267,7 +268,6 @@ export class UserController {
           email: user.email
         })
         return res.send({success:true,user:user});
-
       }
     } catch (error) {
       console.error(error);

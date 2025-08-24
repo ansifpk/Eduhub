@@ -19,18 +19,20 @@ import toast from "react-hot-toast";
 import { otpScheema, type OtpFormInputs } from "@/util/schemas/otpScheema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Loader2Icon } from "lucide-react";
 import userRoutes from "@/service/endPoints/userEndPoints";
-
+import { Button } from "@/components/ui/button";
 
 interface Props {
   email: string;
   handlePage: (page: number) => void;
 }
 
-
-const verifyOtp:React.FC<Props>  = ({email,handlePage}) => {
+const verifyOtp: React.FC<Props> = ({ email, handlePage }) => {
   const [loading, setLoading] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+  // const [otp, setOtp] = useState("");
+  const [second, setSecond] = useState(59);
+  const [minutes, setMinute] = useState(1);
   const { doRequest, err } = useRequest();
 
   const {
@@ -41,20 +43,54 @@ const verifyOtp:React.FC<Props>  = ({email,handlePage}) => {
     resolver: zodResolver(otpScheema),
   });
 
-
   const onSubmit = async (data: OtpFormInputs) => {
     setLoading(true);
+    
     doRequest({
-        url:userRoutes.verifyPassOtp,
-        body:{email:email,otp:data.otp},
+      url: userRoutes.verifyPassOtp,
+      body: { email: email, otp: data.otp },
+      method: "post",
+      onSuccess: () => {
+        handlePage(3);
+        toast.success("Email verified successfully");
+        setLoading(false);
+      },
+    });
+  };
+
+  useEffect(() => {
+    const intervel = setInterval(() => {
+      if (second > 0) {
+        setSecond(second - 1);
+      }
+      if (second === 0) {
+        if (minutes === 0) {
+          clearInterval(intervel);
+        } else {
+          setSecond(59);
+          setMinute(minutes - 1);
+        }
+      }
+    }, 1000);
+    return () => {
+      clearInterval(intervel);
+    };
+  }, [second]);
+
+    const resentOTP = async () => {
+      setResendLoading(true)
+       await doRequest({
+        url:userRoutes.resentOtp,
         method:"post",
+        body:{email:email},
         onSuccess:()=>{
-          handlePage(3);
-          toast.success("Email verified successfully");
-          setLoading(false);
+          setResendLoading(false)
+          setSecond(59);
+          setMinute(1);
+          toast.success("Resnt OTP Sent to Your Mail")
         }
       })
-  };
+    };
 
   useEffect(() => {
     setLoading(false);
@@ -79,7 +115,7 @@ const verifyOtp:React.FC<Props>  = ({email,handlePage}) => {
                     <div className="grid gap-3 items-center text-center justify-center">
                       <label htmlFor="email">OTP</label>
                       <InputOTP
-                        onChange={(value)=>setValue("otp",value)}
+                        onChange={(value) => setValue("otp", value)}
                         maxLength={6}
                         pattern={REGEXP_ONLY_DIGITS}
                       >
@@ -119,20 +155,46 @@ const verifyOtp:React.FC<Props>  = ({email,handlePage}) => {
                       {errors.otp && (
                         <p className="text-red-500">{errors.otp.message}</p>
                       )}
-                      <button
+                      <div>
+                        <p>
+                          Time Remaining:{" "}
+                          <span style={{ color: "black", fontWeight: 600 }}>
+                            {minutes! < 10 ? `0${minutes}` : minutes}:
+                            {second! < 10 ? `0${second}` : second}
+                          </span>
+                        </p>
+                      </div>
+                      {minutes == 0 && second == 0 && (
+                        <Button
+                          type="button"
+                          disabled={resendLoading}
+                          onClick={resentOTP}
+                          className="w-full bg-red-500 cursor-pointer hover:bg-red-300 text-white"
+                        >
+                          {resendLoading ? (
+                            <>
+                              Loading...
+                              <i className="bi bi-arrow-repeat animate-spin"></i>
+                            </>
+                          ) : (
+                            "Resend OTP"
+                          )}
+                        </Button>
+                      )}
+                     <Button
                         type="submit"
-                        disabled={loading}
-                        className="w-full bg-teal-500 hover:bg-teal-300 font-semibold rounded p-2 cursor-pointer text-white"
+                        disabled={loading || (minutes == 0 && second == 0)}
+                        className={`w-full bg-teal-500 hover:bg-teal-300 text-white ${loading || (minutes == 0 && second == 0) ?"" : "cursor-pointer"}`}
                       >
                         {loading ? (
-                          <div className="flex items-center-safe justify-center-safe">
-                            <span className="text-white">Loading...</span>
-                            <Loader2Icon className="animate-spin" />
-                          </div>
+                          <>
+                            Verifying...
+                            <i className="bi bi-arrow-repeat animate-spin"></i>
+                          </>
                         ) : (
                           "Verify"
                         )}
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 </div>

@@ -54,11 +54,18 @@ import type { IUserProfile } from "@/@types/userProfile";
 import type { ISubcription } from "@/@types/subscriptionType";
 import { loadStripe } from "@stripe/stripe-js";
 import { CheckIcon } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { ratingScheema, type RatingFormInputs } from "@/util/schemas/ratingScheema";
+import { zodResolver } from "@hookform/resolvers/zod";
+const stripe = await loadStripe(import.meta.env.VITE_PUBLISH_SECRET);
 
 const CourseDetailes = () => {
   const [course, setCourse] = useState<ICourse>();
   const [instructor, setInstructor] = useState<IUserProfile>();
   const [star, setStar] = useState<number>(0);
+  const [editAlert, setEditAlert] = useState(false);
+  const [addAlert, setAddAlert] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [ratings, setRatings] = useState<IRating[]>([]);
   const [subscriptions, setSubscriptions] = useState<ISubcription[]>([]);
   const { doRequest, err } = useRequest();
@@ -68,6 +75,19 @@ const CourseDetailes = () => {
   const [cart, setCart] = useState<ICart>();
   const navigate = useNavigate();
   const ratingRef = useRef<HTMLTextAreaElement>(null);
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<RatingFormInputs>({
+    resolver: zodResolver(ratingScheema),
+    defaultValues: {
+      rating: "",
+      star: 1,
+    },
+  });
 
   useEffect(() => {
     doRequest({
@@ -104,7 +124,7 @@ const CourseDetailes = () => {
       },
     });
     doRequest({
-      url: `${userRoutes.plans}/${userId}`,
+      url: `${userRoutes.subscribe}/${userId}`,
       method: "get",
       body: {},
       onSuccess: (data) => {
@@ -121,9 +141,33 @@ const CourseDetailes = () => {
     });
   }, [_id]);
 
-  const handleEditRatings = (_id: string) => {
+  const handleRating = (data: RatingFormInputs) => {
+      setLoading(true);
+      doRequest({
+        url: userRoutes.ratingCourse,
+        method: "post",
+        body: { review: data.rating, stars: data.star, courseId:_id, userId },
+        onSuccess: () => {
+          doRequest({
+            url: `${userRoutes.ratingCourse}/${_id}`,
+            method: "get",
+            body: {},
+            onSuccess: (response) => {
+              setLoading(false);
+              setAddAlert(false);
+              setValue("star", 1);
+              setValue("rating", "");
+              toast.success("Successfully added your review ");
+              setRatings(response.rating);
+            },
+          });
+        },
+      });
+  };
+
+  const handleEditRatings = (ratingId: string) => {
     doRequest({
-      url: `${userRoutes.ratingCourse}/${_id}`,
+      url: `${userRoutes.ratingCourse}/${ratingId}`,
       method: "patch",
       body: { review: ratingRef.current!.value, stars: star },
       onSuccess: () => {
@@ -132,7 +176,9 @@ const CourseDetailes = () => {
           method: "get",
           body: {},
           onSuccess: (data) => {
+            toast.success("Review updated successfully...");
             setRatings(data.rating);
+            setEditAlert(!editAlert);
           },
         });
       },
@@ -158,7 +204,7 @@ const CourseDetailes = () => {
   };
 
   const subscribe = async (subscriptionId: string) => {
-    const stripe = await loadStripe(import.meta.env.VITE_PUBLISH_SECRET);
+    
     doRequest({
       url: `${userRoutes.subscriptions}/${subscriptionId}`,
       body: { userId },
@@ -166,6 +212,25 @@ const CourseDetailes = () => {
       onSuccess: async (response) => {
         await stripe?.redirectToCheckout({
           sessionId: response.sessionId,
+        });
+      },
+    });
+  };
+
+  const handleDeleteRating = (ratingId: string) => {
+    doRequest({
+      url: `${userRoutes.ratingCourse}/${ratingId}`,
+      method: "delete",
+      body: {},
+      onSuccess: () => {
+        doRequest({
+          url: `${userRoutes.ratingCourse}/${_id}`,
+          method: "get",
+          body: {},
+          onSuccess: (response) => {
+            setRatings(response.rating);
+            toast.success("Review deleted successfully..");
+          },
         });
       },
     });
@@ -217,7 +282,7 @@ const CourseDetailes = () => {
       </div>
 
       <div className="container mx-auto flex flex-row gap-5">
-        <div className="basis-2/3  border-4 p-4">
+        <div className="basis-2/3   p-4">
           <Tabs defaultValue="Course Content">
             <TabsList className="bg-teal-400 ">
               <TabsTrigger value="Course Content">Course Content</TabsTrigger>
@@ -264,121 +329,167 @@ const CourseDetailes = () => {
             </TabsContent>
             <TabsContent value="Review & Ratings">
               <div className="grid grid-cols-2 gap-5 p-4">
-                {ratings.map((rating) => (
-                  <div key={rating._id} className="border-2 space-y-2 p-4">
-                    <div className="flex justify-between">
-                      <div className="flex items-center gap-3">
-                        <Avatar>
-                          <AvatarImage
-                            src={rating.userId.avatar.avatar_url}
-                            alt="userImage"
-                          />
-                          <AvatarFallback>
-                            {" "}
-                            <i className="bi bi-person-circle"></i>
-                          </AvatarFallback>
-                        </Avatar>
-                        <strong className="text-xs font-extralight ">
-                          {rating.userId.name}
-                        </strong>
-                      </div>
-                      {rating.userId._id == userId && (
-                        <div className="flex gap-5">
-                          <Dialog>
-                            <form>
-                              <DialogTrigger
-                                onClick={() => setStar(rating.stars)}
-                                asChild
+                {ratings.length > 0 ? (
+                  <>
+                    {ratings.map((rating) => (
+                      <div key={rating._id} className="border-2 space-y-2 p-4">
+                        <div className="flex justify-between">
+                          <div className="flex items-center gap-3">
+                            <Avatar>
+                              <AvatarImage
+                                src={rating.userId.avatar.avatar_url}
+                                alt="userImage"
+                              />
+                              <AvatarFallback>
+                                {" "}
+                                <i className="bi bi-person-circle"></i>
+                              </AvatarFallback>
+                            </Avatar>
+                            <strong className="text-xs font-extralight ">
+                              {rating.userId.name}
+                            </strong>
+                          </div>
+                          {rating.userId._id == userId && (
+                            <div className="flex gap-5">
+                              <Dialog
+                                open={editAlert}
+                                onOpenChange={() => {
+                                  if (editAlert) {
+                                  }
+                                  setEditAlert(!editAlert);
+                                }}
                               >
-                                <i className="bi bi-pencil-square cursor-pointer"></i>
-                              </DialogTrigger>
-                              <DialogContent className="sm:max-w-[425px] ">
-                                <DialogHeader>
-                                  <DialogTitle className="text-sm">
-                                    Edit Rating
-                                  </DialogTitle>
-                                  <DialogDescription> </DialogDescription>
-                                </DialogHeader>
-                                <div className="flex">
-                                  {[1, 2, 3, 4, 5].map((_, index) => {
-                                    return (
-                                      <i
-                                        key={index}
-                                        onMouseEnter={() => setStar(index + 1)}
-                                        className={`bi ${
-                                          index + 1 <= star
-                                            ? "bi-star-fill"
-                                            : "bi-star"
-                                        }`}
-                                      ></i>
-                                    );
-                                  })}
-                                </div>
-                                <textarea
-                                  id="ratingEdit"
-                                  name="ratingEdit"
-                                  ref={ratingRef}
-                                  className="h-20  not-focus:outline-0 not-focus:border-0 hover:outline-0 hover:border-0"
-                                  placeholder="Edit Review..."
-                                  defaultValue={rating.review}
-                                />
+                                <form>
+                                  <DialogTrigger
+                                    onClick={() => setStar(rating.stars)}
+                                    asChild
+                                  >
+                                    <i className="bi bi-pencil-square cursor-pointer"></i>
+                                  </DialogTrigger>
+                                  <DialogContent className="sm:max-w-[425px] ">
+                                    <DialogHeader>
+                                      <DialogTitle className="text-sm">
+                                        Edit Rating
+                                      </DialogTitle>
+                                      <DialogDescription> </DialogDescription>
+                                    </DialogHeader>
+                                    <div className="flex">
+                                      {[1, 2, 3, 4, 5].map((_, index) => {
+                                        return (
+                                          <i
+                                            key={index}
+                                            onMouseEnter={() =>
+                                              setStar(index + 1)
+                                            }
+                                            className={`bi ${
+                                              index + 1 <= star
+                                                ? "bi-star-fill"
+                                                : "bi-star"
+                                            }`}
+                                          ></i>
+                                        );
+                                      })}
+                                    </div>
+                                    <textarea
+                                      id="ratingEdit"
+                                      name="ratingEdit"
+                                      ref={ratingRef}
+                                      className="h-20  not-focus:outline-0 not-focus:border-0 hover:outline-0 hover:border-0"
+                                      placeholder="Edit Review..."
+                                      defaultValue={rating.review}
+                                    />
 
-                                <DialogFooter>
-                                  <DialogClose asChild>
-                                    <button
+                                    <DialogFooter>
+                                      <DialogClose asChild>
+                                        <AlertDialog>
+                                          <AlertDialogTrigger asChild>
+                                            <button className="bg-teal-500 hover:bg-teal-300 cursor-pointer  bottom-10  px-1 py-2 mb-2 mr-2 text-white text-xs rounded">
+                                              Save changes
+                                            </button>
+                                          </AlertDialogTrigger>
+                                          <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                              <AlertDialogTitle>
+                                                Are you absolutely sure?
+                                              </AlertDialogTitle>
+                                              <AlertDialogDescription>
+                                                This action cannot be undone.
+                                                This will permanently Save your
+                                                Rating to our servers.
+                                              </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                              <AlertDialogCancel className="text-white bg-teal-500 hover:bg-teal-300 hover:text-white">
+                                                Cancel
+                                              </AlertDialogCancel>
+                                              <AlertDialogAction
+                                                onClick={() =>
+                                                  handleEditRatings(rating._id)
+                                                }
+                                                className="bg-teal-500 hover:bg-teal-300"
+                                              >
+                                                Continue
+                                              </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                          </AlertDialogContent>
+                                        </AlertDialog>
+                                      </DialogClose>
+                                    </DialogFooter>
+                                  </DialogContent>
+                                </form>
+                              </Dialog>
+
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <i className="bi bi-trash-fill cursor-pointer"></i>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>
+                                      Are you absolutely sure?
+                                    </AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      This action cannot be undone. This will
+                                      permanently delete your Rating from our
+                                      servers.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel className="text-white bg-teal-500 hover:bg-teal-300 hover:text-white">
+                                      Cancel
+                                    </AlertDialogCancel>
+                                    <AlertDialogAction
                                       onClick={() =>
-                                        handleEditRatings(rating._id)
+                                        handleDeleteRating(rating._id)
                                       }
-                                      className="bg-teal-500 hover:bg-teal-300 cursor-pointer  bottom-10  px-1 py-2 mb-2 mr-2 text-white text-xs rounded"
+                                      className="bg-teal-500 hover:bg-teal-300"
                                     >
-                                      Save changes
-                                    </button>
-                                  </DialogClose>
-                                </DialogFooter>
-                              </DialogContent>
-                            </form>
-                          </Dialog>
-
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <i className="bi bi-trash-fill cursor-pointer"></i>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>
-                                  Are you absolutely sure?
-                                </AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  This action cannot be undone. This will
-                                  permanently delete your Rating from our
-                                  servers.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel className="text-white bg-teal-500 hover:bg-teal-300 hover:text-white">
-                                  Cancel
-                                </AlertDialogCancel>
-                                <AlertDialogAction className="bg-teal-500 hover:bg-teal-300">
-                                  Continue
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
+                                      Continue
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </div>
+                          )}
                         </div>
-                      )}
-                    </div>
-                    <div className="flex items-center ">
-                      <i className="bi bi-star-fill text-xs"></i>
-                      <strong className="text-xs font-extralight ">
-                        {rating.stars}
-                      </strong>
-                    </div>
-                    <div className="text-xs font-extralight">
-                      {rating.review}
-                    </div>
-                  </div>
-                ))}
+                        <div className="flex items-center ">
+                          <i className="bi bi-star-fill text-xs"></i>
+                          <strong className="text-xs font-extralight ">
+                            {rating.stars}
+                          </strong>
+                        </div>
+                        <div className="text-xs font-extralight">
+                          {rating.review}
+                        </div>
+                      </div>
+                    ))}
+                  </>
+                ) : (
+                  <>No ratings available for this course.</>
+                )}
+                
               </div>
+               
               <Sheet>
                 {ratings.length > 4 && (
                   <SheetTrigger className="text-end w-full">
@@ -496,6 +607,138 @@ const CourseDetailes = () => {
                   </SheetHeader>
                 </SheetContent>
               </Sheet>
+
+              <Dialog
+                  open={addAlert}
+                  onOpenChange={() => {
+                    setValue("rating", "");
+                    setValue("star", 1);
+                    setAddAlert(!addAlert);
+                  }}
+                >
+                  <form>
+                    <DialogTrigger className="text-indigo-600 cursor-pointer underline font-semibold">
+                      {course?.students.some((student) => student._id == userId) ||
+                      plans.some(
+                        (sub) =>
+                          sub.subscriptionId.instructorId._id ==
+                          course?.instructorId._id
+                      )
+                        ? !ratings.find((rat) => rat.userId._id == userId)?"Rate this course":""
+                        : ""}
+                      
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>
+                          {" "}
+                          How whould you Rate this course?
+                        </DialogTitle>
+                        <DialogDescription></DialogDescription>
+                      </DialogHeader>
+                      <div className="text-center">
+                        <form className="w-full flex flex-col space-y-2">
+                          <div>
+                            {[...Array(5)].map((_, index) => {
+                              const star = watch("star");
+                              return (
+                                <i
+                                  {...register("star")}
+                                  key={index}
+                                  onMouseEnter={() =>
+                                    setValue("star", index + 1)
+                                  }
+                                  className={`bi ${
+                                    index + 1 <= star
+                                      ? "bi-star-fill"
+                                      : "bi-star"
+                                  }`}
+                                ></i>
+                              );
+                            })}
+                            {errors.star && (
+                              <p className="text-red-500 text-sm">
+                                {errors.star.message}
+                              </p>
+                            )}
+                          </div>
+                          <label htmlFor="rating">Your Message</label>
+                          <textarea
+                            {...register("rating")}
+                            className=" border rounded border-teal-400 h-50 p-2"
+                            placeholder="Type your message here."
+                            id="rating"
+                          />
+                          {errors.rating && (
+                            <p className="text-red-500 text-sm">
+                              {errors.rating.message}
+                            </p>
+                          )}
+                        </form>
+                      </div>
+                      <DialogFooter>
+                        <DialogClose asChild>
+                          <button
+                            onClick={() => {
+                              setValue("rating", "");
+                              setValue("star", 1);
+                            }}
+                            className="bg-teal-500 hover:bg-teal-300 border px-2 py-1 text-white rounded cursor-pointer font-semibold"
+                          >
+                            Cancel
+                          </button>
+                        </DialogClose>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <button
+                              type="button"
+                              disabled={loading}
+                              className={`bg-teal-500 hover:bg-teal-300 border px-2 py-1 text-white rounded ${
+                                loading ? "" : "cursor-pointer"
+                              } font-semibold`}
+                            >
+                              {loading ? (
+                                <>
+                                  Loading...
+                                  <span className="animate-spin inline-block text-lg">
+                                    <i className="bi bi-arrow-repeat"></i>
+                                  </span>
+                                </>
+                              ) : (
+                                "Save"
+                              )}
+                            </button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                Are you absolutely sure?
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action cannot be undone. This will
+                                permanently save data from our servers.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel className="bg-teal-500 hover:bg-teal-300 text-white rounded cursor-pointer hover:text-white">
+                                Cancel
+                              </AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => {
+                                  handleSubmit(handleRating)();
+                                }}
+                                className="bg-teal-500 hover:bg-teal-300 text-white rounded cursor-pointer"
+                              >
+                                Continue
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </DialogFooter>
+                    </DialogContent>
+                  </form>
+                </Dialog>
+
             </TabsContent>
             <TabsContent value="Instructor">
               <div className="bg-white">
@@ -551,7 +794,7 @@ const CourseDetailes = () => {
             </TabsContent>
           </Tabs>
         </div>
-        <div className="basis-1/3  border-4 ">
+        <div className="basis-1/3   ">
           <img
             className="h-48 w-96 rounded object-fill"
             src={course?.image.image_url}
@@ -604,8 +847,8 @@ const CourseDetailes = () => {
                     <article className="space-y-5">
                       <h2 className="font-bold">Boost your conversion rate</h2>
                       <p className="line-clamp-3 text-xs font-extralight">
-                        Get this course, plus 26,000+ of our top-rated courses,
-                        with Personal Plan.
+                        Get this course, plus all the courses of this
+                        instructor, with This Plan.
                       </p>
 
                       <Sheet key={"bottom"}>
@@ -614,7 +857,7 @@ const CourseDetailes = () => {
                             className="bg-teal-500 w-full
                  py-2 rounded text-white text-xs font-semibold cursor-pointer hover:bg-teal-300 hover:text-white"
                           >
-                            Purchase
+                            Subscribe
                           </button>
                         </SheetTrigger>
                         <SheetContent side="bottom" className="h-screen">
@@ -655,7 +898,7 @@ const CourseDetailes = () => {
                                       : `yearly`}
                                   </span>
                                 </p>
-                              
+
                                 <ul
                                   role="list"
                                   className={
@@ -683,42 +926,6 @@ const CourseDetailes = () => {
                                   Start Subscription
                                 </a>
                               </div>
-                              // <div
-                              //   key={index}
-                              //   className="border w-50 h-[300px] rounded-1"
-                              // >
-                              //   <h4 className=" underline">Personal Plan</h4>
-                              //   <div className="  m-1">
-                              //     <div className="flex flex-col items-center justify-center h-[210px]">
-                              //       <div>
-                              //         {value.plan == "Monthly"
-                              //           ? `Rs : ${value.price}/- per Month`
-                              //           : `Rs : ${value.price}/- per Year`}
-                              //       </div>
-                              //       <div className="text-xs">
-                              //         {value.plan == "Monthly"
-                              //           ? `Billed monthly.`
-                              //           : `Billed annually.`}
-                              //       </div>
-                              //       <div className="space-y-3 m-3">
-                              //         {value.description.map((val, index) => (
-                              //           <li className="text-xs" key={index}>
-                              //             {val}
-                              //           </li>
-                              //         ))}
-                              //       </div>
-                              //     </div>
-                              //     <div className="flex items-end ">
-                              //       <button
-                              //         onClick={() => subscribe(value._id)}
-                              //         type="button"
-                              //         className="w-full bg-teal-500 hover:bg-teal-500 text-white"
-                              //       >
-                              //         Start Subscription
-                              //       </button>
-                              //     </div>
-                              //   </div>
-                              // </div>
                             ))}
                           </div>
                         </SheetContent>

@@ -116,8 +116,8 @@ const PlayCourse = () => {
       body: {},
       onSuccess: async (res) => {
         setCourse(res.course);
-        setLecture(res.course.sections[0].lectures[0]);
-        setChapter(res.course.sections[0].lectures[0].content.video_url);
+        setLecture(res.course.sections.sections[0].lectures[0]);
+        setChapter(res.course.sections.sections[0].lectures[0].content.video_url);
         doRequest({
           url: `${userRoutes.report}/${userId}/${courseId}`,
           method: "get",

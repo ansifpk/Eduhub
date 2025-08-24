@@ -1,10 +1,8 @@
-import { isAuth } from "../middlewares/auth";
 import { userController } from "./injections/injection";
 import { Router } from "express";
 
 export function UserRoute(router: Router) {
   router.post("/register", async (req, res, next) => {
-   
     userController.signUp(req, res, next);
   });
   router.post("/createUser", async (req, res, next) => {
@@ -16,9 +14,6 @@ export function UserRoute(router: Router) {
   router.post("/googleLogin", async (req, res, next) => {
     userController.googleLogin(req, res, next);
   });
-  router.patch("/editUser",isAuth, async (req, res, next) => {    
-    userController.editUser(req, res, next);
-  });
   router.post("/resentOtp", async (req, res, next) => {
     userController.resentOtp(req, res, next);
   });
@@ -29,7 +24,7 @@ export function UserRoute(router: Router) {
     userController.resetPassword(req, res, next);
   });
   router.post("/verifyOtp", async (req, res, next) => {
-    userController.verifyOtp(req, res, next);
+     userController.verifyOtp(req, res, next);
   });
   router.post("/newPassword", async (req, res, next) => {
     userController.changePassword(req, res, next);

@@ -46,7 +46,6 @@ export class UserController{
       const {customerId} = req.params;
       const sessionId =  await this.userUseCase.subscriptionDetailes(customerId,next)
       if (sessionId) {
-         console.log(sessionId)
           res.send({success:true, url:sessionId });
         }
       } catch (error) {

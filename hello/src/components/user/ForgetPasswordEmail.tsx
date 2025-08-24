@@ -6,6 +6,7 @@ import {
   type ForgetPasswordFormInputs,
 } from "@/util/schemas/forgetPasswordScheema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -88,22 +89,20 @@ const ForgetPasswordEmail:React.FC<Props> = ({handlePage,handleEmail}) => {
                     disabled={loading ? true : false}
                   >
                     {loading ? (
-                      <>
-                        Loging...
-                        <i className="bi bi-arrow-repeat  animate-spin"></i>
-                      </>
-                    ) : (
-                      "Confirm"
-                    )}
+                          <div className="flex justify-center-safe items-center-safe">
+                            Loading...
+                            <Loader2 className="mr-3 h-4 w-4 animate-spin" />
+                          </div>
+                        ) : (
+                          "Confirm"
+                        )}
+                    
                   </button>
                 </div>
               </form>
             </CardContent>
           </Card>
-          <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
-            By clicking continue, you agree to our{" "}
-            <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
-          </div>
+          
         </div>
       </div>
     </div>

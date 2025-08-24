@@ -45,6 +45,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loadStripe } from "@stripe/stripe-js";
 import type { IUserProfile } from "@/@types/userProfile";
+import { CheckIcon } from "lucide-react";
 const stripe = await loadStripe(import.meta.env.VITE_PUBLISH_SECRET);
 
 const labels: { [index: string]: string } = {
@@ -106,7 +107,6 @@ const InstructorProfile = () => {
       method: "get",
       body: {},
       onSuccess: (res) => {
-        console.log(res.courses);
         setCourses(res.courses);
       },
     });
@@ -131,13 +131,11 @@ const InstructorProfile = () => {
       method: "get",
       body: {},
       onSuccess: (res) => {
-        console.log("subscriptuin", res.subscriptions);
-
         setSubscriptions(res.subscriptions);
       },
     });
     doRequest({
-      url: `${userRoutes.plans}/${userId}`,
+      url: `${userRoutes.subscribe}/${userId}`,
       method: "get",
       body: {},
       onSuccess: (res) => {
@@ -145,7 +143,6 @@ const InstructorProfile = () => {
       },
     });
   }, [instructorId]);
-
   useEffect(() => {
     err?.map((err) => toast.error(err.message));
   }, [err]);
@@ -243,7 +240,8 @@ const InstructorProfile = () => {
       },
     });
   };
-
+  console.log(reviews);
+  console.log(reviews.find((rev) => rev.userId._id == userId));
   useEffect(() => {
     err?.map((err) => toast.error(err.message));
   }, [err]);
@@ -853,6 +851,7 @@ const InstructorProfile = () => {
                             </DialogTitle>
                           </Dialog>
                         </span>
+
                         <span className="text-indigo-500 underline font-semibold ">
                           <Dialog
                             open={addOpenAlert}
@@ -872,6 +871,11 @@ const InstructorProfile = () => {
                                   course.students.some(
                                     (stu) => stu._id == userId
                                   )
+                                ) ||
+                                plans.some(
+                                  (sub) =>
+                                    sub.subscriptionId.instructorId._id ==
+                                    instructorId
                                 ) ? (
                                   <DialogTrigger
                                     className="cursor-pointer underline"
@@ -983,154 +987,108 @@ const InstructorProfile = () => {
                   <ScrollArea>
                     <div className="relative flex">
                       <div className="flex  mx-5 my-4 gap-3 m-auto ">
-                        {subscriptions.map((value, index) => (
+                        {
+                          subscriptions.length > 0 ? (
+                             <>
+                               {subscriptions.map((value) => (
                           <div
-                            key={index}
-                            className="border w-full h-[273px] rounded border-teal-500"
+                            key={value._id}
+                            className={
+                              "relative bg-teal-500 shadow-2xl rounded-3xl p-8 border-1 border-gray-900/10 sm:p-10 "
+                            }
                           >
-                            <strong>Personal Plan</strong>
-                            <div>
-                              <div className="flex flex-col items-center justify-center h-[210px]">
-                                <div>
-                                  {value.plan == "Monthly"
-                                    ? `Rs : ${value.price}/- per Month`
-                                    : `Rs : ${value.price}/- per Year`}
-                                </div>
-                                <div className="text-xs">
-                                  {value.plan == "Monthly"
-                                    ? `Billed monthly.`
-                                    : `Billed annually.`}
-                                </div>
-                                <div className="space-y-3 m-3">
-                                  {value.description.map((val, index) => (
-                                    <li className="text-xs" key={index}>
-                                      {val}
-                                    </li>
-                                  ))}
-                                </div>
-                              </div>
+                            <h3
+                              className={"text-base/7 font-semibold text-white"}
+                            >
+                              {value.plan == "Monthly"
+                                ? `Monthly Plan`
+                                : `Yearly Plan.`}
+                            </h3>
+                            <p className="mt-4 flex items-baseline gap-x-2">
+                              <span
+                                className={
+                                  "text-white text-5xl font-semibold tracking-tight"
+                                }
+                              >
+                                {value.price}
+                              </span>
+                              <span className={"text-white text-base"}>
+                                /
+                                {value.plan == "Monthly" ? `monthly` : `yearly`}
+                              </span>
+                            </p>
 
-                              <div className="flex justify-end">
-                                {plans.length > 0 ? (
-                                  (() => {
-                                    let customerId: string;
-                                    const isSubscribed = subscriptions.some(
-                                      (sub) =>
-                                        plans.some((plan) => {
-                                          if (
-                                            sub._id === plan.subscriptionId._id
-                                          ) {
-                                            customerId = plan.customerId;
-                                            return true;
-                                          }
-                                        })
-                                    );
-                                    return isSubscribed ? (
-                                      <button
-                                        type="button"
-                                        onClick={() => goToDetailes(customerId)}
-                                        className="w-full bg-teal-500  hover:bg-teal-300 text-white  font-semibold py-2 rounded cursor-pointer"
-                                      >
-                                        View detailes
-                                      </button>
-                                    ) : (
-                                      <button
-                                        onClick={() => subscribe(value._id)}
-                                        type="button"
-                                        className="w-full bg-teal-500  font-bold py-2 rounded cursor-pointer hover:bg-teal-500 text-white"
-                                      >
-                                        Start Subscription
-                                      </button>
-                                    );
-                                  })()
+                            <ul
+                              role="list"
+                              className={
+                                "mt-8 space-y-3 text-sm/6 sm:mt-10 text-white"
+                              }
+                            >
+                              {value.description.map((feature) => (
+                                <li key={feature} className="flex gap-x-3">
+                                  <CheckIcon
+                                    aria-hidden="true"
+                                    className={
+                                      "h-6 w-5 flex-none text-teal-400"
+                                    }
+                                  />
+                                  {feature}
+                                </li>
+                              ))}
+                            </ul>
+                            {plans.length > 0 ? (
+                              (() => {
+                                let customerId: string;
+                                const isSubscribed = subscriptions.some((sub) =>
+                                  plans.some((plan) => {
+                                    if (sub._id === plan.subscriptionId._id) {
+                                      customerId = plan.customerId;
+                                      return true;
+                                    }
+                                  })
+                                );
+                                return isSubscribed ? (
+                                  <button
+                                    type="button"
+                                    onClick={() => goToDetailes(customerId)}
+                                    className={"mt-8 block rounded-md px-3.5 py-2.5 cursor-pointer text-center text-sm font-semibold w-full focus-visible:outline-2 focus-visible:outline-offset-2 sm:mt-10 bg-teal-500 text-white shadow-xs hover:bg-teal-400 focus-visible:outline-teal-500"}>
+                                    View detailes
+                                  </button>
                                 ) : (
-                                  <>
-                                    <button
-                                      onClick={() => subscribe(value._id)}
-                                      type="button"
-                                      className="w-full bg-teal-500 py-2 rounded cursor-pointer hover:bg-teal-500 text-white"
-                                    >
-                                      Start Subscription
-                                    </button>
-                                  </>
-                                )}
-                              </div>
-                            </div>
+                                  <button
+                                    onClick={() => subscribe(value._id)}
+                                    type="button"
+                                    className={
+                                "mt-8 block rounded-md px-3.5 py-2.5 cursor-pointer text-center text-sm font-semibold focus-visible:outline-2  w-full focus-visible:outline-offset-2 sm:mt-10 bg-teal-500 text-white shadow-xs hover:bg-teal-400 focus-visible:outline-teal-500"
+                              }
+                                  >
+                                    Start Subscription
+                                  </button>
+                                );
+                              })()
+                            ) : (
+                              <>
+                                <button
+                                  onClick={() => subscribe(value._id)}
+                                  type="button"
+                                  className={
+                                "mt-8 block rounded-md w-full px-3.5 py-2.5 cursor-pointer text-center text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 sm:mt-10 bg-teal-500 text-white shadow-xs hover:bg-teal-400 focus-visible:outline-teal-500"
+                              }
+                                >
+                                  Start Subscription
+                                </button>
+                              </>
+                            )}
+                       
                           </div>
-                          // <div
-                          //   key={index}
-                          //   className="border w-full h-[300px] rounded border-teal-500"
-                          // >
-                          //   <h4 className=" underline text-center">
-                          //     Personal Plan
-                          //   </h4>
-                          //   <div className="  m-1">
-                          //     <div className="flex flex-col items-center justify-center h-[210px]">
-                          //       <div>
-                          //         {value.plan == "Monthly"
-                          //           ? `Rs : ${value.price}/- per Month`
-                          //           : `Rs : ${value.price}/- per Year`}
-                          //       </div>
-                          //       <div className="text-xs">
-                          //         {value.plan == "Monthly"
-                          //           ? `Billed monthly.`
-                          //           : `Billed annually.`}
-                          //       </div>
-                          //       <div className="space-y-3 m-3">
-                          //         {value.description.map((val, index) => (
-                          //           <li className="text-xs" key={index}>
-                          //             {val}
-                          //           </li>
-                          //         ))}
-                          //       </div>
-                          //     </div>
-
-                          // {plans.length > 0 ? (
-                          //   (() => {
-                          //     let customerId: string;
-                          //     const isSubscribed = subscriptions.some(
-                          //       (sub) =>
-                          //         plans.some((plan) => {
-                          //           if (
-                          //             sub._id === plan.subscriptionId._id
-                          //           ) {
-                          //             customerId = plan.customerId;
-                          //             return true;
-                          //           }
-                          //         })
-                          //     );
-                          //     return isSubscribed ? (
-                          //       <button
-                          //         type="button"
-                          //         onClick={() => goToDetailes(customerId)}
-                          //         className="w-full bg-teal-500 hover:bg-teal-300 text-white font-semibold cursor-pointer py-2 rounded"
-                          //       >
-                          //         View detailes
-                          //       </button>
-                          //     ) : (
-                          //       <button
-                          //         onClick={() => subscribe(value._id)}
-                          //         type="button"
-                          //         className="w-full bg-teal-500 hover:bg-teal-500 text-white"
-                          //       >
-                          //         Start Subscription
-                          //       </button>
-                          //     );
-                          //   })()
-                          // ) : (
-                          //   <>
-                          //     <button
-                          //       onClick={() => subscribe(value._id)}
-                          //       type="button"
-                          //       className="w-full bg-teal-500 hover:bg-teal-500 text-white"
-                          //     >
-                          //       Start Subscription
-                          //     </button>
-                          //   </>
-                          // )}
-                          //   </div>
-                          // </div>
                         ))}
+                             </>
+                          ):(
+                              <>
+                               No subscriptions for this instructor
+                              </>
+                          )
+                        }
                       </div>
                     </div>
                     <ScrollBar orientation="horizontal" />

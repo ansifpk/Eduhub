@@ -18,12 +18,15 @@ export class WebhookController {
       if (!sig) {
         throw new BadRequestError("missing stripe signature");
       }
+
       const event = stripe.webhooks.constructEvent(
         req.body,
         sig,
         enpointSeceret
-      );
-      await this.webhookUseCase.webHook(event, next);
+      ); 
+      if(event){
+        await this.webhookUseCase.webHook(event, next);
+      }
     } catch (error) {
       console.error(error);
     }

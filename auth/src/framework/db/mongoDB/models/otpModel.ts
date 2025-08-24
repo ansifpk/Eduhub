@@ -14,6 +14,6 @@ const OtpSchema: Schema<Iotp> = new mongoose.Schema({
         }
     }
  })
-OtpSchema.index({ createdAt: 1 }, { expireAfterSeconds: 120  });
+OtpSchema.index({ createAt: 1 }, { expireAfterSeconds: 120  });
 const otpModel: Model<Iotp> = mongoose.model('otp', OtpSchema);
 export default otpModel;

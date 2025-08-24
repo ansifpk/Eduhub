@@ -57,7 +57,7 @@ const Courses = () => {
       });
   
       doRequest({
-        url:`${userRoutes.plans}/${userId}`,
+        url:`${userRoutes.subscribe}/${userId}`,
         method:"get",
         body:{},
         onSuccess:(data)=>{

@@ -5,17 +5,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger } from "../ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import userRoutes from "@/service/endPoints/userEndPoints";
 import useRequest from "@/hooks/useRequest";
-import { removeUser } from "@/redux/authSlice";
+import { changeImage, removeUser } from "@/redux/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import type { IUser } from "@/@types/userType";
 
 const Header = () => {
   const [open, setOpen] = useState(false);
   const userId = useSelector((state: IUser) => state._id);
-  const [image, setImage] = useState("");
   const { doRequest, err } = useRequest();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const image = useSelector((state:{ [key: string]: string })=>state.image);
 
   const handleLogout = async () => {
     await doRequest({
@@ -24,7 +24,7 @@ const Header = () => {
       body: {},
       onSuccess: () => {
         dispatch(removeUser());
-        toast.success("Logou Successfully");
+        toast.success("Logout Successfully");
         return navigate("/signIn");
       },
     });
@@ -37,7 +37,7 @@ const Header = () => {
         method: "get",
         body: {},
         onSuccess: (res) => {
-          setImage(res.userData.avatar.avatar_url);
+          dispatch(changeImage(res.userData.avatar.avatar_url))
         },
       });
     }

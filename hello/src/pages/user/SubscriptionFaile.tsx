@@ -1,7 +1,7 @@
 import React from "react"
 import { NavLink } from "react-router-dom"
 
-const Faile = () => {
+const SubscriptionFaile = () => {
   return (
       <div className="w-full">
         <div className="h-screen flex items-center justify-center ">
@@ -9,14 +9,14 @@ const Faile = () => {
             <i className="text-9xl  bi bi-x-lg text-red-600"></i>
             <h1 className="text-red-600 font-extrabold underline">
               {" "}
-               Failed to puchase course
+               Failed to puchase subscription
             </h1>
             <p>
               <NavLink
                 className="font-extrabold underline"
-                to={"/user/profile/course"}
+                to={"/user/profile/plan"}
               >
-                See your orders
+                See your Plans
               </NavLink>
             </p>
           </div>
@@ -25,4 +25,4 @@ const Faile = () => {
   )
 }
 
-export default React.memo(Faile)
+export default React.memo(SubscriptionFaile)

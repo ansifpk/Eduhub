@@ -110,7 +110,7 @@ const Cart = () => {
             onClick={() => navigate("/user/courses")}
             className="text-indigo-700 cursor-pointer underline font-bold"
           >
-            purchase course
+            Go to course page
           </button>
         </div>
       ) : (
@@ -233,111 +233,5 @@ const Cart = () => {
 
 export default Cart;
 
-{
-  /* <div className={"container mx-auto"}>
-       <Header />
-      <div className={`container`} >
-        {cart?.courses?.length! > 0 ? (
-          <div className=" w-full flex justify-center mt-16 md:gap-2 sm:gap-3 gap-1 md:pt-3 sm:pt-3 flex-1">
-            <div className="md:w-[500px] sm:w-72 w-7/12 pl-1 space-y-2 ">
-              {cart?.courses.map((value, index) => (
-                <div
-                  key={index}
-                  className="border-1 rounded shadow-lg flex gap-5"
-                >
-                  <div>
-                    <img
-                      src={value.image.image_url}
-                      alt={value.title}
-                      className="sm:h-[100px] sm:w-[100px] md:h-[120px] md:w-[200px] w-[100px] h-[60px] object-fill border m-1 rounded-2"
-                    />
-                  </div>
-                  <div className="w-full flex justify-between">
-                    <div>
-                      <span className="pl-1 font-medium">{value.title}</span>
-
-                      <p className="md:text-base sm:text-[8px] text-[6px]">
-                        Category: {value.category}
-                      </p>
-                      <p className="font-medium md:text-sm sm:text-[8px] text-[6px] text-muted-foreground">
-                        Topic: {value.subCategory}
-                      </p>
-                      <p className="font-medium md:text-sm sm:text-[8px] text-[6.5px] text-muted-foreground">
-                        Instructor: {value.instructorId.name}
-                      </p>
-                      <p className="font-medium md:text-xs md:text-[8px] text-[6.5px] text-muted-foreground">
-                        Price: {value.price}
-                      </p>
-                    </div>
-                    <i
-                      className="bi bi-x-lg"
-                      // onClick={() => handleCart(value._id)}
-                    ></i>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="md:w-50 sm:w-48 w-40 h-[200px] bg-green-50 rounded-2 border shadow-lg p-1">
-              <span className="font-medium md:text-xs text-[12px] text-muted-foreground">
-                Sub total: {subTotal}
-              </span>
-          
-              <span className="font-medium md:text-xs sm:text-xs text-[12px] text-muted-foreground">
-                Coupon Discount: {discount}
-              </span>
-            
-              <span className="font-medium md:text-xs sm:text-xs text-[12px]">
-                Total: {total}
-              </span>
-
-              <div className="flex my-2 gap-2">
-                <input
-                  type="text"
-                  className="md:w-full sm:w-28 w-20 text-xs"
-                  maxLength={10}
-                  value={couponCode}
-                  // onChange={(e) => {
-                  //   let value = e.target.value.trim();
-                  //   if (value.length == 0) {
-                  //     setSubTotal((prev) => prev + discount);
-                  //     setTotal((prev) => prev + discount);
-                  //     SetDiscount(0);
-                  //     setCouponCode("");
-                  //   }
-                  //   setCouponCode(value);
-                  // }}
-                  placeholder="Enter coupon code"
-                />
-                <Button
-                  size={"sm"}
-                  className="md:text-sm sm:text-xs text-[12px]"
-                  type="button"
-                  disabled={!couponCode}
-                  // onClick={() => (discount ? removeCoupon() : applyCoupon())}
-                >
-                  {discount ? "Remove" : "Apply"}
-                </Button>
-              </div>
-              <Button
-                //   onClick={handleOrder}
-                className="w-full bg-teal-400 hover:bg-teal-600 cursor-pointer"
-              >
-                Purchase
-              </Button>
-            </div>
-          </div>
-        ) : (
-          <div className="h-full flex justify-center items-center flex-1">
-            <Card className="w-4/5 sm:w-1/2 h-[200px] flex justify-center items-center">
-              <CardContent>
-                <CardDescription>No courses in Cart</CardDescription>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-      </div> 
-       <Footer />
-     </div> */
-}
 
 

@@ -125,7 +125,7 @@ export class UserController{
                _id: user._id,
                avatar: user.avatar
             });
-            return res.send({success:true,user})
+            return res.send({success:true,image:user.avatar.avatar_url})
           }
       } catch (error) {
          console.error(error)

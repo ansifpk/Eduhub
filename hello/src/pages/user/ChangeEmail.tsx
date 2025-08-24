@@ -35,6 +35,7 @@ import { otpScheema, type OtpFormInputs } from "@/util/schemas/otpScheema";
 import { Button } from "@/components/ui/button";
 import { changeEmail } from "@/redux/authSlice";
 import { useNavigate } from "react-router-dom";
+import { Loader2 } from "lucide-react";
 
 const ChangeEmail = () => {
   const [second, setSecond] = useState(59);
@@ -50,6 +51,7 @@ const ChangeEmail = () => {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<ChageEmailFormInputs>({
     resolver: zodResolver(changeEmailSchema),
@@ -91,22 +93,24 @@ const ChangeEmail = () => {
       body: { email: data.email },
       method: "post",
       onSuccess: () => {
+        setLoading(false);
         setSecond(59);
         setMinute(1);
         setEmail(data.email)
-        setLoading(false);
         setOtpOpen(true);
       },
     });
   };
   const updateEmail = (data:OtpFormInputs) => {
+      setLoading(true);
+     
       doRequest({
         url:`${userRoutes.changeEmail}/${userId}`,
-        body:{email,otp:data.otp},
+        body:{email:watch("email"),otp:data.otp},
         method:"patch",
         onSuccess:(response)=>{
           setOtpOpen(false);
-          console.log(response.user)
+          setLoading(false);
           dispatch(changeEmail(response.user.email))
           toast.success("Email chnaged successfully")
           return navigate("/user/profile");
@@ -121,7 +125,7 @@ const ChangeEmail = () => {
       method:"post",
       body:{email:email},
       onSuccess:()=>{
-        setResendLoading(true)
+        setResendLoading(false)
         setSecond(59);
         setMinute(1);
         toast.success("Resnt OTP Sent to Your Mail")
@@ -131,6 +135,7 @@ const ChangeEmail = () => {
 
   useEffect(() => {
     setLoading(false);
+    setResendLoading(false);
     err?.map((err) => toast.error(err.message));
   }, [err]);
 
@@ -166,22 +171,26 @@ const ChangeEmail = () => {
                       className="border py-1 rounded-full px-2 border-teal-300"
                     />
                   </div>
-                  <button
+                  
+                </div>
+              </form>
+              <div className="flex gap-2 p-2">
+                  <button type="button" onClick={()=>navigate(-1)} className={`w-full bg-teal-400 flex items-center justify-center-safe hover:bg-teal-400 rounded p-2 text-white font-semibold cursor-pointer`} >
+                    cancell
+                  </button>
+                    <button
                     type="submit"
-                    className={`w-full bg-teal-400 hover:bg-teal-400 rounded p-2 text-white font-semibold cursor-pointer`}
+                    onClick={()=>handleSubmit(handleEmail)()}
+                    className={`w-full bg-teal-400 flex items-center justify-center-safe hover:bg-teal-400 rounded p-2 text-white font-semibold cursor-pointer`}
                     disabled={loading ? true : false}
                   >
                     {loading ? (
-                      <>
-                        Loging...
-                        <i className="bi bi-arrow-repeat  animate-spin"></i>
-                      </>
+                      <><span>Loading...</span><Loader2 className="ml-3 h-5 w-5 animate-spin" /></>
                     ) : (
                       "Confirm"
                     )}
                   </button>
-                </div>
-              </form>
+                  </div>
             </CardContent>
           </Card>
 
@@ -194,10 +203,9 @@ const ChangeEmail = () => {
             <form>
               <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                  <DialogTitle>Edit profile</DialogTitle>
+                  <DialogTitle></DialogTitle>
                   <DialogDescription>
-                    Make changes to your profile here. Click save when
-                    you&apos;re done.
+                   
                   </DialogDescription>
                 </DialogHeader>
                 <Card>
@@ -282,7 +290,7 @@ const ChangeEmail = () => {
                                     <i className="bi bi-arrow-repeat animate-spin"></i>
                                   </>
                                 ) : (
-                                  "Resend OTP"
+                                  `Resend OTP ${resendLoading}`
                                 )}
                               </Button>
                             )}
@@ -291,15 +299,15 @@ const ChangeEmail = () => {
                               disabled={
                                 loading || (minutes == 0 && second == 0)
                               }
-                              className="w-full bg-teal-500 hover:bg-teal-300 text-white"
+                              className="w-full bg-teal-500 cursor-pointer hover:bg-teal-300 text-white"
                             >
                               {loading ? (
                                 <>
-                                  Verifying...
+                                  Loading...
                                   <i className="bi bi-arrow-repeat animate-spin"></i>
                                 </>
                               ) : (
-                                "Verify"
+                                `Verify`
                               )}
                             </Button>
                           </div>

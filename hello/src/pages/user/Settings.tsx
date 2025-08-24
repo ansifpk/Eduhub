@@ -75,7 +75,7 @@ const Settings = () => {
         <main className="w-full flex justify-center items-center md:p-8 p-2">
           <form
             onSubmit={handleSubmit(handleEdit)}
-            className="flex flex-col justify-center items-center space-y-5 w-[80%]"
+            className="flex flex-col justify-center items-center space-y-5 w-[80%] "
           >
             <h3>Reset your password</h3>
             <div className="grid space-y-2 ">
@@ -197,7 +197,6 @@ const Settings = () => {
               </AlertDialogContent>
             </AlertDialog>
           </form>
-          
         </main>
       </div>
       <Footer />

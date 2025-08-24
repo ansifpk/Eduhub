@@ -8,12 +8,10 @@ import userRoutes from '@/service/endPoints/userEndPoints'
 import React, { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
 
 const Coupon = () => {
 
   const [coupons,setCoupons] = useState<ICoupon[]>([]);
-  const navigate = useNavigate();
   const userId = useSelector((state:IUser)=>state._id);
   const date = new Date();
 
@@ -127,13 +125,8 @@ const Coupon = () => {
             ))
           ) : (
             <div className="h-[60vh] flex justify-center items-center gap-5 ">
-              <strong>No course purchased yet</strong>
-              <button
-                onClick={() => navigate("/user/courses")}
-                className="text-indigo-700 cursor-pointer underline font-bold"
-              >
-                Purchase course
-              </button>
+              <strong>No coupons available</strong>
+             
             </div>
           )}
         </main>

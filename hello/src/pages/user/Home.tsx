@@ -6,8 +6,7 @@ import Forstudents from "../../assets/home-page/studnet.jpg";
 import Forteachers from "../../assets/home-page/teacher-home.jpg";
 
 const Home = () => {
-  console.log("home");
-  
+
     const navigate = useNavigate() 
   return (
     <div>
@@ -19,7 +18,7 @@ const Home = () => {
             <p className="font-bold text-5xl text-white">
               Studying Online is now much easier
             </p>
-            <Button type='button' onClick={() => navigate("/users/courses")} className={"bg-gray-500/50 text-white mt-5"}>
+            <Button type='button' onClick={() => navigate("/user/courses")} className={"bg-gray-500/50 text-white mt-5"}>
            Join Free
           </Button>
         

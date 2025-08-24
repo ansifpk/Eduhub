@@ -14,7 +14,7 @@ import {
   profileSchema,
   type ProfileFormInputs,
 } from "@/util/schemas/profileScheema";
-import { profileUpdated } from "@/redux/authSlice";
+import { changeImage, profileUpdated } from "@/redux/authSlice";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,6 +27,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useNavigate } from "react-router-dom";
+import { Loader2 } from "lucide-react";
 
 const Profile = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -36,7 +37,8 @@ const Profile = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState("");
   const [edit, setEdit] = useState(false);
-  // const [loading,setLoading] = useState(false);
+  const [imageLoading, setImageLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [image, setImage] = useState({
     id: "" as string,
     avatar_url: "" as string | File,
@@ -72,18 +74,19 @@ const Profile = () => {
         });
       },
     });
-  }, [userId,edit]);
+  }, [userId, edit]);
 
-  const changeImage = async (file: File) => {
+  const changeProfile = async (file: File) => {
     const formData = new FormData();
     formData.append("profileImage", file);
-    // setLoading(true);
+    setImageLoading(true);
     doRequest({
       url: `${userRoutes.profileImage}/${userId}`,
       method: "patch",
       body: formData,
-      onSuccess: () => {
-        // setLoading(false);
+      onSuccess: (res) => {
+        dispatch(changeImage(res.image));
+        setImageLoading(false);
         setFileToBase(file);
         toast.success("Successfully updated your profile...");
       },
@@ -104,6 +107,7 @@ const Profile = () => {
   };
 
   const handleEdit = (data: ProfileFormInputs) => {
+    setLoading(true)
     doRequest({
       url: `${userRoutes.editUser}/${userId}`,
       body: {
@@ -114,6 +118,7 @@ const Profile = () => {
       method: "patch",
       onSuccess: (response) => {
         setEdit(!edit);
+        setLoading(false)
         toast.success("Profile updated succesffuly");
         dispatch(profileUpdated(response.user.name));
       },
@@ -125,7 +130,8 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    // setLoading(false);
+    setLoading(false);
+    setImageLoading(false);
     err?.map((err) => toast.error(err.message));
   }, [err]);
 
@@ -155,20 +161,26 @@ const Profile = () => {
                       if (e.target.files) {
                         if (e.target.files[0]) {
                           const val = e.target.files[0];
-                          changeImage(val);
+                          changeProfile(val);
                         }
                       }
                     }}
                     className="hidden"
                   />
 
-                  <div
+                  <button
                     onClick={handleButtonClick}
-                    className="cursor-pointer rounded-lg bg-teal-500 text-center text-white md:text-sm text-xs md:px-3 px-2 py-1 rounded-2 "
+                    disabled={imageLoading}
+                    className={`${
+                      imageLoading ? "" : "cursor-pointer"
+                    } rounded-lg bg-teal-500 text-center text-white md:text-sm text-xs md:px-3 px-2 py-1 rounded-2 `}
                   >
                     change profile
-                  </div>
-                  <div onClick={()=>navigate("/user/changeEmail")} className="cursor-pointer rounded-lg text-center bg-teal-500 text-white md:text-sm text-xs md:px-3 px-2 py-1 rounded-2 ">
+                  </button>
+                  <div
+                    onClick={() => navigate("/user/changeEmail")}
+                    className="cursor-pointer rounded-lg text-center bg-teal-500 text-white md:text-sm text-xs md:px-3 px-2 py-1 rounded-2 "
+                  >
                     change email
                   </div>
                 </div>
@@ -254,13 +266,23 @@ const Profile = () => {
                   )}
 
                   <AlertDialog>
-                    <AlertDialogTrigger
-                      type="button"
-                      className={`m-2 cursor-pointer  py-2 px-4 text-white rounded font-semibold text-xs bg-teal-500 hover:bg-teal-300 ${
-                        edit ? "block" : "hidden"
-                      }`}
-                    >
-                      Save
+                    <AlertDialogTrigger asChild>
+                      <button
+                        disabled={loading}
+                        className={`m-2 ${loading?"bg-teal-300":'cursor-pointer hover:bg-teal-300 bg-teal-500'} flex  py-2 px-4 text-white rounded font-semibold text-xs   ${
+                          edit ? "block" : "hidden"
+                        }`}
+                        type="button"
+                      >
+                        {
+                          loading?
+                          
+                            <><span>Loading...</span><Loader2 className="ml-3 h-5 w-5 animate-spin" /></>
+                          
+                          :"save"
+                        }
+                        
+                      </button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>

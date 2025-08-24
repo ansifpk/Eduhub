@@ -75,7 +75,6 @@ const Message = () => {
     });
   }, [socket]);
 
-
   //*get messages
   useEffect(() => {
     if (!socket) return;
@@ -85,8 +84,8 @@ const Message = () => {
         (value) => value._id !== userId
       );
       if (chatUser?._id !== message.senderId) return;
-      socket.emit(`seenMessage${message.senderId}`)
-      setMessages((prev)=>[...prev,{...message}]);
+      socket.emit(`seenMessage${message.senderId}`);
+      setMessages((prev) => [...prev, { ...message }]);
     });
 
     socket.on("getMessageNotification", (res) => {
@@ -110,7 +109,6 @@ const Message = () => {
     });
     socket.on(`seenMessage${userId}`, () => {
       console.log("success");
-      
     });
 
     return () => {
@@ -128,7 +126,7 @@ const Message = () => {
     const recipientId = currentChat?.members.find(
       (value) => value._id !== userId
     );
-    if(newMessage.length == 0) return;
+    if (newMessage.length == 0) return;
     socket.emit("sendMessage", {
       text: newMessage,
       recipientId: recipientId?._id,
@@ -174,9 +172,7 @@ const Message = () => {
   //* seenMsg
 
   useEffect(() => {
-    
     if (chatId && currentChat) {
-      
       socket?.emit("seenMsg", {
         senter: currentChat.members.find((mem) => mem._id !== userId)?._id,
       });
@@ -217,7 +213,6 @@ const Message = () => {
     err?.map((err) => toast.error(err.message));
   }, [err]);
 
-
   return (
     <div>
       <Header />
@@ -232,10 +227,12 @@ const Message = () => {
                   <PopoverTrigger asChild>
                     <div className="relative flex">
                       <BellIcon className="text-white" />
-                      <span className="relative flex size-3">
+                      {
+                        notifications.length > 0 &&<span className="relative flex size-3">
                         <span className="absolute right-3 inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
                         <span className="relative right-3 inline-flex size-3 rounded-full bg-green-500"></span>
                       </span>
+                      }
                     </div>
                   </PopoverTrigger>
                   <PopoverContent>
@@ -334,71 +331,80 @@ const Message = () => {
             </div>
             <div className="flex gap-1">
               <ScrollArea className="w-[35%] border-2  h-[60vh]">
-                {chats.map((chat) => {
-                  let count = 0;
-                  const otherUser = chat.members.find(
-                    (usr) => usr._id !== userId
-                  );
-                  count = notifications.filter(
-                    (not) => not.senderId === otherUser?._id
-                  ).length;
+                {chats.length > 0 ? (
+                  <>
+                    {chats.map((chat) => {
+                      let count = 0;
+                      const otherUser = chat.members.find(
+                        (usr) => usr._id !== userId
+                      );
+                      count = notifications.filter(
+                        (not) => not.senderId === otherUser?._id
+                      ).length;
 
-                  return (
-                    <div
-                      key={chat._id}
-                      onClick={async () => {
-                        searchParams.set("chatId", chat._id);
-                        setSearchParams(searchParams);
-                        let id = chat.members.find(
-                          (member) => member._id !== userId
-                        )?._id;
-                        markAsRead(id!);
-                      }}
-                      className="relative cursor-pointer flex items-center gap-2 p-2 border border-teal-500"
-                    >
-                      <Avatar>
-                        <AvatarImage
-                          src={
-                            chat.members.find((user) => user._id !== userId)
-                              ?.avatar.avatar_url
-                          }
-                        />
-                        <AvatarFallback>
-                          <i className="bi bi-person-circle text-2xl"></i>
-                        </AvatarFallback>
-                      </Avatar>
-                      {onlineUsers.some(
-                        (val) =>
-                          val.userId ==
-                          chat.members.find((user) => user._id !== userId)?._id
-                      ) && (
-                        <span className="relative flex size-3">
-                          <span className="relative right-5 top-3 inline-flex size-2 rounded-full bg-green-500"></span>
-                        </span>
-                      )}
-                      <span className="text-xs font-semibold flex w-full justify-between items-center-safe">
-                        <span>
-                          {" "}
-                          {
-                            chat.members.find((user) => user._id !== userId)
-                              ?.name
-                          }
-                        </span>
-                        {count > 0 && (
-                          <span>
-                            {" "}
-                            <Badge
-                              className="h-5 min-w-5 rounded-full px-1 font-mono tabular-nums bg-teal-500 text-white"
-                              variant="outline"
-                            >
-                              {count > 5 ? "5+" : count}
-                            </Badge>
+                      return (
+                        <div
+                          key={chat._id}
+                          onClick={async () => {
+                            searchParams.set("chatId", chat._id);
+                            setSearchParams(searchParams);
+                            let id = chat.members.find(
+                              (member) => member._id !== userId
+                            )?._id;
+                            markAsRead(id!);
+                          }}
+                          className="relative cursor-pointer flex items-center gap-2 p-2 border border-teal-500"
+                        >
+                          <Avatar>
+                            <AvatarImage
+                              src={
+                                chat.members.find((user) => user._id !== userId)
+                                  ?.avatar.avatar_url
+                              }
+                            />
+                            <AvatarFallback>
+                              <i className="bi bi-person-circle text-2xl"></i>
+                            </AvatarFallback>
+                          </Avatar>
+                          {onlineUsers.some(
+                            (val) =>
+                              val.userId ==
+                              chat.members.find((user) => user._id !== userId)
+                                ?._id
+                          ) && (
+                            <span className="relative flex size-3">
+                              <span className="relative right-5 top-3 inline-flex size-2 rounded-full bg-green-500"></span>
+                            </span>
+                          )}
+                          <span className="text-xs font-semibold flex w-full justify-between items-center-safe">
+                            <span>
+                              {" "}
+                              {
+                                chat.members.find((user) => user._id !== userId)
+                                  ?.name
+                              }
+                            </span>
+                            {count > 0 && (
+                              <span>
+                                {" "}
+                                <Badge
+                                  className="h-5 min-w-5 rounded-full px-1 font-mono tabular-nums bg-teal-500 text-white"
+                                  variant="outline"
+                                >
+                                  {count > 5 ? "5+" : count}
+                                </Badge>
+                              </span>
+                            )}
                           </span>
-                        )}
-                      </span>
-                    </div>
-                  );
-                })}
+                        </div>
+                      );
+                    })}
+                  </>
+                ) : (
+                  <div className="text-center">
+                    <span>you dont have any chats</span>
+                  </div>
+                )}
               </ScrollArea>
               <div className="w-[65%]">
                 {currentChat ? (

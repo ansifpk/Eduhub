@@ -15,7 +15,7 @@ export class WebhookUseCase implements IWebhookUseCase {
   constructor(private webhokkRepository: IWebhookRepository) {}
   async webHook(event: Stripe.Event, next: NextFunction): Promise<void> {
     try {
-  
+      
       const session = event.data.object as Stripe.Checkout.Session;
       const previous = event.data.previous_attributes as any;
       
@@ -24,11 +24,13 @@ export class WebhookUseCase implements IWebhookUseCase {
           
 
           if (session.metadata!.buyer == "instructor") {
-    
+            
              await this.webhokkRepository.createSubscribe(session.metadata!.userId,session.metadata!.subscriptionId,session.metadata!.customerId,session.subscription as string)
           } else if (session.metadata!.buyer == "user") {
+         
              await this.webhokkRepository.createUserSubscribe(session.metadata!.userId,session.metadata!.subscriptionId,session.metadata!.customerId,session.subscription as string)
           } else {
+            
             const courses: ICourse[] = [];
             session.metadata!.courseIds = JSON.parse(
               session.metadata!.courseIds as string
@@ -65,7 +67,7 @@ export class WebhookUseCase implements IWebhookUseCase {
               await new CouponUsedPublisher(
                 kafkaWrapper.producer as Producer
               ).produce({
-                couponId: session.metadata!.couponId,
+                couponId:JSON.parse( session.metadata!.couponId as string),
                 userId: session.metadata!.userId,
               });
             }
