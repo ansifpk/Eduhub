@@ -243,13 +243,13 @@ const InstructorProfile = () => {
   
     const createMessageWithUser = async (recipientId: string) => {
       try {
-        console.log("recipientId",recipientId)
-        return;
+        
         await doRequest({
           url: userRoutes.chat,
           method: "post",
           body: { userId, recipientId, role: "userToInstructor" },
           onSuccess: (response) => {
+            console.log(response,"respnse")
             return navigate(`/user/profile/message?chatId=${response.chat._id}`);
           },
         });
