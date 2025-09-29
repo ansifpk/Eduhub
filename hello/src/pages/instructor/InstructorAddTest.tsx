@@ -194,13 +194,13 @@ const InstructorAddTest = () => {
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
                                   <AlertDialogCancel
-                                    className="bg-purple-600 cursor-pointer text-white"
+                                    className="bg-black cursor-pointer text-white"
                                     type="button"
                                   >
                                     Cancel
                                   </AlertDialogCancel>
                                   <AlertDialogCancel
-                                    className="bg-purple-600 cursor-pointer text-white"
+                                    className="bg-black cursor-pointer text-white"
                                     type="submit"
                                     onClick={() => navigate(-1)}
                                   >
@@ -214,7 +214,7 @@ const InstructorAddTest = () => {
                                 <AlertDialogTrigger asChild>
                                   <button
                                     type="button"
-                                    className="bg-purple-600 cursor-pointer text-white"
+                                    className="bg-black   text-white rounded p-2 font-semibold "
                                     disabled={loading}
                                   >
                                     {loading ? (
@@ -239,13 +239,13 @@ const InstructorAddTest = () => {
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
                                     <AlertDialogCancel
-                                      className="bg-purple-600 cursor-pointer text-white"
+                                      className="bg-black-600 cursor-pointer text-white"
                                       type="button"
                                     >
                                       Cancel
                                     </AlertDialogCancel>
                                     <AlertDialogCancel
-                                     className="bg-purple-600 cursor-pointer text-white"
+                                      className="bg-black-600 cursor-pointer text-white"
                                       type="submit"
                                       onClick={() =>
                                         handleSubmit(handleQuestions)()
