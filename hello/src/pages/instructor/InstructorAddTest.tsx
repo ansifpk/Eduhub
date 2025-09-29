@@ -180,7 +180,7 @@ const InstructorAddTest = () => {
                           </div>
                           <div className="flex justify-center-safe gap-4">
                             <AlertDialog>
-                              <AlertDialogTrigger className="bg-black cursor-pointer text-white rounded p-2 font-semibold">
+                              <AlertDialogTrigger className="bg-black cursor-pointer text-white rounded p-2">
                                 Cancell
                               </AlertDialogTrigger>
                               <AlertDialogContent>
@@ -214,7 +214,7 @@ const InstructorAddTest = () => {
                                 <AlertDialogTrigger asChild>
                                   <button
                                     type="button"
-                                    className="bg-black   text-white rounded p-2 font-semibold "
+                                    className="bg-black text-white rounded p-2 font-semibold"
                                     disabled={loading}
                                   >
                                     {loading ? (
