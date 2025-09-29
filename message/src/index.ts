@@ -45,6 +45,10 @@ app.use(cors({credentials:true,
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.use(cookieParser())
+app.use((req,res,next)=>{
+  console.log("hi")
+  next();
+})
 // Apply the separate routers to different paths
 app.use('/message/chat',chatRouter);
 app.use('/message/message',messageRouter);
@@ -143,7 +147,7 @@ const start = async () => {
         await pictureUpdatedListener.listen();
         await connectDB();
 
-        httpServer.listen(PORT, () => console.log(`the Message server is running in http://localhost:${PORT} for message!!!!!!!!`))
+        httpServer.listen(PORT, () => console.log(`the Message server is running in http://localhost:${PORT} for message!!!!!!!!2`))
     } catch (error) {
         console.error(error);
     }

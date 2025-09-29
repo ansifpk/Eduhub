@@ -75,7 +75,7 @@ export class UseruseCase implements IUserUseCase{
            if(checkChatExists){
             return checkChatExists;
            }
-
+            console.log("finfish")
            const chat = await this.userRepository.create(userId,recipientId,role)
            if(chat){
             const newChat = await this.userRepository.findChat(userId,recipientId);
