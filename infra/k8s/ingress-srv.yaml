@@ -6,7 +6,7 @@ metadata:
     nginx.ingress.kubernetes.io/use-regex: 'true'
     nginx.ingress.kubernetes.io/proxy-body-size: "50m"
     nginx.ingress.kubernetes.io/proxy-buffer-size: '16m'
-    cert-manager.io/cluster-issuer: letsencrypt-prod
+    # cert-manager.io/cluster-issuer: letsencrypt-prod
     nginx.ingress.kubernetes.io/cors-allow-origin: "https://eduhub-s2po.vercel.app,https://api.eduhublearning.online"
     nginx.ingress.kubernetes.io/enable-cors: "true"
     nginx.ingress.kubernetes.io/cors-allow-methods: "GET,POST,PATCH,PUT,DELETE,OPTIONS"
@@ -16,7 +16,7 @@ spec:
   tls:
     - hosts:
         - api.eduhublearning.online
-      secretName: api-eduhub-tls
+      # secretName: api-eduhub-tls
   rules:
     - host: "api.eduhublearning.online"
       http:

@@ -243,6 +243,8 @@ const InstructorProfile = () => {
   
     const createMessageWithUser = async (recipientId: string) => {
       try {
+        console.log("recipientId",recipientId)
+        return;
         await doRequest({
           url: userRoutes.chat,
           method: "post",
