@@ -194,13 +194,13 @@ const InstructorAddTest = () => {
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
                                   <AlertDialogCancel
-                                    className="bg-black cursor-pointer text-white"
+                                    className="bg-black cursor-pointer text-white rounded p-2"
                                     type="button"
                                   >
                                     Cancel
                                   </AlertDialogCancel>
                                   <AlertDialogCancel
-                                    className="bg-black cursor-pointer text-white"
+                                    className="bg-black cursor-pointer text-white rounded p-2"
                                     type="submit"
                                     onClick={() => navigate(-1)}
                                   >
@@ -214,7 +214,7 @@ const InstructorAddTest = () => {
                                 <AlertDialogTrigger asChild>
                                   <button
                                     type="button"
-                                    className="bg-black text-white rounded p-2 font-semibold"
+                                    className="bg-black cursor-pointer text-white rounded p-2"
                                     disabled={loading}
                                   >
                                     {loading ? (
@@ -233,19 +233,18 @@ const InstructorAddTest = () => {
                                       Are you absolutely sure?
                                     </AlertDialogTitle>
                                     <AlertDialogDescription>
-                                      This will hide this course from the users
-                                      of Eduhub
+                                      This will save the dats you provide in our server of Eduhub
                                     </AlertDialogDescription>
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
                                     <AlertDialogCancel
-                                      className="bg-black-600 cursor-pointer text-white"
+                                      className="bg-black cursor-pointer text-white"
                                       type="button"
                                     >
                                       Cancel
                                     </AlertDialogCancel>
                                     <AlertDialogCancel
-                                      className="bg-black-600 cursor-pointer text-white"
+                                      className="bg-black cursor-pointer text-white"
                                       type="submit"
                                       onClick={() =>
                                         handleSubmit(handleQuestions)()
