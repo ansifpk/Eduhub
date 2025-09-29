@@ -92,7 +92,7 @@ const InstructorListCourses = () => {
     if (subscriptions.length > 0) {
       navigate(`/instructor/addTest/${course._id}`);
     } else {
-      navigate("/instructor/purchaseSubscription");
+      navigate("/instructor/plans");
     }
   };
 
