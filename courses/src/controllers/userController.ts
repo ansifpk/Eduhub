@@ -125,6 +125,7 @@ export class UserController {
     const { testId } = req.params;
     const test = await this.userUseCase.getTest(testId, next);
     if (test) {
+      console.log("hi tests",test);
       return res.send({ success: true, test: test });
     }
   }
