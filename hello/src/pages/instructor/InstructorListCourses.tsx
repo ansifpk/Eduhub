@@ -304,15 +304,15 @@ const InstructorListCourses = () => {
                           <DropdownMenuItem
                             onClick={() => {
                               {
-                                course?.test?.length
+                                course?.test
                                   ? navigate(
-                                      `/instructor/editTest/${course?.test[0]._id}`
+                                      `/instructor/editTest/${course?.test._id}`
                                     )
                                   : checkSubscription(course);
                               }
                             }}
                           >
-                            {course?.test?.length ? "Edit Test" : "Add Test"}
+                            {course?.test ? "Edit Test" : "Add Test"}
                             <i className="bi bi-book-fill"></i>
                           </DropdownMenuItem>
                         </DropdownMenuContent>
