@@ -385,49 +385,49 @@ const PlayCourse = () => {
                           <h6 className="font-bold">Tests</h6>
                           <div>
                             {course?.test ? (
-                              // course.test.students.some(
-                              //   (val) => val.user == userId
-                              // ) ? (
-                              //   <div className="flex flex-col w-25 h-[200px] gap-2">
-                              //     <div className="border rounded-2 shadow-lg w-full h-[150px]">
-                              //       <h4 className="font-medium text-sm ">
-                              //         Your Score
-                              //       </h4>
-                              //       <div className="flex h-full w-full items-center justify-center">
-                              //         <h1>
-                              //           {
-                              //             course.test.students.find(
-                              //               (val) => val.user == userId
-                              //             )?.score
-                              //           }
-                              //         </h1>
-                              //       </div>
-                              //     </div>
-                              //     <button
-                              //       disabled
-                              //       className="text-black  shadow-lg bg-teal-300 hover:bg-teal-300 w-full"
-                              //     >
-                              //       Test Attended
-                              //     </button>
-                              //   </div>
-                              // ) : (
-                              //   <div className="flex flex-col w-25 h-[200px] gap-2">
-                              //     <img
-                              //       className="border rounded-2 shadow-lg w-full h-[150px]"
-                              //       src={course.image.image_url}
-                              //     />
-                              //     <button
-                              //       className=" shadow-lg bg-teal-300 hover:bg-teal-300 w-full"
-                              //       onClick={() =>
-                              //         navigate(
-                              //           `/user/assesmentTest/${course.test._id}`
-                              //         )
-                              //       }
-                              //     >
-                                  "  Go to test"
-                              //     </button>
-                              //   </div>
-                              // )
+                              course.test?.students.some(
+                                (val) => val.user == userId
+                              ) ? (
+                                <div className="flex flex-col w-25 h-[200px] gap-2">
+                                  <div className="border rounded-2 shadow-lg w-full h-[150px]">
+                                    <h4 className="font-medium text-sm ">
+                                      Your Score
+                                    </h4>
+                                    <div className="flex h-full w-full items-center justify-center">
+                                      <h1>
+                                        {
+                                          course.test.students.find(
+                                            (val) => val.user == userId
+                                          )?.score
+                                        }
+                                      </h1>
+                                    </div>
+                                  </div>
+                                  <button
+                                    disabled
+                                    className="text-black  shadow-lg bg-teal-300 hover:bg-teal-300 w-full"
+                                  >
+                                    Test Attended
+                                  </button>
+                                </div>
+                              ) : (
+                                <div className="flex flex-col w-25 h-[200px] gap-2">
+                                  <img
+                                    className="border rounded-2 shadow-lg w-full h-[150px]"
+                                    src={course.image.image_url}
+                                  />
+                                  <button
+                                    className=" shadow-lg bg-teal-300 hover:bg-teal-300 w-full"
+                                    onClick={() =>
+                                      navigate(
+                                        `/user/assesmentTest/${course.test._id}`
+                                      )
+                                    }
+                                  >
+                                  Go to test
+                                  </button>
+                                </div>
+                              )
                             )
                              : (
                               "No Tests Available for this Course."

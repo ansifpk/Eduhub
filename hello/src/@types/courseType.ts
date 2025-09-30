@@ -21,7 +21,7 @@ export interface ICourse{
             user:string,
             score:number
         }[],
-    }[],
+    },
     subscription:boolean,
     image:{
         _id:string,
