@@ -1,75 +1,75 @@
 import React, { useEffect, useState } from 'react'
-// import {
-//   Carousel,
-//   CarouselContent,
-//   CarouselItem,
-//   CarouselNext,
-//   CarouselPrevious,
-//   type CarouselApi,
-// } from "@/components/ui/carousel";
-// import { testSchema, type TestFormInputs } from '@/util/schemas/testScheema';
-// import { useForm } from 'react-hook-form';
-// import { zodResolver } from '@hookform/resolvers/zod';
-import {  useParams } from 'react-router-dom';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+  type CarouselApi,
+} from "@/components/ui/carousel";
+import { testSchema, type TestFormInputs } from '@/util/schemas/testScheema';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {  useNavigate, useParams } from 'react-router-dom';
 import useRequest from '@/hooks/useRequest';
-// import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import toast from 'react-hot-toast';
-// import {
-//   AlertDialog,
-//   AlertDialogCancel,
-//   AlertDialogContent,
-//   AlertDialogDescription,
-//   AlertDialogFooter,
-//   AlertDialogHeader,
-//   AlertDialogTitle,
-//   AlertDialogTrigger,
-// } from "@/components/ui/alert-dialog";
-// import { Loader2Icon } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Loader2Icon } from 'lucide-react';
 import userRoutes from '@/service/endPoints/userEndPoints';
 
-// const {
-    // register,
-    // watch,
-    // handleSubmit,
-//     formState: { errors },
-//   } = useForm<TestFormInputs>({
-//     resolver: zodResolver(testSchema),
-//     defaultValues: {
-//       questions: Array.from({ length: 5 }, () => ({
-//         question: "",
-//         option1: "",
-//         option2: "",
-//         option3: "",
-//         option4: "",
-//         answer: "",
-//       })),
-//     },
-//   });
+const {
+    register,
+    watch,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<TestFormInputs>({
+    resolver: zodResolver(testSchema),
+    defaultValues: {
+      questions: Array.from({ length: 5 }, () => ({
+        question: "",
+        option1: "",
+        option2: "",
+        option3: "",
+        option4: "",
+        answer: "",
+      })),
+    },
+  });
 
 
 
 const AssesmentTest = () => {
-    // const [loading, setLoading] = useState(false);
-    const [count] = useState(0);
-    const [current] = useState(0);
-    // const [api, setApi] = useState<CarouselApi>();
+    const [loading, setLoading] = useState(false);
+    const [count,setCount] = useState(0);
+    const [current,setCurrent] = useState(0);
+    const [api, setApi] = useState<CarouselApi>();
 
       const { testId } = useParams();
-    //   const navigate = useNavigate();
+      const navigate = useNavigate();
       const { doRequest, err } = useRequest();
     
-    //   useEffect(() => {
-    //     if (!api) {
-    //       return;
-    //     }
+      useEffect(() => {
+        if (!api) {
+          return;
+        }
     
-    //     setCount(api.scrollSnapList().length);
-    //     setCurrent(api.selectedScrollSnap() + 1);
+        setCount(api.scrollSnapList().length);
+        setCurrent(api.selectedScrollSnap() + 1);
     
-    //     api.on("select", () => {
-    //       setCurrent(api.selectedScrollSnap() + 1);
-    //     });
-    //   }, [api]);
+        api.on("select", () => {
+          setCurrent(api.selectedScrollSnap() + 1);
+        });
+      }, [api]);
 
        useEffect(() => {
    
@@ -86,8 +86,8 @@ const AssesmentTest = () => {
     },[testId]);
 
 
-    // const handleQuestions = (data: TestFormInputs) => {
-    //     console.log("submit",data);
+    const handleQuestions = (data: TestFormInputs) => {
+        console.log("submit",data);
         // setLoading(true);
         // doRequest({
         //   url: `${instructorRoutes.tests}/${courseId}`,
@@ -99,10 +99,10 @@ const AssesmentTest = () => {
         //     return toast.success(`Successfully added the Test`);
         //   },
         // });
-    // };
+    };
 
     useEffect(() => {
-    // setLoading(false);
+    setLoading(false);
     err?.map((err) => toast.error(err.message));
   }, [err]);
 
@@ -113,7 +113,7 @@ const AssesmentTest = () => {
               <div className="font-extrabold text-3xl underline">Add Test</div>
               Slide {current} of {count}
             </div>
-            {/* <Carousel setApi={setApi} className="w-[75%] h-[430px] ">
+            <Carousel setApi={setApi} className="w-[75%] h-[430px] ">
               <CarouselContent>
                 {watch("questions").map((_value, index) => (
                   <CarouselItem key={index}>
@@ -278,7 +278,7 @@ const AssesmentTest = () => {
               </CarouselContent>
               <CarouselPrevious />
               <CarouselNext />
-            </Carousel> */}
+            </Carousel>
           </div>
         </div>
   )
