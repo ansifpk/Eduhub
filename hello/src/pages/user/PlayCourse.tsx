@@ -242,7 +242,7 @@ const PlayCourse = () => {
   //   console.log("ratings");
   //   console.log("errors", errors);
   //   console.log("instructorRatings",instructorRatings);
-  console.log("reposrts", reports);
+  console.log("ctest", course?.test);
 
   useEffect(() => {
     setLoading(false);
