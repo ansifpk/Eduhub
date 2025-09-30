@@ -63,7 +63,7 @@ const UserRoter = () => {
           {/* <Route path="/user/success" element={id?<Success/>:<Login />} />  */}
           <Route path="/editUser" element={id?<EditProfile/>:<Login />} /> 
           {/* <Route path="/user/faile" element={id?<Faile/>:<Login />} />   */}
-          {/* <Route path="/user/assesmentTest/:testId" element={id?<AssesmentTest/>:<Login />} />  */}
+          <Route path="/user/assesmentTest/:testId" element={id?<AssesmentTest/>:<Login />} /> 
           {/* <Route path="/users/forgetPassword" element={<ForgotPassword/>} />  */}
           <Route path="*" element={id?<ErrorPage/>:<Login />}/>
            

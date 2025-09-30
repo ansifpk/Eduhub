@@ -26,6 +26,7 @@ const InstructorProfile = React.lazy(
 const ChangeEmail = React.lazy(() => import("@/pages/user/ChangeEmail"));
 const ForgetPassword = React.lazy(() => import("@/pages/user/ForgetPassword"));
 const UserErrorPage = React.lazy(() => import("@/pages/user/UserErrorPage"));
+const AssesmentTest = React.lazy(() => import("@/pages/user/AssesmentTest"));
 const SubscriptionFaile = React.lazy(
   () => import("@/pages/user/SubscriptionFaile")
 );
@@ -136,6 +137,7 @@ const UserRouter = () => {
           path="/user/faile"
           element={userId ? <Faile /> : <Navigate to={"/signIn"} replace />}
         />
+        <Route path="/user/assesmentTest/:testId" element={userId?<AssesmentTest/>:<Login />} />
         <Route
           path="*"
           element={
