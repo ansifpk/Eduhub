@@ -411,13 +411,13 @@ const PlayCourse = () => {
                                   </button>
                                 </div>
                               ) : (
-                                <div className="flex flex-col w-25 h-[200px] gap-2">
+                                <div className="flex flex-col w-[200px] h-[200px] gap-2">
                                   <img
-                                    className="border rounded-2 shadow-lg w-full h-[150px]"
+                                    className="border rounded-2 shadow-lg w-full h-[200px]"
                                     src={course.image.image_url}
                                   />
                                   <button
-                                    className=" shadow-lg bg-teal-300 hover:bg-teal-300 w-full"
+                                    className=" shadow-lg bg-teal-300 rounded text-white  hover:bg-teal-300 w-full"
                                     onClick={() =>
                                       navigate(
                                         `/user/assesmentTest/${course.test._id}`
