@@ -38,7 +38,8 @@ const AssesmentTest = () => {
     const [count,setCount] = useState(0);
     const [current,setCurrent] = useState(0);
     const [api, setApi] = useState<CarouselApi>();
-
+    console.log(count,current);
+    
     const {
         register,
         watch,
