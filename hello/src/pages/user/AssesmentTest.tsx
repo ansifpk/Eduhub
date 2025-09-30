@@ -27,24 +27,7 @@ import {
 import { Loader2Icon } from 'lucide-react';
 import userRoutes from '@/service/endPoints/userEndPoints';
 
-const {
-    register,
-    watch,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<TestFormInputs>({
-    resolver: zodResolver(testSchema),
-    defaultValues: {
-      questions: Array.from({ length: 5 }, () => ({
-        question: "",
-        option1: "",
-        option2: "",
-        option3: "",
-        option4: "",
-        answer: "",
-      })),
-    },
-  });
+
 
 
 
@@ -53,6 +36,25 @@ const AssesmentTest = () => {
     const [count,setCount] = useState(0);
     const [current,setCurrent] = useState(0);
     const [api, setApi] = useState<CarouselApi>();
+
+    const {
+        register,
+        watch,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<TestFormInputs>({
+        resolver: zodResolver(testSchema),
+        defaultValues: {
+        questions: Array.from({ length: 5 }, () => ({
+            question: "",
+            option1: "",
+            option2: "",
+            option3: "",
+            option4: "",
+            answer: "",
+        })),
+        },
+    });
 
       const { testId } = useParams();
       const navigate = useNavigate();
