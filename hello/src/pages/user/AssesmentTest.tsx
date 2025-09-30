@@ -8,13 +8,11 @@ import {
   type CarouselApi,
 } from "@/components/ui/carousel";
 const Header = React.lazy(() => import('@/components/user/Header'));
-import { testSchema, type TestFormInputs } from '@/util/schemas/testScheema';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {  useNavigate, useParams } from 'react-router-dom';
 import useRequest from '@/hooks/useRequest';
 import { Card, CardContent } from "@/components/ui/card";
-import toast from 'react-hot-toast';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -27,6 +25,10 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Loader2Icon } from 'lucide-react';
 import userRoutes from '@/service/endPoints/userEndPoints';
+import { assessmentTestSchema, type AssessmentTestForm } from '@/util/schemas/assessmentTestScheema';
+import toast from 'react-hot-toast';
+import type { IUser } from '@/@types/userType';
+import { useSelector } from 'react-redux';
 
 
 
@@ -35,19 +37,20 @@ import userRoutes from '@/service/endPoints/userEndPoints';
 
 const AssesmentTest = () => {
     const [loading, setLoading] = useState(false);
-    const [count,setCount] = useState(0);
-    const [current,setCurrent] = useState(0);
+    const [result, setResult] = useState(false);
+    const [_count,setCount] = useState(0);
+    const [mark, setMark] = useState(0);
+    const [_current,setCurrent] = useState(0);
     const [api, setApi] = useState<CarouselApi>();
-    console.log(count,current);
+    const userId = useSelector((state: IUser) => state._id);
     
     const {
         register,
         watch,
         setValue,
         handleSubmit,
-        formState: { errors },
-    } = useForm<TestFormInputs>({
-        resolver: zodResolver(testSchema),
+    } = useForm<AssessmentTestForm>({
+        resolver: zodResolver(assessmentTestSchema),
         defaultValues: {
         questions: Array.from({ length: 5 }, () => ({
             question: "",
@@ -56,10 +59,10 @@ const AssesmentTest = () => {
             option3: "",
             option4: "",
             answer: "",
+            selected: "",
         })),
         },
     });
-
       const { testId } = useParams();
       const navigate = useNavigate();
       const { doRequest, err } = useRequest();
@@ -84,34 +87,80 @@ const AssesmentTest = () => {
           body:{},
           method:"get",
           onSuccess:(response)=>{
-            console.log("test",response.test.test);
             setValue("questions",response.test.test)
           }
-        })
- 
-   
+        });
     },[testId]);
-
-
-    const handleQuestions = (data: TestFormInputs) => {
-        console.log("submit",data);
-        // setLoading(true);
-        // doRequest({
-        //   url: `${instructorRoutes.tests}/${courseId}`,
-        //   body: { testData: data },
-        //   method: "post",
-        //   onSuccess: () => {
-        //     setLoading(false);
-        //     navigate("/instructor/courses");
-        //     return toast.success(`Successfully added the Test`);
-        //   },
-        // });
+    
+    const handleErrors = () =>{
+        toast.error("Please try to enter all the answers and try again!")
+    }
+    const handleQuestions = async(data: AssessmentTestForm) => {
+        setLoading(true);
+        let calculateMark = 0;
+        data.questions.map((value)=>{
+           if(value.answer==value.selected){
+            calculateMark++
+           }
+        })
+        setMark(calculateMark);
+        
+        await doRequest({
+            url:`${userRoutes.test}/${testId}`,
+            method:"patch",
+            body:{userId,mark:calculateMark},
+            onSuccess:()=>{
+              setResult(true);
+              setLoading(false);
+            }
+        })
     };
 
     useEffect(() => {
-    setLoading(false);
-    err?.map((err) => toast.error(err.message));
-  }, [err]);
+        setLoading(false);
+        err?.map((err) => toast.error(err.message));
+    }, [err]);
+
+  if(result){
+    return (
+        <div className='w-75 mx-auto flex justify-center items-center-safe h-screen'>
+           <div className='flex flex-col items-center justify-center-safe'>
+              <h4>YOU GOT</h4>
+              <h4>{mark}/5</h4>
+
+              <div className="flex gap-2 m-2">
+                  {
+                    watch("questions").map((_value,index)=>(
+                        <div key={index+1} className="p-1 w-[180px] h-[180px] border">
+                            <label>Your Answer</label>
+                            <div className={`w-full flex  items-center gap-3 p-2 py-3 text-left  rounded-lg border ${
+                                    watch(`questions.${index}.answer`) == watch(`questions.${index}.selected`)
+                                    ? "bg-green-100 border-green-500"
+                                    :"bg-red-200 border-red-500" }`}>
+                                <input type='checkbox' checked={true} id="terms2" disabled />
+                                <label>{watch(`questions.${index}.selected`)}</label>
+                            </div>
+                             <label>Currect Answer</label>
+                            <div className={`w-full flex  items-center gap-3 px-2 py-3 text-left  rounded-lg border bg-green-100 border-green-500`} >
+                                <input type='checkbox' checked={true} id="terms2" disabled />
+                                <label>{watch(`questions.${index}.answer`)}</label>
+                            </div>
+                        </div>
+                    ))
+                  }
+              </div>
+              <div className="flex justify-center">
+                <button
+                    onClick={() => navigate(-1)}
+                    className="bg-teal-400 hover:bg-teal-400"
+                >
+                    back to class
+                </button>
+            </div>
+           </div>
+        </div>
+    )
+  }
 
   return (
     <div>
@@ -129,117 +178,55 @@ const AssesmentTest = () => {
                     <CarouselItem key={index}>
                         <Card className=" text-black">
                         <CardContent>
-                             <span className="text-sm font-medium text-blue-500 bg-blue-100 px-3 py-1 mb-1 rounded-full">
+                             <span className="text-sm font-medium text-blue-500 bg-blue-100 px-3 py-1 rounded-full">
                                 Question {index + 1}
                             </span>
                             <form
                             className="space-y-3"
-                            onSubmit={handleSubmit(handleQuestions)}
+                            onSubmit={handleSubmit(handleQuestions,handleErrors)}
                             >
                             <div>
-                                <textarea
+                                <textarea disabled
                                 {...register(`questions.${index}.question`)}
                                 className="border border-teal-400 w-full rounded h-40 p-2"
                                 placeholder="Enter question"
                                 />
-                                <span className="text-red-500 text-sm">
-                                {errors.questions?.[index]?.question?.message}
-                                </span>
                             </div>
-                            <div className="grid grid-cols-2 gap-2">
-                                <div>
-                                <input
-                                    {...register(`questions.${index}.option1`)}
-                                    type="text"
-                                    placeholder="option 1"
-                                    className="border border-teal-400 rounded p-2 w-full"
-                                />
-                                <span className="text-red-500 text-sm">
-                                    {errors.questions?.[index]?.option1?.message}
-                                </span>
+                            <div className="grid grid-cols-2 gap-2"> 
+                                <div
+                                    className={`w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg border border-teal-400`}
+                                    >
+                                    <input type="checkbox" checked={watch(`questions.${index}.option1`) == watch(`questions.${index}.selected`)} {...register(`questions.${index}.option1`)} onChange={()=>setValue(`questions.${index}.selected`,watch(`questions.${index}.option1`))} value={watch(`questions.${index}.option1`)} />
+                                    <label>{watch(`questions.${index}.option1`)}</label> 
                                 </div>
-                                <div>
-                                <input
-                                    {...register(`questions.${index}.option2`)}
-                                    type="text"
-                                    placeholder="option 2"
-                                    className="border border-teal-400 rounded w-full p-2"
-                                />
-                                <span className="text-red-500 text-sm">
-                                    {errors.questions?.[index]?.option2?.message}
-                                </span>
+                                <div
+                                    className={`w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg border border-teal-400`}
+                                    >
+                                    <input type="checkbox" checked={watch(`questions.${index}.option2`) == watch(`questions.${index}.selected`)} {...register(`questions.${index}.option2`)} onChange={()=>setValue(`questions.${index}.selected`,watch(`questions.${index}.option2`))} value={watch(`questions.${index}.option2`)} />
+                                    <label>{watch(`questions.${index}.option2`)}</label> 
                                 </div>
-                                <div>
-                                <input
-                                    {...register(`questions.${index}.option3`)}
-                                    type="text"
-                                    placeholder="option 3"
-                                    className="border border-teal-400 w-full rounded p-2"
-                                />
-                                <span className="text-red-500 text-sm">
-                                    {errors.questions?.[index]?.option3?.message}
-                                </span>
+                                <div
+                                    className={`w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg border border-teal-400`}
+                                    >
+                                    <input type="checkbox" checked={watch(`questions.${index}.option3`) == watch(`questions.${index}.selected`)} {...register(`questions.${index}.option3`)} onChange={()=>setValue(`questions.${index}.selected`,watch(`questions.${index}.option3`))} value={watch(`questions.${index}.option3`)} />
+                                    <label>{watch(`questions.${index}.option3`)}</label> 
                                 </div>
-                                <div>
-                                <input
-                                    {...register(`questions.${index}.option4`)}
-                                    type="text"
-                                    placeholder="option 4"
-                                    className="border border-teal-400 w-full rounded p-2"
-                                />
-                                <span className="text-red-500 text-sm">
-                                    {errors.questions?.[index]?.option4?.message}
-                                </span>
+                                <div
+                                    className={`w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg border border-teal-400`}
+                                    >
+                                    <input type="checkbox" checked={watch(`questions.${index}.option4`) == watch(`questions.${index}.selected`)} {...register(`questions.${index}.option4`)} onChange={()=>setValue(`questions.${index}.selected`,watch(`questions.${index}.option4`))} value={watch(`questions.${index}.option4`)} />
+                                    <label>{watch(`questions.${index}.option4`)}</label> 
                                 </div>
                             </div>
-                            <div>
-                                <input
-                                type="text"
-                                {...register(`questions.${index}.answer`)}
-                                className="border border-teal-400 p-2 w-full rounded"
-                                placeholder="Enter answer"
-                                />
-                                <span className="text-red-500 text-sm">
-                                {errors.questions?.[index]?.answer?.message}
-                                </span>
-                            </div>
+                           
                             <div className="flex justify-center-safe gap-4">
-                                <AlertDialog>
-                                <AlertDialogTrigger className="bg-teal-600 cursor-pointer text-white rounded p-2">
-                                    Cancell
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                    <AlertDialogTitle>
-                                        Are you absolutely sure?
-                                    </AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                        This will discard all the datas you entered
-                                    </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                    <AlertDialogCancel
-                                        className="bg-teal-600 cursor-pointer text-white rounded p-2"
-                                        type="button"
-                                    >
-                                        Cancel
-                                    </AlertDialogCancel>
-                                    <AlertDialogCancel
-                                        className="bg-teal-600 cursor-pointer text-white rounded p-2"
-                                        type="submit"
-                                        onClick={() => navigate(-1)}
-                                    >
-                                        Continue
-                                    </AlertDialogCancel>
-                                    </AlertDialogFooter>
-                                </AlertDialogContent>
-                                </AlertDialog>
+                               
                                 {index == 4 && (
                                 <AlertDialog>
                                     <AlertDialogTrigger asChild>
                                     <button
                                         type="button"
-                                        className="bg-teal-600 cursor-pointer text-white rounded p-2"
+                                        className="bg-teal-400 cursor-pointer text-white rounded p-2"
                                         disabled={loading}
                                     >
                                         {loading ? (
@@ -263,16 +250,16 @@ const AssesmentTest = () => {
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
                                         <AlertDialogCancel
-                                        className="bg-teal-600 cursor-pointer text-white"
+                                        className="bg-teal-400 cursor-pointer text-white"
                                         type="button"
                                         >
                                         Cancel
                                         </AlertDialogCancel>
                                         <AlertDialogCancel
-                                        className="bg-teal-600 cursor-pointer text-white"
+                                        className="bg-teal-400 cursor-pointer text-white"
                                         type="submit"
                                         onClick={() =>
-                                            handleSubmit(handleQuestions)()
+                                            handleSubmit(handleQuestions,handleErrors)()
                                         }
                                         >
                                         Continue

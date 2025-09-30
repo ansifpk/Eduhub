@@ -137,7 +137,7 @@ const UserRouter = () => {
           path="/user/faile"
           element={userId ? <Faile /> : <Navigate to={"/signIn"} replace />}
         />
-        <Route path="/user/assesmentTest/:testId" element={userId?<AssesmentTest/>:<Login />} />
+        <Route path="/user/assesmentTest/:testId" element={userId ?<AssesmentTest/>:<Navigate to={"/signIn"} replace />} />
         <Route
           path="*"
           element={
