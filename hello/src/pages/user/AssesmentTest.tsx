@@ -43,6 +43,7 @@ const AssesmentTest = () => {
     const {
         register,
         watch,
+        setValue,
         handleSubmit,
         formState: { errors },
     } = useForm<TestFormInputs>({
@@ -83,7 +84,8 @@ const AssesmentTest = () => {
           body:{},
           method:"get",
           onSuccess:(response)=>{
-            console.log("test",response);
+            console.log("test",response.test.test);
+            setValue("questions",response.test.test)
           }
         })
  
@@ -118,7 +120,7 @@ const AssesmentTest = () => {
             <div className=" flex flex-col items-center w-full">
                 <div className=" text-center text-sm text-black ">
                   <div className="mb-4">
-                    Assessment Test
+                    <span className='text-3xl'>Assessment Test</span>
                   </div>
                 </div>
                 <Carousel setApi={setApi} className="w-[75%] h-[430px]">
@@ -127,7 +129,7 @@ const AssesmentTest = () => {
                     <CarouselItem key={index}>
                         <Card className=" text-black">
                         <CardContent>
-                             <span className="text-sm font-medium text-blue-500 bg-blue-100 px-3 py-1 rounded-full">
+                             <span className="text-sm font-medium text-blue-500 bg-blue-100 px-3 py-1 mb-1 rounded-full">
                                 Question {index + 1}
                             </span>
                             <form
