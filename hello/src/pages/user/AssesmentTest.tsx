@@ -152,7 +152,7 @@ const AssesmentTest = () => {
               <div className="flex justify-center">
                 <button
                     onClick={() => navigate(-1)}
-                    className="bg-teal-400 hover:bg-teal-400"
+                    className="bg-teal-400 hover:bg-teal-400 py-2 rounded"
                 >
                     back to class
                 </button>

@@ -388,7 +388,7 @@ const PlayCourse = () => {
                               ) ? (
                                 <div className="flex flex-col w-25 h-[200px] gap-2">
                                   <div className="border rounded-2 shadow-lg w-full h-[150px]">
-                                    <h4 className="font-medium text-sm ">
+                                    <h4 className="font-medium text-sm text-center">
                                       Your Score
                                     </h4>
                                     <div className="flex h-full w-full items-center justify-center">
@@ -403,7 +403,7 @@ const PlayCourse = () => {
                                   </div>
                                   <button
                                     disabled
-                                    className="text-black  shadow-lg bg-teal-300 hover:bg-teal-300 w-full"
+                                    className="text-white p-2 shadow-lg bg-teal-300 hover:bg-teal-300 w-full"
                                   >
                                     Test Attended
                                   </button>
