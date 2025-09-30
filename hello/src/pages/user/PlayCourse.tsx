@@ -403,7 +403,7 @@ const PlayCourse = () => {
                                   </div>
                                   <button
                                     disabled
-                                    className="text-white p-2 shadow-lg bg-teal-300 hover:bg-teal-300 w-full"
+                                    className="text-white p-2 text-xs shadow-lg bg-teal-300 hover:bg-teal-300 w-full"
                                   >
                                     Test Attended
                                   </button>
