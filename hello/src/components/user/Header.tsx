@@ -9,6 +9,7 @@ import { changeImage, removeUser } from "@/redux/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import type { IUser } from "@/@types/userType";
 
+
 const Header = () => {
   const [open, setOpen] = useState(false);
   const userId = useSelector((state: IUser) => state._id);
@@ -54,7 +55,7 @@ const Header = () => {
   ];
   return (
     <>
-      <div className="px-5 hidden md:flex lg:flex sm:flex   h-14 justify-between font-light items-center  bg-teal-400 text-white text-sm ">
+      <div className="px-5 flex h-14 justify-between font-light items-center  bg-teal-400 text-white text-sm ">
         <span className="font-bold text-2xl flex items-center font-[poppins] text-gray-800">
           EduHub
         </span>
@@ -69,7 +70,7 @@ const Header = () => {
             </>
           )}
         </div>
-        <ul className="flex gap-10 items-center">
+        <ul className="hidden sm:flex md:flex lg:flex gap-10 items-center">
           {navbar.map((value) => (
             <li key={value.path}>
               <NavLink
