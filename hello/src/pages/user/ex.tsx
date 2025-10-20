@@ -1,5 +1,5 @@
 import  {  useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -12,9 +12,7 @@ const Ex = () => {
     const [open, setOpen] = useState(false);
   const userId = useSelector((state: IUser) => state._id);
  
-  const navigate = useNavigate();
  
-
 
 
 
