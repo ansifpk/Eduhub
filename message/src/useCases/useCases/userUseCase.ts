@@ -13,16 +13,21 @@ export class UseruseCase implements IUserUseCase{
     ){}
 
     async markAsRead(userId: string, senterId: string, next: NextFunction): Promise<UpdateWriteOpResult | void> {
-        const user  = await this.userRepository.findUserById(senterId);
-
-        if(!user){
-          throw new   NotFoundError("User Not Found")
-        
-        }
-        const notifications = await this.userRepository.updateNotification(userId,senterId);
-        if(notifications){
-           return  notifications
-        }
+       try {
+         const user  = await this.userRepository.findUserById(senterId);
+ 
+         if(!user){
+           throw new   NotFoundError("User Not Found")
+         
+         }
+         const notifications = await this.userRepository.updateNotification(userId,senterId);
+         if(notifications){
+            return  notifications
+         }
+       } catch (error) {
+        console.error(error)
+        next(error);
+       }
     }
    async  getNotifications(recipientId: string, next: NextFunction): Promise<INotification[] | void> {
     try {

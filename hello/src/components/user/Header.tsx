@@ -54,7 +54,7 @@ const Header = () => {
   ];
   return (
     <>
-      <div className=" px-5 flex  h-14 justify-between font-light items-center  bg-teal-400 text-white text-sm">
+      <div className=" px-5 flex  h-14 justify-between font-light items-center  bg-teal-400 text-white text-sm sm:hidden">
         <span className="font-bold text-2xl flex items-center font-[poppins] text-gray-800">
           EduHub
         </span>
