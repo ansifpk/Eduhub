@@ -1,75 +1,44 @@
-import React, { useEffect, useState } from "react";
+import  {  useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
-import { Select, SelectContent, SelectItem, SelectTrigger } from "../ui/select";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import userRoutes from "@/service/endPoints/userEndPoints";
-import useRequest from "@/hooks/useRequest";
-import { changeImage, removeUser } from "@/redux/authSlice";
-import { useDispatch, useSelector } from "react-redux";
+
+import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+
+import { useSelector } from "react-redux";
 import type { IUser } from "@/@types/userType";
+// import { Select } from "@/components/ui/select";
 
-
-const Header = () => {
-  const [open, setOpen] = useState(false);
+const Ex = () => {
+    const [open, setOpen] = useState(false);
   const userId = useSelector((state: IUser) => state._id);
-  const { doRequest, err } = useRequest();
+ 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const image = useSelector((state:{ [key: string]: string })=>state.image);
+ 
 
-  const handleLogout = async () => {
-    await doRequest({
-      url: userRoutes.logout,
-      method: "post",
-      body: {},
-      onSuccess: () => {
-        dispatch(removeUser());
-        toast.success("Logout Successfully");
-        return navigate("/signIn");
-      },
-    });
-  };
 
-  useEffect(() => {
-    if (userId) {
-      doRequest({
-        url: `${userRoutes.profile}?userId=${userId}`,
-        method: "get",
-        body: {},
-        onSuccess: (res) => {
-          dispatch(changeImage(res.userData.avatar.avatar_url))
-        },
-      });
-    }
-  }, [userId]);
 
-  useEffect(() => {
-    err?.map((err) => toast.error(err.message));
-  }, [err]);
 
   const navbar = [
     { name: "Home", path: "/" },
     { name: "Courses", path: "/user/courses" },
     { name: "Cart", path: "/user/cart" },
   ];
+
   return (
-    <>
+        <>
       <div className="px-5 flex h-14 justify-between font-light items-center  bg-teal-400 text-white text-sm ">
         <span className="font-bold text-2xl flex items-center font-[poppins] text-gray-800">
           EduHub
         </span>
         <div className="flex md:hidden lg:hidden sm:hidden cursor-pointer items-center">
           {open ? (
-         
               <i className="bi bi-x-lg" onClick={() => setOpen(!open)}></i>
        
           ) : (
-          
               <i className="bi bi-list" onClick={() => setOpen(!open)}></i>
-           
           )}
         </div>
+        
         <ul className={`md:flex  hidden gap-10 items-center`}>
           {navbar.map((value) => (
             <li key={value.path}>
@@ -88,17 +57,11 @@ const Header = () => {
           {userId ? (
             <li>
               <Select
-                onValueChange={(value) => {
-                  if (value === "Sign Out") {
-                    handleLogout();
-                  } else if (value === "Profile") {
-                    navigate("/user/profile")
-                  }
-                }}
+                
               >
                 <SelectTrigger className="">
                   <Avatar>
-                    <AvatarImage src={image} />
+                    
                     <AvatarFallback>
                       <i className="bi bi-person-circle"></i>
                     </AvatarFallback>
@@ -127,8 +90,7 @@ const Header = () => {
         </ul>
       </div>
       {
-              open&&
-             <ul className={`md:hidden flex flex-col  bg-teal-400 text-white items-end-safe gap-5 p-2`}>
+        open&&<ul className={`md:hidden flex flex-col  bg-teal-400 text-white items-end-safe gap-5 p-2`}>
           {navbar.map((value) => (
             <li key={value.path}>
               <NavLink
@@ -146,17 +108,11 @@ const Header = () => {
           {userId ? (
             <li>
               <Select
-                onValueChange={(value) => {
-                  if (value === "Sign Out") {
-                    handleLogout();
-                  } else if (value === "Profile") {
-                    navigate("/user/profile")
-                  }
-                }}
+                
               >
                 <SelectTrigger className="">
                   <Avatar>
-                    <AvatarImage src={image} />
+                    
                     <AvatarFallback>
                       <i className="bi bi-person-circle"></i>
                     </AvatarFallback>
@@ -182,10 +138,11 @@ const Header = () => {
               </li>
             </>
           )}
-        </ul>
-            }
+      </ul>
+      }
+      
     </>
-  );
-};
+  )
+}
 
-export default React.memo(Header);
+export default Ex

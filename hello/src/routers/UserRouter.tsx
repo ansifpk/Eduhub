@@ -1,4 +1,5 @@
 import type { IUser } from "@/@types/userType";
+import Ex from "@/pages/user/ex";
 import React, { Suspense } from "react";
 import { useSelector } from "react-redux";
 import { Navigate, Route, Routes } from "react-router-dom";
@@ -138,6 +139,7 @@ const UserRouter = () => {
           element={userId ? <Faile /> : <Navigate to={"/signIn"} replace />}
         />
         <Route path="/user/assesmentTest/:testId" element={userId ?<AssesmentTest/>:<Navigate to={"/signIn"} replace />} />
+        <Route path="fuck" element={<Ex />} />
         <Route
           path="*"
           element={
