@@ -58,7 +58,7 @@ const Header = () => {
         <span className="font-bold text-2xl flex items-center font-[poppins] text-gray-800">
           EduHub
         </span>
-        <div className="md:hidden cursor-pointer absolute right-8 top-0">
+        <div className="flex md:hidden lg:hidden sm:hidden cursor-pointer absolute right-8 top-0">
           {open ? (
             <>
               <i className="bi bi-x-lg" onClick={() => setOpen(!open)}></i>
