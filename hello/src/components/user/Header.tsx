@@ -59,15 +59,15 @@ const Header = () => {
         <span className="font-bold text-2xl flex items-center font-[poppins] text-gray-800">
           EduHub
         </span>
-        <div className="flex md:hidden lg:hidden sm:hidden cursor-pointer absolute right-8 top-0">
+        <div className="flex md:hidden lg:hidden sm:hidden cursor-pointer absolute right-8 top-0 items-center">
           {open ? (
-            <>
+         
               <i className="bi bi-x-lg" onClick={() => setOpen(!open)}></i>
-            </>
+       
           ) : (
-            <>
+          
               <i className="bi bi-list" onClick={() => setOpen(!open)}></i>
-            </>
+           
           )}
         </div>
         <ul className="hidden sm:flex md:flex lg:flex gap-10 items-center">
