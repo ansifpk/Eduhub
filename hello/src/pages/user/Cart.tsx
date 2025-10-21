@@ -115,7 +115,105 @@ const Cart = () => {
         </div>
       ) : (
         <div>
-          <div className="w-3/4 flex  text-center mx-auto mt-3">
+                  <div className="md:flex md:w-[70%]  w-full gap-5 mx-auto mt-5 justify-center-safe">
+          {/* iteam area  */}
+          <div className="md:w-2/3  md:p-2">
+            <table className="table-auto w-full border-separate">
+              <thead>
+                <tr>
+                  <th>Iteam</th>
+                  <th>Price</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody className="gap-2">
+                {cart?.courses.map((course) => (
+                  <tr key={course._id} className="text-center md:text-sm text-xs">
+                    <td className="flex md:gap-5 gap-1">
+                      <img
+                        onClick={()=>navigate(`/user/courseDetailes/${course._id}`)}
+                        src={course.image.image_url}
+                        className="w-25 h-20 rounded"
+                        alt="product image"
+                      />
+                      <ul className="text-start w-full">
+                        <li>{course.title}</li>
+                        <li>Instructor: {course.instructorId.name}</li>
+                        <li>Level : {course.level}</li>
+                        <li>Create date : {moment(course.createdAt).calendar()}</li>
+                      </ul>
+                    </td>
+                    <td>{course.price}</td>
+                    <td>
+                      <AlertDialog>
+                        <AlertDialogTrigger className="cursor-pointer">X</AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Are you absolutely sure?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This action cannot be undone. This will
+                              permanently delete this course from your cart.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel className="text-white bg-teal-500 hover:bg-teal-300 hover:text-white">
+                              Cancel
+                            </AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => handleCart(course._id)}
+                              className="bg-teal-500 hover:bg-teal-300"
+                            >
+                              Continue
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* price area  */}
+
+          <div className="md:w-1/3 flex   flex-col h-[83vh]  p-2 md:m-0 m-1 border-dashed space-y-5 items-start border-gray-400 border-2 rounded ">
+            <label className="font-medium text-3xl"> Cart Total</label>
+            <li className="list-none border w-full"></li>
+            <div className="flex w-full justify-between">
+              <span className="font-semibold">Discount :</span>
+              <span>{discount}</span>
+            </div>
+            <div className="flex w-full justify-between">
+              <span className="font-semibold">Sub Total : </span>
+              <span>{cartTotal}</span>
+            </div>
+            <li className="list-none border w-full"></li>
+            <div className="flex w-full justify-between">
+              <span className="font-semibold">Total</span>
+              <span>{cartTotal - discount}</span>
+            </div>
+            <li className="list-none border w-full"></li>
+            <span className="font-semibold">Coupon</span>
+            <input
+              ref={couponRef}
+              type="text"
+              placeholder="enter coupon"
+              className="border border-teal-400 w-full rounded-full px-2 py-1"
+            />
+            <button onClick={()=>discount?deleteCoupon(): applyCoupon() } className="bg-teal-500 font-semibold w-full hover:bg-teal-300 rounded cursor-pointer px-2 py-1 text-white">
+               {discount ? "Remove" : "Apply"}
+            </button>
+            <button onClick={handleOrder} className="w-full font-semibold bg-teal-500 text-white py-1 px-2 text-sm rounded hover:bg-teal-300 cursor-pointer">
+              Proceed to checkout
+            </button>
+          </div>
+        </div>
+
+
+          {/* <div className="w-3/4 flex  text-center mx-auto mt-3">
             <div className="w-full flex gap-5 ">
               <div className="w-2/3">
                 <table className="table-auto w-full border-separate   border-spacing-y-4">
@@ -129,7 +227,7 @@ const Cart = () => {
                   <tbody>
                     {cart?.courses.map((course) => (
                       <tr key={course._id}>
-                        <td className="flex gap-2" onClick={()=>navigate(`/user/courseDetailes/${course._id}`) }>
+                        <td className="flex gap-5" onClick={()=>navigate(`/user/courseDetailes/${course._id}`) }>
                           <img
                             src={course.image.image_url}
                             alt=""
@@ -137,17 +235,10 @@ const Cart = () => {
                           />
                           <div className="flex flex-col items-start">
                             <span>{course.title}</span>
-                            {/* <span className="text-xs">
-                              4.5 <i className={`bi bi-star-fill`}></i>{" "}
-                              <i className={`bi bi-star-fill`}></i>{" "}
-                              <i className={`bi bi-star-fill`}></i>
-                              <i className={`bi bi-star-fill`}></i> (1000
-                              ratings){" "}
-                            </span> */}
+                            
                             <span className="text-sm">instructor : { course.instructorId.name } </span>
                             <div className="flex gap-5 text-xs">
-                              {/* <li>10 hr</li>
-                              <li>10 videos</li> */}
+                              
                               <li>{course.level}</li>
                             </div>
                             <span className="flex gap-5 text-xs" >created : {moment(course.createdAt).calendar()}</span>
@@ -222,7 +313,7 @@ const Cart = () => {
                   </button>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       )}
 

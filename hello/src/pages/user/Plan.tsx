@@ -50,7 +50,7 @@ const Plan = () => {
         <main className="w-full flex justify-center items-center md:p-8 p-2">
           {plans.length > 0 ? (
             <div className="relative flex flex-col items-center justify-content-center ">
-              <div className="flex flex-wrap mx-5 mt-4 gap-3 m-auto  ">
+              <div className="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 mx-5 mt-4 gap-3 m-auto">
                 {plans.map((plan: IUserSubscribe, _index) => (
                   <div
                     key={plan._id}

@@ -40,14 +40,14 @@ const Coupon = () => {
       <Header />
       <div className="w-full">
         <ProfileNavbar value="Coupons" />
-        <main className="w-full flex justify-center items-center md:p-8 p-2 gap-2">
+        <main className="w-full grid md:grid-cols-4 justify-center items-center md:p-8 p-2 gap-2">
           {coupons.length > 0 ? (
             coupons
             .filter((valu: ICoupon) => date > new Date(valu.startingDate))
             .map((value: ICoupon, index) => (
               <div
                 key={index}
-                className={`md:w-[250px] md:h-[200px] rounded sm:w-[300px] sm:h-[200px] lg:w-[330px] lg:h-[170px] w-[235px]  h-[170px] border-1 rounded-3 p-1 sm:m-1 lg:mx-auto md:mx-auto sm:mx-auto mx-auto ${
+                className={` border-1 rounded p-1 sm:m-1 lg:mx-auto md:mx-auto sm:mx-auto mx-auto ${
                   !value.users.includes(userId)
                     ? date > new Date(value.expiryDate)
                       ? "bg-red-100 border-danger"

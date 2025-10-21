@@ -238,10 +238,7 @@ const PlayCourse = () => {
     });
   };
 
-  //   console.log("ratings");
-  //   console.log("errors", errors);
-  //   console.log("instructorRatings",instructorRatings);
-
+  
   useEffect(() => {
     setLoading(false);
     err?.map((err) => toast.error(err.message));

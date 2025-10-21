@@ -282,7 +282,7 @@ const CourseDetailes = () => {
       </div>
 
       <div className="container mx-auto flex flex-row gap-5">
-        <div className="basis-2/3   p-4">
+        <div className="md:basis-2/3 basis-1 p-4">
           <Tabs defaultValue="Course Content">
             <TabsList className="bg-teal-400 ">
               <TabsTrigger value="Course Content">Course Content</TabsTrigger>
@@ -794,7 +794,7 @@ const CourseDetailes = () => {
             </TabsContent>
           </Tabs>
         </div>
-        <div className="basis-1/3   ">
+        <div className="md:basis-1/3 basis-1">
           <img
             className="h-48 w-96 rounded object-fill"
             src={course?.image.image_url}
@@ -802,7 +802,7 @@ const CourseDetailes = () => {
           <div className="grid p-5 gap-3">
             <p>
               <span className="font-bold">{course?.price}/- </span>
-              {/* <span className="text-xs">10%</span> */}
+             
             </p>
             <button
               onClick={() =>

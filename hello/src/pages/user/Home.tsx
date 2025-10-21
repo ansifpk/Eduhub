@@ -11,7 +11,6 @@ const Home = () => {
   return (
     <div>
       <Header/>
-
        <div>
         <div className="flex items-center  justify-center  text-center bg-teal-400 ">
           <div className="mt-5">

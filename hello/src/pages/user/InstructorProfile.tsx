@@ -266,12 +266,12 @@ const InstructorProfile = () => {
     <div>
       <Header />
       <div className="p-5">
-        <div className="flex gap-2">
+        <div className="md:flex space-y-2 gap-2">
           <Avatar className=" rounded-full h-48 w-48">
             <AvatarImage src={user?.avatar.avatar_url} />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
-          <div className=" flex border-2 drop-shadow-lg  w-full p-2 rounded border-teal-400">
+          <div className=" flex border-2 drop-shadow-lg md:text-sm text-xs w-full p-2 rounded border-teal-400">
             <div className="space-y-10">
               <span className="font-semibold">Name : </span>
               <span>{user?.name}</span>
