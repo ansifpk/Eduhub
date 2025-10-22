@@ -28,9 +28,7 @@ export class ApiServer {
          
          const httpServer = createServer(app);
          const allowedOrgins =  JSON.parse(process.env.ORGINS!)
-         // console.log("allowedOrgins",process.env.KAFKA_BROKER);
-         // console.log("allowedOrgins",process.env);
-         
+       
 
          app.set('trust proxy',true);
          app.use(cookieParser())

@@ -6,10 +6,10 @@ class KafkaWrapper {
     private _producer?: Producer;
     private _consumer?: Consumer;
     constructor() {
-        console.log('KAFKA_BROKER value:', process.env.KAFKA_BROKER);
+       
         this._kafka = new Kafka({
             clientId: 'message-service',
-            brokers: [process.env.KAFKA_BROKER!],
+            brokers: ["kafka-srv:9092"],
            
         })
     }
