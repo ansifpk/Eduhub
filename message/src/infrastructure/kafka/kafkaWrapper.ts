@@ -8,7 +8,7 @@ class KafkaWrapper {
     constructor() {
         this._kafka = new Kafka({
             clientId: 'message-service',
-            brokers: [process.env.KAFKA_BROCKER!],
+            brokers: [process.env.KAFKA_BROKER!],
            
         })
     }
