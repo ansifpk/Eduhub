@@ -11,8 +11,6 @@ import { Socket,Server } from 'socket.io';
 
 const app = express();
 app.set('trust proxy',true);
-const httpServer = createServer(app);
-const allowedOrgins =  JSON.parse(process.env.ORGINS!)
 
 
 
@@ -22,6 +20,11 @@ export class ApiServer {
 
     public static async run(port:number):Promise<void>{
        try {
+         const httpServer = createServer(app);
+         const allowedOrgins =  JSON.parse(process.env.ORGINS!)
+         console.log("allowedOrgins",allowedOrgins);
+         console.log("process.env.ORGINS",process.env.ORGINS);
+         
          app.use(cookieParser())
          app.use(cors({credentials:true,
             origin: allowedOrgins
