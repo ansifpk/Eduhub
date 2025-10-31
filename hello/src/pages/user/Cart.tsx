@@ -52,11 +52,9 @@ const Cart = () => {
       body: {userId},
       onSuccess: (data) => {
         toast.success("item removed from your cart!");
-        data.cart.courses.reduce((acc:number,cur:ICourse)=>{
-            console.log(acc,cur.price)
-        },0)
+        const total = data.cart.courses.reduce((acc:number,cur:ICourse)=>acc+=cur.price,0)
         setCart(data.cart);
-        setCartTotal(data.cartTotal);
+        setCartTotal(total);
         return 
       },
     });
