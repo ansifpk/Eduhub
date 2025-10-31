@@ -73,16 +73,16 @@ const Courses = () => {
       url:`${userRoutes.addToCart}?courseId=${courseId}`,
       method:"post",
       body:{userId},
-      onSuccess:()=>{ 
-        doRequest({
-          url:`${userRoutes.Cart}/${userId}`,
-          method:"get",
-          body:{},
-          onSuccess:(data)=>{
+      onSuccess:(data)=>{ 
+        // doRequest({
+        //   url:`${userRoutes.Cart}/${userId}`,
+        //   method:"get",
+        //   body:{},
+        //   onSuccess:(data)=>{
             setCart(data.cart);
             toast.success("Item Added to cart");
-          }
-        })
+        //   }
+        // })
       }
     })
   }
