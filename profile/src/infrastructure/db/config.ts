@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const connectDB = async () => {
     try {
-        await mongoose.connect(process.env.MoNGO_URL!).then(()=>console.log("profile service mongodb connected successfully...!"))
+        await mongoose.connect(process.env.MONGO_URL!).then(()=>console.log("profile service mongodb connected successfully...!"))
         .catch((err)=>{
             console.error(err);
         })        

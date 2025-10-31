@@ -46,9 +46,9 @@ const Cart = () => {
 
   const handleCart = async (courseId: string) => {
     doRequest({
-      url: `${userRoutes.addToCart}/${courseId}/${userId}`,
-      method: "delete",
-      body: {},
+      url: `${userRoutes.addToCart}?courseId=${courseId}`,
+      method: "post",
+      body: {userId},
       onSuccess: (data) => {
         setCart(data.cart);
         setCartTotal(data.cartTotal);
