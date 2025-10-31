@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { MarkAsRead } from "../../application/useCase/markAsRead";
+import { IController } from "../../shared/IController";
 
-export class MarkAsReadController {
+export class MarkAsReadController implements IController {
     constructor(private readonly _useCase:MarkAsRead) {
         
     }

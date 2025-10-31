@@ -1,0 +1,28 @@
+import { ICategory } from "../../../domain/category";
+import { IInstructorRepository } from "../../../domain/insterfaces/repositoryInterfaces/IinstructorRepository";
+import { categoryModel } from "../models/categoryModel";
+
+export class InstructorRepository implements IInstructorRepository{
+    constructor(
+        private categoryModels:typeof categoryModel
+    ){}
+   
+    async find(): Promise< ICategory[] | void> {
+        try {
+            const categories = await this.categoryModels.find({isListed:true}).sort({title:-1});
+            if(categories){
+                return categories
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+    async findTop5(): Promise< ICategory[] | void> {
+        try {
+            
+        } catch (error) {
+            console.error(error)
+        }
+    }
+   
+}

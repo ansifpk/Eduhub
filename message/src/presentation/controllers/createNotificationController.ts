@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { CreateNotification } from "../../application/useCase/createNotification";
+import { IController } from "../../shared/IController";
 
-export class CreateNotificationController {
+export class CreateNotificationController implements IController {
     constructor(private readonly _userUseCase:CreateNotification) {
         
     }

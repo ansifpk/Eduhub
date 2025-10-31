@@ -1,8 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { CreateChatUseCase } from "../../application/useCase/createChat";
+import { IController } from "../../shared/IController";
 
 
-export class CreateChatController {
+export class CreateChatController implements IController {
     constructor(private readonly _useCase:CreateChatUseCase) {}
     
     public async handle(req:Request,res:Response,next:NextFunction):Promise<void>{

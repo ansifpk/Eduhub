@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { GetMessages } from "../../application/useCase/GetMessages";
+import { IController } from "../../shared/IController";
 
-export class GetMessagesController {
+export class GetMessagesController implements IController {
     constructor(private readonly _useCase:GetMessages) {
         
     }

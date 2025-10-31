@@ -2,8 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { BadRequestError, ForbiddenError, NotAuthorizedError } from "@eduhublearning/common";
-import { userModel } from "../../domain/modals/userModel";
-// import { userModel } from "../../db/mongodb/models/userModel";
+import { userModel } from "../../infrastructure/db/modals/userModel";
 
 
 

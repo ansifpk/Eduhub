@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { CreateMessage } from "../../application/useCase/createMessage";
+import { IController } from "../../shared/IController";
 
-export class CreateMessageController {
+export class CreateMessageController implements IController {
     constructor(private readonly _useCase:CreateMessage){}
 
     public async handle(req:Request,res:Response,next:NextFunction):Promise<void>{
