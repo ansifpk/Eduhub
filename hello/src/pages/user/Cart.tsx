@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import {loadStripe} from "@stripe/stripe-js";
 import moment from "moment";
+import type { ICourse } from "@/@types/courseType";
 
 const Cart = () => {
 
@@ -51,6 +52,9 @@ const Cart = () => {
       body: {userId},
       onSuccess: (data) => {
         toast.success("item removed from your cart!");
+        const datas = data.cart.courses.reduce((acc:number,cur:ICourse)=>{
+            console.log(acc,cur.price)
+        },0)
         setCart(data.cart);
         setCartTotal(data.cartTotal);
         return 
