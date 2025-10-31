@@ -173,7 +173,6 @@ export class UserRepository implements IUserRepository {
           { new: true }
         )
         .populate("courses");
-       console.log("cart",cart)
       if (cart) {
         return cart;
       }

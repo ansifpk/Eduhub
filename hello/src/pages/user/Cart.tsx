@@ -50,9 +50,10 @@ const Cart = () => {
       method: "post",
       body: {userId},
       onSuccess: (data) => {
+        toast.success("item removed from your cart!");
         setCart(data.cart);
         setCartTotal(data.cartTotal);
-        return toast.success("item removed from your cart!");
+        return 
       },
     });
   };
