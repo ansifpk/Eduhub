@@ -52,7 +52,7 @@ const Cart = () => {
       body: {userId},
       onSuccess: (data) => {
         toast.success("item removed from your cart!");
-        const datas = data.cart.courses.reduce((acc:number,cur:ICourse)=>{
+        data.cart.courses.reduce((acc:number,cur:ICourse)=>{
             console.log(acc,cur.price)
         },0)
         setCart(data.cart);
