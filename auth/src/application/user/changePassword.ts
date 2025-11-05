@@ -1,7 +1,7 @@
 import { NextFunction } from "express";
 import { IUseCase } from "../../shared/IUseCase";
 import { UserRepository } from "../../infrastructure/db/repository/userRepositories";
-import { BadRequestError } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
 import { Encrypt } from "../../infrastructure/services/hashPassword";
 import { OtpRepository } from "../../infrastructure/db/repository/otpRepostory";
 import { Iuser } from "../../domain/entities/user";
@@ -24,17 +24,17 @@ export class ChangePassword implements IUseCase<{ email:string,
         try {
               const user = await this._userRepository.findByEmail(input.email);
               if (!user) {
-                throw new BadRequestError("User Not Found");
+                throw new BadRequestError(ErrorMessages.USER_NOT_FOUND);
               }
               if (!input.password) {
-                throw new BadRequestError("New Password is Required");
+                throw new BadRequestError(ErrorMessages.NEW_PASSWORD_REQUIRED);
               }
               if (!input.confirmPassword) {
-                throw new BadRequestError("Confirm Password is Required");
+                throw new BadRequestError(ErrorMessages.CONFIRM_PASSWORD_REQUIRED);
               }
               if (input.confirmPassword !== input.password) {
                 throw new BadRequestError(
-                  "Confirm Password and password is not maching"
+                  ErrorMessages.CONFIRM_AND_NEW_PASSWORD_IS_NOT_MATCHING
                 );
               }
               const compare = await this._encrypt.comparePassword(
@@ -42,7 +42,7 @@ export class ChangePassword implements IUseCase<{ email:string,
                 user.password
               );
               if (compare) {
-                throw new BadRequestError("You Cannot Set Old Password Again");
+                throw new BadRequestError(ErrorMessages.OLD_AND_NEW_PASSWORD_IS_SAME);
               }
          
               const newPassword = await this._encrypt.createHash(input.password);

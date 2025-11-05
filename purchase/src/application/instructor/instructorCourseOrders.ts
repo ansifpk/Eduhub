@@ -1,4 +1,4 @@
-import { BadRequestError, IUseCase } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
 import { InstructorRepository } from "../../infrastructure/db/repository/instructorRepository";
 import { IOrder } from "../../domain/entities/order";
 import { NextFunction } from "express";
@@ -21,7 +21,7 @@ export class InstructorCourseOrders
       const { instructorId, start, end } = input;
       const user = await this.instructorRepository.userFindById(instructorId);
       if (!user) {
-        throw new BadRequestError("user Not found");
+        throw new BadRequestError(ErrorMessages.USER_NOT_FOUND);
       }
       const orders = await this.instructorRepository.instrutcorOrders(
         user.id,

@@ -1,7 +1,7 @@
 import { NextFunction } from "express";
 import { IUseCase } from "../../shared/IUseCase";
 import { IUserRepository } from "../../domain/interfaces/IuserRepository";
-import { BadRequestError, ForbiddenError } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages, ForbiddenError } from "@eduhublearning/common";
 import { JWTtocken } from "../../infrastructure/services/jwt";
 import { Encrypt } from "../../infrastructure/services/hashPassword";
 import { Iuser } from "../../domain/entities/user";
@@ -27,7 +27,7 @@ export class LoginUser implements IUseCase<{email:string,
               const user = await this._userRepository.findByEmail(input.email);
         
               if (!user) {
-                throw new BadRequestError("Invalid credentials");
+                throw new BadRequestError(ErrorMessages.INVALID_CREDENCIALS);
               }
               if (user.isBlock == true) {
                 throw new ForbiddenError();
@@ -39,7 +39,7 @@ export class LoginUser implements IUseCase<{email:string,
               );
         
               if (!checkPassword) {
-                throw new BadRequestError("incorrect password");
+                throw new BadRequestError(ErrorMessages.INVALID_CREDENCIALS);
               }
         
               const token: any = await this._jwtToken.createAccessAndRefreashToken(

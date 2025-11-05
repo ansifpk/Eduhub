@@ -1,4 +1,4 @@
-import { IController } from "@eduhublearning/common";
+import { IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
 import { TestSubmit } from "../../../application/user/testSubmit";
 
@@ -15,7 +15,7 @@ export class TestSubmitController implements IController {
       const { userId, mark } = req.body;
       const test = await this._useCase.execute({ userId, testId, mark, next });
       if (test) {
-        res.send({ success: true });
+        res.status(StatusCodes.CREATED).send({ success: true });
       }
     } catch (error) {
       console.error(error);

@@ -61,7 +61,7 @@ const webhookRepository = new WebhookRepository(instructotSubscribeModel,userSub
 const getSubscriptions = new GetSubscriptions(userRepository)
 const purchaseSubscription = new PurchaseSubscription(userRepository)
 const purchasedSubscription = new PurchasedSubscriptions(userRepository)
-const subscriptionDetailes = new SubscriptionDetailes(userRepository)
+const subscriptionDetailes = new SubscriptionDetailes()
 
 const getSubscriptionsController = new GetSubscriptionsController(getSubscriptions)
 const purchaseSubscriptionController = new PurchaseSubscriptionController(purchaseSubscription)

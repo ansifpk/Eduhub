@@ -1,4 +1,4 @@
-import { BadRequestError, NotFoundError } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages, NotFoundError } from "@eduhublearning/common";
 import { CategoryRepository } from "../../infrastructure/db/repository/categoryRepository";
 import { IUseCase } from "../../shared/IUseCase";
 import { ICategory } from "../../domain/category";
@@ -29,7 +29,7 @@ export class EditCategory
       const currentCategory = await this.categoryRepository.findById(input._id);
 
       if (!currentCategory) {
-        throw new NotFoundError("Category Not Fount");
+        throw new NotFoundError(ErrorMessages.CATEGORY_NOT_FOUND);
       }
       const checkCategory = await this.categoryRepository.findOne(input.title);
 
@@ -37,7 +37,7 @@ export class EditCategory
         checkCategory &&
         checkCategory._id?.toString() !== currentCategory._id?.toString()
       ) {
-        throw new BadRequestError("This Category Already Exists");
+        throw new BadRequestError(ErrorMessages.CATEGORY_CONFLICT);
       }
       const updatedCategory = await this.categoryRepository.update(
         input._id,

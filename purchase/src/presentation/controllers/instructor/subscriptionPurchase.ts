@@ -1,4 +1,4 @@
-import { IController } from "@eduhublearning/common";
+import { IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
 import { SubscriptionPurchase } from "../../../application/instructor/subscriptionPurchase";
 
@@ -14,7 +14,7 @@ export class SubscriptionPurchaseController implements IController {
       const { method, userId } = req.params;
       const sessionId = await this._useCase.execute({ userId, method, next });
       if (sessionId) {
-        res.send({ success: true, sessionId });
+        res.status(StatusCodes.OK).send({ success: true, sessionId });
       }
     } catch (error) {
       next(error);

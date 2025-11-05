@@ -1,4 +1,4 @@
-import { BadRequestError, IUseCase } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
 import { UserRepository } from "../../infrastructure/db/repository/userRepository";
 import { Iuser } from "../../domain/entities/user";
 import { NextFunction } from "express";
@@ -28,7 +28,7 @@ export class EditProfile
       const { userId, name, thumbnail, aboutMe } = input;
       const user = await this.userRepository.findById(userId);
       if (!user) {
-        throw new BadRequestError("User Not Found");
+        throw new BadRequestError(ErrorMessages.USER_NOT_FOUND);
       }
       const updatedUser = await this.userRepository.findByIdAndUpdate(
         userId,

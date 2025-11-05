@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { SendOtp } from "../../../application/user/sendOtp";
 import { IController } from "../../../shared/IController";
+import { StatusCodes } from "@eduhublearning/common";
 
 
 export class ResendOtpController implements IController {
@@ -12,7 +13,7 @@ export class ResendOtpController implements IController {
   ): Promise<void> {
     try {
       const data = await this._useCase.execute({ email: req.body.email, next });
-      res.status(200).send({
+      res.status(StatusCodes.OK).send({
         success: true,
         data: data,
       });

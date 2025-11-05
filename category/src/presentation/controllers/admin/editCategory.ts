@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { IController } from "../../../shared/IController";
 import { EditCategory } from "../../../application/admin/editCategory";
+import { StatusCodes } from "@eduhublearning/common";
 
 
 export class EditCategoryController implements IController {
@@ -19,7 +20,7 @@ export class EditCategoryController implements IController {
       );
     
       if (categories) {
-         res.send({ success: true, data: categories });
+         res.status(StatusCodes.OK).send({ success: true, data: categories });
       }
     } catch (error) {
       console.error(error);

@@ -1,4 +1,4 @@
-import { BadRequestError } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
 import { JWTtocken } from "../../infrastructure/services/jwt";
 import { IUseCase } from "../../shared/IUseCase";
 import { IToken } from "../../domain/interfaces/serviceInterfaces/IJwt";
@@ -13,8 +13,7 @@ export class TockenCheck implements IUseCase<{tocken: string,
     next: NextFunction}): Promise<IToken | void> {
          try {
               const decoded = await this._jwtToken.verifyRefreshJwt(input.tocken);
-              console.log("check", decoded);
-        
+           
               if (decoded) {
                 const tockens = await this._jwtToken.createAccessAndRefreashToken(
                   decoded.id
@@ -23,7 +22,7 @@ export class TockenCheck implements IUseCase<{tocken: string,
                   return tockens;
                 }
               } else {
-                throw new BadRequestError("Invalid token");
+                throw new BadRequestError(ErrorMessages.INVALID_TOKEN);
               }
             } catch (error) {
               console.error(error);

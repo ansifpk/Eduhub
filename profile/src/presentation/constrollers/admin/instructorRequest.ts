@@ -1,4 +1,4 @@
-import { IController } from "@eduhublearning/common";
+import { IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
 import { InstructorRequest } from "../../../application/admin/instructorRequest";
 
@@ -18,7 +18,7 @@ export class InstructorRequestController implements IController {
         next,
       });
       if (students) {
-        res.send(students);
+        res.status(StatusCodes.OK).send(students);
       }
     } catch (error) {
       console.error(error);

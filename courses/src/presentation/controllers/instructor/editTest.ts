@@ -1,4 +1,4 @@
-import { IController } from "@eduhublearning/common";
+import { IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
 import { EditTest } from "../../../application/instructor/editTest";
 
@@ -12,7 +12,7 @@ export class EditTestController implements IController {
           
       const course =  await this._useCase.execute({testId,testData:testData.questions,next})
       if(course){
-        res.send({success:true});
+        res.status(StatusCodes.NO_CONTENT).send({success:true});
       }
     }
 }

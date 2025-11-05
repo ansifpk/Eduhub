@@ -1,4 +1,4 @@
-import { IController } from "@eduhublearning/common";
+import { IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
 import { Register } from "../../../application/instructor/register";
 
@@ -14,17 +14,14 @@ export class RegisterController implements IController {
         certificateImage?: Express.Multer.File[];
         cvImage?: Express.Multer.File[];
       };
-    //    register(
-    //   { bodyData: req.body, fileData: files },
-    //   next
-    // )
+
       const updatedUser = await this._useCase.execute({
         userData: req.body,
         fileData: files,
         next,
       });
       if (updatedUser) {
-        res.send({ success: true });
+        res.status(StatusCodes.CREATED).send({ success: true });
       }
     } catch (error) {
       console.error(error);

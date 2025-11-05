@@ -1,4 +1,4 @@
-import { IController } from "@eduhublearning/common";
+import { IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
 import { AdminEditSubscription } from "../../../application/admin/editSubscription";
 
@@ -19,7 +19,7 @@ export class AdminEditSubscriptionController implements IController {
         next,
       });
       if (subscription) {
-        res.send({ success: true });
+        res.status(StatusCodes.NO_CONTENT).send({ success: true });
       }
     } catch (error) {
       console.error(error);

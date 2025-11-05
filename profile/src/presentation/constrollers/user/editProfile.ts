@@ -1,5 +1,6 @@
 import {
   IController,
+  StatusCodes,
   UserProfileUpdatedPublisher,
 } from "@eduhublearning/common";
 import { EditProfile } from "../../../application/user/editProfile";
@@ -31,7 +32,7 @@ export class EditProfileController implements IController {
           _id: userProfile._id,
           name: userProfile.name,
         });
-        res.send({ success: true, user: userProfile });
+        res.status(StatusCodes.OK).send({ success: true, user: userProfile });
       }
     } catch (error) {
       console.error(error);

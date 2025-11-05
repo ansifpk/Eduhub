@@ -2,7 +2,7 @@ import { NextFunction } from "express";
 import { ICategory } from "../../domain/category";
 import { CategoryRepository } from "../../infrastructure/db/repository/categoryRepository";
 import { IUseCase } from "../../shared/IUseCase";
-import { BadRequestError } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
 
 export class AddCategory
   implements IUseCase<{ data: ICategory; next: NextFunction }, ICategory|void>
@@ -15,7 +15,7 @@ export class AddCategory
     try {
       const check = await this.categoryRepository.findOne(input.data.title);
       if (check) {
-        throw new BadRequestError("This Category Already Exists");
+        throw new BadRequestError(ErrorMessages.CATEGORY_CONFLICT);
       } else {
         const category = await this.categoryRepository.create(input.data);
         return category;

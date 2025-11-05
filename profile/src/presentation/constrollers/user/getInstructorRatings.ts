@@ -1,4 +1,4 @@
-import { IController } from "@eduhublearning/common";
+import { IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
 import { GetInstructorRatings } from "../../../application/user/getInstructorRatings";
 
@@ -13,7 +13,7 @@ export class GetInstructorRatingsontroller implements IController {
       const { instructorId } = req.params;
       const ratings = await this._useCase.execute({ instructorId, next });
       if (ratings) {
-        res.send({ success: true, ratings: ratings });
+        res.status(StatusCodes.OK).send({ success: true, ratings: ratings });
       }
     } catch (error) {
       console.error(error);

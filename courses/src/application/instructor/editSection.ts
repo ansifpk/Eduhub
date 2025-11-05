@@ -1,4 +1,4 @@
-import { BadRequestError, IUseCase } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
 import { ReqUp } from "../../domain/interfaces/IReqUp";
 import { NextFunction } from "express";
 import { InstructorRepository } from "../../insfrastructure/db/repositories/instructorRepository";
@@ -25,7 +25,7 @@ export class EditSection
         sectionData.courseId
       );
       if (!course) {
-        throw new BadRequestError("course Not Found");
+        throw new BadRequestError(ErrorMessages.COURSE_NOT_FOUND);
       }
 
       sectionData.bodyData = JSON.parse(

@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { LoginUser } from "../../../application/user/loginUser";
 import { IController } from "../../../shared/IController";
+import { StatusCodes } from "@eduhublearning/common";
 
 
 
@@ -30,7 +31,7 @@ export class LoginUserController implements IController{
           path:"/",
           maxAge:30 * 24 * 60 * 60 * 1000,
        });
-        res.send(userAndTokens);
+        res.status(StatusCodes.OK).send(userAndTokens);
       }
     } catch (err) {
       console.error(err);

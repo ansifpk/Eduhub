@@ -1,4 +1,4 @@
-import { BadRequestError, IUseCase } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
 import { ICoupon } from "../../domain/entities/coupon";
 import { AdminRepository } from "../../insfrastructure/db/repositories/adminRepository";
 import { NextFunction } from "express";
@@ -17,7 +17,7 @@ export class CouponDetailes
       if (coupon) {
         return coupon;
       } else {
-        throw new BadRequestError("Coupon Not found");
+        throw new BadRequestError(ErrorMessages.COUPON_NOT_FOUND);
       }
     } catch (error) {
       console.error(error);

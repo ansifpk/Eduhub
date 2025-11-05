@@ -1,4 +1,4 @@
-import { IController } from "@eduhublearning/common";
+import { IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
 import { AddTest } from "../../../application/instructor/AddTest";
 
@@ -18,7 +18,7 @@ export class AddTestController implements IController {
         next,
       });
       if (course) {
-        res.send({ success: true });
+        res.status(StatusCodes.CREATED).send({ success: true });
       }
     } catch (error) {
       console.error(error);

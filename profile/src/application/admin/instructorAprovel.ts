@@ -1,4 +1,4 @@
-import { BadRequestError, IUseCase } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
 import { AdminRepository } from "../../infrastructure/db/repository/adminRepository";
 import { Iuser } from "../../domain/entities/user";
 import { NextFunction } from "express";
@@ -20,7 +20,7 @@ export class InstructorAprovel
       const { email, status } = input;
       const user = await this.adminRepository.findByEmail(email);
       if (!user) {
-        throw new BadRequestError("User Not Fount");
+        throw new BadRequestError(ErrorMessages.USER_NOT_FOUND);
       }
       let updatedUser;
       if (status == "Rejected") {

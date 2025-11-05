@@ -1,4 +1,4 @@
-import { BadRequestError, ForbiddenError } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages, ForbiddenError } from "@eduhublearning/common";
 import { InstructorRepository } from "../../infrastructure/db/repository/instructorRepository";
 import { IUseCase } from "../../shared/IUseCase";
 import { IToken } from "../../domain/interfaces/serviceInterfaces/IJwt";
@@ -26,13 +26,13 @@ export class InstructorLogin implements IUseCase<{email: string, password: strin
                        const token = await this.jwt.createAccessAndRefreashToken(instructor._id!) as IToken
                        return {instructor,token}
                      }else{
-                       throw new BadRequestError( "You Are Not Instructor")
+                       throw new BadRequestError(ErrorMessages.NOT_INSTRUCTOR)
                      }
                   }else{
-                   throw new BadRequestError("Incorrect Password" )
+                   throw new BadRequestError(ErrorMessages.INVALID_CREDENCIALS)
                   }
               }else{
-               throw new BadRequestError("Instructor Not Found" )
+               throw new BadRequestError(ErrorMessages.INVALID_CREDENCIALS)
               }
             } catch (error) {
                console.error(error)

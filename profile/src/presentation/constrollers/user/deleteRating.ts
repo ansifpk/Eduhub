@@ -1,4 +1,4 @@
-import { IController } from "@eduhublearning/common";
+import { IController, StatusCodes } from "@eduhublearning/common";
 import { DeleteRating } from "../../../application/user/deleteRating";
 import { Request, Response, NextFunction } from "express";
 
@@ -13,7 +13,7 @@ export class DeleteRatingController implements IController {
       const { ratingId } = req.params;
       const rating = await this._usecase.execute({ ratingId, next });
       if (rating) {
-        res.send({ success: true, rating: rating });
+        res.status(StatusCodes.OK).send({ success: true, rating: rating });
       }
     } catch (error) {
       console.error(error);

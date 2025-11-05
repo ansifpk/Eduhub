@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { FetchChats } from "../../application/useCase/fetchChats";
 import { IController } from "../../shared/IController";
+import { StatusCodes } from "@eduhublearning/common";
 
 
 export class FindUserChatsController implements IController {
@@ -11,7 +12,7 @@ export class FindUserChatsController implements IController {
             const {userId} = req.query;  
             const userChats = await this._useCase.execute({userId:userId as string,next})
             if(userChats){
-               res.send({success:true,chats:userChats})
+               res.status(StatusCodes.OK).send({success:true,chats:userChats})
             }
         } catch (error) {
             console.error(error)

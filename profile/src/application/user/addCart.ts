@@ -1,4 +1,4 @@
-import { BadRequestError, IUseCase } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
 import { UserRepository } from "../../infrastructure/db/repository/userRepository";
 import { ICart } from "../../domain/entities/cart";
 import { NextFunction } from "express";
@@ -25,11 +25,11 @@ export class AddToCart
         this.userRepository.findCart(userId),
       ]);
       if (!checkUser) {
-        throw new BadRequestError("User not found");
+        throw new BadRequestError(ErrorMessages.USER_NOT_FOUND);
       }
 
       if (!course) {
-        throw new BadRequestError("Course not found");
+        throw new BadRequestError(ErrorMessages.COURSE_NOT_FOUND);
       }
 
        

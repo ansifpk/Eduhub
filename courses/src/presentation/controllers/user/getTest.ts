@@ -1,4 +1,4 @@
-import { IController } from "@eduhublearning/common";
+import { IController, StatusCodes } from "@eduhublearning/common";
 import { UserGetTest } from "../../../application/user/getTest";
 import { Request, Response, NextFunction } from "express";
 
@@ -13,7 +13,7 @@ export class UserGetTestController implements IController {
       const { testId } = req.params;
       const test = await this._useCase.execute({ testId, next });
       if (test) {
-        res.send({ success: true, test: test });
+        res.status(StatusCodes.OK).send({ success: true, test: test });
       }
     } catch (error) {
       console.error(error);

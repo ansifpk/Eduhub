@@ -1,4 +1,4 @@
-import { IController } from "@eduhublearning/common";
+import { IController, StatusCodes } from "@eduhublearning/common";
 import { DeleteRating } from "../../../application/user/deleteRating";
 import { Request, Response, NextFunction } from "express";
 import { EditRating } from "../../../application/user/editRating";
@@ -20,7 +20,7 @@ export class EditRatingController implements IController {
         next,
       });
       if (rating) {
-        res.send({ success: true, rating: rating });
+        res.status(StatusCodes.OK).send({ success: true, rating: rating });
       }
     } catch (error) {
       console.error(error);

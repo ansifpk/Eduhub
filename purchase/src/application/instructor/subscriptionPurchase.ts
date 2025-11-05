@@ -1,4 +1,4 @@
-import { BadRequestError, IUseCase } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
 import { InstructorRepository } from "../../infrastructure/db/repository/instructorRepository";
 import { NextFunction } from "express";
 import Stripe from "stripe";
@@ -22,17 +22,17 @@ export class SubscriptionPurchase
       const { userId, method } = input;
       const user = await this.instructorRepository.userFindById(userId);
       if (!user) {
-        throw new BadRequestError("user Not found");
+        throw new BadRequestError(ErrorMessages.USER_NOT_FOUND);
       }
 
       const subscription =
         await this.instructorRepository.subscriptionFindByPlan(method);
       if (!subscription) {
-        throw new BadRequestError("Subscription Not found");
+        throw new BadRequestError(ErrorMessages.SUBSCRIPTION_NOT_FOUND);
       }
       const checkSUbscribe = await this.instructorRepository.findPlan(userId);
       if (checkSUbscribe) {
-        throw new BadRequestError("You Already have an active plan");
+        throw new BadRequestError(ErrorMessages.ACTIVE_PLAN_CONFLICT);
       }
 
       let customers = await stripe.customers.list({

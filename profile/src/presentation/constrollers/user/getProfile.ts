@@ -1,4 +1,4 @@
-import { IController } from "@eduhublearning/common";
+import { IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
 import { GetProfile } from "../../../application/user/getProfile";
 
@@ -16,7 +16,7 @@ export class GetProfileController implements IController {
         next,
       });
       if (userProfile) {
-        res.send({ success: true, userData: userProfile });
+        res.status(StatusCodes.OK).send({ success: true, userData: userProfile });
       }
     } catch (error) {
       console.error(error);

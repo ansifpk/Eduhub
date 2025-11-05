@@ -1,4 +1,4 @@
-import { BadRequestError, IUseCase } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
 import { UserRepository } from "../../infrastructure/db/repository/userRepository";
 import { NextFunction } from "express";
 import { Iuser } from "../../domain/entities/user";
@@ -32,7 +32,7 @@ export class ProfileImage
       const { userId, image } = input;
       const user = await this.userRepository.findById(userId);
       if (!user) {
-        throw new BadRequestError("User Not Found");
+        throw new BadRequestError(ErrorMessages.USER_NOT_FOUND);
       }
       if (user.avatar.avatar_url) {
         const profile = await this.cloudinary.addFile(image.profileImage![0]);

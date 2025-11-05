@@ -3,6 +3,7 @@ import { UserRepository } from "../../infrastructure/db/repositories/userReposit
 import { IUseCase } from "../../shared/IUseCase";
 import { BadRequestError } from "@eduhublearning/common";
 import { INotification } from "../../domain/entities/notifications";
+import { ErrorMessages } from "../../../../common/src/errors/errorMessages";
 
 export class GetNotification
   implements
@@ -20,7 +21,7 @@ export class GetNotification
       const user = await this._useRepository.findUserById(input.recipientId);
 
       if (!user) {
-        throw new BadRequestError("User Not Found");
+        throw new BadRequestError(ErrorMessages.USER_NOT_FOUND);
       }
       const notifications = await this._useRepository.findAllNotification(
         input.recipientId

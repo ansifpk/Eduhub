@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { IController } from "../../../shared/IController";
 import { InstructorLogin } from "../../../application/instructor/instructorLogin";
+import { StatusCodes } from "@eduhublearning/common";
 
 export class LoginInstructorController implements IController{
     constructor(private readonly _useCase:InstructorLogin){}
@@ -24,7 +25,7 @@ export class LoginInstructorController implements IController{
                 maxAge:30 * 24 * 60 * 60 * 1000
              });
               
-              res.send(instructorAndToken)
+              res.status(StatusCodes.OK).send(instructorAndToken)
             }
            } catch (error) {
              console.error(error)

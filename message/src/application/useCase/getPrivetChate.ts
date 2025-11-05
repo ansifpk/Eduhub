@@ -3,6 +3,7 @@ import { UserRepository } from "../../infrastructure/db/repositories/userReposit
 import { IUseCase } from "../../shared/IUseCase";
 import { BadRequestError } from "@eduhublearning/common";
 import { IChat } from "../../domain/entities/chat";
+import { ErrorMessages } from "../../../../common/src/errors/errorMessages";
 
 export class GetPrivetChate
   implements IUseCase<{ chatId: string; next: NextFunction }, IChat | void>
@@ -16,10 +17,10 @@ export class GetPrivetChate
       const chat = await this._userRepository.findChatById(input.chatId);
 
       if (!chat) {
-        throw new BadRequestError("Chat Not Found");
+        throw new BadRequestError(ErrorMessages.CHAT_NOT_FOUND);
       }
       if (chat.members[1].isBlock) {
-        throw new BadRequestError("This user is blocked");
+        throw new BadRequestError(ErrorMessages.BLOCKED_CHAT);
       }
       return chat;
     } catch (error) {

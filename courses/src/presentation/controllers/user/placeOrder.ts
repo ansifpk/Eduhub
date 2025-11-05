@@ -1,4 +1,4 @@
-import { IController } from "@eduhublearning/common";
+import { IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
 import { PlaceOrder } from "../../../application/user/placeOrder";
 
@@ -18,7 +18,7 @@ export class PlaceOrderController implements IController {
         next}
       );
       if (sessionId) {
-        res.send({ id: sessionId });
+        res.status(StatusCodes.CREATED).send({ id: sessionId });
       }
     } catch (error) {
       console.error(error);

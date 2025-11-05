@@ -1,4 +1,4 @@
-import { IController } from "@eduhublearning/common";
+import { IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
 import { TopInstructors } from "../../../application/admin/topInstructors";
 
@@ -12,7 +12,7 @@ export class TopInstructorsController implements IController {
     try {
       const users = await this._useCase.execute({ next });
       if (users) {
-        res.send(users);
+        res.status(StatusCodes.OK).send(users);
       }
     } catch (error) {
       console.error(error);

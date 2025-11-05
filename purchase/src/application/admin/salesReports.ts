@@ -1,4 +1,4 @@
-import { BadRequestError, IUseCase } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
 import { AdminRepository } from "../../infrastructure/db/repository/adminRepository";
 import { NextFunction } from "express";
 import exceljs from "exceljs";
@@ -19,7 +19,7 @@ export class AdminSalesRepost
     try {
       const { start, end } = input;
       if ((start && !end) || (!start && end)) {
-        throw new BadRequestError("PLease select starting and ending dates!");
+        throw new BadRequestError(ErrorMessages.CHART_STARTING_AND_ENDING_DATE);
       }
 
       const orders = await this.adminRepository.findOrders(start, end);

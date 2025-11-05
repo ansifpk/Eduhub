@@ -1,4 +1,4 @@
-import { CourseCreatedPublisher, IController } from "@eduhublearning/common";
+import { CourseCreatedPublisher, IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
 import { Producer } from "kafkajs";
 import kafkaWrapper from "../../../insfrastructure/kafka/kafkaWrapper";
@@ -36,7 +36,7 @@ export class CreateCourseControll implements IController {
             })
 
             this._uploadVideoUseCase.execute({sectionData:{courseId:course._id as string,bodyData:req.body.sectionsVideos,fileData:files},next})
-            res.send({success:true,course:course}) ;
+            res.status(StatusCodes.CREATED).send({success:true,course:course}) ;
           
         }
     }

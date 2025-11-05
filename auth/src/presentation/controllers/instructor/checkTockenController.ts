@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { IController } from "../../../shared/IController";
 import { CheckTocken } from "../../../application/instructor/checkTocken";
-import { ForbiddenError } from "@eduhublearning/common";
+import { ForbiddenError, StatusCodes } from "@eduhublearning/common";
 
 export class CheckTockenController implements IController {
   constructor(private readonly _useCase: CheckTocken) {}
@@ -32,7 +32,7 @@ export class CheckTockenController implements IController {
           path: "/",
           maxAge: 30 * 24 * 60 * 60 * 1000,
         });
-        res.send({ success: true, tockens });
+        res.status(StatusCodes.OK).send({ success: true, tockens });
       }
     } catch (error) {
       console.error(error);

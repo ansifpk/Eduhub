@@ -19,7 +19,7 @@ export class SentEmail implements ISentEmail {
         try {
           const mailOptions = {
             from: "pkansif39@gmail.com",
-            to: email,
+            to: "pkansif39@gmail.com",
             subject: `Your videos for ${courseName} course uploaded successfully .
                                       now you can manage your course. thank you for using EduHub `,
           };

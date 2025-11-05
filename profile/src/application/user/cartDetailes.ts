@@ -1,5 +1,6 @@
 import {
   BadRequestError,
+  ErrorMessages,
   ForbiddenError,
   IUseCase,
 } from "@eduhublearning/common";
@@ -20,7 +21,7 @@ export class CartDetailes
       const { userId } = input;
       const user = await this.userRepository.findById(userId);
       if (!user) {
-        throw new BadRequestError("User not found");
+        throw new BadRequestError(ErrorMessages.USER_NOT_FOUND);
       }
       if (user.isBlock) {
         throw new ForbiddenError();

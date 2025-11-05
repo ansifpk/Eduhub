@@ -1,4 +1,4 @@
-import { IController } from "@eduhublearning/common";
+import { IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
 import { CreateReport } from "../../../application/admin/createReport";
 
@@ -12,7 +12,7 @@ export class ReportController implements IController {
     try {
       const reports = await this._useCase.execute({ next });
       if (reports) {
-        res.send(reports);
+        res.status(StatusCodes.OK).send(reports);
       }
     } catch (error) {
       console.error(error);

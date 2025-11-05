@@ -1,6 +1,6 @@
 import { NextFunction } from "express";
 import { IUseCase } from "../../shared/IUseCase";
-import { BadRequestError } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
 import { UserRepository } from "../../infrastructure/db/repository/userRepositories";
 import { OtpGenerator } from "../../infrastructure/services/otpGenerator";
 import { OtpRepository } from "../../infrastructure/db/repository/otpRepostory";
@@ -19,7 +19,7 @@ export class ForgetPassword implements IUseCase<{email:string, next:NextFunction
         try {
               let checkuser = await this._userRepository.findByEmail(input.email);
               if (!checkuser) {
-                throw new BadRequestError("Email Not Registerd");
+                throw new BadRequestError(ErrorMessages.EMAIL_NOT_REGISTERED);
               }
               const otp = await this._otpGenerate.createOtp();
               console.log("otp to change pass", otp);

@@ -9,7 +9,7 @@ export class SubscriptionDetailes
   implements
     IUseCase<{ customerId: string; next: NextFunction }, string | void>
 {
-  constructor(private readonly userRepository: UserRepository) {}
+  
   public async execute(input: {
     customerId: string;
     next: NextFunction;

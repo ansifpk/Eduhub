@@ -1,4 +1,4 @@
-import { BadRequestError, IUseCase } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
 import { NextFunction } from "express";
 import { ISubcription } from "../../domain/entities/subscription";
 import { AdminRepository } from "../../infrastructure/db/repository/adminRepository";
@@ -28,7 +28,7 @@ export class AdminEditSubscription
         subscriptionId
       );
       if (!check) {
-        throw new BadRequestError("Subscription Not Found.");
+        throw new BadRequestError(ErrorMessages.SUBSCRIPTION_NOT_FOUND);
       }
       const sub = await stripe.subscriptions.list({});
 

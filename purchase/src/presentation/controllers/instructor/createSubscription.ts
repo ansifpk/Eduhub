@@ -1,4 +1,4 @@
-import { IController } from "@eduhublearning/common";
+import { IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
 import { InstructorCreateSubscription } from "../../../application/instructor/createSubscription";
 
@@ -21,7 +21,7 @@ export class CreateSubscriptionController implements IController {
         next,
       });
       if (subscription) {
-        res.send({ success: true });
+        res.status(StatusCodes.CREATED).send({ success: true });
       }
     } catch (error) {
       console.error(error);

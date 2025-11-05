@@ -1,6 +1,7 @@
 import {
   IController,
   InstructorAprovalPublisher,
+  StatusCodes,
 } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
 import { InstructorAprovel } from "../../../application/admin/instructorAprovel";
@@ -25,7 +26,7 @@ export class InstructorAprovelController implements IController {
           _id: students._id,
           isInstructor: students.isInstructor,
         });
-        res.send(students);
+        res.status(StatusCodes.OK).send(students);
       }
     } catch (error) {
       console.error(error);

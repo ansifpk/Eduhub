@@ -1,4 +1,4 @@
-import { BadRequestError, IUseCase } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
 import { AdminRepository } from "../../insfrastructure/db/repositories/adminRepository";
 import { NextFunction } from "express";
 import { ICoupon } from "../../domain/entities/coupon";
@@ -16,7 +16,7 @@ export class DeleteCoupon
       const couponCheck = await this.couponRepository.findCouponById(_id);
 
       if (!couponCheck) {
-        throw new BadRequestError("Coupon Not found");
+        throw new BadRequestError(ErrorMessages.COUPON_NOT_FOUND);
       }
 
       const coupon = await this.couponRepository.deleteCoupon(_id);

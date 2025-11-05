@@ -3,6 +3,7 @@ import { IUseCase } from "../../shared/IUseCase";
 import { UserRepository } from "../../infrastructure/db/repositories/userRepository";
 import { BadRequestError } from "@eduhublearning/common";
 import { IChat } from "../../domain/entities/chat";
+import { ErrorMessages } from "../../../../common/src/errors/errorMessages";
 
 export class CreateChatUseCase
   implements
@@ -27,12 +28,10 @@ export class CreateChatUseCase
         input.recipientId
       );
       if (!checkCurrentUser || !checkRecipientUser) {
-        throw new BadRequestError("User Not Found");
+        throw new BadRequestError(ErrorMessages.USER_NOT_FOUND);
       }
 
-      if (checkRecipientUser.isBlock) {
-        throw new BadRequestError("This user is blocked");
-      }
+  
       const checkChatExists = await this._userRepository.findChat(
         input.userId,
         input.recipientId

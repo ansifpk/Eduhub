@@ -2,7 +2,7 @@ import { NextFunction } from "express";
 import { IUseCase } from "../../shared/IUseCase";
 import { Iuser } from "../../domain/entities/user";
 import { UserRepository } from "../../infrastructure/db/repository/userRepositories";
-import { BadRequestError } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
 import { OtpRepository } from "../../infrastructure/db/repository/otpRepostory";
 
 export class ChangeEmail implements IUseCase<{ userId: string,
@@ -23,15 +23,15 @@ export class ChangeEmail implements IUseCase<{ userId: string,
               
               const checkUser = await this._userRepository.findById(input.userId);
               if (!checkUser) {
-                throw new BadRequestError("User Not Found");
+                throw new BadRequestError(ErrorMessages.USER_NOT_FOUND);
               }
         
               const findOTP = await this._otpRepository.findOtp(input.email);
               if (!findOTP) {
-                throw new BadRequestError("OTP expired");
+                throw new BadRequestError(ErrorMessages.OTP_EXPIRED);
               }
               if (findOTP.otp !== input.otp) {
-                throw new BadRequestError("Invalid OTP");
+                throw new BadRequestError(ErrorMessages.INVALID_OTP);
               }
         
               const user = await this._userRepository.changeEmail(input.userId, input.email);

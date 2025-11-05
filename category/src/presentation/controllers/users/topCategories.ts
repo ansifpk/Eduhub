@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { IController } from "../../../shared/IController";
 import { TopCategories } from "../../../application/instructor/topCategories";
+import { StatusCodes } from "@eduhublearning/common";
 
 export class TopCategoriesController implements IController {
     constructor(private readonly _useCase:TopCategories) {
@@ -13,7 +14,7 @@ export class TopCategoriesController implements IController {
         
          const categories = await this._useCase.execute({next});
          if(categories){
-             res.send(categories);
+             res.status(StatusCodes.OK).send(categories);
          }
        } catch (error) {
         console.error(error)

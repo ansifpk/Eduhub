@@ -1,4 +1,4 @@
-import { IController } from "@eduhublearning/common";
+import { IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
 import { InstructorEditSubscription } from "../../../application/instructor/editSubscription";
 
@@ -10,7 +10,7 @@ export class EditSubscriptionController implements IController {
         const {price,plan,instructorId} = req.body;
         const subscription = await this._useCase.execute({subscriptionId,price,plan:plan[0],instructorId,next})
         if(subscription){
-             res.send({success:true})
+             res.status(StatusCodes.NO_CONTENT).send({success:true})
         }
        } catch (error) {
         console.error(error);

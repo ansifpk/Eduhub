@@ -1,4 +1,4 @@
-import { IController } from "@eduhublearning/common";
+import { IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
 import { AdminSalesRepost } from "../../../application/admin/salesReports";
 
@@ -18,7 +18,7 @@ export class AdminSalesRepostController implements IController {
       });
       if (workbook) {
         workbook.xlsx.writeBuffer().then((data) => {
-          res.status(200).send(data);
+          res.status(StatusCodes.OK).send(data);
         });
       }
     } catch (error) {

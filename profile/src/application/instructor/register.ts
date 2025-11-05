@@ -1,5 +1,6 @@
 import {
   BadRequestError,
+  ErrorMessages,
   ForbiddenError,
   IUseCase,
 } from "@eduhublearning/common";
@@ -26,16 +27,16 @@ export class Register implements IUseCase<any, Iuser | void> {
         input.userData.email
       );
       if (!user) {
-        throw new BadRequestError("user not registered");
+        throw new BadRequestError(ErrorMessages.USER_NOT_FOUND);
       }
       if (user.isBlock) {
         throw new ForbiddenError();
       }
       if (user.isInstructor) {
-        throw new BadRequestError("you are already registered as instructor");
+        throw new BadRequestError(ErrorMessages.INSTRUCTOR_CONFILICT);
       }
       if (user.status == "pending") {
-        throw new BadRequestError("your instructor request is in pending...");
+        throw new BadRequestError(ErrorMessages.INSTRUTCOR_PRNDING_REQUEST);
       }
 
       const certificate = await this.cloudinary.addFile(

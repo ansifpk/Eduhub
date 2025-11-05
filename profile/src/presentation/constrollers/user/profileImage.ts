@@ -1,6 +1,7 @@
 import {
   IController,
   ProfilePictureUpdatedPublisher,
+  StatusCodes,
 } from "@eduhublearning/common";
 import { ProfileImage } from "../../../application/user/profileImage";
 import { Request, Response, NextFunction } from "express";
@@ -28,7 +29,7 @@ export class ProfileImageController implements IController {
           _id: user._id,
           avatar: user.avatar,
         });
-        res.send({ success: true, image: user.avatar.avatar_url });
+        res.status(StatusCodes.OK).send({ success: true, image: user.avatar.avatar_url });
       }
     } catch (error) {
       console.error(error);

@@ -1,4 +1,4 @@
-import { CourseListedPublisher, IController } from "@eduhublearning/common";
+import { CourseListedPublisher, IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
 import { ListCourse } from "../../../application/instructor/listCourse";
 import kafkaWrapper from "../../../insfrastructure/kafka/kafkaWrapper";
@@ -22,7 +22,7 @@ export class ListCourseController implements IController {
           _id: course._id!,
           isListed: course.isListed,
         });
-        res.send({ success: true, course: course });
+        res.status(StatusCodes.OK).send({ success: true, course: course });
       }
     } catch (error) {
       console.error(error);

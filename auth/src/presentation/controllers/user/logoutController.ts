@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { IController } from "../../../shared/IController";
+import { StatusCodes } from "@eduhublearning/common";
 
 export class LogOutController implements IController {
 
@@ -15,7 +16,7 @@ export class LogOutController implements IController {
             });
             res.clearCookie("accessToken")
                 res.clearCookie("refreshToken")
-            res.send({ succuss: true, message: "logout success" });
+            res.status(StatusCodes.OK).send({ succuss: true, message: "logout success" });
        } catch (error) {
          console.error(error);
        }

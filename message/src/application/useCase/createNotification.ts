@@ -3,6 +3,7 @@ import { UserRepository } from "../../infrastructure/db/repositories/userReposit
 import { IUseCase } from "../../shared/IUseCase";
 import { INotification } from "../../domain/entities/notifications";
 import { NextFunction } from "express";
+import { ErrorMessages } from "../../../../common/src/errors/errorMessages";
 
 export class CreateNotification
   implements
@@ -20,11 +21,11 @@ export class CreateNotification
     try {
       const user = await this._userRepository.findUserById(input.recipientId);
       if (!user) {
-        throw new BadRequestError("User Not Found");
+        throw new BadRequestError(ErrorMessages.USER_NOT_FOUND);
       }
       const user2 = await this._userRepository.findUserById(input.senderId);
       if (!user2) {
-        throw new BadRequestError("User Not Found");
+        throw new BadRequestError(ErrorMessages.USER_NOT_FOUND);
       }
       const notifications = await this._userRepository.createNotification(
         input.recipientId,

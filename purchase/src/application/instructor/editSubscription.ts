@@ -1,4 +1,4 @@
-import { BadRequestError, IUseCase } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
 import { InstructorRepository } from "../../infrastructure/db/repository/instructorRepository";
 import { NextFunction } from "express";
 import { IUserSubcription } from "../../domain/entities/userSubscription";
@@ -36,7 +36,7 @@ export class InstructorEditSubscription
           subscriptionId
         );
       if (!subscription) {
-        throw new BadRequestError("Subscription Not found");
+        throw new BadRequestError(ErrorMessages.SUBSCRIPTION_NOT_FOUND);
       }
       const checkSubscription =
         await this.instructorRepository.checkSubscription(plan, instructorId);
@@ -45,7 +45,7 @@ export class InstructorEditSubscription
         checkSubscription._id.toString() !== subscription._id.toString()
       ) {
         throw new BadRequestError(
-          "You already have an subscription for this plan methode choose another plan method please!."
+          ErrorMessages.SUBSCRIPTION_CONFLICT
         );
       }
 

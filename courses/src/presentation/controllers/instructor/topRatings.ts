@@ -1,4 +1,4 @@
-import { IController } from "@eduhublearning/common";
+import { IController, StatusCodes } from "@eduhublearning/common";
 import { InstructorRepository } from "../../../insfrastructure/db/repositories/instructorRepository";
 import { Request, Response } from "express";
 import { NextFunction } from "express-serve-static-core";
@@ -15,7 +15,7 @@ export class TopRatingsController implements IController {
       const { userId } = req.params;
       const ratings = await this._useCase.execute({ userId, next });
       if (ratings) {
-        return res.send({ success: true, ratings });
+        return res.status(StatusCodes.OK).send({ success: true, ratings });
       }
     } catch (error) {
       console.error(error);

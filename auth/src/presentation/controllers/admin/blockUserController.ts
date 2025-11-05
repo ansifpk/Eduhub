@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { IController } from "../../../shared/IController";
 import { BlockUser } from "../../../application/admin/blockUser";
-import { UserBlcokedPublisher } from "@eduhublearning/common";
+import { StatusCodes, UserBlcokedPublisher } from "@eduhublearning/common";
 import kafkaWrapper from "../../../infrastructure/kafka/kafkaWrapper";
 import { Producer } from "kafkajs";
 
@@ -23,7 +23,7 @@ export class BlockUserController implements IController {
           _id: user._id!,
           isBlock: user.isBlock!,
         });
-        res.send({ success: true, data: user });
+        res.status(StatusCodes.OK).send({ success: true, data: user });
       }
     } catch (error) {
       next(error);

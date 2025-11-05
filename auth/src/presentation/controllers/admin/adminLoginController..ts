@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { AdminLogin } from "../../../application/admin/adminLogin";
 import { IController } from "../../../shared/IController";
+import { StatusCodes } from "@eduhublearning/common";
 
 export class AdminLoginController implements IController {
     constructor(private readonly _useCase:AdminLogin) {
@@ -26,7 +27,7 @@ export class AdminLoginController implements IController {
             path:"/",
             maxAge:30 * 24 * 60 * 60 * 1000
          });
-          res.send(adminAndToken)
+          res.status(StatusCodes.OK).send(adminAndToken)
         }
        } catch (error) {
          next(error)

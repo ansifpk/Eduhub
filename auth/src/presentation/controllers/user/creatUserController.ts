@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { NotAuthorizedError, UserCreatedPublisher } from "@eduhublearning/common";
+import { NotAuthorizedError, StatusCodes, UserCreatedPublisher } from "@eduhublearning/common";
 import { Producer } from "kafkajs";
 import { CreateUser } from "../../../application/user/createUser";
 import kafkaWrapper from "../../../infrastructure/kafka/kafkaWrapper";
@@ -60,7 +60,7 @@ export class CreatUserController implements IController {
           maxAge:30 * 24 * 60 * 60 * 1000,
        });
       
-      res.send({ succusse: true, user: user });
+      res.status(StatusCodes.CREATED).send({ succusse: true, user: user });
       }
         } catch (error) {
             console.error(error);

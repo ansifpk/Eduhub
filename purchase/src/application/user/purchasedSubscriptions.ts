@@ -1,4 +1,4 @@
-import { BadRequestError, IUseCase } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
 import { UserRepository } from "../../infrastructure/db/repository/userRepository";
 import { NextFunction } from "express";
 import { IUserSubscribe } from "../../domain/entities/userSubscribe";
@@ -16,7 +16,7 @@ export class PurchasedSubscriptions
       const { userId } = input;
       const user = await this.userRepository.findUser(userId);
       if (!user) {
-        throw new BadRequestError("user not fount");
+        throw new BadRequestError(ErrorMessages.USER_NOT_FOUND);
       }
       const plans = await this.userRepository.plans(userId);
       if (plans) {

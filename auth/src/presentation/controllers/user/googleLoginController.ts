@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { GooogleLogin } from "../../../application/user/googleLogin";
 import { IController } from "../../../shared/IController";
+import { StatusCodes } from "@eduhublearning/common";
 
 export class GoogleLoginController implements IController {
     constructor(private readonly _useCase:GooogleLogin) {
@@ -31,7 +32,7 @@ export class GoogleLoginController implements IController {
           maxAge:30 * 24 * 60 * 60 * 1000
        });
 
-          res.send({ success: true, user: userAndToken });
+          res.status(StatusCodes.OK).send({ success: true, user: userAndToken });
       }
     } catch (err) {
       console.error(err);

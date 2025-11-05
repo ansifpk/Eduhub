@@ -1,4 +1,4 @@
-import { BadRequestError, IUseCase } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
 import { UserRepository } from "../../insfrastructure/db/repositories/userRepository";
 import { NextFunction } from "express";
 import { IReport } from "../../domain/entities/report";
@@ -28,7 +28,7 @@ export class UserCreateReport
       const { userId, report, content, courseId } = input;
       const course = await this.userRepository.findById(courseId);
       if (!course) {
-        throw new BadRequestError("Course not Found");
+        throw new BadRequestError(ErrorMessages.COURSE_NOT_FOUND);
       }
 
       const checkReport = await this.userRepository.checkReport(
@@ -37,7 +37,7 @@ export class UserCreateReport
         courseId
       );
       if (checkReport) {
-        throw new BadRequestError("Already report this video");
+        throw new BadRequestError(ErrorMessages.RIPORT_CONFLICT);
       }
       const createReport = await this.userRepository.createReport(
         userId,

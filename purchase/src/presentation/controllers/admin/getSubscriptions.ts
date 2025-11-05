@@ -1,4 +1,4 @@
-import { IController } from "@eduhublearning/common";
+import { IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
 import { GetAdminSubscriptions } from "../../../application/admin/getSubscriptions";
 
@@ -12,7 +12,7 @@ export class GetAdminSubscriptionsController implements IController {
     try {
       const subscriptions = await this._useCase.execute({ next });
       if (subscriptions) {
-        res.send({ success: true, subscriptions: subscriptions });
+        res.status(StatusCodes.OK).send({ success: true, subscriptions: subscriptions });
       }
     } catch (error) {
       console.error(error);

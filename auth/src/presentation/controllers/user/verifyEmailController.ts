@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { VerifyEmail } from "../../../application/user/verifyEmail";
 import { IController } from "../../../shared/IController";
+import { StatusCodes } from "@eduhublearning/common";
 
 export class VerifyEmailController implements IController {
   constructor(private readonly _useCase: VerifyEmail) {}
@@ -14,7 +15,7 @@ export class VerifyEmailController implements IController {
       const { email } = req.body;
       const otp = await this._useCase.execute({ userId, email, next });
       if (otp) {
-        res.send({ success: true, otp: otp });
+        res.status(StatusCodes.OK).send({ success: true, otp: otp });
       }
     } catch (error) {
       console.error(error);

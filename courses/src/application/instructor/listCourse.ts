@@ -1,4 +1,4 @@
-import { BadRequestError, IUseCase } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
 import { InstructorRepository } from "../../insfrastructure/db/repositories/instructorRepository";
 import { NextFunction } from "express";
 import { ICourse } from "../../domain/entities/course";
@@ -15,11 +15,11 @@ export class ListCourse
       const { courseId } = input;
       const course = await this.instructorRepository.findById(courseId);
       if (!course) {
-        throw new BadRequestError("Course not Found");
+        throw new BadRequestError(ErrorMessages.COURSE_NOT_FOUND);
       }
       if (!course.sections) {
         throw new BadRequestError(
-          "You cannot list this course becouse the video uploading is still processing..."
+          ErrorMessages.COURSE_LISTING_IN_PROCESS
         );
       }
 

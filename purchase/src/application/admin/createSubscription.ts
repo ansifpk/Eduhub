@@ -1,4 +1,4 @@
-import { BadRequestError, IController, IUseCase } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages, IController, IUseCase } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
 import { AdminRepository } from "../../infrastructure/db/repository/adminRepository";
 import { ISubcription } from "../../domain/entities/subscription";
@@ -31,7 +31,7 @@ export class AdminCreateSubscription
       const { price, plan, description } = input;
       const check = await this.adminRepository.findSubscription(plan);
       if (check) {
-        throw new BadRequestError("This plan alredy exists.");
+        throw new BadRequestError(ErrorMessages.PLAN_CONFLICT);
       }
       const subscription = await this.adminRepository.createSubscription(
         price,

@@ -1,4 +1,4 @@
-import { IController } from "@eduhublearning/common";
+import { IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
 import { DeleteLecture } from "../../../application/admin/deleteLecture";
 
@@ -13,7 +13,7 @@ export class DeleteLectureController implements IController {
       const { lectureUrl } = req.body;
       const courses = await this._useCase.execute({ lectureUrl, next });
       if (courses) {
-        res.send({ success: true });
+        res.status(StatusCodes.NO_CONTENT).send({ success: true });
       }
     } catch (error) {
       console.error(error);

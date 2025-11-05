@@ -1,4 +1,4 @@
-import { BadRequestError, IUseCase } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
 import { NextFunction } from "express";
 import { InstructorRepository } from "../../insfrastructure/db/repositories/instructorRepository";
 import { ICourse } from "../../domain/entities/course";
@@ -17,7 +17,7 @@ export class InstructorCourseDetailes
         courseId
       );
       if (!course) {
-        throw new BadRequestError("Course Not Foun");
+        throw new BadRequestError(ErrorMessages.COURSE_NOT_FOUND);
       }
 
       if (course) {

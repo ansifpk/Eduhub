@@ -1,4 +1,4 @@
-import { BadRequestError, IUseCase } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
 import { UserRepository } from "../../infrastructure/db/repository/userRepository";
 import { IRating } from "../../domain/entities/ratings";
 import { NextFunction } from "express";
@@ -28,14 +28,14 @@ export class CreateRating
       const { instructorId, userId, review, stars } = input;
       const instructor = await this.userRepository.findById(userId);
       if (!instructor) {
-        throw new BadRequestError("Instructor Not Found");
+        throw new BadRequestError(ErrorMessages.INSTRUCTOR_NOT_FOUND);
       }
       const checkRating = await this.userRepository.checkingRating(
         instructorId,
         userId
       );
       if (checkRating) {
-        throw new BadRequestError("Already Rated this instructor");
+        throw new BadRequestError(ErrorMessages.RATING_CONFLICT);
       }
       const rating = await this.userRepository.createRating(
         instructorId,

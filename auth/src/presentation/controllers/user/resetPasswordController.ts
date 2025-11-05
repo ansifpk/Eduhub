@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { ResetPassword } from "../../../application/user/resetPassword";
 import { IController } from "../../../shared/IController";
+import { StatusCodes } from "@eduhublearning/common";
 
 
 export class ResetPasswordController implements IController{
@@ -11,7 +12,7 @@ export class ResetPasswordController implements IController{
     const {password,newPassword,conPassword} = req.body
      const data = await this._useCase.execute({userId,password,newPassword,conPassword, next});
      if (data) {
-        res.send({ success: true });
+        res.status(StatusCodes.OK).send({ success: true });
      }
    } catch (error) {
     console.error(error);

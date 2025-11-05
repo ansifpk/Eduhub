@@ -2,7 +2,7 @@ import { NextFunction } from "express";
 import { ICategory } from "../../domain/category";
 import { CategoryRepository } from "../../infrastructure/db/repository/categoryRepository";
 import { IUseCase } from "../../shared/IUseCase";
-import { BadRequestError } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
 
 export class ListCategory
   implements IUseCase<{ _id: string; next: NextFunction }, ICategory | void>
@@ -20,10 +20,10 @@ export class ListCategory
         if (done) {
           return check;
         } else {
-          throw new BadRequestError("Category Not Fount");
+          throw new BadRequestError(ErrorMessages.CATEGORY_NOT_FOUND);
         }
       } else {
-        throw new BadRequestError("Category Not Fount");
+        throw new BadRequestError(ErrorMessages.CATEGORY_NOT_FOUND);
       }
     } catch (error) {
       console.error(error);

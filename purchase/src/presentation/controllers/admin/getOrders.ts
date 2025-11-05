@@ -1,4 +1,4 @@
-import { IController } from "@eduhublearning/common";
+import { IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
 import { AdminGetOrders } from "../../../application/admin/getOrders";
 
@@ -18,7 +18,7 @@ export class AdminGetOrdersController implements IController {
         next,
       });
       if (orders) {
-        res.send({ success: true, orders });
+        res.status(StatusCodes.OK).send({ success: true, orders });
       }
     } catch (error) {
       console.error(error);

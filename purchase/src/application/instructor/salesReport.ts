@@ -1,4 +1,4 @@
-import { BadRequestError, IUseCase } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
 import { InstructorRepository } from "../../infrastructure/db/repository/instructorRepository";
 import { NextFunction } from "express";
 import exceljs from "exceljs";
@@ -23,10 +23,10 @@ export class SalesReport
         instructorId
       );
       if (!checkUser) {
-        throw new BadRequestError("user Not found");
+        throw new BadRequestError(ErrorMessages.USER_NOT_FOUND);
       }
       if ((start && !end) || (!start && end)) {
-        throw new BadRequestError("PLease select starting and ending dates!");
+        throw new BadRequestError(ErrorMessages.CHART_STARTING_AND_ENDING_DATE);
       }
 
       const orders = await this.instructorRepository.orders(

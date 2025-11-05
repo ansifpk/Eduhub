@@ -3,6 +3,7 @@ import { UserRepository } from "../../infrastructure/db/repositories/userReposit
 import { IUseCase } from "../../shared/IUseCase";
 import { NextFunction } from "express";
 import { IMessage } from "../../domain/entities/message";
+import { ErrorMessages } from "../../../../common/src/errors/errorMessages";
 
 export class CreateMessage
   implements
@@ -21,16 +22,16 @@ export class CreateMessage
     try {
       const checkChat = await this._usrRepository.findChatById(input.chatId);
       if (!checkChat) {
-        throw new BadRequestError("Chat Not Found");
+        throw new BadRequestError(ErrorMessages.CHAT_NOT_FOUND);
       }
       if (checkChat.members[1].isBlock) {
-        throw new BadRequestError("This user is blocked");
+        throw new BadRequestError(ErrorMessages.BLOCKED_CHAT);
       }
 
       const checkUser = await this._usrRepository.findUserById(input.senderId);
 
       if (!checkUser) {
-        throw new BadRequestError("User Not Found");
+        throw new BadRequestError(ErrorMessages.USER_NOT_FOUND);
       }
       if (checkUser.isBlock) {
         throw new ForbiddenError();

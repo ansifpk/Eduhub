@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { EmailChangedPublisher } from "@eduhublearning/common";
+import { EmailChangedPublisher, StatusCodes } from "@eduhublearning/common";
 import { Producer } from "kafkajs";
 import { ChangeEmail } from "../../../application/user/changeEmail";
 import kafkaWrapper from "../../../infrastructure/kafka/kafkaWrapper";
@@ -19,7 +19,7 @@ export class ChangeEmailController implements IController {
           _id: user._id!,
           email: user.email
         })
-        res.send({success:true,user:user});
+        res.status(StatusCodes.OK).send({success:true,user:user});
       }
     } catch (error) {
       console.error(error);

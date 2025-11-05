@@ -3,6 +3,7 @@ import { UserRepository } from "../../infrastructure/db/repositories/userReposit
 import { IUseCase } from "../../shared/IUseCase";
 import { BadRequestError } from "@eduhublearning/common";
 import { UpdateWriteOpResult } from "mongoose";
+import { ErrorMessages } from "../../../../common/src/errors/errorMessages";
 
 export class MarkAsRead
   implements
@@ -21,7 +22,7 @@ export class MarkAsRead
       const user = await this._userRepository.findUserById(input.senderId);
 
       if (!user) {
-        throw new BadRequestError("User Not Found");
+        throw new BadRequestError(ErrorMessages.USER_NOT_FOUND);
       }
       const notifications = await this._userRepository.updateNotification(
         input.userId,

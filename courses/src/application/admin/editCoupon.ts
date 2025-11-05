@@ -1,4 +1,4 @@
-import { BadRequestError, IUseCase } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
 import { ICoupon } from "../../domain/entities/coupon";
 import { AdminRepository } from "../../insfrastructure/db/repositories/adminRepository";
 import { NextFunction } from "express";
@@ -42,28 +42,28 @@ export class EditCoupon
       } = input;
       const couponCheck = await this.couponRepository.findCouponById(couponId);
       if (title.length < 1) {
-        throw new BadRequestError("Pleaseprovide a valid title");
+        throw new BadRequestError(ErrorMessages.COUPON_TITLE_VALIDATION);
       }
       if (description.length < 1) {
-        throw new BadRequestError("Pleaseprovide a valid description");
+        throw new BadRequestError(ErrorMessages.COUPON_DESCRIPTION_VALIDATION);
       }
       if (!couponCheck) {
-        throw new BadRequestError("Coupon Not found");
+        throw new BadRequestError(ErrorMessages.COUPON_NOT_FOUND);
       }
       if (expiryDate < startingDate) {
         throw new BadRequestError(
-          "expiry Date date must be greaterthan Starting Date"
+          ErrorMessages.COUPON_EXPIRY_DATE_VALIDATION
         );
       }
       const today = new Date().toISOString().slice(0, 16);
       if (today > startingDate) {
         throw new BadRequestError(
-          "Please set the starting date as today or day that is grater than today"
+          ErrorMessages.COUPON_STARTING_DATE_VALIDATION
         );
       }
 
       if (offer < 5 || offer > 15) {
-        throw new BadRequestError("Offer rate must be in betwwen 5% - 20% ");
+        throw new BadRequestError(ErrorMessages.COUPON_STARTING_DATE_VALIDATION);
       }
 
       const coupon = await this.couponRepository.editCoupon(

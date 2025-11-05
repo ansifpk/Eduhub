@@ -3,6 +3,7 @@ import { IUseCase } from "../../shared/IUseCase";
 import { UserRepository } from "../../infrastructure/db/repositories/userRepository";
 import { BadRequestError } from "@eduhublearning/common";
 import { IChat } from "../../domain/entities/chat";
+import { ErrorMessages } from "../../../../common/src/errors/errorMessages";
 
 export class FetchChats
   implements IUseCase<{ userId: string; next: NextFunction }, IChat[] | void>
@@ -15,7 +16,7 @@ export class FetchChats
     try {
       const user = await this._userRepository.findUserById(input.userId);
       if (!user) {
-        throw new BadRequestError("User Not Found");
+        throw new BadRequestError(ErrorMessages.USER_NOT_FOUND);
       }
       const userChats = await this._userRepository.find(input.userId);
       if (userChats) {

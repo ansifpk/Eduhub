@@ -1,4 +1,4 @@
-import { BadRequestError, IUseCase } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
 import { UserRepository } from "../../insfrastructure/db/repositories/userRepository";
 import { IRating } from "../../domain/entities/ratings";
 import { NextFunction } from "express";
@@ -15,7 +15,7 @@ export class DeleteRating
       const { ratingId } = input;
       const checkRating = await this.userRepository.findRating(ratingId);
       if (!checkRating) {
-        throw new BadRequestError("Rating not Found");
+        throw new BadRequestError(ErrorMessages.RATING_NOT_FOUND);
       }
 
       const rating = await this.userRepository.deleteRating(ratingId);

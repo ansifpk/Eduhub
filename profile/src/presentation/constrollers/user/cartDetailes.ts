@@ -1,4 +1,4 @@
-import { IController } from "@eduhublearning/common";
+import { IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
 import { CartDetailes } from "../../../application/user/cartDetailes";
 
@@ -14,7 +14,7 @@ export class CartDetailesController implements IController {
       const cart = await this._useCase.execute({ userId, next });
       if (cart) {
         const cartTotal = cart.courses.reduce((acc, cur) => acc + cur.price, 0);
-        res.send({ success: true, cart: cart, cartTotal });
+        res.status(StatusCodes.OK).send({ success: true, cart: cart, cartTotal });
       }
     } catch (error) {
       console.error(error);

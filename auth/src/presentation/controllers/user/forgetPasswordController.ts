@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { ForgetPassword } from "../../../application/user/forgetPassword";
 import { IController } from "../../../shared/IController";
+import { StatusCodes } from "@eduhublearning/common";
 
 export class ForgetPasswordController implements IController {
 
@@ -10,7 +11,7 @@ export class ForgetPasswordController implements IController {
         try {
      const data = await this._useCase.execute({email:req.body.email, next});
      if (data) {
-        res.send({ sucess: true });
+        res.status(StatusCodes.NO_CONTENT).send({ sucess: true });
      }
    } catch (error) {
     console.error(error);

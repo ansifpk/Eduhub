@@ -2,7 +2,7 @@ import { NextFunction } from "express";
 import { IUseCase } from "../../shared/IUseCase";
 import { Iuser } from "../../domain/entities/user";
 import { IToken } from "../../domain/interfaces/serviceInterfaces/IJwt";
-import { BadRequestError } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
 import { JWTtocken } from "../../infrastructure/services/jwt";
 import { UserRepository } from "../../infrastructure/db/repository/userRepositories";
 import { OtpRepository } from "../../infrastructure/db/repository/otpRepostory";
@@ -24,11 +24,11 @@ export class CreateUser implements IUseCase<{token: string, otp: string,next: Ne
              
         
               if (!result) {
-                throw new BadRequestError("OTP Expired");
+                throw new BadRequestError(ErrorMessages.OTP_EXPIRED);
               }
         
               if (Number(result.otp) !== Number(input.otp)) {
-                throw new BadRequestError("invalid otp");
+                throw new BadRequestError(ErrorMessages.INVALID_OTP);
               }
         
               const user = (await this._userRepository.create(decoded)) as Iuser;

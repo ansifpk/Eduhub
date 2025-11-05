@@ -1,4 +1,4 @@
-import { IController } from "@eduhublearning/common";
+import { IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
 import { UserGetCoupons } from "../../../application/user/getCoupons";
 
@@ -12,7 +12,7 @@ export class UserGetCouponsController implements IController {
     try {
       const coupons = await this._useCase.execute({ next });
       if (coupons) {
-        res.send({ success: true, coupons: coupons });
+        res.status(StatusCodes.OK).send({ success: true, coupons: coupons });
       }
     } catch (error) {
       console.error(error);

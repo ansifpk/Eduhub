@@ -17,7 +17,7 @@ export class SentEmail implements ISentEmail {
         const mailOptions = {
           from: process.env.EMAIL,
           // to: process.env.EMAIL,
-          to: toEmail,
+          to: process.env.EMAIL,
           subject: "Verify Your email",
           html: `Your OTP is: ${otp}`,
         };

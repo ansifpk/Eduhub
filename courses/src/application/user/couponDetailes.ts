@@ -1,4 +1,4 @@
-import { BadRequestError, IUseCase } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
 import { UserRepository } from "../../insfrastructure/db/repositories/userRepository";
 import { ICoupon } from "../../domain/entities/coupon";
 import { NextFunction } from "express";
@@ -15,15 +15,15 @@ export class UserCouponDetailes implements IUseCase<{couponCode:string,userId:st
         
               if (!coupons) {
                 //! coupon not fund error
-                throw new BadRequestError("Invalid coupon code!.");
+                throw new BadRequestError(ErrorMessages.INVALID_COUPON_CODE);
               }
         
               if (coupons.users.includes(userId)) {
-                throw new BadRequestError("Already used this coupon code!.");
+                throw new BadRequestError(ErrorMessages.COUPON_USED);
               }
         
               if (new Date(coupons.expiryDate) < today) {
-                throw new BadRequestError("Coupon expired!.");
+                throw new BadRequestError(ErrorMessages.COUPON_EXPIRED);
               }
         
               if (coupons) {

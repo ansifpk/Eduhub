@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { IController } from "../../../shared/IController";
+import { StatusCodes } from "@eduhublearning/common";
 
 export class AdminLogoutController implements IController {
  
@@ -15,7 +16,7 @@ export class AdminLogoutController implements IController {
         });
         res.clearCookie("accessAdminToken")
         res.clearCookie("refreshAdminToken")
-        res.send({ succuss: true, message: "logout success" });
+        res.status(StatusCodes.OK).send({ succuss: true, message: "logout success" });
       } catch (error) {
         console.error(error);
       }

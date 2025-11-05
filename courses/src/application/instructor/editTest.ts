@@ -1,4 +1,4 @@
-import { BadRequestError, IUseCase } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
 import { ITest } from "../../domain/entities/test";
 import { NextFunction } from "express";
 import { InstructorRepository } from "../../insfrastructure/db/repositories/instructorRepository";
@@ -20,7 +20,7 @@ export class EditTest
       const { testData, testId } = input;
       const checkTest = await this.instructorRepository.findTest(testId);
       if (!checkTest) {
-        throw new BadRequestError("Test not Found");
+        throw new BadRequestError(ErrorMessages.TEST_NOT_FOUND);
       }
 
       const updatedTest = await this.instructorRepository.editTest(

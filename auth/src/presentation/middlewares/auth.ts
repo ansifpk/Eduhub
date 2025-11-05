@@ -28,13 +28,6 @@ export const isAuth = async (req:Request,res:Response,next:NextFunction)=>{
       throw new NotAuthorizedError()
      }
 
-     const user = await userModel.findOne({_id:check.id});
-     if(!user){
-      throw new NotAuthorizedError()
-     }
-     if(user.isBlock){
-      throw new ForbiddenError();
-     }
       next();
    } catch (error) {
     console.error(error)
@@ -66,8 +59,7 @@ export const isAdmin = async (req:Request,res:Response,next:NextFunction)=>{
         if(user.isAdmin){
            next()
         }else{
-          throw new NotAuthorizedError()
-      
+          throw new NotAuthorizedError();
         }
     } catch (error) {
       console.error(error)

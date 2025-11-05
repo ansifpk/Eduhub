@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { IController } from "../../../shared/IController";
-import { ForbiddenError } from "@eduhublearning/common";
+import { ForbiddenError, StatusCodes } from "@eduhublearning/common";
 import { TockenCheck } from "../../../application/user/tockenCheck";
 
 export class TockenCheckController implements IController {
@@ -29,7 +29,7 @@ export class TockenCheckController implements IController {
                  sameSite:process.env.NODE_ENV == 'development'?'strict':"none",
                  maxAge:30 * 24 * 60 * 60 * 1000
               });
-               res.send({success:true,tockens});
+               res.status(StatusCodes.OK).send({success:true,tockens});
              }
            } catch (error) {
              console.error(error);

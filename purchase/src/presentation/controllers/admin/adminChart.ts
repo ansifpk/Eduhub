@@ -1,4 +1,4 @@
-import { IController } from "@eduhublearning/common";
+import { IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
 import { AdminChart } from "../../../application/admin/adminChart";
 
@@ -13,7 +13,7 @@ export class AdminChartController implements IController {
       const { start, end } = req.params;
       const orders = await this._useCase.execute({ start, end, next });
       if (orders) {
-        res.send({ success: true, orders });
+        res.status(StatusCodes.OK).send({ success: true, orders });
       }
     } catch (error) {
       console.error(error);

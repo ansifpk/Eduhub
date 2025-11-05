@@ -1,4 +1,4 @@
-import { IController } from "@eduhublearning/common";
+import { IController, StatusCodes } from "@eduhublearning/common";
 import { EditCoupon } from "../../../application/admin/editCoupon";
 import { Request, Response, NextFunction } from "express";
 
@@ -32,7 +32,7 @@ export class EditCouponController implements IController {
         next,
       });
       if (coupon) {
-        res.send({ success: true, coupon: coupon });
+        res.status(StatusCodes.OK).send({ success: true, coupon: coupon });
       }
     } catch (error) {
       console.error(error);

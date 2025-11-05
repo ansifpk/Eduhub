@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { ChangePassword } from "../../../application/user/changePassword";
 import { IController } from "../../../shared/IController";
+import { StatusCodes } from "@eduhublearning/common";
 
 export class ChangePasswordConstroller implements IController {
     constructor(private readonly _useCase:ChangePassword) {
@@ -16,7 +17,7 @@ export class ChangePasswordConstroller implements IController {
         next}
       );
       if (data) {
-         res.send({ sucess: true });
+         res.status(StatusCodes.NO_CONTENT).send({ sucess: true });
       }
     } catch (error) {
       console.error(error);

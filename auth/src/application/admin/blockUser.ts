@@ -1,4 +1,4 @@
-import { BadRequestError } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
 import { AdminRepository } from "../../infrastructure/db/repository/adminRepository";
 import { IUseCase } from "../../shared/IUseCase";
 import { Iuser } from "../../domain/entities/user";
@@ -20,7 +20,7 @@ export class BlockUser
           return data;
         }
       } else {
-        throw new BadRequestError("User Not Found");
+        throw new BadRequestError(ErrorMessages.USER_NOT_FOUND);
       }
     } catch (error) {
       console.log(error);

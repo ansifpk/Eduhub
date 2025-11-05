@@ -1,4 +1,4 @@
-import { CourseUpdatedPublisher, IController } from "@eduhublearning/common";
+import { CourseUpdatedPublisher, IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
 import { EditCourse } from "../../../application/instructor/editCourse";
 import kafkaWrapper from "../../../insfrastructure/kafka/kafkaWrapper";
@@ -38,7 +38,7 @@ export class EditCourseController implements IController {
           image: course.image,
         });
         this._sectionUuseCase.execute({sectionData:{courseId:courseId,bodyData:req.body.sections,fileData:files},next})
-        res.send({ success: true, course: course });
+        res.status(StatusCodes.OK).send({ success: true, course: course });
       }
     } catch (error) {
       console.error(error);

@@ -1,4 +1,4 @@
-import { BadRequestError, IUseCase } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
 import { ICourse } from "../../domain/entities/course";
 import { NextFunction } from "express";
 import { UserRepository } from "../../insfrastructure/db/repositories/userRepository";
@@ -30,7 +30,7 @@ export class PlaceOrder
       const { course, userId, couponCode } = input;
       const coupon = await this.userRepository.findByCouponCode(couponCode);
       if (couponCode && !coupon) {
-        new BadRequestError("Invalid coupon code");
+        new BadRequestError(ErrorMessages.INVALID_COUPON_CODE);
       }
 
       let courseIds: string[] = [];

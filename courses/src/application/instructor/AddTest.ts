@@ -1,4 +1,4 @@
-import { BadRequestError, IUseCase } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
 import { InstructorRepository } from "../../insfrastructure/db/repositories/instructorRepository";
 import { NextFunction } from "express";
 import { ITest } from "../../domain/entities/test";
@@ -20,7 +20,7 @@ export class AddTest
       const { courseId, testData } = input;
       const course = await this.instructorRepository.findById(courseId);
       if (!course) {
-        throw new BadRequestError("Course not Found");
+        throw new BadRequestError(ErrorMessages.COURSE_NOT_FOUND);
       }
       const test = await this.instructorRepository.creatTest(testData);
       if (test) {

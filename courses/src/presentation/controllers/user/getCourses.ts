@@ -1,4 +1,4 @@
-import { IController, IUseCase } from "@eduhublearning/common";
+import { IController, IUseCase, StatusCodes } from "@eduhublearning/common";
 import { NextFunction, Request, Response } from "express";
 import { UserGetCourses } from "../../../application/user/getCourses";
 
@@ -23,7 +23,7 @@ export class UserGetCoursesController implements IController {
         next,
       });
       if (courses) {
-        res.send({
+        res.status(StatusCodes.OK).send({
           success: true,
           courses: courses.courses,
           pages: courses.pages,

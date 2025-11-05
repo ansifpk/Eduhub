@@ -1,4 +1,4 @@
-import { IController } from "@eduhublearning/common";
+import { IController, StatusCodes } from "@eduhublearning/common";
 import { AddToCart } from "../../../application/user/addCart";
 import { Request, Response, NextFunction } from "express";
 
@@ -18,7 +18,7 @@ export class AddToCartController implements IController {
         next,
       });
       if (cart) {
-        res.send({ success: true, cart: cart });
+        res.status(StatusCodes.CREATED).send({ success: true, cart: cart });
       }
     } catch (error) {
       console.error(error);
