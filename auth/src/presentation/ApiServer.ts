@@ -77,16 +77,16 @@ export class ApiServer {
                         io.emit("getOnlineUsers",onlineUsers)
                     })
                 })
-            await kafkaWrapper.connect();
-            const consumer = await kafkaWrapper.createConsumer("auth-instructor-aproved-group")
-            const consumer2 = await kafkaWrapper.createConsumer("auth-profile-updated-group")
-            const consumer3 = await kafkaWrapper.createConsumer("email-changed-group")
-            consumer.connect()
-            consumer2.connect()
-            consumer3.connect()
-            await new InstructorAprovedConsumer(consumer).listen()
-            await new UserProfileUpdatedConsumer(consumer2).listen()
-            await new EmailChangedConsumer(consumer3).listen()
+            // await kafkaWrapper.connect();
+            // const consumer = await kafkaWrapper.createConsumer("auth-instructor-aproved-group")
+            // const consumer2 = await kafkaWrapper.createConsumer("auth-profile-updated-group")
+            // const consumer3 = await kafkaWrapper.createConsumer("email-changed-group")
+            // consumer.connect()
+            // consumer2.connect()
+            // consumer3.connect()
+            // await new InstructorAprovedConsumer(consumer).listen()
+            // await new UserProfileUpdatedConsumer(consumer2).listen()
+            // await new EmailChangedConsumer(consumer3).listen()
             httpServer.listen(port,()=>console.log(`auth service running at ${port}...`))
         } catch (error) {
             console.error(error);

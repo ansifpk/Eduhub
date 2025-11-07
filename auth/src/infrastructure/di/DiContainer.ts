@@ -15,6 +15,7 @@ import { LoginUser } from "../../application/user/loginUser";
 import { ResetPassword } from "../../application/user/resetPassword";
 import { SendOtp } from "../../application/user/sendOtp";
 import { TockenCheck } from "../../application/user/tockenCheck";
+import { UserSignUp } from "../../application/user/userSignUp";
 import { VerifyEmail } from "../../application/user/verifyEmail";
 import { VerifyOtp } from "../../application/user/verifyOtp";
 import { AdminLoginController } from "../../presentation/controllers/admin/adminLoginController.";
@@ -34,6 +35,7 @@ import { ForgetPasswordController } from "../../presentation/controllers/user/fo
 import { GoogleLoginController } from "../../presentation/controllers/user/googleLoginController";
 import { LoginUserController } from "../../presentation/controllers/user/loginController";
 import { LogOutController } from "../../presentation/controllers/user/logoutController";
+import { RegisterController } from "../../presentation/controllers/user/registerController";
 import { ResendOtpController } from "../../presentation/controllers/user/resendOtpController";
 import { ResetPasswordController } from "../../presentation/controllers/user/resetPasswordController";
 import { TockenCheckController } from "../../presentation/controllers/user/tockenCheckController";
@@ -68,6 +70,7 @@ const changePasswordUseCase = new ChangePassword(userRepository,otpRepository,en
 const verifyEmailUseCase = new VerifyEmail(userRepository,otpGenerator,otpRepository,sentEmail)
 const changeEmailUseCase = new ChangeEmail(userRepository,otpRepository)
 const tockenCheckUseCase = new TockenCheck(jwtTocken)
+const userSignUpUseCase = new UserSignUp(userRepository,encrypt,otpGenerator,otpRepository,sentEmail,jwtTocken)
 
 const creatUserController = new CreatUserController(createUserUseCase)
 const loginUserController = new LoginUserController(loginUserUseCase)
@@ -80,6 +83,7 @@ const changePasswordConstroller = new ChangePasswordConstroller(changePasswordUs
 const verifyEmailConstroller = new VerifyEmailController(verifyEmailUseCase)
 const changeEmailConstroller = new ChangeEmailController(changeEmailUseCase)
 const tockenCheckConstroller = new TockenCheckController(tockenCheckUseCase)
+const userSignUpController = new RegisterController(userSignUpUseCase)
 const logOutController = new LogOutController()
 
 //* for instructors
@@ -109,6 +113,7 @@ const adminLogoutController = new AdminLogoutController()
 
 export {
     creatUserController,
+    userSignUpController,
     loginUserController,
     logOutController,
     googleLoginController,

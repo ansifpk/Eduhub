@@ -28,7 +28,7 @@ export class CreatUserController implements IController {
         otp:req.body.otp,
         next
         });
- 
+   
       if (user) {
        await new UserCreatedPublisher(kafkaWrapper.producer as Producer).produce({
          _id: user.user._id! as string,
