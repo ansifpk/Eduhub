@@ -1,9 +1,8 @@
-import { BadRequestError, ForbiddenError } from "@eduhublearning/common";
+import { BadRequestError, ForbiddenError,ErrorMessages } from "@eduhublearning/common";
 import { UserRepository } from "../../infrastructure/db/repositories/userRepository";
 import { IUseCase } from "../../shared/IUseCase";
 import { NextFunction } from "express";
 import { IMessage } from "../../domain/entities/message";
-import { ErrorMessages } from "../../../../common/src/errors/errorMessages";
 
 export class CreateMessage
   implements

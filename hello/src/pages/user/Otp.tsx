@@ -53,6 +53,7 @@ const Otp = () => {
 
   const resentOTP = async () => {
     setResendLoading(true)
+    setLoading(false)
      await doRequest({
       url:userRoutes.resentOtp,
       method:"post",

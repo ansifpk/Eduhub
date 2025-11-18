@@ -5,7 +5,6 @@ export class SentEmail implements ISentEmail {
   async sentEmailVerification(email: string, otp: string): Promise<any> {
     let transporter = nodeMailer.createTransport({
       service: "gmail",
-
       auth: {
         user: process.env.EMAIL,
         pass: process.env.PASSWORD,
@@ -16,8 +15,7 @@ export class SentEmail implements ISentEmail {
       try {
         const mailOptions = {
           from: process.env.EMAIL,
-          // to: process.env.EMAIL,
-          to: process.env.EMAIL,
+          to: toEmail,
           subject: "Verify Your email",
           html: `Your OTP is: ${otp}`,
         };

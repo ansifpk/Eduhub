@@ -1,9 +1,8 @@
 import { NextFunction } from "express";
 import { UserRepository } from "../../infrastructure/db/repositories/userRepository";
 import { IUseCase } from "../../shared/IUseCase";
-import { BadRequestError } from "@eduhublearning/common";
+import { BadRequestError,ErrorMessages } from "@eduhublearning/common";
 import { INotification } from "../../domain/entities/notifications";
-import { ErrorMessages } from "../../../../common/src/errors/errorMessages";
 
 export class GetNotification
   implements

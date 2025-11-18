@@ -1,9 +1,8 @@
-import { BadRequestError } from "@eduhublearning/common";
+import { BadRequestError,ErrorMessages } from "@eduhublearning/common";
 import { UserRepository } from "../../infrastructure/db/repositories/userRepository";
 import { IUseCase } from "../../shared/IUseCase";
 import { INotification } from "../../domain/entities/notifications";
 import { NextFunction } from "express";
-import { ErrorMessages } from "../../../../common/src/errors/errorMessages";
 
 export class CreateNotification
   implements

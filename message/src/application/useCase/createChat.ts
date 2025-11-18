@@ -1,9 +1,8 @@
 import { NextFunction } from "express";
 import { IUseCase } from "../../shared/IUseCase";
 import { UserRepository } from "../../infrastructure/db/repositories/userRepository";
-import { BadRequestError } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
 import { IChat } from "../../domain/entities/chat";
-import { ErrorMessages } from "../../../../common/src/errors/errorMessages";
 
 export class CreateChatUseCase
   implements
