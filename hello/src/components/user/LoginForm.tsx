@@ -108,7 +108,7 @@ useEffect(()=>{
                 
                 {
                     loading?<>
-                     Loging...
+                     Loading...
                      <i className="bi bi-arrow-repeat animate-spin"></i>
                     </>
                     :
