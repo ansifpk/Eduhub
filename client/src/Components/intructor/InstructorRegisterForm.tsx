@@ -164,7 +164,7 @@ const InstructorRegisterForm = () => {
                       : " What kind of teaching have you done before?"}
                   </label>
                   <Select onValueChange={(e) => setValue("experience", e)}>
-                    <SelectTrigger className="w-full rounded-full border-1 border-teal-300">
+                    <SelectTrigger className="w-full rounded-full border border-teal-300">
                       <SelectValue placeholder="Select..." />
                     </SelectTrigger>
                     <SelectContent>
@@ -223,7 +223,7 @@ const InstructorRegisterForm = () => {
                     }}
                     type="file"
                     accept="image/*"
-                    className={`rounded-full border-1 py-1 px-2 border-teal-300`}
+                    className={`rounded-full border py-1 px-2 border-teal-300`}
                     id="cv"
                     placeholder="cv"
                   />

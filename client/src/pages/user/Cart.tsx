@@ -19,145 +19,7 @@ import { Input } from "@/components/ui/input";
 import type { ICourse } from "@/@types/courseType";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-const cartWithTwoCourses: any = {
-  _id: "cart_003",
-  userId: "user_003",
-  courses: [
-    {
-      _id: "course_01",
-      title: "React Basics",
-      instructorId: {
-        _id: "inst_01",
-        name: "Alex Johnson",
-        email: "alex@demo.com",
-      },
-      subCategory: "Frontend",
-      description: "Learn React from scratch.",
-      thumbnail: "https://example.com/react.png",
-      category: "Web Development",
-      level: "Beginner",
-      isListed: true,
-      price: 1499,
-      test: {
-        _id: "test_01",
-        test: [],
-        students: [],
-      },
-      subscription: true,
-      image: {
-        _id: "img_01",
-        image_url: "https://example.com/react-course.jpg",
-      },
-      courseReviews: [],
-      students: [],
-      createdAt: "2024-01-12T08:00:00Z",
-      sections: {
-        _id: "sec_01",
-        title: "Introduction",
-      },
-    },
 
-    {
-      _id: "course_02",
-      title: "Node.js Essentials",
-      instructorId: {
-        _id: "inst_02",
-        name: "Sarah Lee",
-        email: "sarah@demo.com",
-      },
-      subCategory: "Backend",
-      description: "Build backend apps with Node.js.",
-      thumbnail: "https://example.com/node.png",
-      category: "Backend Development",
-      level: "Intermediate",
-      isListed: true,
-      price: 2499,
-      test: {
-        _id: "test_02",
-        test: [],
-        students: [],
-      },
-      subscription: false,
-      image: {
-        _id: "img_02",
-        image_url: "https://example.com/node-course.jpg",
-      },
-      courseReviews: [],
-      students: [],
-      createdAt: "2024-02-18T10:30:00Z",
-      sections: {
-        _id: "sec_02",
-        title: "Node Fundamentals",
-      },
-    },
-    {
-      _id: "course_03",
-      title: "Node.js Essentials",
-      instructorId: {
-        _id: "inst_02",
-        name: "Sarah Lee",
-        email: "sarah@demo.com",
-      },
-      subCategory: "Backend",
-      description: "Build backend apps with Node.js.",
-      thumbnail: "https://example.com/node.png",
-      category: "Backend Development",
-      level: "Intermediate",
-      isListed: true,
-      price: 2499,
-      test: {
-        _id: "test_02",
-        test: [],
-        students: [],
-      },
-      subscription: false,
-      image: {
-        _id: "img_02",
-        image_url: "https://example.com/node-course.jpg",
-      },
-      courseReviews: [],
-      students: [],
-      createdAt: "2024-02-18T10:30:00Z",
-      sections: {
-        _id: "sec_02",
-        title: "Node Fundamentals",
-      },
-    },
-    {
-      _id: "course_04",
-      title: "Node.js Essentials4",
-      instructorId: {
-        _id: "inst_02",
-        name: "Sarah Lee",
-        email: "sarah@demo.com",
-      },
-      subCategory: "Backend",
-      description: "Build backend apps with Node.js.",
-      thumbnail: "https://example.com/node.png",
-      category: "Backend Development",
-      level: "Intermediate",
-      isListed: true,
-      price: 2499,
-      test: {
-        _id: "test_02",
-        test: [],
-        students: [],
-      },
-      subscription: false,
-      image: {
-        _id: "img_02",
-        image_url: "https://example.com/node-course.jpg",
-      },
-      courseReviews: [],
-      students: [],
-      createdAt: "2024-02-18T10:30:00Z",
-      sections: {
-        _id: "sec_02",
-        title: "Node Fundamentals",
-      },
-    },
-  ],
-};
 import {
   flexRender,
   getCoreRowModel,
@@ -340,7 +202,7 @@ const Cart = () => {
   return (
     <div>
       <Header />
-      {!cartWithTwoCourses || cartWithTwoCourses?.courses?.length == 0 ? (
+      {!cart || cart?.courses?.length == 0 ? (
         <div className="h-[75vh] flex justify-center items-center gap-5 ">
           <strong>No Item in Your Cart</strong>
           <button

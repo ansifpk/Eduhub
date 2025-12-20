@@ -131,7 +131,7 @@ const AssesmentTest = () => {
               <div className="flex gap-2 m-2">
                   {
                     watch("questions").map((_value,index)=>(
-                        <div key={index+1} className="p-1 w-[180px] h-[180px] border">
+                        <div key={index+1} className="p-1 w-45 h-45 border">
                             <label>Your Answer</label>
                             <div className={`w-full flex  items-center gap-3 p-2 py-3 text-left  rounded-lg border ${
                                     watch(`questions.${index}.answer`) == watch(`questions.${index}.selected`)
@@ -172,7 +172,7 @@ const AssesmentTest = () => {
                     <span className='text-3xl'>Assessment Test</span>
                   </div>
                 </div>
-                <Carousel setApi={setApi} className="w-[75%] h-[430px]">
+                <Carousel setApi={setApi} className="w-[75%] h-107.5">
                 <CarouselContent>
                     {watch("questions").map((_value, index) => (
                     <CarouselItem key={index}>
