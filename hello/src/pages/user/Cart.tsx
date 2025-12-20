@@ -1,4 +1,3 @@
-import type { ICart } from "@/@types/cartType";
 import Footer from "@/components/user/Footer";
 import useRequest from "@/hooks/useRequest";
 import { useEffect, useMemo, useRef, useState } from "react";
