@@ -9,7 +9,6 @@ import { changeImage, removeUser } from "@/redux/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import type { IUser } from "@/@types/userType";
 import StarBorder from "../StarBorder";
-import { AnimatePresence, motion } from "motion/react";
 
 const Header = () => {
   const [open, setOpen] = useState(false);
@@ -56,9 +55,7 @@ const Header = () => {
   ];
   return (
     <>
-      <div 
-      className="sticky top-0 z-50 px-5 flex h-14 justify-between items-center  bg-gray-10/50 backdrop-filter inset-0 backdrop-blur-lg font-mono text-black text-sm "
-      >
+      <div className="sticky top-0 z-50 px-5 flex h-14 justify-between items-center  bg-gray-10/50 backdrop-filter inset-0 backdrop-blur-lg font-mono text-black text-sm ">
         <span className="font-bold text-2xl flex items-center font-[poppins] text-gray-800">
           EduHub
         </span>
@@ -132,21 +129,17 @@ const Header = () => {
         </ul>
       </div>
       {open && (
-        <AnimatePresence>
-          <motion.ul
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 1 }}
-            className={`md:hidden flex flex-col bg-gray-10/50 backdrop-blur-lg backdrop-filter sticky top-0 z-50 text-black items-end-safe gap-5 p-2`}
+          <ul
+           
+            className={`md:hidden flex w-full   flex-col bg-gray-10/50 backdrop-blur-lg fixed top-14 right-0 z-50 text-black items-end gap-5 p-2`}
           >
             {navbar.map((value) => (
               <li key={value.path}>
                 <NavLink
                   className={({ isActive }) =>
                     isActive
-                      ? "bg-gray-300/50 p-2 rounded-full"
-                      : "hover:bg-gray-300/50 p-2 rounded-full"
+                      ? "bg-gray-300/50 p-2 rounded-full text-sm font-semibold"
+                      : "hover:bg-gray-300/50 p-2 rounded-full text-sm font-semibold"
                   }
                   to={value.path}
                 >
@@ -186,15 +179,18 @@ const Header = () => {
             ) : (
               <>
                 <StarBorder as="button" thickness={3} color="red" speed="2s">
-                  <NavLink to={"/signIn"}>Sign In</NavLink>
+                  <NavLink className="text-sm font-semibold" to={"/signIn"}>
+                    Sign In
+                  </NavLink>
                 </StarBorder>
                 <StarBorder as="button" thickness={3} color="red" speed="2s">
-                  <NavLink to={"/signUp"}>Sign Up</NavLink>
+                  <NavLink className="text-sm font-semibold" to={"/signUp"}>
+                    Sign Up
+                  </NavLink>
                 </StarBorder>
               </>
             )}
-          </motion.ul>
-        </AnimatePresence>
+          </ul>
       )}
     </>
   );
