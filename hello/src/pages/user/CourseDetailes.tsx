@@ -264,7 +264,7 @@ const CourseDetailes = () => {
         <div className="mx-5">
           <Separator
             orientation="vertical"
-            className="min-h-[50vh] bg-teal-500 "
+            className="md:min-h-[50vh] min-h-[30vh] bg-teal-500 "
           />
         </div>
         <div className="grid mx-2 text-black ">
@@ -299,7 +299,7 @@ const CourseDetailes = () => {
         </div>
       </div>
 
-      <Card className="md:hidden block w-full max-w-sm border-0 border-none">
+        <Card className="md:hidden block w-full max-w-sm mx-auto border-0 border-none">
           <CardContent className="border-0">
             <img
               className="h-70 w-96  object-fill"
@@ -323,7 +323,7 @@ const CourseDetailes = () => {
                   ? navigate("/user/cart")
                   : handleCart(course?._id!)
               }
-              className="bg-teal-500 w-full rounded text-white text-xs cursor-pointer font-semibold transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 hover:bg-teal-300"
+              className="bg-teal-500 w-full rounded text-white text-xs cursor-pointer font-semibold transition-all hover:scale-110 hover:bg-teal-300"
             >
               {course?.students.some((student) => student._id == userId) ||
               plans.some(
@@ -361,6 +361,7 @@ const CourseDetailes = () => {
                         <SheetTrigger asChild>
                           <Button
                             className="bg-teal-500 w-full
+                           transition-all hover:scale-110
                   rounded text-white text-xs font-semibold cursor-pointer hover:bg-teal-300 hover:text-white"
                           >
                             Subscribe
@@ -981,7 +982,7 @@ const CourseDetailes = () => {
                   ? navigate("/user/cart")
                   : handleCart(course?._id!)
               }
-              className="bg-teal-500 w-full rounded text-white text-xs cursor-pointer font-semibold transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 hover:bg-teal-300"
+              className="bg-teal-500 w-full rounded text-white text-xs cursor-pointer font-semibold transition-all hover:scale-110 hover:bg-teal-300"
             >
               {course?.students.some((student) => student._id == userId) ||
               plans.some(
@@ -1019,6 +1020,7 @@ const CourseDetailes = () => {
                         <SheetTrigger asChild>
                           <Button
                             className="bg-teal-500 w-full
+                            transition-all hover:scale-110
                   rounded text-white text-xs font-semibold cursor-pointer hover:bg-teal-300 hover:text-white"
                           >
                             Subscribe
@@ -1104,6 +1106,7 @@ const CourseDetailes = () => {
             )}
           </CardFooter>
         </Card>
+
       </div>
       <Footer />
     </>
