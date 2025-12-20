@@ -346,6 +346,50 @@ const PlayCourse = () => {
             ) : (
               <p>Video not available</p>
             )}
+
+            <div className=" md:hidden block w-full mt-3 ">
+          <div className="bg-white border border-teal-500 rounded ">
+            <div className="m-3 space-y-2">
+              <p className="font-bold">Course contents</p>
+
+              {course &&
+                course.sections.sections.map((section, index) => (
+                  <Accordion
+                    key={index}
+                    type="multiple"
+                    className="w-full  border-1 border-teal-500 rounded"
+                  >
+                    <AccordionItem value={`Section - ${index + 1}`}>
+                      <AccordionTrigger className="cursor-pointer">
+                        <span className="font-bold px-4">
+                          {section.sectionTitle}
+                        </span>
+                      </AccordionTrigger>
+                      {section.lectures.map((lecture, ind) => (
+                        <AccordionContent
+                          key={ind}
+                          onClick={() => {
+                            setLecture(lecture);
+                            setChapter(lecture.content.video_url);
+                          }}
+                          className="flex justify-between py-2 my-1 border-top bg-white mx-2"
+                        >
+                          <div className="cursor-pointer flex gap-2">
+                            <span>{lecture.title}</span>
+                            {chapter == lecture.content.video_url && (
+                              <i className="bi bi-play-circle"></i>
+                            )}
+                          </div>
+                          <div>{lecture.duration}</div>
+                        </AccordionContent>
+                      ))}
+                    </AccordionItem>
+                  </Accordion>
+                ))}
+            </div>
+          </div>
+        </div>
+
             <div className="m-2">
               <Tabs defaultValue="Description" className="w-full ">
                 <TabsList className="grid w-full grid-cols-3 bg-teal-400">
@@ -1138,10 +1182,10 @@ const PlayCourse = () => {
             </div>
           </div>
         </div>
-        <div>
+        <div className="hidden md:block">
           <Separator orientation="vertical" className="bg-teal-600 " />
         </div>
-        <div className="md:w-[400px] max-w-md mt-3 ">
+        <div className="md:w-[400px] md:block hidden w-full mt-3 ">
           <div className="bg-white border border-teal-500 rounded ">
             <div className="m-3 space-y-2">
               <p className="font-bold">Course contents</p>
