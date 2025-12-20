@@ -248,8 +248,8 @@ const PlayCourse = () => {
   return (
     <div>
       <Header />
-      <main className="w-full flex justify-center  gap-10    py-8">
-        <div className="bg-white w-[650px]">
+      <main className="w-full flex md:flex-row flex-col justify-center  gap-10    py-8">
+        <div className="bg-white md:w-[650px] w-full">
           <div className="flex items-center space-x-2 m-3">
             <button
               className="bg-teal-500 px-2 py-1 rounded transition-all hover:scale-110 cursor-pointer hover:bg-teal-300 "
@@ -1141,7 +1141,7 @@ const PlayCourse = () => {
         <div>
           <Separator orientation="vertical" className="bg-teal-600 " />
         </div>
-        <div className="w-[400px] mt-3 ">
+        <div className="md:w-[400px] max-w-md mt-3 ">
           <div className="bg-white border border-teal-500 rounded ">
             <div className="m-3 space-y-2">
               <p className="font-bold">Course contents</p>
