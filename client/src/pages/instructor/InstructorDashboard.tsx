@@ -1,7 +1,7 @@
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import AppSidebar from "@/components/AppSidebar";
+import { SidebarProvider, SidebarTrigger } from "../../components/ui/sidebar";
+import AppSidebar from "../../components/AppSidebar";
 import React, { useEffect, useState } from "react";
-import InstructorChart from "@/components/intructor/InstructorChart";
+import InstructorChart from "../../components/intructor/InstructorChart";
 import {
   Table,
   TableBody,
@@ -24,7 +24,7 @@ import {
 } from "@/util/schemas/dateRangeScheema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { ICourse } from "@/@types/courseType";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
 import type { IRating } from "@/@types/ratingType";
 import type { IInstructorRating } from "@/@types/instructorRatingType";
 import { createReport } from "@/Api/instructorAPi";

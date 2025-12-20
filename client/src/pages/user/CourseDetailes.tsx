@@ -1,13 +1,13 @@
-import Footer from "@/components/user/Footer";
-import Header from "@/components/user/Header";
+import Footer from "../../components/user/Footer";
+import Header from "../../components/user/Header";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ScrollArea } from "@/components/ui/scroll-area";
+} from "../../components/ui/accordion";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
+import { ScrollArea } from "../../components/ui/scroll-area";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,7 +18,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+} from "../../components/ui/alert-dialog";
 import {
   Sheet,
   SheetContent,
@@ -37,7 +37,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from "../../components/ui/dialog";
 import { useEffect, useRef, useState } from "react";
 import useRequest from "@/hooks/useRequest";
 import userRoutes from "@/service/endPoints/userEndPoints";
@@ -49,7 +49,7 @@ import { useSelector } from "react-redux";
 import type { IUser } from "@/@types/userType";
 import type { IUserSubscribe } from "@/@types/userSubscribe";
 import type { ICart } from "@/@types/cartType";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
 import type { IUserProfile } from "@/@types/userProfile";
 import type { ISubcription } from "@/@types/subscriptionType";
 import { loadStripe } from "@stripe/stripe-js";
@@ -60,13 +60,13 @@ import {
   type RatingFormInputs,
 } from "@/util/schemas/ratingScheema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
+import { Separator } from "../../components/ui/separator";
+import { Button } from "../../components/ui/button";
 import {
   Card,
   CardContent,
   CardFooter,
-} from "@/components/ui/card";
+} from "../../components/ui/card";
 const stripe = await loadStripe(import.meta.env.VITE_PUBLISH_SECRET);
 
 

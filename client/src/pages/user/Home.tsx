@@ -1,10 +1,10 @@
-import { Button } from "@/components/ui/button";
-import Footer from "@/components/user/Footer";
-import Header from "@/components/user/Header";
+import { Button } from "../../components/ui/button";
+import Footer from "../../components/user/Footer";
+import Header from "../../components/user/Header";
 import { useNavigate } from "react-router-dom";
 import Forstudents from "../../assets/home-page/studnet.jpg";
 import Forteachers from "../../assets/home-page/teacher-home.jpg";
-import StarBorder from "@/components/StarBorder";
+import StarBorder from "../../components/StarBorder";
 import { ArrowRightCircleIcon } from "lucide-react";
 const Home = () => {
   const navigate = useNavigate();

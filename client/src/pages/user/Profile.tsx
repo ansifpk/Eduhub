@@ -1,13 +1,13 @@
-import Header from "@/components/user/Header";
+import Header from "../../components/user/Header";
 import ProfileNavbar from "../../components/user/ProfileNavbar";
-import Footer from "@/components/user/Footer";
+import Footer from "../../components/user/Footer";
 import React, { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import useRequest from "@/hooks/useRequest";
 import userRoutes from "@/service/endPoints/userEndPoints";
 import { useDispatch, useSelector } from "react-redux";
 import type { IUser } from "@/@types/userType";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -25,7 +25,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+} from "../../components/ui/alert-dialog";
 import { useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 

@@ -10,20 +10,20 @@ import type { IChat } from "@/@types/chatType";
 import { useSearchParams } from "react-router-dom";
 import InputEmoji from "react-input-emoji";
 import type { IMessage } from "@/@types/messageType";
-import Header from "@/components/user/Header";
-import ProfileNavbar from "@/components/user/ProfileNavbar";
-import Footer from "@/components/user/Footer";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Header from "../../components/user/Header";
+import ProfileNavbar from "../../components/user/ProfileNavbar";
+import Footer from "../../components/user/Footer";
+import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
 import { BellIcon } from "lucide-react";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea } from "../../components/ui/scroll-area";
 import moment from "moment";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "../../components/ui/popover";
 import type { INotification } from "@/@types/notificationType";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "../../components/ui/badge";
 
 const Message = () => {
   const [chats, setChats] = useState<IChat[]>([]);

@@ -1,12 +1,12 @@
 import type { IChat } from "@/@types/chatType";
 import type { IMessage } from "@/@types/messageType";
 import type { INotification } from "@/@types/notificationType";
-import AppSidebar from "@/components/AppSidebar";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import AppSidebar from "../../components/AppSidebar";
+import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
+import { Badge } from "../../components/ui/badge";
+import { Popover, PopoverContent, PopoverTrigger } from "../../components/ui/popover";
+import { ScrollArea } from "../../components/ui/scroll-area";
+import { SidebarProvider, SidebarTrigger } from "../../components/ui/sidebar";
 import useRequest from "@/hooks/useRequest";
 import instructorRoutes from "@/service/endPoints/instructorEndPoints";
 import { BellIcon } from "lucide-react";

@@ -1,4 +1,4 @@
-import ForgetPasswordEmail from "@/components/user/ForgetPasswordEmail";
+import ForgetPasswordEmail from "../../components/user/ForgetPasswordEmail";
 import React, { useCallback, useState } from "react";
 import VerifyOtp from "./verifyOtp";
 import ForgetNewPassword from "./ForgetNewPassword";

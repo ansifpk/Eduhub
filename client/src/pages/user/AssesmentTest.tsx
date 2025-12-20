@@ -6,13 +6,13 @@ import {
   CarouselNext,
   CarouselPrevious,
   type CarouselApi,
-} from "@/components/ui/carousel";
-const Header = React.lazy(() => import('@/components/user/Header'));
+} from "../../components/ui/carousel";
+const Header = React.lazy(() => import('../../components/user/Header'));
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {  useNavigate, useParams } from 'react-router-dom';
 import useRequest from '@/hooks/useRequest';
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "../../components/ui/card";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -22,7 +22,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+} from "../../components/ui/alert-dialog";
 import { Loader2Icon } from 'lucide-react';
 import userRoutes from '@/service/endPoints/userEndPoints';
 import { assessmentTestSchema, type AssessmentTestForm } from '@/util/schemas/assessmentTestScheema';

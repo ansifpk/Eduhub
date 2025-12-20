@@ -1,4 +1,4 @@
-import Footer from "@/components/user/Footer";
+import Footer from "../../components/user/Footer";
 import useRequest from "@/hooks/useRequest";
 import { useEffect, useMemo, useRef, useState } from "react";
 import toast from "react-hot-toast";
@@ -14,11 +14,11 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+} from "../../components/ui/card";
+import { Input } from "../../components/ui/input";
 import type { ICourse } from "@/@types/courseType";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
+import { Button } from "../../components/ui/button";
+import { Separator } from "../../components/ui/separator";
 
 import {
   flexRender,
@@ -38,10 +38,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "../../components/ui/table";
 
 import { motion, AnimatePresence } from "motion/react";
-import Header from "@/components/user/Header";
+import Header from "../../components/user/Header";
 
 export type Payment = {
   id: string;

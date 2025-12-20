@@ -1,14 +1,14 @@
 import type { IUserProfile } from "@/@types/userProfile";
 import type { IUser } from "@/@types/userType";
-import AppSidebar from "@/components/AppSidebar";
+import AppSidebar from "../../components/AppSidebar";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+} from "../../components/ui/select";
+import { SidebarProvider, SidebarTrigger } from "../../components/ui/sidebar";
 import useRequest from "@/hooks/useRequest";
 import instructorRoutes from "@/service/endPoints/instructorEndPoints";
 import React, { useEffect,  useState } from "react";
@@ -21,7 +21,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination";
+} from "../../components/ui/pagination";
 import {
   Table,
   TableBody,
@@ -30,8 +30,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+} from "../../components/ui/table";
+import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
 
 
 

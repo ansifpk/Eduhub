@@ -2,14 +2,14 @@ import type { IChat } from "@/@types/chatType";
 import type { IMessage } from "@/@types/messageType";
 import type { INotification } from "@/@types/notificationType";
 import type { IUser } from "@/@types/userType";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
+import { Badge } from "../../components/ui/badge";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { ScrollArea } from "@/components/ui/scroll-area";
+} from "../../components/ui/popover";
+import { ScrollArea } from "../../components/ui/scroll-area";
 import useRequest from "@/hooks/useRequest";
 import userRoutes from "@/service/endPoints/userEndPoints";
 import { BellIcon } from "lucide-react";

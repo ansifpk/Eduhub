@@ -1,7 +1,7 @@
 import type { ISubcription } from "@/@types/subscriptionType";
 import type { IUser } from "@/@types/userType";
-import AppSidebar from "@/components/AppSidebar";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import AppSidebar from "../../components/AppSidebar";
+import { SidebarProvider, SidebarTrigger } from "../../components/ui/sidebar";
 import useRequest from "@/hooks/useRequest";
 import instructorRoutes from "@/service/endPoints/instructorEndPoints";
 import { CheckIcon, Loader2Icon } from "lucide-react";
@@ -17,7 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from "../../components/ui/dialog";
 import {
   subscriptionSchema,
   type SubscriptionFormInputs,

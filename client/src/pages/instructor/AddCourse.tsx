@@ -1,6 +1,6 @@
 import type { ICategory } from "@/@types/categoryType";
 import type { IUser } from "@/@types/userType";
-import AppSidebar from "@/components/AppSidebar";
+import AppSidebar from "../../components/AppSidebar";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -10,15 +10,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+} from "../../components/ui/alert-dialog";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-} from "@/components/ui/card";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+} from "../../components/ui/card";
+import { RadioGroup, RadioGroupItem } from "../../components/ui/radio-group";
+import { SidebarProvider, SidebarTrigger } from "../../components/ui/sidebar";
 import useRequest from "@/hooks/useRequest";
 import instructorRoutes from "@/service/endPoints/instructorEndPoints";
 import {

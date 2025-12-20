@@ -1,5 +1,5 @@
 import React from 'react'
-import InstructorRegisterForm from '@/components/intructor/InstructorRegisterForm'
+import InstructorRegisterForm from '../../components/intructor/InstructorRegisterForm'
 
 const InstructorRegister = () => {
   return (

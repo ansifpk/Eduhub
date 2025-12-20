@@ -5,13 +5,13 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "../../components/ui/card";
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSeparator,
   InputOTPSlot,
-} from "@/components/ui/input-otp";
+} from "../../components/ui/input-otp";
 import useRequest from "@/hooks/useRequest";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { useEffect, useState } from "react";
@@ -20,7 +20,7 @@ import { otpScheema, type OtpFormInputs } from "@/util/schemas/otpScheema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import userRoutes from "@/service/endPoints/userEndPoints";
-import { Button } from "@/components/ui/button";
+import { Button } from "../../components/ui/button";
 import { Link } from "react-router-dom";
 
 interface Props {

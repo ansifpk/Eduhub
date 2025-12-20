@@ -5,7 +5,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "../../components/ui/card";
 import useRequest from "@/hooks/useRequest";
 import userRoutes from "@/service/endPoints/userEndPoints";
 import {
@@ -23,16 +23,16 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "../../components/ui/dialog";
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSeparator,
   InputOTPSlot,
-} from "@/components/ui/input-otp";
+} from "../../components/ui/input-otp";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { otpScheema, type OtpFormInputs } from "@/util/schemas/otpScheema";
-import { Button } from "@/components/ui/button";
+import { Button } from "../../components/ui/button";
 import { changeEmail } from "@/redux/authSlice";
 import { useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";

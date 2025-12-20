@@ -9,10 +9,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import Footer from "@/components/user/Footer";
-import Header from "@/components/user/Header";
-import ProfileNavbar from "@/components/user/ProfileNavbar";
+} from "../../components/ui/alert-dialog";
+import Footer from "../../components/user/Footer";
+import Header from "../../components/user/Header";
+import ProfileNavbar from "../../components/user/ProfileNavbar";
 import useRequest from "@/hooks/useRequest";
 import userRoutes from "@/service/endPoints/userEndPoints";
 import {

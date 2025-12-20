@@ -8,11 +8,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-
-import { Card, CardContent } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
+} from "../../components/ui/alert-dialog";
+import { Card,CardContent } from '../../components/ui/card';
+import { ScrollArea } from "../../components/ui/scroll-area";
+import { Separator } from "../../components/ui/separator";
 import useRequest from "@/hooks/useRequest";
 import adminRoutes from "@/service/endPoints/adminEndPoints";
 import {

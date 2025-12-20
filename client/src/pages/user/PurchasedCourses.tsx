@@ -1,8 +1,8 @@
 import type { ICourse } from "@/@types/courseType";
 import type { IUser } from "@/@types/userType";
-import Footer from "@/components/user/Footer";
-import Header from "@/components/user/Header";
-import ProfileNavbar from "@/components/user/ProfileNavbar";
+import Footer from "../../components/user/Footer";
+import Header from "../../components/user/Header";
+import ProfileNavbar from "../../components/user/ProfileNavbar";
 import useRequest from "@/hooks/useRequest";
 import userRoutes from "@/service/endPoints/userEndPoints";
 import { useEffect, useState } from "react";

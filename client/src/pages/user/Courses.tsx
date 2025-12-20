@@ -2,8 +2,8 @@ import type { ICart } from "@/@types/cartType";
 import type { ICourse } from "@/@types/courseType";
 import type { IUserSubscribe } from "@/@types/userSubscribe";
 import type { IUser } from "@/@types/userType";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription } from "@/components/ui/card";
+import { Button } from "../../components/ui/button";
+import { Card, CardContent, CardDescription } from "../../components/ui/card";
 import {
   Pagination,
   PaginationContent,
@@ -11,10 +11,10 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination";
-import FilterHeader from "@/components/user/FilterHeader";
-import Footer from "@/components/user/Footer";
-import Header from "@/components/user/Header";
+} from "../../components/ui/pagination";
+import FilterHeader from "../../components/user/FilterHeader";
+import Footer from "../../components/user/Footer";
+import Header from "../../components/user/Header";
 import useRequest from "@/hooks/useRequest";
 import userRoutes from "@/service/endPoints/userEndPoints";
 import React, { useCallback, useEffect, useState } from "react";

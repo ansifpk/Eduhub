@@ -1,7 +1,7 @@
 import type { IInstructorSubscribe } from "@/@types/instructorSubscribe";
 import type { IUser } from "@/@types/userType";
-import AppSidebar from "@/components/AppSidebar";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import AppSidebar from "../../components/AppSidebar";
+import { SidebarProvider, SidebarTrigger } from "../../components/ui/sidebar";
 import useRequest from "@/hooks/useRequest";
 import instructorRoutes from "@/service/endPoints/instructorEndPoints";
 import { CheckIcon } from "lucide-react";
@@ -15,7 +15,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
+} from "../../components/ui/sheet";
 import type { ISubcription } from "@/@types/subscriptionType";
 import { loadStripe } from "@stripe/stripe-js";
 

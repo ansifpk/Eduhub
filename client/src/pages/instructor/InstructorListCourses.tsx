@@ -1,14 +1,14 @@
 import type { ICourse } from "@/@types/courseType";
 import type { IUser } from "@/@types/userType";
-import AppSidebar from "@/components/AppSidebar";
+import AppSidebar from "../../components/AppSidebar";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+} from "../../components/ui/select";
+import { SidebarProvider, SidebarTrigger } from "../../components/ui/sidebar";
 import useRequest from "@/hooks/useRequest";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -21,8 +21,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+} from "../../components/ui/alert-dialog";
+import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
 import {
   Pagination,
   PaginationContent,
@@ -30,7 +30,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination";
+} from "../../components/ui/pagination";
 import {
   Table,
   TableBody,
@@ -39,7 +39,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "../../components/ui/table";
 import moment from "moment";
 import instructorRoutes from "@/service/endPoints/instructorEndPoints";
 import { MoreVertical, PlusCircle } from "lucide-react";
@@ -48,9 +48,9 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "../../components/ui/dropdown-menu";
 import { useNavigate } from "react-router-dom";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "../../components/ui/badge";
 import type { ISubcription } from "@/@types/subscriptionType";
 
 const InstructorListCourses = () => {

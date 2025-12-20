@@ -1,4 +1,4 @@
-import useRequest from "@/hooks/useRequest";
+import useRequest from "../../hooks/useRequest";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import {
@@ -17,7 +17,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination";
+} from "../../components/ui/pagination";
 import {
   Table,
   TableBody,
@@ -26,11 +26,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "../../components/ui/table";
 import moment from "moment";
-import adminRoutes from "@/service/endPoints/adminEndPoints";
+import adminRoutes from "../../service/endPoints/adminEndPoints";
 import { MoreHorizontal } from "lucide-react";
-import type { ICoupon } from "@/@types/couponType";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,13 +37,12 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "../../components/ui/dropdown-menu";
 import {
   couponSchema,
   type CouponFormInputs,
-} from "@/util/schemas/couponSchema";
+} from "../../util/schemas/couponSchema";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Sheet,
   SheetClose,
@@ -53,7 +51,7 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
-} from "@/components/ui/sheet";
+} from "../../components/ui/sheet";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -64,8 +62,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+} from "../../components/ui/alert-dialog";
 import { useNavigate } from "react-router-dom";
+import type { ICoupon } from "@/@types/couponType";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const AdminCoupons = () => {
   const [coupons, setCoupons] = useState<ICoupon[]>([]);

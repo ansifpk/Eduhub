@@ -13,7 +13,7 @@ const InstructorListStudents = lazy(()=>import("@/pages/instructor/InstructorLis
 const InstructorMessage = lazy(()=>import("@/pages/instructor/InstructorMessage"))
 const InstructorPlans = lazy(()=>import("@/pages/instructor/InstructorPlans"))
 const InstructorRegister = lazy(()=>import("@/pages/instructor/InstructorRegister"))
-const Success = lazy(()=>import("@/pages/instructor/Success"))
+const Success = lazy(()=>import("@/pages/instructor/success"))
 const Faile = lazy(()=>import("@/pages/instructor/Faile"))
 const InstructorSubscriptions = lazy(()=>import("@/pages/instructor/InstructorSubscriptions"));
 const InstructorErrorPage = lazy(()=>import("@/pages/instructor/InstructorErrorPage"));

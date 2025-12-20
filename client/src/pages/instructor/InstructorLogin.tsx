@@ -1,4 +1,4 @@
-import InstructorLoginForm from '@/components/intructor/InstructorLoginForm'
+import InstructorLoginForm from '../../components/intructor/InstructorLoginForm'
 import React from 'react'
 
 const InstructorLogin = () => {

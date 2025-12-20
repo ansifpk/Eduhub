@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import AppSidebar from "@/components/AppSidebar";
+import { SidebarProvider, SidebarTrigger } from "../../components/ui/sidebar";
+import AppSidebar from "../../components/AppSidebar";
 import useRequest from "@/hooks/useRequest";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -10,9 +10,9 @@ import {
   CarouselNext,
   CarouselPrevious,
   type CarouselApi,
-} from "@/components/ui/carousel";
+} from "../../components/ui/carousel";
 import toast from "react-hot-toast";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "../../components/ui/card";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { testSchema, type TestFormInputs } from "@/util/schemas/testScheema";
@@ -27,7 +27,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+} from "../../components/ui/alert-dialog";
 
 const InstructorEditTest = () => {
   const [loading, setLoading] = useState(false);

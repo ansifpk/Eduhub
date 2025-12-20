@@ -1,5 +1,5 @@
-import AppSidebar from "@/components/AppSidebar"
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import AppSidebar from "../../components/AppSidebar"
+import { SidebarProvider, SidebarTrigger } from "../../components/ui/sidebar"
 import React from "react"
 import { NavLink } from "react-router-dom"
 
