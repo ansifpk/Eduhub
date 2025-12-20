@@ -172,7 +172,6 @@ import {
 } from "@tanstack/react-table";
 import {
   Table,
-  TableBody,
   TableCell,
   TableHead,
   TableHeader,
