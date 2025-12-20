@@ -257,7 +257,7 @@ const CourseDetailes = () => {
       <div className=" text-black flex bg-center bg-no-repeat bg-cover items-center justify-center h-[300px]">
         <div className="flex align-middle gap-5 items-center justify-center ">
           <img
-            className="h-70 w-96  object-fill"
+            className="md:h-70 md:w-96 h-60 w-90  object-fill"
             src={course?.image?.image_url}
           />
         </div>
@@ -279,7 +279,7 @@ const CourseDetailes = () => {
       </div>
 
       <div className="flex justify-center gap-10  my-2">
-        <div className="grid items-center justify-center text-center px-2 text-xs border-r-2">
+        <div className="grid items-center justify-center text-center px-2 text-xs">
           <p>4.7</p>
           <div className="animate-bounce">
             <i className="bi bi-star-fill text-orange-300"></i>
@@ -289,6 +289,9 @@ const CourseDetailes = () => {
             <i className="bi bi-star-fill text-orange-300"></i>
           </div>
           <p>ratings</p>
+        </div>
+        <div>
+          <Separator orientation="vertical bg-teal-600" />
         </div>
         <div className="">
           <div className="text-center text-xs">
