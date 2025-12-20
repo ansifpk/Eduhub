@@ -1,258 +1,207 @@
-import { User } from "../../@types/userType";
-import Footer from "../../components/Footer/Footer";
-import Header from "../../components/Header/Header";
-import ProfileNavbar from "../../components/Header/ProfileNavbar";
+import type { IUser } from "@/@types/userType";
 import {
   AlertDialog,
   AlertDialogAction,
+  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "../../components/ui/alert-dialog";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Label } from "../../components/ui/label";
-import { useEffect, useState } from "react";
+} from "@/components/ui/alert-dialog";
+import Footer from "@/components/user/Footer";
+import Header from "@/components/user/Header";
+import ProfileNavbar from "@/components/user/ProfileNavbar";
+import useRequest from "@/hooks/useRequest";
+import userRoutes from "@/service/endPoints/userEndPoints";
+import {
+  resetPasswordScheema,
+  type ResetPasswordFormInputs,
+} from "@/util/schemas/resetPasswordScheema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
-import useRequest from "../../hooks/useRequest";
-import userRoutes from "../../service/endPoints/userEndPoints";
 
 const Settings = () => {
-  const [password, setPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showConfirmPassword, setSchowConfirmPassword] = useState(false);
-  const [error, setErrors] = useState({
-    password: "",
-    newPassword: "",
-    confirmPassword: "",
-    success: true,
+  const [showConPassword, setShowConPassword] = useState(false);
+  const userId = useSelector((state: IUser) => state._id);
+  const { doRequest, err } = useRequest();
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<ResetPasswordFormInputs>({
+    resolver: zodResolver(resetPasswordScheema),
+    defaultValues: {
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
   });
-  const {doRequest,errors} = useRequest();
-  const userId = useSelector((state: User) => state.id);
-  const handlePassword = async () => {
 
-      if (password.length < 8 || password.length > 20) {
-        setErrors((prev) => ({
-          ...prev,
-          password: "password length in between 8-20",
-        }));
-        return;
-      } else {
-        setErrors((prev) => ({
-          ...prev,
-          password: "",
-        }));
-      }
-      if (newPassword.length < 8 || newPassword.length > 20) {
-        setErrors((prev) => ({
-          ...prev,
-          newPassword: "password length in between 8-20",
-        }));
-        return;
-      } else if (newPassword == password) {
-        setErrors((prev) => ({
-          ...prev,
-          newPassword: "old passward and new passworld not be same",
-        }));
-        return;
-      } else {
-        setErrors((prev) => ({
-          ...prev,
-          newPassword: "",
-        }));
-      }
-      if (newPassword !== confirmPassword) {
-        setErrors((prev) => ({
-          ...prev,
-          confirmPassword: "confirm password and ne wpassword is not same",
-        }));
-        return;
-      } else {
-        setErrors((prev) => ({
-          ...prev,
-          confirmPassword: "",
-        }));
-      }
-
-      if (error.success) {
-       await doRequest({
-          url:`${userRoutes.resetPassword}/${userId}`,
-          body:{password,newPassword},
-          method:"patch",
-          onSuccess:()=>{
-            setPassword("");
-            setNewPassword("");
-            setConfirmPassword("");
-            return toast.success("successfully reseted your password");
-          }
-        })
-        // const response = await resetPassword(userId, password, newPassword);
-      
-        // if (response.success) {
-         
-        // } else {
-        //   if (
-        //     response.response.data.message == "Current password is not matching"
-        //   ) {
-        //     setErrors((prev) => ({
-        //       ...prev,
-        //       password: "Current password is not matching",
-             
-        //     }));
-
-        //     return toast.error(response.response.data.message);
-        //   } else if (response.response.data.message == "User Not Found") {
-        //     return toast.error(response.response.data.message);
-        //   }
-        // }
-      }
+  const handleEdit = (data: ResetPasswordFormInputs) => {
+    doRequest({
+      url: `${userRoutes.resetPassword}/${userId}`,
+      body: {
+        password: data.currentPassword,
+        newPassword: data.newPassword,
+        conPassword: data.confirmPassword,
+      },
+      method: "patch",
+      onSuccess: () => {
+        setValue("confirmPassword", "");
+        setValue("currentPassword", "");
+        setValue("newPassword", "");
+        return toast.success("successfully reseted your password");
+      },
+    });
   };
-  console.log("erro",errors);
-  
-  useEffect(()=>{
-    errors?.map((err)=>toast.error(err.message));
-  },[errors]);
+
+  useEffect(() => {
+    err?.map((err) => toast.error(err.message));
+  }, [err]);
 
   return (
-    <div className="bg-blue-50 h-screen">
+    <div>
       <Header />
-      <ProfileNavbar />
-      <main className="w-full flex justify-center  gap-10 py-8">
-        <div className="grid w-75 gap-1.5">
-          <h3>Reset your password</h3>
-          <div className="grid  gap-1.5">
-            <Label htmlFor="message-2">Enter your current password</Label>
-            <div className="relative">
-              <Input
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value.trim())}
-                placeholder="Current password"
-                className="rounded-full hover:border-teal-500 border-1 border-teal-500"
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-              >
-                {showPassword ? (
-                 
-                  <i className="bi bi-eye-slash-fill"></i>
-                  
-                ) : (
-                  <i className="bi bi-eye-fill"></i>
-                )}
-              </button>
-            </div>
-            {error.password && (
-              <div className="text-sm text-red-500">
-                {error.password}
+      <div className="w-full">
+        <ProfileNavbar value="Settings" />
+        <main className="w-full flex justify-center items-center md:p-8 p-2">
+          <form
+            onSubmit={handleSubmit(handleEdit)}
+            className="flex flex-col justify-center items-center space-y-5 w-[80%] "
+          >
+            <h3>Reset your password</h3>
+            <div className="grid space-y-2 ">
+              <label htmlFor="currentPassword" className="text-xs">
+                Enter Your Current Password
+              </label>
+              <div className="relative">
+                <input
+                  {...register("currentPassword")}
+                  type={showPassword ? "text" : "password"}
+                  name="currentPassword"
+                  className="border rounded-full py-1 px-2  border-teal-400"
+                  placeholder="current password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                >
+                  {showPassword ? (
+                    <i className="bi bi-eye-slash-fill"></i>
+                  ) : (
+                    <i className="bi bi-eye-fill"></i>
+                  )}
+                </button>
               </div>
-            )}
-          </div>
-          <div className="grid  gap-1.5">
-            <Label htmlFor="message-2">Enter your New password</Label>
-            <div className="relative">
-              <Input
-                type={showNewPassword ? "text" : "password"}
-                name="password"
-                placeholder="New Password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value.trim())}
-                className="rounded-full hover:border-teal-500 border-1 border-teal-500"
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowNewPassword(!showNewPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-              >
-                {showNewPassword ? (
-                   <i className="bi bi-eye-slash-fill"></i>
-                 
-                ) : (
-                  <i className="bi bi-eye-fill"></i>
-                )}
-              </button>
+              {errors.currentPassword && (
+                <p className="text-red-500 text-xs">
+                  {errors.currentPassword.message}
+                </p>
+              )}
             </div>
-            {error.newPassword && (
-              <div className="text-sm text-red-500 ">
-                {error.newPassword}
+            <div className="grid space-y-2">
+              <label htmlFor="newPassword" className="text-xs">
+                Enter Your New Password
+              </label>
+              <div className="relative">
+                <input
+                  {...register("newPassword")}
+                  type={showNewPassword ? "text" : "password"}
+                  name="newPassword"
+                  className="border rounded-full py-1 px-2  border-teal-400"
+                  placeholder="current password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowNewPassword(!showNewPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                >
+                  {showNewPassword ? (
+                    <i className="bi bi-eye-slash-fill"></i>
+                  ) : (
+                    <i className="bi bi-eye-fill"></i>
+                  )}
+                </button>
               </div>
-            )}
-          </div>
-          <div className="grid  gap-1.5">
-            <Label htmlFor="message-2">Confirm your New password</Label>
-            <div className="relative">
-              <Input
-                type={showConfirmPassword ? "text" : "password"}
-                name="password"
-                placeholder="New Password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value.trim())}
-                className="rounded-full hover:border-teal-500 border-1 border-teal-500"
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setSchowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-              >
-                {showConfirmPassword ? (
-                  <i className="bi bi-eye-slash-fill"></i>
-                ) : (
-                  <i className="bi bi-eye-fill"></i>
-                )}
-              </button>
+              {errors.newPassword && (
+                <p className="text-red-500 text-xs">
+                  {errors.newPassword.message}
+                </p>
+              )}
             </div>
-            {error.confirmPassword && (
-              <div className="text-sm text-red-500">
-                {error.confirmPassword}
+            <div className="grid space-y-2">
+              <label htmlFor="confirmPassword" className="text-xs">
+                Confirm Your New Password
+              </label>
+              <div className="relative">
+                <input
+                  {...register("confirmPassword")}
+                  type={showConPassword ? "text" : "password"}
+                  name="confirmPassword"
+                  className="border rounded-full py-1 px-2  border-teal-400"
+                  placeholder="current password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConPassword(!showConPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                >
+                  {showConPassword ? (
+                    <i className="bi bi-eye-slash-fill"></i>
+                  ) : (
+                    <i className="bi bi-eye-fill"></i>
+                  )}
+                </button>
               </div>
-            )}
-          </div>
-          <div className="flex justify-center">
+              {errors.confirmPassword && (
+                <p className="text-red-500 text-xs">
+                  {errors.confirmPassword.message}
+                </p>
+              )}
+            </div>
             <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button className="w-25 rounded bg-teal-400 hover:bg-teal-400">
-                  reset
-                </Button>
+              <AlertDialogTrigger
+                type="button"
+                className={`m-2 cursor-pointer  py-2 px-4 text-white rounded font-semibold text-xs bg-teal-500 hover:bg-teal-300`}
+              >
+                Save
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Are you sure you want to submit your answers? you cannot re
-                    attend this test.
+                    This action cannot be undone. This will permanently save
+                    this information to our database.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogAction className="bg-teal-400 hover:bg-teal-400">
+                  <AlertDialogCancel className="text-white bg-teal-500 hover:bg-teal-300 hover:text-white">
                     Cancel
-                  </AlertDialogAction>
+                  </AlertDialogCancel>
                   <AlertDialogAction
-                    className="bg-teal-400 hover:bg-teal-400"
-                    onClick={handlePassword}
+                    onClick={() => handleSubmit(handleEdit)()}
+                    className="bg-teal-500 hover:bg-teal-300"
                   >
                     Continue
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
-          </div>
-        </div>
-      </main>
+          </form>
+        </main>
+      </div>
       <Footer />
     </div>
   );
 };
 
-export default Settings;
+export default React.memo(Settings);

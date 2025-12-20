@@ -1,10 +1,10 @@
 const adminRoutes = {
   //*auth
-    login:'/auth/auth/admin/login',
+    login:'/auth/admin/login',
     blockUser:'/auth/admin/blockUser',
     blockInstructor:'/auth/admin/blockinstructor',
-    logout:'/auth/auth/admin/logout',
-    tocken:"/auth/auth/admin/refresh-token",
+    logout:'/auth/admin/logout',
+    tocken:"/auth/admin/refresh-token",
     //*category
     category:'/category/admin/category',
     addCategory:'/category/admin/addCategory',
@@ -12,10 +12,8 @@ const adminRoutes = {
     listCategory:'/category/admin/listCategory',
     //*profile
     students:'/profile/admin/students',
-    instructors:'/profile/profile/admin/instructors',
-    instructorAprovel:'/profile/profile/admin/instructorAprovel',
-    top5Instructors:"/profile/admin/top5Instructors",
-    instructorRequest:"/profile/profile/admin/instructorRequest",
+    instructors:'/profile/admin/instructors',
+    instructorAprovel:'/profile/admin/instructorAprovel',
 
      //*course
     getCourses:"/course/admin/getCourses",
@@ -26,14 +24,19 @@ const adminRoutes = {
      //!message
      message:"/message/message",
      notification:"/message/notification",
+     //chat
     chat:"/message/chat",
     privetChat:"/message/chat/privetChat",
-     //*purchase
-     order:"/purchase/admin/order",
+     //*subscription
      subscription:"/purchase/admin/subscription",
-     getOrders:"/purchase/admin/getOrders",
+     //*salesReports
      salesReports:"/purchase/admin/salesReports",
-
+     //*order
+     order:"/purchase/admin/order",
+     getOrders:"/purchase/admin/getOrders",
+     //*top5Instructors
+     top5Instructors:"/profile/admin/top5Instructors",
+     instructorRequest:"/profile/admin/instructorRequest",
    }
 
    

@@ -1,19 +1,12 @@
-import { IUser } from "./chatUser"
-import { IRating } from "./ratingType"
-import { ITest } from "./testType"
+import type { IRating } from "./ratingType"
+import type { ISection } from "./sectionType"
+import type { ITest } from "./testType"
+import type { IUser } from "./userType"
 
 export interface ICourse{
     _id:string,
     title:string,
-    instructorId:{
-        _id:string,
-        name:string,
-        email:string,
-        avatar:{
-            id:string,
-            avatart_url:string
-        }
-    },
+    instructorId:IUser,
     subCategory:string,
     description:string,
     thumbnail:string,
@@ -35,18 +28,7 @@ export interface ICourse{
         image_url:string
     },
     courseReviews:IRating[],
-    students?:IUser[],
+    students:IUser[],
     createdAt:string,
-    sections:{
-        sectionTitle:string,
-        lectures:[{
-            id:string,
-            content:{
-                _id:string,
-                video_url:string
-            },
-            duration:string,
-            title:string,
-        }]
-    }[],
+    sections:ISection,
 }

@@ -1,5 +1,5 @@
-import { IUser } from "./chatUser";
-import { ICourse } from "./courseType";
+import type { ICourse } from "./courseType";
+import type { IUser } from "./userType";
 
 export interface IReport{
     _id:string,

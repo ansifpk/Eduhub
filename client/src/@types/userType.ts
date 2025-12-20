@@ -1,5 +1,5 @@
-export interface User{
-    id:string,
+export interface IUser{
+    _id:string,
     name:string,
     email:string,
     isVerified:boolean,

@@ -1,529 +1,448 @@
-import { IChat } from "../../@types/chatType";
-import { IMessage } from "../../@types/messageType";
-import { User } from "../../@types/userType";
-import InstructorAside from "../../components/instructor/InstructorAside";
-import { Avatar, AvatarImage } from "../../components/ui/avatar";
-import { ScrollArea } from "../../components/ui/scroll-area";
-import { Separator } from "../../components/ui/separator";
-import { MoreVertical, Send } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import InputEmoji from "react-input-emoji";
-import { useSelector } from "react-redux";
-import {  useSearchParams } from "react-router-dom";
-import { io, Socket } from "socket.io-client";
-import { DefaultEventsMap } from "@socket.io/component-emitter";
+import type { IChat } from "@/@types/chatType";
+import type { IMessage } from "@/@types/messageType";
+import type { INotification } from "@/@types/notificationType";
+import AppSidebar from "@/components/AppSidebar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import useRequest from "@/hooks/useRequest";
+import instructorRoutes from "@/service/endPoints/instructorEndPoints";
+import { BellIcon } from "lucide-react";
 import moment from "moment";
+import React, { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
-import { INotification } from "../../@types/notificationType";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "../../components/ui/popover";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "../../components/ui/dropdown-menu";
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "../../components/ui/alert-dialog";
-import useRequest from "../../hooks/useRequest";
-import instructorRoutes from "../../service/endPoints/instructorEndPoints";
+import { useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
+import { io, type Socket } from "socket.io-client";
+import InputEmoji from "react-input-emoji";
+import type { DefaultEventsMap } from "@socket.io/component-emitter";
+import type { IUser } from "@/@types/userType";
 
-export default function InstructorMessage() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const chatId = searchParams.get("chatId");
-  const userId = useSelector((state: User) => state.id);
-  const [chats, setChats] = useState([]);
-  const [text, setText] = useState("");
-  const [open, setOpen] = useState(false);
-  const [currentChat, setCurrentChat] = useState<IChat>();
-  const [messages, setMessages] = useState<IMessage[]>([]);
-  const [newMessage, setNewMessage] = useState("");
-  const {doRequest,errors}=useRequest();
-  const [onlineUsers, setOnlineUsers] = useState<
-    { userId: string; socketId: string }[]
-  >([]);
-  const [socket, setSocket] = useState<
-    Socket<DefaultEventsMap, DefaultEventsMap> | undefined
-  >();
-  const [notifications, setNotifications] = useState<INotification[]>([]);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Function to scroll to bottom
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+const InstructorMessage = () => {
 
-  // Auto-scroll when messages change
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  //!websocket
-  //* initialise socket
-  useEffect(() => {
-    const newSocket = io(import.meta.env.VITE_APIGATEWAY, {
-      path: "/message/socket.io",
-    });
-    setSocket(newSocket!);
-    return () => {
-      newSocket!.disconnect();
-    };
-  }, [userId]);
-
-  //* add user
-
-  useEffect(() => {
-    if (!socket) return;
-    socket.emit("addNewUser", userId);
-    socket.on("getOnlineUsers", (res) => {
-      setOnlineUsers(res);
-    });
-  }, [socket]);
-
-  //* send message
-
-  useEffect(() => {
-    if (!socket) return;
-    const recipientId = currentChat?.members.find(
-      (value) => value._id !== userId
-    );
-    socket.emit("sendMessage", {
-      text: newMessage,
-      recipientId: recipientId?._id,
-      senderId: userId,
-    });
-  }, [newMessage]);
-
-  //* recieve message
-
-  useEffect(() => {
-    if (!socket) return;
-
-    socket.on("getMessage", (message) => {
-      const chatUser = currentChat?.members.find(
-        (value) => value._id !== userId
-      );
-      if (chatUser?._id !== message.senderId) return;
-      setMessages((prev) => [...prev, message]);
-    });
-
-    socket.on("getMessageNotification", (res) => {
-      const isChatOpen = currentChat?.members.find(
-        (value) => value._id !== res.recipientId
-      );
-      toast.success(`You got a new message`);
-      if (isChatOpen?._id == res.senderId) {
-        setNotifications((prev) => [{ ...res, isRead: true }, ...prev]);
-        markAsRead(res.senderId);
-      } else {
-        setNotifications((prev) => [res, ...prev]);
-      }
-    });
-
-    return () => {
-      socket.off("getMessage");
-      socket.off("getMessageNotification");
-    };
-  }, [socket, currentChat]);
-
-  //*initial calls
-
-  useEffect(() => {
-    doRequest({
-      url:`${instructorRoutes.chat}?userId=${userId}`,
-      method:"get",
-      body:{},
-      onSuccess:(response)=>{
-        setChats(response.chats);
-      }
-    });
-  }, [userId]);
-
-  useEffect(() => {
-    if (chatId) {
-      doRequest({
-        url:`${instructorRoutes.privetChat}/${chatId}`,
-        method:"get",
-        body:{},
-        onSuccess:(response)=>{
-          setCurrentChat(response.chat);
-        }
-      });
-      doRequest({
-        url:`${instructorRoutes.message}/${chatId}`,
-        method:"get",
-        body:{},
-        onSuccess:(response)=>{
-          setMessages(response.messages);
-        }
-      });
-    }
-  }, [chatId]);
-
-  useEffect(() => {
-    doRequest({
-      url:`${instructorRoutes.notification}/${userId}`,
-      method:"get",
-      body:{},
-      onSuccess:(response)=>{
-        setNotifications(response.notifications);
-      }
-    });
-  }, []);
-
-  const handletext = async () => {
-    let reciever = "";
-    currentChat?.members.map((user) => {
-      if (user._id !== userId) {
-        reciever = user._id;
-      }
-    });
-    doRequest({
-      url:instructorRoutes.message,
-      method:"post",
-      body:{chatId:currentChat?._id!,senderId:userId,text},
-      onSuccess:(response)=>{
-        setNewMessage(response.message.text);
-        setMessages((prev) => [...prev, response.message]);
-        setText("");
-        doRequest({
-          url: instructorRoutes.notification,
-          method:"post",
-          body:{recipientId:reciever,senderId:userId},
-          onSuccess:()=>{
-            
+    const [chats, setChats] = useState<IChat[]>([]);
+      const [text, setText] = useState("");
+      const [currentChat, setCurrentChat] = useState<IChat>();
+      const [messages, setMessages] = useState<IMessage[]>([]);
+      const [newMessage, setNewMessage] = useState("");
+      const userId = useSelector((state: IUser) => state._id);
+      const [searchParams, setSearchParams] = useSearchParams();
+      const chatId = searchParams.get("chatId");
+      const { doRequest, err } = useRequest();
+      const [socket, setSocket] = useState<
+        Socket<DefaultEventsMap, DefaultEventsMap> | undefined
+      >();
+      const [onlineUsers, setOnlineUsers] = useState<
+        { userId: string; socketId: string }[]
+      >([]);
+      const messagesEndRef = useRef<HTMLDivElement>(null);
+    
+      const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      };
+      const [notifications, setNotifications] = useState<INotification[]>([]);
+    
+      useEffect(() => {
+        scrollToBottom();
+      }, [messages]);
+    
+      //* initial socket setup
+      useEffect(() => {
+        const newSocket = io(import.meta.env.VITE_APIGATEWAY, {
+          path: "/message/socket.io",
+        });
+        setSocket(newSocket!);
+        return () => {
+          newSocket.disconnect();
+        };
+      }, [userId]);
+    
+      //* add user
+      useEffect(() => {
+        if (!socket) return;
+        socket.emit("addNewUser", userId);
+        socket.on("getOnlineUsers", (res) => {
+          const filter = res.filter(
+            (value: { userId: string }) => value.userId !== userId
+          );
+          setOnlineUsers(filter);
+        });
+      }, [socket]);
+    
+    
+      //*get messages
+      useEffect(() => {
+        if (!socket) return;
+    
+        socket.on("getMessage", (message) => {
+          const chatUser = currentChat?.members.find(
+            (value) => value._id !== userId
+          );
+          if (chatUser?._id !== message.senderId) return;
+          socket.emit(`seenMessage${message.senderId}`)
+          setMessages((prev)=>[...prev,{...message}]);
+        });
+    
+        socket.on("getMessageNotification", (res) => {
+          toast.success(`You got a new message!`);
+          if (
+            currentChat?.members.find((usr) => usr._id !== userId)?._id ==
+            res.senderId
+          ) {
+          } else {
+            setNotifications((prev) => [res, ...prev]);
           }
         });
-      }
-    });
-  };
-// console.log("notifications",notifications);
-
-  let user = "";
-  const modification = notifications.map((notify: INotification) => {
-    chats.map((chat: IChat) => {
-      chat.members.map((value) => {
-        if (value._id == notify.senderId) {
-          user = value.name;
+    
+        socket.on("markSeenMessage", () => {
+          setMessages((prev) =>
+            prev.map((msg) => ({
+              ...msg,
+              isRead: true,
+            }))
+          );
+        });
+        socket.on(`seenMessage${userId}`, () => {
+          console.log("success");
+          
+        });
+    
+        return () => {
+          socket.off("getMessage");
+          socket.off("getMessageNotification");
+          socket.off("markSeenMessage");
+          socket.off(`seenMessage${userId}`);
+        };
+      }, [socket, currentChat]);
+    
+      //* send message
+    
+      useEffect(() => {
+        if (!socket) return;
+        const recipientId = currentChat?.members.find(
+          (value) => value._id !== userId
+        );
+        if(newMessage.length == 0) return;
+        socket.emit("sendMessage", {
+          text: newMessage,
+          recipientId: recipientId?._id,
+          senderId: userId,
+          isRead: false,
+        });
+        setNewMessage("");
+      }, [newMessage]);
+    
+      useEffect(() => {
+        doRequest({
+          url: `${instructorRoutes.chat}?userId=${userId}`,
+          method: "get",
+          body: {},
+          onSuccess: (res) => {
+            setChats(res.chats);
+          },
+        });
+      }, [userId]);
+    
+      //* get current privet chat
+      useEffect(() => {
+        if (chatId) {
+          doRequest({
+            url: `${instructorRoutes.privetChat}/${chatId}`,
+            method: "get",
+            body: {},
+            onSuccess: (res) => {
+              doRequest({
+                url: `${instructorRoutes.message}/${chatId}`,
+                method: "get",
+                body: {},
+                onSuccess: (response) => {
+                  setCurrentChat(res.chat);
+                  setMessages(response.messages);
+                },
+              });
+            },
+          });
         }
-      });
-    });
-    return {
-      ...notify,
-      senderName: user,
-    };
-  });
-
-  const markAsRead = async (sentId: string) => {
-    const mdNotifications = notifications.filter(
-      (value: INotification) => value.senderId !== sentId
-    );
-    if (mdNotifications) {
-      doRequest({
-        url:`${instructorRoutes.notification}/${userId}/${sentId}`,
-        method:"patch",
-        body:{},
-        onSuccess:(response)=>{
-          setNotifications(response);
+      }, [chatId]);
+    
+      //* seenMsg
+    
+      useEffect(() => {
+        
+        if (chatId && currentChat) {
+          
+          socket?.emit("seenMsg", {
+            senter: currentChat.members.find((mem) => mem._id !== userId)?._id,
+          });
         }
-      });
-    }
-  };
-
-  useEffect(()=>{
-    errors?.map((err)=>toast.error(err.message))
-  },[errors]);
+      }, [chatId, currentChat]);
+    
+      //* markAsRead
+    
+      const markAsRead = async (sentId: string) => {
+        doRequest({
+          url: `${instructorRoutes.notification}/${userId}/${sentId}`,
+          method: "patch",
+          body: {},
+          onSuccess: () => {
+            setNotifications((prev) =>
+              prev.filter((not) => not.senderId !== sentId)
+            );
+          },
+        });
+      };
+    
+      //* sent text
+    
+      const handletext = async () => {
+        doRequest({
+          url: instructorRoutes.message,
+          method: "post",
+          body: { chatId: currentChat?._id!, senderId: userId, text },
+          onSuccess: (response) => {
+            setNewMessage(response.message.text);
+            setText("");
+            setMessages((prev) => [...prev, response.message]);
+          },
+        });
+      };
+    
+      useEffect(() => {
+        err?.map((err) => toast.error(err.message));
+      }, [err]);
 
   return (
-    <div className="bg-black ">
-      <div className="space-y-6 md:p-10 p-2 pb-16">
-        <div className="flex justify-between">
-          <div className="space-y-0.5">
-            <h2 className="text-white text-2xl font-bold tracking-tight">
-              Edu Hub
-            </h2>
-            <p className="md:text-sm lg:text-sm text-xs text-muted-foreground">
-              Manage your instructor account students and courses.
-            </p>
-          </div>
-          <div className="block md:hidden lg:hidden">
-            {open ? (
-            
-                <i onClick={()=>setOpen(!open)} className="bi bi-x-lg text-white"></i>
-                
-            ) : (
-              
-                <i onClick={()=>setOpen(!open)} className="bi bi-list text-white"></i>
-             
-            )}
-          </div>
-        </div>
-        <Separator className="my-6" />
-        <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-5 lg:space-y-0">
-          <InstructorAside />
-          <div className="flex justify-center">
-            <div className="bg-white md:mx-5 lg:mx:-5  flex lg:w-[900px] md:w-[900px] w-full rounded-2">
-              <div className="border borer-danger  m-2   rounded-2 md:w-[330px] lg:w-[330px] w-50">
-                <div className="flex items-center bg-green-400  justify-between md:p-3 p-2">
-                  <h3 className=" md:text-sm text-xs font-medium text-white leading-none">
-                    Messages
-                  </h3>
-
+    <SidebarProvider>
+      <AppSidebar />
+      <div className="w-full">
+        <SidebarTrigger />
+        <div className="p-2  space-y-2">
+          <main className="w-full flex justify-center items-center md:p-8 p-3">
+            <div className="w-full border-2 rounded h-[70vh]">
+              <div className="w-full flex rounded  gap-1">
+                <div className="w-[35%] flex justify-between border bg-black text-white p-3">
+                  <strong>Messages</strong>
                   <Popover>
-                    <PopoverTrigger>
-                      <i className="bi bi-envelope-exclamation-fill"></i>
-                      {notifications.length}
+                    <PopoverTrigger asChild>
+                      <div className="relative flex">
+                        <BellIcon className="text-white" />
+                        {notifications.length > 0 &&<span className="relative flex size-3">
+                          <span className="absolute right-3 inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
+                          <span className="relative right-3 inline-flex size-3 rounded-full bg-green-500"></span>
+                        </span>}
+                      </div>
                     </PopoverTrigger>
                     <PopoverContent>
-                      <div className="flex justify-between gap-3">
-                        <span className="text-xs">Notifications</span>
-                      </div>
+                      <ScrollArea
+                        className={`${
+                          notifications.length > 0 ? "h-[60vh]" : ""
+                        }`}
+                      >
+                        <div className="flex justify-between gap-3">
+                          <h5>Notifications</h5>
+                        </div>
 
-                      {modification.length > 0 ? (
-                        modification.map((value: INotification, index) => (
-                          <div
-                            onClick={() => {
-                              let id = "";
-                              let sentId = "";
-                              chats.map((chat: IChat) => {
-                                chat.members.map((val) => {
-                                  if (val._id == value.senderId) {
-                                    id = chat._id;
-                                    sentId = value.senderId;
-                                  }
-                                });
+                        {notifications.length > 0 ? (
+                          notifications.map((value: INotification, index) => {
+                            let name = "";
+
+                            chats.map((chat) => {
+                              chat.members.map((mem) => {
+                                if (mem._id == value.senderId) {
+                                  name = mem.name;
+                                }
                               });
-                              markAsRead(sentId);
-                              searchParams.set("chatId", id);
-                              setSearchParams(searchParams);
-                            }}
-                            className={`p-2 ${
-                              value.isRead ? "bg-white" : "bg-green-600"
-                            }`}
-                            key={index}
-                          >
-                            <div>{`${value.senderName} Sent you a new message`}</div>
-                            <div>{moment(value.date).calendar()}</div>
-                          </div>
-                        ))
-                      ) : (
-                        <p className="text-xs">No New Notifications...</p>
-                      )}
+                            });
+
+                            return (
+                              <div
+                                key={`${value._id}+${index}`}
+                                onClick={() => {
+                                  let id = "";
+                                  let sentId = "";
+                                  chats.map((chat: IChat) => {
+                                    chat.members.map((val) => {
+                                      if (val._id == value.senderId) {
+                                        id = chat._id;
+                                        sentId = value.senderId;
+                                      }
+                                    });
+                                  });
+                                  markAsRead(sentId);
+                                  searchParams.set("chatId", id);
+                                  setSearchParams(searchParams);
+                                }}
+                                className={`p-2  ${
+                                  value.isRead
+                                    ? "bg-white "
+                                    : "bg-green-600 cursor-pointer"
+                                }`}
+                              >
+                                <div>{name} Sent you a new message</div>
+
+                                <div>{moment(value.date).calendar()}</div>
+                              </div>
+                            );
+                          })
+                        ) : (
+                          <p>No New Notifications...</p>
+                        )}
+                      </ScrollArea>
                     </PopoverContent>
                   </Popover>
                 </div>
-                <ScrollArea className="h-[360px]">
-                  {chats.length > 0 ? (
-                    chats
-                      .filter(
-                        (value: IChat) => value.role == "userToInstructor"
-                      )
-                      .map((chat: IChat, index: number) => {
-                        const chatMember = chat.members.find(
-                          (member) => member._id !== userId
-                        );
-                        const unreadCount = notifications.filter(
-                          (notif) =>
-                            !notif.isRead && notif.senderId === chatMember?._id
-                        ).length;
-                       
-                        
-                        return (
-                          <div
-                            key={index}
-                            className="flex justify-between items-center"
-                          >
-                            <div className="flex space-x-3 m-2">
-                            {
-                                  chat.members.find(
-                                    (member) => member._id !== userId
-                                  )?.avatar.avatar_url?
-                                  <Avatar
-                                className={`border-3 ${
-                                  onlineUsers.some(
-                                    (value) =>
-                                      value.userId ==
-                                      chat.members.find(
-                                        (member) => member._id !== userId
-                                      )?._id
-                                  ) && "border-3 border-success-400"
-                                }  cursor-pointer`}
-                              >
-                                
-                                <AvatarImage
-                                  src={
-                                    chat.members.find(
-                                      (member) => member._id !== userId
-                                    )?.avatar.avatar_url}
-                                  alt="@shadcn"
-                                />
-                              </Avatar>
-                                  :
-                                  <i className="bi bi-person-circle text-2xl"></i>
-                                }
-                              
-                              <div
-                                onClick={() => {
-                                  let id = chat.members.find(
-                                    (member) => member._id !== userId
-                                  )?._id;
-                                  markAsRead(id!);
-                                  searchParams.set("chatId", chat._id);
-                                  setSearchParams(searchParams);
-                                }}
-                                className="grid flex-1 text-left text-sm leading-tight cursor-pointer"
-                              >
-                                <span className="text-xs md:text-sm font-semibold">
-                                  {
-                                    chat.members.find(
-                                      (member) => member._id !== userId
-                                    )?.name
-                                  }
-                                </span>
-                               
-                              </div>
-                            </div>
-                            {unreadCount > 0 && (
-                              <div className="bg-green text-xs px-2 text-white rounded-full">
-                                {unreadCount}
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })
-                  ) : (
-                    <div className="flex items-center justify-center">
-                      <p>No chats started...</p>
-                    </div>
-                  )}
-                </ScrollArea>
-              </div>
-
-              <div className="w-full m-2 border bg-green-50 rounded-2">
-                <header className="flex  items-center text-white bg-green-400 rounded-2 h-[50px]">
+                <div className="w-[65%] bg-black text-white border p-2 rounded">
                   {currentChat && (
-                    <div className="flex w-full items-center justify-between mx-3">
-                      <div className="flex items-center space-x-3 m-2">
+                    <div className="relative flex gap-2 items-center">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage
+                          src={
+                            currentChat.members.find(
+                              (user) => user._id !== userId
+                            )?.avatar.avatar_url
+                          }
+                        />
+                        <AvatarFallback>
+                          <i className="bi bi-person-circle text-black"></i>
+                        </AvatarFallback>
+                      </Avatar>
+                      {onlineUsers.some(
+                        (val) =>
+                          val.userId ==
+                          currentChat.members.find(
+                            (user) => user._id !== userId
+                          )?._id
+                      ) && (
+                        <span className="relative flex size-3">
+                          <span className="relative right-5 top-3 inline-flex size-2 rounded-full bg-green-500"></span>
+                        </span>
+                      )}
+                      <strong className="text-white">
                         {
                           currentChat.members.find(
-                            (member) => member._id !== userId
-                          )?.avatar.avatar_url?
-                          <Avatar className={`cursor-pointer`}>
-                          <AvatarImage
-                            src={
-                              currentChat.members.find(
-                                (member) => member._id !== userId
-                              )?.avatar.avatar_url }
-                            alt="@shadcn"
-                          />
-                        </Avatar>
-                          :
-                          <i className="bi bi-person-circle text-2xl"></i>
+                            (user) => user._id !== userId
+                          )?.name
                         }
-                        
-                        <div className="grid flex-1 text-left text-sm leading-tight cursor-pointer">
-                          <span className="truncate font-semibold">
-                            {
-                              currentChat.members.find(
-                                (member) => member._id !== userId
-                              )?.name
-                            }
-                          </span>
-                        </div>
-                      </div>
-                      <AlertDialog>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <MoreVertical className="cursor-pointer" />
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent className="w-56">
-                            <AlertDialogTrigger asChild>
-                              <DropdownMenuItem>block</DropdownMenuItem>
-                            </AlertDialogTrigger>
-
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem>bye</DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-
-                        <AlertDialogContent className="bg-black">
-                          <AlertDialogHeader>
-                            <AlertDialogTitle className="text-white">
-                              Are you absolutely sure?
-                            </AlertDialogTitle>
-                            <AlertDialogDescription className="text-white">
-                              If you block this user you cannot send message to
-                              this user. you can unblock this user any time you
-                              want.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel className="text-black bg-white">
-                              Cancel
-                            </AlertDialogCancel>
-                            <AlertDialogCancel className="text-black bg-white">
-                              Continue
-                            </AlertDialogCancel>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
+                      </strong>
                     </div>
                   )}
-                </header>
+                </div>
+              </div>
+              <div className="flex gap-1">
+                <ScrollArea className="w-[35%] border-2  h-[60vh]">
+                  {chats.map((chat) => {
+                    let count = 0;
+                    const otherUser = chat.members.find(
+                      (usr) => usr._id !== userId
+                    );
+                    count = notifications.filter(
+                      (not) => not.senderId === otherUser?._id
+                    ).length;
 
-                <div className=" m-2 rounded-2 ">
-                  <div className="flex flex-col justify-between m-2 ">
-                    <ScrollArea className="h-[300px]">
-                      {chatId && messages.length > 0 ? (
+                    return (
+                      <div
+                        key={chat._id}
+                        onClick={async () => {
+                          searchParams.set("chatId", chat._id);
+                          setSearchParams(searchParams);
+                          let id = chat.members.find(
+                            (member) => member._id !== userId
+                          )?._id;
+                          markAsRead(id!);
+                        }}
+                        className="relative cursor-pointer flex items-center gap-2 p-2 border border-black"
+                      >
+                        <Avatar>
+                          <AvatarImage
+                            src={
+                              chat.members.find((user) => user._id !== userId)
+                                ?.avatar.avatar_url
+                            }
+                          />
+                          <AvatarFallback>
+                            <i className="bi bi-person-circle text-2xl"></i>
+                          </AvatarFallback>
+                        </Avatar>
+                        {onlineUsers.some(
+                          (val) =>
+                            val.userId ==
+                            chat.members.find((user) => user._id !== userId)
+                              ?._id
+                        ) && (
+                          <span className="relative flex size-3">
+                            <span className="relative right-5 top-3 inline-flex size-2 rounded-full bg-green-500"></span>
+                          </span>
+                        )}
+                        <span className="text-xs font-semibold flex w-full justify-between items-center-safe">
+                          <span>
+                            {" "}
+                            {
+                              chat.members.find((user) => user._id !== userId)
+                                ?.name
+                            }
+                          </span>
+                          {count > 0 && (
+                            <span>
+                              {" "}
+                              <Badge
+                                className="h-5 min-w-5 rounded-full px-1 font-mono tabular-nums bg-teal-500 text-white"
+                                variant="outline"
+                              >
+                                {count > 5 ? "5+" : count}
+                              </Badge>
+                            </span>
+                          )}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </ScrollArea>
+                <div className="w-[65%]">
+                  {currentChat ? (
+                    <div>
+                      <ScrollArea className="h-[50vh] p-3  flex flex-col">
                         <>
                           {messages.map((msg, index) => (
                             <div
-                              key={index}
-                              className={`flex p-[0.75rem] md:w-[250px] w-[200px] border rounded shadow-md  ${
-                                msg.senderId == userId
-                                  ? "bg-green-200 ml-auto"
-                                  : "bg-white items-start"
+                              key={`${msg._id}+${index}`}
+                              className={`flex ${
+                                msg.senderId !== userId
+                                  ? ""
+                                  : "justify-end-safe"
                               }`}
                             >
-                              <div className="leading-none overflow-hidden break-words w-full">
-                                <span className="flex justify-start md:text-sm text-xs font-semibold">
-                                  {msg.text}
-                                </span>
-                                <div
-                                  className={`flex text-xs  text-gray-500 justify-end`}
-                                >
-                                  {moment(msg.createdAt).calendar()}
+                              <div
+                                className={`p-2 m-1 w-[50%] rounded ${
+                                  msg.senderId !== userId
+                                    ? "bg-black text-white"
+                                    : "bg-gray-200 "
+                                }`}
+                              >
+                                {msg.text}
+                                <div className="flex justify-end-safe gap-2 items-end-safe">
+                                  {msg.senderId == userId && (
+                                    <span className="text-xs">
+                                      <i
+                                        className={`bi bi-check2-all ${
+                                          msg.isRead ? "text-indigo-600" : ""
+                                        } `}
+                                      ></i>
+                                    </span>
+                                  )}
+                                  <span className="text-xs">
+                                    {moment(msg.createdAt).calendar()}
+                                  </span>
                                 </div>
                               </div>
                             </div>
                           ))}
-
                           <div ref={messagesEndRef} />
                         </>
-                      ) : chatId ? (
-                        <div className="flex justify-center">
-                          No messages sent yet
-                        </div>
-                      ) : (
-                        <div className="flex justify-center">
-                          No conversation selected
-                        </div>
-                      )}
-                    </ScrollArea>
-                    {currentChat && (
-                      <div className="flex items-center gap-2 ">
+                      </ScrollArea>
+                      <div className="flex items-center p-2">
                         <InputEmoji
                           placeholder="Type a Messsage"
                           placeholderColor="black"
@@ -536,20 +455,24 @@ export default function InstructorMessage() {
                           shouldConvertEmojiToImage={false}
                         />
                         {text.length > 0 && (
-                          <Send
-                            className="cursor-pointer"
+                          <i
                             onClick={handletext}
-                          />
+                            className="bi bi-send-fill cursor-pointer"
+                          ></i>
                         )}
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  ) : (
+                    <div className="text-center">No chat selected</div>
+                  )}
                 </div>
               </div>
             </div>
-          </div>
+          </main>
         </div>
       </div>
-    </div>
+    </SidebarProvider>
   );
-}
+};
+
+export default React.memo(InstructorMessage);

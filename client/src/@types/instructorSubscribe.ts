@@ -1,4 +1,4 @@
-import { ISubcription } from "./subscriptionType";
+import type { ISubcription } from "./subscriptionType";
 
 export interface IInstructorSubscribe{
     _id:string,

@@ -1,4 +1,5 @@
-import { IUser } from "./chatUser";
+import type { IUser } from "./userType";
+
 
 export interface IChat{
     _id:string,

@@ -3,8 +3,9 @@ import {createSlice} from '@reduxjs/toolkit'
 
 
 interface currentUser{
-   id:string
+   _id:string
    name:string,
+   image:string,
    email:string,
    isBlock:boolean,
    isVerified:boolean,
@@ -13,9 +14,10 @@ interface currentUser{
 }
 
 const initialState:currentUser = {
-    id:"",
+    _id:"",
     name: "",
     email: "",
+    image: "",
     isBlock: true,
     isVerified:false,
     isAdmin:false,
@@ -27,23 +29,25 @@ const authSLice = createSlice({
     initialState,
     reducers:{
         setUser:(state,action)=>{
-            state.id = action.payload._id;
+            state._id = action.payload._id;
             state.email = action.payload.email;
+            state.image = action.payload.image;
             state.name = action.payload.name;
             state.isVerified = action.payload.isVerified;
             state.isBlock = action.payload.isBlock;
             state.isInstructor = action.payload.isInstructor;
         },
         setInstructor:(state,action)=>{
-            state.id = action.payload._id;
+            state._id = action.payload._id;
             state.email = action.payload.email;
             state.name = action.payload.name;
+            state.image = action.payload.image;
             state.isVerified = action.payload.isVerified;
             state.isBlock = action.payload.isBlock;
             state.isInstructor = action.payload.isInstructor;
         },
         setAdmin:(state,action)=>{
-            state.id = action.payload._id;
+            state._id = action.payload._id;
             state.email = action.payload.email;
             state.name = action.payload.name;
             state.isVerified = action.payload.isVerified;
@@ -60,10 +64,14 @@ const authSLice = createSlice({
         changeEmail:(state,action)=>{
           state.email = action.payload.email
         },
+        changeImage:(state,action)=>{
+          state.image = action.payload
+        },
         removeUser:(state)=>{
-            state.id = "";
+            state._id = "";
             state.email ="";
             state.name = "";
+            state.image = "";
             state.isVerified = false;
             state.isBlock = false;
             state.isAdmin = false;
@@ -72,7 +80,7 @@ const authSLice = createSlice({
     }
 });
 
-export const {setUser,setAdmin,blockUser,setInstructor,removeUser,profileUpdated,changeEmail} = authSLice.actions;
+export const {setUser,setAdmin,blockUser,setInstructor,removeUser,profileUpdated,changeEmail,changeImage} = authSLice.actions;
 export default authSLice.reducer;
 
 

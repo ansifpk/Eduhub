@@ -1,22 +1,29 @@
-
-import Header from '../../components/Header/Header'
-import { Button } from '../../components/ui/button'
-import { useNavigate } from 'react-router-dom'
+import React from 'react'
+import { NavLink } from 'react-router-dom'
 
 const Success = () => {
-  const navigate = useNavigate()
   return (
-    <>
-    <Header />
-    <div className=' h-[100vh] bg-blue-200 flex justify-center items-center'>
-    <div className='w-25 h-25  rounded-2 flex flex-col justify-center items-center bg-green-400'>
-       <h3>Purchase successfully</h3>
-      <Button onClick={()=>navigate("/users/courses")}>Go home</Button>
-    </div>
-    </div>
-    </>
-    
+
+      <div className="w-full">
+        <div className="h-screen flex items-center justify-center ">
+          <div className="flex flex-col items-center justify-center">
+            <i className="text-9xl  bi bi-check-lg text-yellow-600"></i>
+            <h1 className="text-yellow-600 font-extrabold underline">
+              {" "}
+              Successfully puchased the course
+            </h1>
+            <p>
+              <NavLink
+                className="font-extrabold underline"
+                to={"/user/profile/course"}
+              >
+               See your orders
+              </NavLink>
+            </p>
+          </div>
+        </div>
+      </div>
   )
 }
 
-export default Success
+export default React.memo(Success)

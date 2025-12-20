@@ -1,4 +1,4 @@
-import ApiGatway from "../service/axios";
+import ApiGatway from "../service/client";
 import { useState } from "react";
 
 export default () => {

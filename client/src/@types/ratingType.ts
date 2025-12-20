@@ -1,5 +1,4 @@
-import { IUser } from "./chatUser";
-import { User } from "./userType";
+import type { IUser } from "./userType";
 
 
 export interface IRating{

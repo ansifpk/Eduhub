@@ -1,12 +1,5 @@
-import { Button } from "../ui/button";
+import React, { useEffect, useState } from "react";
 import data from "../../assets/home-page/studnet.jpg";
-import { ICategory } from "../../@types/categoryTpe";
-import { ICourse } from "../../@types/courseType";
-import { useEffect, useState } from "react";
-import useRequest from "../../hooks/useRequest";
-import userRoutes from "../../service/endPoints/userEndPoints";
-import toast from "react-hot-toast";
-import { Input } from "../ui/input";
 import {
   Select,
   SelectContent,
@@ -16,90 +9,96 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import useRequest from "@/hooks/useRequest";
+import instructorRoutes from "@/service/endPoints/instructorEndPoints";
+import type { ICategory } from "@/@types/categoryType";
+import type { ICourse } from "@/@types/courseType";
+import userRoutes from "@/service/endPoints/userEndPoints";
+import toast from "react-hot-toast";
 
 interface Props {
-  categories: ICategory[];
-  onsendcourse: (courses: ICourse[]) => void;
-  onsendpages: (pages: number) => void;
-  page: number;
+  handleCourse: (courses: ICourse[]) => void;
+  handlePage: (page: number) => void;
+  page:number
 }
+
 const FilterHeader: React.FC<Props> = ({
-  categories,
-  onsendcourse,
-  onsendpages,
-  page,
+  handleCourse,
+  handlePage,
+  page
 }) => {
   const [topics, setTopics] = useState<string[]>([]);
+  const [categories, setCategories] = useState<ICategory[]>([]);
   const [category, setCategory] = useState("");
   const [topic, setTopic] = useState("");
   const [level, setLevel] = useState("");
   const [sort, setSort] = useState("");
   const [search, setSearch] = useState("");
-  const { doRequest, errors } = useRequest();
+  const { doRequest, err } = useRequest();
 
   useEffect(() => {
     doRequest({
-      url: `${userRoutes.getCourses}?category=${category}&&topic=${topic}&&level=${level}&&search=${search}&&sort=${sort}&&page=${page}`,
-      body: {},
+      url: instructorRoutes.getCategoryies,
       method: "get",
-      onSuccess: (response) => {
-        onsendcourse(response.courses);
-        onsendpages(response.pages);
+      body: {},
+      onSuccess: (data) => {
+        setCategories(data);
       },
     });
-     
-    const cate = async () => {
-      categories.filter((val) => {
-        if (category.length > 0) {
-          if (val.title == category) {
-            setTopics(val.topics);
-          }
-        }
-      });
-    };
-    cate();
-  }, [categories, category, topic, level, search, search, sort, page]);
+  }, [search]);
+
   useEffect(() => {
-    errors?.map((err) => toast.error(err.message));
-  }, [errors]);
- 
+    doRequest({
+      url:`${userRoutes.getCourses}?category=${category}&&page=${page}&&search=${search}&&topic=${topic}&&level=${level}&&sort=${sort}`,
+      method: "get",
+      body: {},
+      onSuccess: (data) => {
+        handleCourse(data.courses);
+        handlePage(data.pages);
+      },
+    });
+  }, [search,category,topic,level,sort,page]);
   
+  useEffect(()=>{
+     err?.map((err)=>toast.error(err.message));
+  },[err])
+
   return (
     <div
+      className="container-fluid mx-auto h-52 flex justify-center items-center gap-4 p-4 "
       style={{
-        backgroundImage: `linear-gradient(
-          rgba(73, 187, 189, 0.5),
-      rgba(73, 187, 189, 0.5)
-        ), url(${data})`,
+        backgroundImage: `linear-gradient(rgba(73, 187, 189, 0.5),rgba(73, 187, 189, 0.5)), url(${data})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
       }}
-      className="h-52 flex flex-col items-center justify-center gap-4 p-4 "
     >
-      <div className="w-75 md:w-1/2 flex bg-white border rounded">
-        <Input
-          type="text"
-          className="m-1 md:text-sm lg:text-sm text-xs"
-          placeholder="Search courses here..."
-          aria-label="Search courses"
-          onChange={(e) => setSearch(e.target.value)}
+      <div className="w-3/4  flex flex-col gap-4">
+        <input
+          type="search"
+          id="search"
+          onChange={(e)=>setSearch(e.target.value)}
+          placeholder="Serach course here..."
+          className="bg-white py-2 rounded-2xl px-2"
         />
-        <Button
-          type="button"
-          className="bg-[#49BBBD] text-white m-1 md:text-sm text-xs"
-        >
-          Search
-        </Button>
-      </div>
-      <div className="  flex w-75 md:w-1/2 gap-5">
-        <div className=" flex-1">
+
+        <div  className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <Select
             onValueChange={(value) => {
               setCategory(value);
+              if(value == "All") {
+                setTopic("")
+                return  setTopics([])
+              }
+              categories.filter((val)=>{
+                if(val.title == value){
+                    setTopics(val.topics)
+                    return;
+                }
+              })
             }}
           >
-            <SelectTrigger className="md:text-sm w-full text-xs bg-white">
+            <SelectTrigger className="md:text-sm  w-full text-xs bg-white">
               <SelectValue placeholder="Select a Category" />
             </SelectTrigger>
             <SelectContent>
@@ -114,11 +113,9 @@ const FilterHeader: React.FC<Props> = ({
               </SelectGroup>
             </SelectContent>
           </Select>
-        </div>
-        <div className=" flex-1">
           <Select onValueChange={(value) => setTopic(value)}>
-            <SelectTrigger className="md:text-sm w-full text-xs bg-white">
-              <SelectValue  placeholder="Select a Topic..." />
+            <SelectTrigger className="md:text-sm  w-full text-xs bg-white">
+              <SelectValue placeholder="Select a Topic..." />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
@@ -138,10 +135,8 @@ const FilterHeader: React.FC<Props> = ({
               </SelectGroup>
             </SelectContent>
           </Select>
-        </div>
-        <div className="flex-1">
           <Select onValueChange={(value) => setLevel(value)}>
-            <SelectTrigger className="md:text-sm w-full text-xs bg-white">
+            <SelectTrigger className="md:text-sm  w-full text-xs bg-white">
               <SelectValue placeholder="Select Level" />
             </SelectTrigger>
             <SelectContent>
@@ -154,10 +149,8 @@ const FilterHeader: React.FC<Props> = ({
               </SelectGroup>
             </SelectContent>
           </Select>
-        </div>
-        <div className="  flex-1">
           <Select onValueChange={(value) => setSort(value)}>
-            <SelectTrigger className="md:text-sm w-full text-xs bg-white">
+            <SelectTrigger className="md:text-sm  w-full text-xs bg-white">
               <SelectValue placeholder="Sort " />
             </SelectTrigger>
             <SelectContent>
@@ -181,4 +174,4 @@ const FilterHeader: React.FC<Props> = ({
   );
 };
 
-export default FilterHeader;
+export default React.memo(FilterHeader);

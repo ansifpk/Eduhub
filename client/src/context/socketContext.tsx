@@ -1,4 +1,5 @@
-import { User } from "../@types/userType";
+
+import type { IUser } from "@/@types/userType";
 import { removeUser } from "../redux/authSlice";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -14,7 +15,7 @@ const SocketContext = createContext<Socket|null>(null);
 
 export const SocketProvider: React.FC<{children: React.ReactNode}> = ({children}) =>{
     const [socket,setSocket] = useState<Socket|null>(null);
-    const userId = useSelector((state:User)=>state.id);
+    const userId = useSelector((state:IUser)=>state._id);
     const navigate =  useNavigate()
     const dispatch = useDispatch()
     useEffect(()=>{
@@ -27,9 +28,10 @@ export const SocketProvider: React.FC<{children: React.ReactNode}> = ({children}
             })
             setSocket(newSocket);
             newSocket.on(`block:${userId}`,()=>{
+                console.log("user blocked",userId)
               toast.error("Access blocked by Admin")
               dispatch(removeUser())
-              navigate("/users/login");
+              navigate("/signIn");
             })
             return ()=>{
                 newSocket.disconnect();

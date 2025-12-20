@@ -1,18 +1,21 @@
-import { Route, Routes } from "react-router-dom"
-import UserRoter from "./routes/UserRoter"
-// import InstructorRoter from "./routes/InstructorRouter"
-// import AdminRouter from "./routes/AdminRouter"
-import 'bootstrap-icons/font/bootstrap-icons.css';
+import React, { lazy, Suspense } from "react";
+import { Route, Routes } from "react-router-dom";
+import "bootstrap-icons/font/bootstrap-icons.css";
+const UserRouter = lazy(()=>import("./routers/UserRouter"));
+const AdminRouter = lazy(()=>import("./routers/AdminRouter"));
+const InstructorRouter = lazy(()=>import("./routers/InstructorRouter"));
 
 
-const App = () => {
+function App() {
   return (
-     <Routes>
-            <Route path="/*" element={<UserRoter/>} />
-            {/* <Route path="/instructor/*" element={<InstructorRoter/>} /> 
-              <Route path="/admin/*" element={<AdminRouter/>} /> */}
-          </Routes>
-  )
+    <Suspense fallback={<>loading....</>}>
+      <Routes>
+        <Route path="/*" element={<UserRouter/>} />
+        <Route path="/admin/*" element={<AdminRouter/>} />
+        <Route path="/instructor/*" element={<InstructorRouter />} />
+      </Routes>
+    </Suspense>
+  );
 }
 
-export default App
+export default React.memo(App);

@@ -1,4 +1,3 @@
-import { User } from "./userType";
 
 export interface ICoupon{
     _id?:string,

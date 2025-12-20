@@ -1,4 +1,4 @@
-import { ICourse } from "./courseType";
+import type { ICourse } from "./courseType";
 
 export interface ICart{
     _id:string,

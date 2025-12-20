@@ -1,9 +1,8 @@
-import { User } from "./userType";
-
+import type { IUser } from "./userType";
 
 export interface IInstructorRating{
     _id:string,
-    userId:User,
+    userId:IUser,
     instructor:string,
     review:string,
     stars:number,

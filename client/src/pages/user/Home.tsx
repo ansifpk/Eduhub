@@ -1,40 +1,55 @@
+import { Button } from "@/components/ui/button";
+import Footer from "@/components/user/Footer";
+import Header from "@/components/user/Header";
+import { useNavigate } from "react-router-dom";
 import Forstudents from "../../assets/home-page/studnet.jpg";
 import Forteachers from "../../assets/home-page/teacher-home.jpg";
-import { useNavigate } from "react-router-dom";
-import Header from "../../components/Header/Header";
-import Footer from "../../components/Footer/Footer";
-import Button from "../../components/Button";
-const Home: React.FC = () => {
+import StarBorder from "@/components/StarBorder";
+import { ArrowRightCircleIcon } from "lucide-react";
+const Home = () => {
   const navigate = useNavigate();
   return (
-    <div className="h-screen">
+    <div className="flex flex-col space-y-5">
       <Header />
-
-      <div>
-        <div className="flex items-center  justify-center  text-center bg-teal-400 ">
-          <div className="mt-5">
-            <p className="font-bold text-5xl text-white">
-              Studying Online is now much easier
-            </p>
+      <div
+        style={{
+          backgroundImage: `url(${Forteachers})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+        className="flex items-center justify-center  text-center min-h-screen"
+      >
+        <div className="flex flex-col space-y-5 items-center justify-center-safe">
+          <p className="font-bold text-5xl text-white">
+            Studying Online is now much easier
+          </p>
+          <StarBorder as="button" thickness={3} color="red" speed="2s">
             <Button
               type="button"
-              className={"bg-gray-500/50 text-white mt-5"}
-              text={"Join Free"}
-              onClick={() => navigate("/users/courses")}
-            />
-          </div>
+              onClick={() => navigate("/user/courses")}
+              className={"text-white w-50 cursor-pointer text-center"}
+            >
+              Explore Courses{" "}
+              <ArrowRightCircleIcon className="animate-pulse " />
+            </Button>
+          </StarBorder>
         </div>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
-          <path
-            fill="#2dd4bf"
-            fillOpacity="1"
-            d="M0,224L80,234.7C160,245,320,267,480,266.7C640,267,800,245,960,224C1120,203,1280,181,1360,170.7L1440,160L1440,0L1360,0C1280,0,1120,0,960,0C800,0,640,0,480,0C320,0,160,0,80,0L0,0Z"
-          ></path>
-        </svg>
       </div>
-      <div className="flex gap-5 justify-center">
+
+      <div className="text-center font-semibold my-5">
+        <h1 className="text-4xl font-extrabold">What is EduHub?</h1>
+        <div className="w-[75%] mx-auto">
+          Eduhub is a platform that allows educators to create online classes
+          whereby they can store the course materials online; manage
+          assignments, quizzes and exams; monitor due dates; grade results and
+          provide students with feedback all in one place.
+        </div>
+      </div>
+
+      <div className="flex gap-5 md:mx-0 mx-2 justify-center">
         <div
-          className="bg-local rounded-2 text-white flex flex-col items-center justify-center md:w-1/3 h-[250px]"
+          className="bg-local rounded-lg text-white flex flex-col items-center justify-center md:w-1/3 w-full h-[250px]"
           style={{
             backgroundImage: `linear-gradient(
                       rgba(4, 18, 19, 0.0),
@@ -48,16 +63,17 @@ const Home: React.FC = () => {
             FOR INSTRUCTORS
           </span>
           <Button
-           type="button"
+            type="button"
+            onClick={() => navigate("/instructor/login")}
             className={
-              "bg-gray-500/50 rounded-pill text-white mt-3  cursor-pointer"
+              "bg-gray-500/50 rounded-full text-white mt-3  cursor-pointer"
             }
-            text={"Start a class today"}
-            onClick={() => navigate("/instructor")}
-          />
+          >
+            Start a class today
+          </Button>
         </div>
         <div
-          className="bg-local rounded-2 text-white flex flex-col items-center justify-center md:w-1/3 h-[250px]"
+          className="bg-local rounded-lg text-white flex flex-col items-center justify-center md:w-1/3 w-full h-[250px]"
           style={{
             backgroundImage: `linear-gradient(
                       rgba(4, 18, 19, 0.0),
@@ -71,15 +87,17 @@ const Home: React.FC = () => {
             FOR STUDENTS
           </span>
           <Button
-           type="button"
+            type="button"
+            onClick={() => navigate("/user/courses")}
             className={
-              "bg-gray-500/50 rounded-pill text-white mt-3  cursor-pointer"
+              "bg-gray-500/50 rounded-full text-white mt-3  cursor-pointer"
             }
-            text={"Explore our Courses"}
-            onClick={() => navigate("/users/courses")}
-          />
+          >
+            Explore our Courses
+          </Button>
         </div>
       </div>
+
       <Footer />
     </div>
   );

@@ -1,10 +1,8 @@
 
-import { IChat } from "./chatType";
-import { IUser } from "./chatUser";
-
 
 export interface IMessage{
-    chatId:IChat,
+    _id:string,
+    chatId:string,
     senderId:string,
     text:string,
     isRead:boolean,

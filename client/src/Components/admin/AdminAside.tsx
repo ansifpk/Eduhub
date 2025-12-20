@@ -1,15 +1,13 @@
-import { removeUser } from "../../redux/authSlice";
+import useRequest from "@/hooks/useRequest";
+import { removeUser } from "@/redux/authSlice";
+import adminRoutes from "@/service/endPoints/adminEndPoints";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
-import { NavLink } from "react-router-dom";
-import useRequest from "../../hooks/useRequest";
-import adminRoutes from "../../service/endPoints/adminEndPoints";
-import { cn } from "../../lib/utils";
-import { buttonVariants } from "../ui/button";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 const arr = [
   {
     name: "Home",
-    to: "/admin/home",
+    to: "",
     icon: <i className="bi bi-house-fill"></i>,
   },
   {
@@ -22,12 +20,7 @@ const arr = [
     to: "/admin/instructors",
     icon: <i className="bi bi-person-video3"></i>,
   },
-  {
-    name: "Reports",
-    to: "/admin/reports",
-    icon: <i className="bi bi-file-earmark-arrow-down-fill"></i>,
-  },
-  { name: "Courses", to: "/admin/courses", icon: <i className="bi bi-tv"></i> },
+  { name: "courses", to: "courses", icon: <i className="bi bi-tv"></i> },
   {
     name: "Category",
     to: "/admin/category",
@@ -40,7 +33,7 @@ const arr = [
   },
   {
     name: "Messages",
-    to: "/admin/messages",
+    to: "/admin/mesage",
     icon: <i className="bi bi-chat-left-dots"></i>,
   },
   {
@@ -49,63 +42,49 @@ const arr = [
     icon: <i className="bi bi-bell-fill"></i>,
   },
 ];
+
 const AdminAside = () => {
-  const dispatch = useDispatch();
-  const { doRequest } = useRequest();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const { doRequest } = useRequest();
   const handleLogout = async () => {
+    
     doRequest({
       url: adminRoutes.logout,
       method: "post",
       body: {},
       onSuccess: (response) => {
         dispatch(removeUser());
+        navigate("/admin/login")
         return toast.success(response.message);
       },
     });
   };
 
   return (
-    <aside className="bg-purple-600 w-[250px] h-screen lg:block md:block sm:hidden hidden h-sceen sticky top-0 left-0">
-      <div className="flex justify-center">
-        <div className="text-2xl font-bold text-white">
-          <span className="inline-block transform">
-            <div className="bg-white text-purple-600 p-2 rounded">EduHub</div>
-          </span>
-        </div>
-      </div>
-      <ul className="list-none mt-4 p-0 ">
-        {arr.map((val, index) => (
-          <li key={index}>
-            <NavLink
-              end
-              className={({ isActive }) =>
-                cn(
-                  buttonVariants({ variant: "ghost" }),
-                  isActive
-                    ? "bg-white hover:bg-white text-black w-50 no-underline"
-                    : "hover:bg-transparent hover:underline text-white no-underline",
-                  "justify-start mx-1"
-                )
-              }
-              to={val.to}
-            >
-              {val.icon} {val.name}
-            </NavLink>
-          </li>
-        ))}
-
-        <li
-          onClick={handleLogout}
-          className={cn(
-            buttonVariants({ variant: "ghost" }),
-            "hover:bg-transparent hover:underline text-white no-underline",
-            "justify-start"
-          )}
-        >
-          Log Out
-        </li>
-      </ul>
-    </aside>
+    <>
+      <aside className="h-screen fixed top-0 bg-purple-800 w-[20%] shadow-lg">
+          <div className="text-center">
+              <span className="font-extrabold text-5xl text-white ">EduHub</span>
+          </div>
+          <ul className="flex mt-5 flex-col font-semibold text-white text-center space-y-4 mx-3">
+              {arr.map((val) => (
+                  <div key={val.name}>
+                      <NavLink
+                          end
+                          className={({ isActive }) => `flex w-full gap-2 justify-center-safe ${isActive ? "bg-white text-black rounded py-1" : "text-white"}`}
+                          to={val.to}
+                      >
+                          <span>{val.icon}</span>
+                          <span>{val.name}</span>
+                      </NavLink>
+                  </div>
+              ))}
+              <li className="cursor-pointer" onClick={handleLogout}>Log Out</li>
+          </ul>
+      </aside>
+      <Outlet/>
+      </>
   );
 };
 

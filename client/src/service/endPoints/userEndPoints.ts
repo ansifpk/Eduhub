@@ -2,7 +2,7 @@ const userRoutes = {
     
  // auth servic end poin
  signUp:'/auth/user/register',
- login:'/auth/auth/auth/user/login',
+ login:'/auth/user/login',
  googleLogin:'/auth/user/googleLogin',
  verifyOtp:'/auth/user/createUser',
  resentOtp:"/auth/user/resentOtp",
@@ -14,8 +14,8 @@ const userRoutes = {
 
  // user servic end points
  editUser:'/profile/user/profile',
- changeEmailVeryfy:'/user/verifyEmail',
- changeEmail:'/auth/changeEmail',
+ changeEmailVeryfy:'/auth/user/verifyEmail',
+ changeEmail:'/auth/user/changeEmail',
 
  getCourses:"/course/user/courses",
  fetchCourses:"/course/user/getCourses",
@@ -29,7 +29,6 @@ const userRoutes = {
 
  // purchase
  createOrder:"/profile/user/createOrder",
-
  addToCart:"/profile/user/Cart",
  Cart:"/profile/user/Cart",
  profile:"/profile/user/profile",
@@ -49,9 +48,10 @@ const userRoutes = {
 
  //*subscriptions
  subscriptions:"/purchase/user/subscription",
- plans:"/purchase/user/subscribe",
+ subscribe:"/purchase/user/subscribe",
+ plans:"/purchase/user/customer",
  customer:"/purchase/user/customer",
- tocken:"/auth/auth/user/refresh-token",
+ tocken:"/auth/user/refresh-token",
 
 }
 

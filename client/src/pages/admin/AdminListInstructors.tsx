@@ -1,30 +1,23 @@
-import AdminAside from "../../components/admin/AdminAside";
-import { Card } from "../../components/ui/card";
-import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../../components/ui/table";
-import { Button } from "../../components/ui/button";
-import { useNavigate } from "react-router-dom";
+import type { IUserProfile } from "@/@types/userProfile";
 import {
   AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle,
   AlertDialogTrigger,
-} from "../../components/ui/alert-dialog";
-import { useSelector } from "react-redux";
-import { IUser } from "../../@types/chatUser";
-import { User } from "../../@types/userType";
+  AlertDialogContent,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogCancel,
+} from "@/components/ui/alert-dialog";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationPrevious,
+  PaginationLink,
+  PaginationNext,
+} from "@/components/ui/pagination";
 import {
   Select,
   SelectContent,
@@ -33,31 +26,35 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "../../components/ui/select";
-import { Input } from "../../components/ui/input";
-import { useSocket } from "../../context/socketContext";
-import useRequest from "../../hooks/useRequest";
-import adminRoutes from "../../service/endPoints/adminEndPoints";
+} from "@/components/ui/select";
 import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "../../components/ui/pagination";
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { useSocket } from "@/context/socketContext";
+import useRequest from "@/hooks/useRequest";
+import adminRoutes from "@/service/endPoints/adminEndPoints";
+import moment from "moment";
+import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const AdminListInstructors = () => {
-  const [instructor, setInstructors] = useState([]);
-  const [requests, setRequests] = useState(0);
+  const [instructors, setInstructors] = useState<IUserProfile[]>([]);
   const [search, setSearch] = useState("");
+  const [debouns, setDebouns] = useState("");
+  const [requests, setRequests] = useState(0);
   const [sort, setSort] = useState("");
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(0);
-  const navigate = useNavigate();
-  const userId = useSelector((state: User) => state.id);
   const socket = useSocket();
-  const { doRequest, errors } = useRequest();
+  const navigate = useNavigate();
+  const { doRequest, err } = useRequest();
 
   useEffect(() => {
     doRequest({
@@ -65,25 +62,25 @@ const AdminListInstructors = () => {
       body: {},
       method: "get",
       onSuccess: (response) => {
-        const arr = response.instructors.filter(
-          (value: IUser) => value.status == "Approved"
-        );
-        setInstructors(arr);
-        setTotalPage(response.pages);
-        response.instructors.map((value: IUser) => {
-          if (value.status == "pending") {
-            setRequests((prev) => {
-              return prev + 1;
-            });
-          }
-        });
+        setInstructors(response[0].instructors);
+        setTotalPage(response[0].instructorTotalPages[0].totalPages);
+        setRequests(response[0].requests[0].totelRequests);
       },
     });
-  }, [search, sort]);
+  }, [search, sort, page]);
+  useEffect(() => {
+    const intervel = setTimeout(() => {
+      setPage(1);
+      setSearch(debouns);
+    }, 600);
+    return () => {
+      clearTimeout(intervel);
+    };
+  }, [debouns]);
 
-  const handleBlockInstructroctor = async (userId: string) => {
+  const handleBlockInstructor = (instructorId: string) => {
     doRequest({
-      url: `${adminRoutes.blockUser}/${userId}`,
+      url: `${adminRoutes.blockUser}/${instructorId}`,
       method: "patch",
       body: {},
       onSuccess: (response) => {
@@ -93,19 +90,10 @@ const AdminListInstructors = () => {
             body: {},
             method: "get",
             onSuccess: (response) => {
-              const arr = response.instructors.filter(
-                (value: IUser) => value.status == "Approved"
-              );
-              setInstructors(arr);
-              setTotalPage(response.pages);
-              response.instructors.map((value: IUser) => {
-                if (value.status == "pending") {
-                  setRequests((prev) => {
-                    return prev + 1;
-                  });
-                }
-              });
-              socket?.emit(`blockUser`, userId);
+              setInstructors(response[0].instructors);
+              setTotalPage(response[0].instructorTotalPages[0].totalPages);
+              setRequests(response[0].requests[0].totelRequests);
+              socket?.emit(`blockUser`, instructorId);
               toast.success("Successfully Block Instructroctor");
             },
           });
@@ -115,18 +103,9 @@ const AdminListInstructors = () => {
             body: {},
             method: "get",
             onSuccess: (response) => {
-              const arr = response.instructors.filter(
-                (value: IUser) => value.status == "Approved"
-              );
-              setInstructors(arr);
-              setTotalPage(response.pages);
-              response.instructors.map((value: IUser) => {
-                if (value.status == "pending") {
-                  setRequests((prev) => {
-                    return prev + 1;
-                  });
-                }
-              });
+              setInstructors(response[0].instructors);
+              setTotalPage(response[0].instructorTotalPages[0].totalPages);
+              setRequests(response[0].requests[0].totelRequests);
               toast.success("Successfully UnBlock Instructroctor");
             },
           });
@@ -135,44 +114,29 @@ const AdminListInstructors = () => {
     });
   };
 
-  const createMessageWithUser = async (recipientId: string) => {
-    try {
-      doRequest({
-        url: adminRoutes.chat,
-        body: { userId, recipientId, role: "userToInstructor" },
-        method: "post",
-        onSuccess: (response) => {
-          return navigate(`/admin/messages?chatId=${response.chat._id}`);
-        },
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   useEffect(() => {
-    errors?.map((err) => toast.error(err.message));
-  }, [errors]);
+    err?.map((err) => toast.error(err.message));
+  }, [err]);
 
   return (
-    <div className="flex gap-2">
-      <AdminAside />
-      <div className="w-full mr-3">
-      <div className="w-full mx-auto mt-2 rounded-lg p-5  text-white bg-purple-600">
-          <span className="text-3xl">Welcome back, Admin</span>
+    <div className="w-[80%] ml-auto">
+      <div className="px-5 flex flex-col space-y-5">
+        <div className="w-full mx-auto mt-2 rounded-lg p-5  text-white bg-purple-600">
+          <span className="font-bold text-3xl">Welcome back, Admin</span>
         </div>
-        <div className="w-full">
-          <div className="flex justify-between my-3">
-            <h1 className="text-lg font-bold">Instructors</h1>
-            <div className="flex">
-              <Input
+
+        <div className="space-y-5">
+          <div className="flex justify-between">
+            <span className="text-3xl font-bold underline">List Instructors</span>
+            <div className="flex gap-2">
+              <input
                 type="search"
-                placeholder="Search..."
-                onChange={(e) => setSearch(e.target.value)}
-                className="md:w-[100px] lg:w-[300px] "
+                onChange={(e) => setDebouns(e.target.value)}
+                className="border rounded py-1 px-2 border-purple-600"
+                placeholder="Search instructors here..."
               />
               <Select onValueChange={(value) => setSort(value)}>
-                <SelectTrigger>
+                <SelectTrigger className="w-[150px] border rounded border-purple-600">
                   <SelectValue placeholder="Sort..." />
                 </SelectTrigger>
                 <SelectContent>
@@ -186,153 +150,152 @@ const AdminListInstructors = () => {
                   </SelectGroup>
                 </SelectContent>
               </Select>
-              <Button
+               <button
                 type="button"
                 onClick={() => navigate("/admin/instructorRequests")}
-                className="mb-3"
+                className="relative cursor-pointer bg-purple-600 rounded px-2 text-white"
               >
-                Instructor Requests {requests}
-              </Button>
+                Instructor Requests 
+                <span className="absolute -top-3 -right-1 size-14 text-white bg-purple-600 w-5 h-auto rounded-full" >{requests}</span>
+              </button>
             </div>
           </div>
-          {/* table card  */}
-          <Card>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="text-center w-[100px] ">
-                    Image
-                  </TableHead>
-                  <TableHead className=" text-center w-[200px]">Name</TableHead>
-                  <TableHead className="text-center w-[100px]">Email</TableHead>
-                  <TableHead className="text-center w-[100px]">
-                    Connect
-                  </TableHead>
-                  <TableHead className="text-center w-[100px]">
-                    Actions
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {instructor.length > 0 ? (
-                  instructor.map((value: IUser, index) => (
-                    <TableRow key={index}>
-                      <TableCell className="font-medium">
+          <Table className="border-2 rounded-lg border-purple-600">
+            <TableCaption>
+              {instructors.length > 0 && (
+                <Pagination>
+                  <PaginationContent className="gap-10">
+                    <PaginationItem>
+                      <PaginationPrevious
+                        onClick={() => {
+                          if (page > 1) {
+                            setPage((prev) => (prev -= 1));
+                          }
+                        }}
+                        className={`text-purple-600 hover:bg-white ${
+                          page > 1 ? "cursor-pointer" : ""
+                        } `}
+                        size={undefined}
+                      />
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationLink
+                        size={undefined}
+                        className="text-purple-600 border border-purple-600"
+                        isActive
+                      >
+                        {page}
+                      </PaginationLink>
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationNext
+                        size={undefined}
+                        onClick={() => {
+                          if (page !== totalPage) {
+                            setPage((prev) => (prev += 1));
+                          }
+                        }}
+                        className={`text-purple-600 hover:bg-white ${
+                          page < totalPage ? "cursor-pointer" : ""
+                        }`}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              )}
+            </TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-center">Image</TableHead>
+                <TableHead className="text-center">Name</TableHead>
+                <TableHead className="text-center">Email</TableHead>
+                <TableHead className="text-center">Joined At</TableHead>
+                <TableHead className="text-center">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {instructors.length > 0 ? (
+                instructors.map((instructor) => (
+                  <TableRow key={instructor._id}>
+                    <TableCell className="flex  justify-center">
                       {
-                          value.avatar.avatar_url?
-                          <img
-                            src={
-                              value.avatar.avatar_url
-                            }
-                            alt="Profile Picture"
-                            className="rounded-full w-10"
+                        <Avatar>
+                          <AvatarImage
+                            src={instructor.avatar.avatar_url}
+                            alt="@shadcn"
                           />
-                          :
-                         <i className="bi bi-person-circle text-4xl"></i>
-                         }
-                      </TableCell>
-                      <TableCell>{value.name}</TableCell>
-                      <TableCell>{value.email}</TableCell>
-                      <TableCell align="center">
-                        <Button
-                          onClick={() => createMessageWithUser(value?._id!)}
-                          className="bg-light border-1 border-black rounded-full text-black"
-                        >
-                          message
-                        </Button>
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button
-                              className={`rounded-full ${
-                                value.isBlock ? "bg-red-500" : "bg-green-500"
-                              }`}
+                          <AvatarFallback>
+                            <i className="bi bi-person-fill text-3xl"></i>
+                          </AvatarFallback>
+                        </Avatar>
+                      }
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {instructor.name}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {instructor.email}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {moment(new Date(instructor.createdAt)).calendar()}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <button
+                            type="button"
+                            className={` px-2 py-2 rounded text-white font-bold cursor-pointer ${
+                              instructor.isBlock ? "bg-red-500" : "bg-green-500"
+                            }`}
+                          >
+                            {instructor.isBlock ? "UnBlock" : "Block"}
+                          </button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Are you absolutely sure?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This will deney access of this user to enter
+                              Eduhub
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel
+                              className="bg-purple-600 cursor-pointer text-white"
+                              type="button"
                             >
-                              {value.isBlock ? "UnBlock" : "BLock"}
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>
-                                Are you absolutely sure?
-                              </AlertDialogTitle>
-                              <AlertDialogDescription>
-                                This will deney access of this user to enter
-                                Eduhub
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel
-                                className="bg-black text-white"
-                                type="button"
-                              >
-                                Cancel
-                              </AlertDialogCancel>
-                              <AlertDialogCancel
-                                className="bg-black text-white"
-                                type="button"
-                                onClick={() =>
-                                  handleBlockInstructroctor(value._id!)
-                                }
-                              >
-                                Continue
-                              </AlertDialogCancel>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell align="center" colSpan={20}>
-                      No instructors Available
+                              Cancel
+                            </AlertDialogCancel>
+                            <AlertDialogCancel
+                              className="bg-purple-600 cursor-pointer text-white"
+                              type="button"
+                              onClick={() =>
+                                handleBlockInstructor(instructor._id)
+                              }
+                            >
+                              Continue
+                            </AlertDialogCancel>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </TableCell>
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
-            <div>
-              <Pagination>
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious
-                    
-                      onClick={() => {
-                        if (page > 1) {
-                          setPage((prev) => (prev -= 1));
-                        }
-                      } }
-                      className={`text-black ${page > 1 ? "cursor-pointer" : ""} `} size={undefined}                    />
-                  </PaginationItem>
-                  <PaginationItem>
-                    <PaginationLink size={undefined} className="text-black" isActive>
-                      {page}
-                    </PaginationLink>
-                  </PaginationItem>
-                  <PaginationItem>
-                    <PaginationNext
-                    size={undefined}
-                      onClick={() => {
-                        if (page !== totalPage) {
-                          setPage((prev) => (prev += 1));
-                        }
-                      }}
-                      className={`text-black ${
-                        page < totalPage ? "cursor-pointer" : ""
-                      }`}
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
-            </div>
-          </Card>
-          {/* table card end */}
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={30} className="text-center font-bold">
+                    No Instrors Found
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
         </div>
       </div>
     </div>
   );
 };
 
-export default AdminListInstructors;
+export default React.memo(AdminListInstructors);
