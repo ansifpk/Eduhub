@@ -62,7 +62,7 @@ const Header = () => {
         <span className="font-bold text-2xl flex items-center font-[poppins] text-gray-800">
           EduHub
         </span>
-        <div className="flex md:hidden lg:hidden sm:hidden cursor-pointer items-center">
+        <div className="flex md:hidden sticky top-0 lg:hidden sm:hidden cursor-pointer items-center">
           {open ? (
             <i
               className="bi bi-x-lg text-2xl"
@@ -145,8 +145,8 @@ const Header = () => {
                 <NavLink
                   className={({ isActive }) =>
                     isActive
-                      ? "bg-gray-300/50 px-4 py-2 rounded-full"
-                      : "hover:bg-gray-300/50 px-4 py-2 rounded-full"
+                      ? "bg-gray-300/50 p-2 rounded-full"
+                      : "hover:bg-gray-300/50 p-2 rounded-full"
                   }
                   to={value.path}
                 >
