@@ -323,7 +323,7 @@ const CourseDetailes = () => {
                   ? navigate("/user/cart")
                   : handleCart(course?._id!)
               }
-              className="bg-teal-500 w-full rounded text-white text-xs cursor-pointer font-semibold transition-all hover:scale-110 hover:bg-teal-300"
+              className="bg-teal-500 w-full rounded text-white text-xs cursor-pointer font-semibold transition-all hover:scale-105 hover:bg-teal-300"
             >
               {course?.students.some((student) => student._id == userId) ||
               plans.some(
@@ -361,7 +361,7 @@ const CourseDetailes = () => {
                         <SheetTrigger asChild>
                           <Button
                             className="bg-teal-500 w-full
-                           transition-all hover:scale-110
+                           transition-all hover:scale-105
                   rounded text-white text-xs font-semibold cursor-pointer hover:bg-teal-300 hover:text-white"
                           >
                             Subscribe
@@ -982,7 +982,7 @@ const CourseDetailes = () => {
                   ? navigate("/user/cart")
                   : handleCart(course?._id!)
               }
-              className="bg-teal-500 w-full rounded text-white text-xs cursor-pointer font-semibold transition-all hover:scale-110 hover:bg-teal-300"
+              className="bg-teal-500 w-full rounded text-white text-xs cursor-pointer font-semibold transition-all hover:scale-105 hover:bg-teal-300"
             >
               {course?.students.some((student) => student._id == userId) ||
               plans.some(
@@ -1020,7 +1020,7 @@ const CourseDetailes = () => {
                         <SheetTrigger asChild>
                           <Button
                             className="bg-teal-500 w-full
-                            transition-all hover:scale-110
+                            transition-all hover:scale-105
                   rounded text-white text-xs font-semibold cursor-pointer hover:bg-teal-300 hover:text-white"
                           >
                             Subscribe
