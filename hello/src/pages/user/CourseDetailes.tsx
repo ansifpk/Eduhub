@@ -268,9 +268,9 @@ const CourseDetailes = () => {
           />
         </div>
         <div className="grid mx-2 text-black ">
-          <strong className="font-bold text-3xl">{course?.title}</strong>
-          <strong className="font-bold text-1xl">{course?.thumbnail}</strong>
-          <p className="font-bold">created by {course?.instructorId?.name}</p>
+          <strong className="font-bold md:text-3xl text-xl">{course?.title}</strong>
+          <strong className="font-bold md:text-1xl text-lg">{course?.thumbnail}</strong>
+          <p className="md:font-bold font-semibold">created by {course?.instructorId?.name}</p>
           <span className="text-xs">
             Last Updated {moment(course?.createdAt).calendar()}
           </span>{" "}
