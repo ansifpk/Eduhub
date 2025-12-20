@@ -1,13 +1,4 @@
 import { Home, Inbox, BookAIcon, ContactIcon } from "lucide-react";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar";
 import { NavLink, useNavigate } from "react-router-dom";
 import instructorRoutes from "@/service/endPoints/instructorEndPoints";
 import useRequest from "@/hooks/useRequest";
@@ -15,6 +6,7 @@ import toast from "react-hot-toast";
 import { removeUser } from "@/redux/authSlice";
 import { useDispatch } from "react-redux";
 import React, { useEffect } from "react";
+import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarHeader, SidebarMenu, SidebarMenuItem } from "./ui/sidebar";
 const items = [
   {
     title: "Home",
