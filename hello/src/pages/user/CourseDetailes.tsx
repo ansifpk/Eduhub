@@ -299,8 +299,156 @@ const CourseDetailes = () => {
         </div>
       </div>
 
-      <div className="container mx-auto flex flex-row gap-5">
+      <Card className="md:hidden block w-full max-w-sm border-0 border-none">
+          <CardContent className="border-0">
+            <img
+              className="h-70 w-96  object-fill"
+              src={course?.image?.image_url}
+            />
+            <p>
+              <span className="font-bold">{course?.price}/- </span>
+            </p>
+          </CardContent>
+          <CardFooter className="flex-col gap-2 border-0">
+            <Button
+              onClick={() =>
+                course?.students.some((student) => student._id == userId) ||
+                plans.some(
+                  (sub) =>
+                    sub.subscriptionId.instructorId._id ==
+                    course?.instructorId._id
+                )
+                  ? navigate(`/user/playCourse/${course?._id}`)
+                  : cart?.courses.some((cour) => cour._id == course?._id)
+                  ? navigate("/user/cart")
+                  : handleCart(course?._id!)
+              }
+              className="bg-teal-500 w-full rounded text-white text-xs cursor-pointer font-semibold transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 hover:bg-teal-300"
+            >
+              {course?.students.some((student) => student._id == userId) ||
+              plans.some(
+                (sub) =>
+                  sub.subscriptionId.instructorId._id ==
+                  course?.instructorId._id
+              )
+                ? "Go To Class"
+                : cart?.courses.some((cour) => cour._id == course?._id)
+                ? `Go To Cart`
+                : "Add To Cart"}
+            </Button>
+            {plans.some(
+              (sub) =>
+                sub.subscriptionId.instructorId._id == course?.instructorId._id
+            ) ? (
+              <></>
+            ) : (
+              <>
+                {subscriptions.length > 0 && (
+                  <>
+                    <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
+                      <span className="bg-card text-muted-foreground relative z-10 px-2">
+                        Or
+                      </span>
+                    </div>
+                    <article className="space-y-5">
+                      <h2 className="font-bold">Boost your conversion rate</h2>
+                      <p className="line-clamp-3 text-xs font-extralight">
+                        Get this course, plus all the courses of this
+                        instructor, with This Plan.
+                      </p>
 
+                      <Sheet key={"bottom"}>
+                        <SheetTrigger asChild>
+                          <Button
+                            className="bg-teal-500 w-full
+                  rounded text-white text-xs font-semibold cursor-pointer hover:bg-teal-300 hover:text-white"
+                          >
+                            Subscribe
+                          </Button>
+                        </SheetTrigger>
+                        <SheetContent side="bottom" className="h-screen">
+                          <SheetHeader>
+                            <SheetTitle> Instructor Subscriptions</SheetTitle>
+                            <SheetDescription></SheetDescription>
+                          </SheetHeader>
+                          <div className="grid grid-cols-5 mx-2">
+                            {subscriptions.map((value) => (
+                              <div
+                                key={value._id}
+                                className={
+                                  "relative bg-teal-500 shadow-2xl rounded-3xl p-8 border-1 border-gray-900/10 sm:p-10 "
+                                }
+                              >
+                                <h3
+                                  id={value._id}
+                                  className={
+                                    "text-base/7 font-semibold text-white"
+                                  }
+                                >
+                                  {value.plan == "Monthly"
+                                    ? `Monthly Plan`
+                                    : `Yearly Plan.`}
+                                </h3>
+                                <p className="mt-4 flex items-baseline gap-x-2">
+                                  <span
+                                    className={
+                                      "text-white text-5xl font-semibold tracking-tight"
+                                    }
+                                  >
+                                    {value.price}
+                                  </span>
+                                  <span className={"text-white text-base"}>
+                                    /
+                                    {value.plan == "Monthly"
+                                      ? `monthly`
+                                      : `yearly`}
+                                  </span>
+                                </p>
+
+                                <ul
+                                  role="list"
+                                  className={
+                                    "mt-8 space-y-3 text-sm/6 sm:mt-10 text-white"
+                                  }
+                                >
+                                  {value.description.map((feature) => (
+                                    <li key={feature} className="flex gap-x-3">
+                                      <CheckIcon
+                                        aria-hidden="true"
+                                        className={
+                                          "h-6 w-5 flex-none text-teal-400"
+                                        }
+                                      />
+                                      {feature}
+                                    </li>
+                                  ))}
+                                </ul>
+                                <a
+                                  onClick={() => subscribe(value._id)}
+                                  className={
+                                    "mt-8 block rounded-md px-3.5 py-2.5 cursor-pointer text-center text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 sm:mt-10 bg-teal-500 text-white shadow-xs hover:bg-teal-400 focus-visible:outline-teal-500"
+                                  }
+                                >
+                                  Start Subscription
+                                </a>
+                              </div>
+                            ))}
+                          </div>
+                        </SheetContent>
+                      </Sheet>
+                      <p className="text- text-xs font-extralight text-center">
+                        Cancel anytime
+                      </p>
+                    </article>
+                  </>
+                )}
+              </>
+            )}
+          </CardFooter>
+        </Card>
+
+      <div className="container mx-auto flex md:flex-row flex-col gap-5">
+         
         <div className="md:basis-2/3 basis-1 p-4">
           <Tabs defaultValue="Course Content">
             <TabsList className="bg-teal-400 ">
@@ -809,7 +957,7 @@ const CourseDetailes = () => {
           </Tabs>
         </div>
 
-        <Card className="w-full max-w-sm border-0 border-none">
+        <Card className="md:block hidden w-full max-w-sm border-0 border-none">
           <CardContent className="border-0">
             <img
               className="h-70 w-96  object-fill"
