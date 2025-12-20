@@ -21,6 +21,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import userRoutes from "@/service/endPoints/userEndPoints";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 interface Props {
   email: string;
@@ -184,7 +185,7 @@ const verifyOtp: React.FC<Props> = ({ email, handlePage }) => {
                      <Button
                         type="submit"
                         disabled={loading || (minutes == 0 && second == 0)}
-                        className={`w-full bg-teal-500 hover:bg-teal-300 text-white ${loading || (minutes == 0 && second == 0) ?"" : "cursor-pointer"}`}
+                        className={`w-full transition-all hover:scale-105 bg-teal-500 hover:bg-teal-300 text-white ${loading || (minutes == 0 && second == 0) ?"" : "cursor-pointer"}`}
                       >
                         {loading ? (
                           <>
@@ -195,6 +196,7 @@ const verifyOtp: React.FC<Props> = ({ email, handlePage }) => {
                           "Verify"
                         )}
                       </Button>
+                       <span className="text-center text-sm underline"><Link to={"/signIn"}  >Back to Login</Link></span>
                     </div>
                   </div>
                 </div>

@@ -71,7 +71,7 @@ const PurchasedCourses = () => {
                         onClick={() =>
                           navigate(`/user/playCourse/${course._id}`)
                         }
-                        className="bg-teal-500 text-sm rounded py-1 font-semibold cursor-pointer  w-full text-white hover:bg-teal-300"
+                        className="bg-teal-500 text-xs transition-all hover:scale-105 rounded py-1 font-semibold cursor-pointer  w-full text-white hover:bg-teal-300"
                       >
                         Go To Class
                       </button>
@@ -80,7 +80,7 @@ const PurchasedCourses = () => {
                         onClick={() =>
                           navigate(`/user/courseDetailes/${course._id}`)
                         }
-                        className="bg-teal-500 text-sm rounded py-1 font-semibold cursor-pointer  w-full text-white hover:bg-teal-300"
+                        className="bg-teal-500 text-xs transition-all hover:scale-105 rounded  py-1 font-semibold cursor-pointer  w-full text-white hover:bg-teal-300"
                       >
                         View Detailes
                       </button>

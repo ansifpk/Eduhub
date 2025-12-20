@@ -55,9 +55,20 @@ import type { ISubcription } from "@/@types/subscriptionType";
 import { loadStripe } from "@stripe/stripe-js";
 import { CheckIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { ratingScheema, type RatingFormInputs } from "@/util/schemas/ratingScheema";
+import {
+  ratingScheema,
+  type RatingFormInputs,
+} from "@/util/schemas/ratingScheema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 const stripe = await loadStripe(import.meta.env.VITE_PUBLISH_SECRET);
+
 
 const CourseDetailes = () => {
   const [course, setCourse] = useState<ICourse>();
@@ -142,27 +153,27 @@ const CourseDetailes = () => {
   }, [_id]);
 
   const handleRating = (data: RatingFormInputs) => {
-      setLoading(true);
-      doRequest({
-        url: userRoutes.ratingCourse,
-        method: "post",
-        body: { review: data.rating, stars: data.star, courseId:_id, userId },
-        onSuccess: () => {
-          doRequest({
-            url: `${userRoutes.ratingCourse}/${_id}`,
-            method: "get",
-            body: {},
-            onSuccess: (response) => {
-              setLoading(false);
-              setAddAlert(false);
-              setValue("star", 1);
-              setValue("rating", "");
-              toast.success("Successfully added your review ");
-              setRatings(response.rating);
-            },
-          });
-        },
-      });
+    setLoading(true);
+    doRequest({
+      url: userRoutes.ratingCourse,
+      method: "post",
+      body: { review: data.rating, stars: data.star, courseId: _id, userId },
+      onSuccess: () => {
+        doRequest({
+          url: `${userRoutes.ratingCourse}/${_id}`,
+          method: "get",
+          body: {},
+          onSuccess: (response) => {
+            setLoading(false);
+            setAddAlert(false);
+            setValue("star", 1);
+            setValue("rating", "");
+            toast.success("Successfully added your review ");
+            setRatings(response.rating);
+          },
+        });
+      },
+    });
   };
 
   const handleEditRatings = (ratingId: string) => {
@@ -204,7 +215,6 @@ const CourseDetailes = () => {
   };
 
   const subscribe = async (subscriptionId: string) => {
-    
     doRequest({
       url: `${userRoutes.subscriptions}/${subscriptionId}`,
       body: { userId },
@@ -243,27 +253,35 @@ const CourseDetailes = () => {
   return (
     <>
       <Header />
-      <div className=" container-fluid  grid grid-cols-2 mx-auto bg-gray-600 ">
-        <div className="flex align-middle items-center justify-center">
+     
+      <div className=" text-black flex bg-center bg-no-repeat bg-cover items-center justify-center h-[300px]">
+        <div className="flex align-middle gap-5 items-center justify-center ">
           <img
-            className="h-48 w-96 object-fill"
-            src={course?.image.image_url}
+            className="h-70 w-96  object-fill"
+            src={course?.image?.image_url}
           />
         </div>
-        <div className="grid mx-2 text-white ">
+        <div className="mx-5">
+          <Separator
+            orientation="vertical"
+            className="min-h-[50vh] bg-teal-500 "
+          />
+        </div>
+        <div className="grid mx-2 text-black ">
           <strong className="font-bold text-3xl">{course?.title}</strong>
           <strong className="font-bold text-1xl">{course?.thumbnail}</strong>
-          <p className="font-bold">created by {course?.instructorId.name}</p>
+          <p className="font-bold">created by {course?.instructorId?.name}</p>
           <span className="text-xs">
             Last Updated {moment(course?.createdAt).calendar()}
           </span>{" "}
           <span className="text-xs">language english</span>
         </div>
       </div>
+
       <div className="flex justify-center gap-10  my-2">
         <div className="grid items-center justify-center text-center px-2 text-xs border-r-2">
           <p>4.7</p>
-          <div>
+          <div className="animate-bounce">
             <i className="bi bi-star-fill text-orange-300"></i>
             <i className="bi bi-star-fill text-orange-300"></i>
             <i className="bi bi-star-fill text-orange-300"></i>
@@ -275,13 +293,14 @@ const CourseDetailes = () => {
         <div className="">
           <div className="text-center text-xs">
             <i className="bi bi-person-vcard-fill"></i>
-            <p>{course?.students.length}</p>
+            <p>{course?.students?.length}</p>
             <p>students</p>
           </div>
         </div>
       </div>
 
       <div className="container mx-auto flex flex-row gap-5">
+
         <div className="md:basis-2/3 basis-1 p-4">
           <Tabs defaultValue="Course Content">
             <TabsList className="bg-teal-400 ">
@@ -296,24 +315,24 @@ const CourseDetailes = () => {
               <span className="font-bold text-2xl">Course Contents</span>
               <div className="border border-gray-300 my-5">
                 <Accordion type="single" collapsible>
-                  {course?.sections.sections.map((section, index) => (
+                  {course?.sections?.sections.map((section, index) => (
                     <AccordionItem
-                      key={section.sectionTitle + index}
+                      key={section?.sectionTitle + index}
                       value="item-1"
                     >
                       <AccordionTrigger className=" px-2 cursor-pointer">
                         <div className="flex justify-between w-full">
                           <span>Section {index + 1} </span>
-                          <span>{section.sectionTitle} </span>
+                          <span>{section?.sectionTitle} </span>
                         </div>
                       </AccordionTrigger>
-                      {section.lectures.map((lecture, idx) => (
+                      {section?.lectures.map((lecture, idx) => (
                         <AccordionContent
                           key={lecture.title + index + idx}
                           className="flex justify-between px-2"
                         >
-                          <p>{lecture.title}</p>
-                          <p>{lecture.duration}</p>
+                          <p>{lecture?.title}</p>
+                          <p>{lecture?.duration}</p>
                         </AccordionContent>
                       ))}
                     </AccordionItem>
@@ -329,15 +348,15 @@ const CourseDetailes = () => {
             </TabsContent>
             <TabsContent value="Review & Ratings">
               <div className="grid grid-cols-2 gap-5 p-4">
-                {ratings.length > 0 ? (
+                {ratings?.length > 0 ? (
                   <>
-                    {ratings.map((rating) => (
-                      <div key={rating._id} className="border-2 space-y-2 p-4">
+                    {ratings?.map((rating) => (
+                      <div key={rating?._id} className="border-2 space-y-2 p-4">
                         <div className="flex justify-between">
                           <div className="flex items-center gap-3">
                             <Avatar>
                               <AvatarImage
-                                src={rating.userId.avatar.avatar_url}
+                                src={rating?.userId?.avatar?.avatar_url}
                                 alt="userImage"
                               />
                               <AvatarFallback>
@@ -346,10 +365,10 @@ const CourseDetailes = () => {
                               </AvatarFallback>
                             </Avatar>
                             <strong className="text-xs font-extralight ">
-                              {rating.userId.name}
+                              {rating?.userId?.name}
                             </strong>
                           </div>
-                          {rating.userId._id == userId && (
+                          {rating?.userId?._id == userId && (
                             <div className="flex gap-5">
                               <Dialog
                                 open={editAlert}
@@ -361,7 +380,7 @@ const CourseDetailes = () => {
                               >
                                 <form>
                                   <DialogTrigger
-                                    onClick={() => setStar(rating.stars)}
+                                    onClick={() => setStar(rating?.stars)}
                                     asChild
                                   >
                                     <i className="bi bi-pencil-square cursor-pointer"></i>
@@ -396,7 +415,7 @@ const CourseDetailes = () => {
                                       ref={ratingRef}
                                       className="h-20  not-focus:outline-0 not-focus:border-0 hover:outline-0 hover:border-0"
                                       placeholder="Edit Review..."
-                                      defaultValue={rating.review}
+                                      defaultValue={rating?.review}
                                     />
 
                                     <DialogFooter>
@@ -487,9 +506,8 @@ const CourseDetailes = () => {
                 ) : (
                   <>No ratings available for this course.</>
                 )}
-                
               </div>
-               
+
               <Sheet>
                 {ratings.length > 4 && (
                   <SheetTrigger className="text-end w-full">
@@ -609,136 +627,134 @@ const CourseDetailes = () => {
               </Sheet>
 
               <Dialog
-                  open={addAlert}
-                  onOpenChange={() => {
-                    setValue("rating", "");
-                    setValue("star", 1);
-                    setAddAlert(!addAlert);
-                  }}
-                >
-                  <form>
-                    <DialogTrigger className="text-indigo-600 cursor-pointer underline font-semibold">
-                      {course?.students.some((student) => student._id == userId) ||
-                      plans.some(
-                        (sub) =>
-                          sub.subscriptionId.instructorId._id ==
-                          course?.instructorId._id
-                      )
-                        ? !ratings.find((rat) => rat.userId._id == userId)?"Rate this course":""
-                        : ""}
-                      
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
-                      <DialogHeader>
-                        <DialogTitle>
-                          {" "}
-                          How whould you Rate this course?
-                        </DialogTitle>
-                        <DialogDescription></DialogDescription>
-                      </DialogHeader>
-                      <div className="text-center">
-                        <form className="w-full flex flex-col space-y-2">
-                          <div>
-                            {[...Array(5)].map((_, index) => {
-                              const star = watch("star");
-                              return (
-                                <i
-                                  {...register("star")}
-                                  key={index}
-                                  onMouseEnter={() =>
-                                    setValue("star", index + 1)
-                                  }
-                                  className={`bi ${
-                                    index + 1 <= star
-                                      ? "bi-star-fill"
-                                      : "bi-star"
-                                  }`}
-                                ></i>
-                              );
-                            })}
-                            {errors.star && (
-                              <p className="text-red-500 text-sm">
-                                {errors.star.message}
-                              </p>
-                            )}
-                          </div>
-                          <label htmlFor="rating">Your Message</label>
-                          <textarea
-                            {...register("rating")}
-                            className=" border rounded border-teal-400 h-50 p-2"
-                            placeholder="Type your message here."
-                            id="rating"
-                          />
-                          {errors.rating && (
+                open={addAlert}
+                onOpenChange={() => {
+                  setValue("rating", "");
+                  setValue("star", 1);
+                  setAddAlert(!addAlert);
+                }}
+              >
+                <form>
+                  <DialogTrigger className="text-indigo-600 cursor-pointer underline font-semibold">
+                    {course?.students.some(
+                      (student) => student._id == userId
+                    ) ||
+                    plans.some(
+                      (sub) =>
+                        sub.subscriptionId.instructorId._id ==
+                        course?.instructorId._id
+                    )
+                      ? !ratings.find((rat) => rat.userId._id == userId)
+                        ? "Rate this course"
+                        : ""
+                      : ""}
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>
+                        {" "}
+                        How whould you Rate this course?
+                      </DialogTitle>
+                      <DialogDescription></DialogDescription>
+                    </DialogHeader>
+                    <div className="text-center">
+                      <form className="w-full flex flex-col space-y-2">
+                        <div>
+                          {[...Array(5)].map((_, index) => {
+                            const star = watch("star");
+                            return (
+                              <i
+                                {...register("star")}
+                                key={index}
+                                onMouseEnter={() => setValue("star", index + 1)}
+                                className={`bi ${
+                                  index + 1 <= star ? "bi-star-fill" : "bi-star"
+                                }`}
+                              ></i>
+                            );
+                          })}
+                          {errors.star && (
                             <p className="text-red-500 text-sm">
-                              {errors.rating.message}
+                              {errors.star.message}
                             </p>
                           )}
-                        </form>
-                      </div>
-                      <DialogFooter>
-                        <DialogClose asChild>
+                        </div>
+                        <label htmlFor="rating">Your Message</label>
+                        <textarea
+                          {...register("rating")}
+                          className=" border rounded border-teal-400 h-50 p-2"
+                          placeholder="Type your message here."
+                          id="rating"
+                        />
+                        {errors.rating && (
+                          <p className="text-red-500 text-sm">
+                            {errors.rating.message}
+                          </p>
+                        )}
+                      </form>
+                    </div>
+                    <DialogFooter>
+                      <DialogClose asChild>
+                        <button
+                          onClick={() => {
+                            setValue("rating", "");
+                            setValue("star", 1);
+                          }}
+                          className="bg-teal-500 hover:bg-teal-300 border px-2 py-1 text-white rounded cursor-pointer font-semibold"
+                        >
+                          Cancel
+                        </button>
+                      </DialogClose>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
                           <button
-                            onClick={() => {
-                              setValue("rating", "");
-                              setValue("star", 1);
-                            }}
-                            className="bg-teal-500 hover:bg-teal-300 border px-2 py-1 text-white rounded cursor-pointer font-semibold"
+                            type="button"
+                            disabled={loading}
+                            className={`bg-teal-500 hover:bg-teal-300 border px-2 py-1 text-white rounded ${
+                              loading ? "" : "cursor-pointer"
+                            } font-semibold`}
                           >
-                            Cancel
+                            {loading ? (
+                              <>
+                                Loading...
+                                <span className="animate-spin inline-block text-lg">
+                                  <i className="bi bi-arrow-repeat"></i>
+                                </span>
+                              </>
+                            ) : (
+                              "Save"
+                            )}
                           </button>
-                        </DialogClose>
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <button
-                              type="button"
-                              disabled={loading}
-                              className={`bg-teal-500 hover:bg-teal-300 border px-2 py-1 text-white rounded ${
-                                loading ? "" : "cursor-pointer"
-                              } font-semibold`}
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Are you absolutely sure?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This action cannot be undone. This will
+                              permanently save data from our servers.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel className="bg-teal-500 hover:bg-teal-300 text-white rounded cursor-pointer hover:text-white">
+                              Cancel
+                            </AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => {
+                                handleSubmit(handleRating)();
+                              }}
+                              className="bg-teal-500 hover:bg-teal-300 text-white rounded cursor-pointer"
                             >
-                              {loading ? (
-                                <>
-                                  Loading...
-                                  <span className="animate-spin inline-block text-lg">
-                                    <i className="bi bi-arrow-repeat"></i>
-                                  </span>
-                                </>
-                              ) : (
-                                "Save"
-                              )}
-                            </button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>
-                                Are you absolutely sure?
-                              </AlertDialogTitle>
-                              <AlertDialogDescription>
-                                This action cannot be undone. This will
-                                permanently save data from our servers.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel className="bg-teal-500 hover:bg-teal-300 text-white rounded cursor-pointer hover:text-white">
-                                Cancel
-                              </AlertDialogCancel>
-                              <AlertDialogAction
-                                onClick={() => {
-                                  handleSubmit(handleRating)();
-                                }}
-                                className="bg-teal-500 hover:bg-teal-300 text-white rounded cursor-pointer"
-                              >
-                                Continue
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </DialogFooter>
-                    </DialogContent>
-                  </form>
-                </Dialog>
-
+                              Continue
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </DialogFooter>
+                  </DialogContent>
+                </form>
+              </Dialog>
             </TabsContent>
             <TabsContent value="Instructor">
               <div className="bg-white">
@@ -773,20 +789,18 @@ const CourseDetailes = () => {
                     <p className="mt-6 text-sm font-light text-gray-600 indent-8 line-clamp-8">
                       {instructor?.about}
                     </p>
-                    {/* <span className="font-extralight text-indigo-500 underline">
-                      see more...
-                    </span> */}
-                    <div className="space-x-5">
+                  
+                    <div className="space-x-5 flex ">
                       <span className="font-light">students : 8</span>
                       <span className="font-light">courses : 8</span>
-                      <span className="font-light">
                         Ratings : 4.7{" "}
+                      <div className="font-light animate-bounce">
                         <i className="bi bi-star-fill text-orange-300 text-xs"></i>
                         <i className="bi bi-star-fill text-orange-300 text-xs"></i>
                         <i className="bi bi-star-fill text-orange-300 text-xs"></i>
                         <i className="bi bi-star-fill text-orange-300 text-xs"></i>
                         <i className="bi bi-star-fill text-orange-300 text-xs"></i>
-                      </span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -794,17 +808,19 @@ const CourseDetailes = () => {
             </TabsContent>
           </Tabs>
         </div>
-        <div className="md:basis-1/3 basis-1">
-          <img
-            className="h-48 w-96 rounded object-fill"
-            src={course?.image.image_url}
-          />
-          <div className="grid p-5 gap-3">
+
+        <Card className="w-full max-w-sm border-0 border-none">
+          <CardContent className="border-0">
+            <img
+              className="h-70 w-96  object-fill"
+              src={course?.image?.image_url}
+            />
             <p>
               <span className="font-bold">{course?.price}/- </span>
-             
             </p>
-            <button
+          </CardContent>
+          <CardFooter className="flex-col gap-2 border-0">
+            <Button
               onClick={() =>
                 course?.students.some((student) => student._id == userId) ||
                 plans.some(
@@ -817,7 +833,7 @@ const CourseDetailes = () => {
                   ? navigate("/user/cart")
                   : handleCart(course?._id!)
               }
-              className="bg-teal-500 py-2 rounded text-white text-xs cursor-pointer font-semibold hover:bg-teal-300 hover:text-white"
+              className="bg-teal-500 w-full rounded text-white text-xs cursor-pointer font-semibold transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 hover:bg-teal-300"
             >
               {course?.students.some((student) => student._id == userId) ||
               plans.some(
@@ -829,7 +845,7 @@ const CourseDetailes = () => {
                 : cart?.courses.some((cour) => cour._id == course?._id)
                 ? `Go To Cart`
                 : "Add To Cart"}
-            </button>
+            </Button>
             {plans.some(
               (sub) =>
                 sub.subscriptionId.instructorId._id == course?.instructorId._id
@@ -853,12 +869,12 @@ const CourseDetailes = () => {
 
                       <Sheet key={"bottom"}>
                         <SheetTrigger asChild>
-                          <button
+                          <Button
                             className="bg-teal-500 w-full
-                 py-2 rounded text-white text-xs font-semibold cursor-pointer hover:bg-teal-300 hover:text-white"
+                  rounded text-white text-xs font-semibold cursor-pointer hover:bg-teal-300 hover:text-white"
                           >
                             Subscribe
-                          </button>
+                          </Button>
                         </SheetTrigger>
                         <SheetContent side="bottom" className="h-screen">
                           <SheetHeader>
@@ -938,8 +954,8 @@ const CourseDetailes = () => {
                 )}
               </>
             )}
-          </div>
-        </div>
+          </CardFooter>
+        </Card>
       </div>
       <Footer />
     </>

@@ -16,7 +16,7 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface Props {
   email: string;
@@ -126,7 +126,7 @@ const ForgetNewPassword: React.FC<Props> = ({ email }) => {
 
             <button
               type="submit"
-              className="w-full bg-teal-400 hover:bg-teal-600 rounded p-2 text-white font-bold cursor-pointer"
+              className="w-full transition-all hover:scale-105 bg-teal-400 hover:bg-teal-600 rounded p-2 text-white font-bold cursor-pointer"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -140,6 +140,9 @@ const ForgetNewPassword: React.FC<Props> = ({ email }) => {
             </button>
           </form>
         </CardContent>
+        <span className="text-center text-sm underline">
+          <Link to={"/signIn"}>Back to Login</Link>
+        </span>
       </Card>
     </div>
   );

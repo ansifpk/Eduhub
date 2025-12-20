@@ -8,7 +8,8 @@ import useRequest from "@/hooks/useRequest";
 import { changeImage, removeUser } from "@/redux/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import type { IUser } from "@/@types/userType";
-
+import StarBorder from "../StarBorder";
+import { AnimatePresence, motion } from "motion/react";
 
 const Header = () => {
   const [open, setOpen] = useState(false);
@@ -16,7 +17,7 @@ const Header = () => {
   const { doRequest, err } = useRequest();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const image = useSelector((state:{ [key: string]: string })=>state.image);
+  const image = useSelector((state: { [key: string]: string }) => state.image);
 
   const handleLogout = async () => {
     await doRequest({
@@ -38,7 +39,7 @@ const Header = () => {
         method: "get",
         body: {},
         onSuccess: (res) => {
-          dispatch(changeImage(res.userData.avatar.avatar_url))
+          dispatch(changeImage(res.userData.avatar.avatar_url));
         },
       });
     }
@@ -55,19 +56,23 @@ const Header = () => {
   ];
   return (
     <>
-      <div className="px-5 flex h-14 justify-between font-light items-center  bg-teal-400 text-white text-sm ">
+      <div 
+      className="sticky top-0 z-50 px-5 flex h-14 justify-between items-center  bg-gray-10/50 backdrop-filter inset-0 backdrop-blur-lg font-mono text-black text-sm "
+      >
         <span className="font-bold text-2xl flex items-center font-[poppins] text-gray-800">
           EduHub
         </span>
         <div className="flex md:hidden lg:hidden sm:hidden cursor-pointer items-center">
           {open ? (
-         
-              <i className="bi bi-x-lg" onClick={() => setOpen(!open)}></i>
-       
+            <i
+              className="bi bi-x-lg text-2xl"
+              onClick={() => setOpen(!open)}
+            ></i>
           ) : (
-          
-              <i className="bi bi-list" onClick={() => setOpen(!open)}></i>
-           
+            <i
+              className="bi bi-list text-2xl"
+              onClick={() => setOpen(!open)}
+            ></i>
           )}
         </div>
         <ul className={`md:flex  hidden gap-10 items-center`}>
@@ -92,7 +97,7 @@ const Header = () => {
                   if (value === "Sign Out") {
                     handleLogout();
                   } else if (value === "Profile") {
-                    navigate("/user/profile")
+                    navigate("/user/profile");
                   }
                 }}
               >
@@ -105,7 +110,7 @@ const Header = () => {
                   </Avatar>
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem  className="cursor-pointer" value="Profile">
+                  <SelectItem className="cursor-pointer" value="Profile">
                     Profile
                   </SelectItem>
                   <SelectItem className="cursor-pointer" value="Sign Out">
@@ -116,74 +121,81 @@ const Header = () => {
             </li>
           ) : (
             <>
-              <li className="hover:bg-gray-300/50 px-4 py-2 border rounded-full">
+              <StarBorder as="button" thickness={3} color="red" speed="2s">
                 <NavLink to={"/signIn"}>Sign In</NavLink>
-              </li>
-              <li className="hover:bg-gray-300/50 px-4 py-2 border rounded-full">
+              </StarBorder>
+              <StarBorder as="button" thickness={3} color="red" speed="2s">
                 <NavLink to={"/signUp"}>Sign Up</NavLink>
-              </li>
+              </StarBorder>
             </>
           )}
         </ul>
       </div>
-      {
-              open&&
-             <ul className={`md:hidden flex flex-col  bg-teal-400 text-white items-end-safe gap-5 p-2`}>
-          {navbar.map((value) => (
-            <li key={value.path}>
-              <NavLink
-                className={({ isActive }) =>
-                  isActive
-                    ? "bg-gray-300/50 px-4 py-2 rounded-full"
-                    : "hover:bg-gray-300/50 px-4 py-2 rounded-full"
-                }
-                to={value.path}
-              >
-                {value.name}
-              </NavLink>
-            </li>
-          ))}
-          {userId ? (
-            <li>
-              <Select
-                onValueChange={(value) => {
-                  if (value === "Sign Out") {
-                    handleLogout();
-                  } else if (value === "Profile") {
-                    navigate("/user/profile")
+      {open && (
+        <AnimatePresence>
+          <motion.ul
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 1 }}
+            className={`md:hidden flex flex-col bg-gray-10/50 backdrop-blur-lg backdrop-filter sticky top-0 text-black items-end-safe gap-5 p-2`}
+          >
+            {navbar.map((value) => (
+              <li key={value.path}>
+                <NavLink
+                  className={({ isActive }) =>
+                    isActive
+                      ? "bg-gray-300/50 px-4 py-2 rounded-full"
+                      : "hover:bg-gray-300/50 px-4 py-2 rounded-full"
                   }
-                }}
-              >
-                <SelectTrigger className="">
-                  <Avatar>
-                    <AvatarImage src={image} />
-                    <AvatarFallback>
-                      <i className="bi bi-person-circle"></i>
-                    </AvatarFallback>
-                  </Avatar>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem  className="cursor-pointer" value="Profile">
-                    Profile
-                  </SelectItem>
-                  <SelectItem className="cursor-pointer" value="Sign Out">
-                    Sign Out
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </li>
-          ) : (
-            <>
-              <li className="hover:bg-gray-300/50 px-4 py-2 border rounded-full">
-                <NavLink to={"/signIn"}>Sign In</NavLink>
+                  to={value.path}
+                >
+                  {value.name}
+                </NavLink>
               </li>
-              <li className="hover:bg-gray-300/50 px-4 py-2 border rounded-full">
-                <NavLink to={"/signUp"}>Sign Up</NavLink>
+            ))}
+            {userId ? (
+              <li>
+                <Select
+                  onValueChange={(value) => {
+                    if (value === "Sign Out") {
+                      handleLogout();
+                    } else if (value === "Profile") {
+                      navigate("/user/profile");
+                    }
+                  }}
+                >
+                  <SelectTrigger className="">
+                    <Avatar>
+                      <AvatarImage src={image} />
+                      <AvatarFallback>
+                        <i className="bi bi-person-circle"></i>
+                      </AvatarFallback>
+                    </Avatar>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem className="cursor-pointer" value="Profile">
+                      Profile
+                    </SelectItem>
+                    <SelectItem className="cursor-pointer" value="Sign Out">
+                      Sign Out
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
               </li>
-            </>
-          )}
-        </ul>
-            }
+            ) : (
+              <>
+                <StarBorder as="button" thickness={3} color="red" speed="2s">
+                  <NavLink to={"/signIn"}>Sign In</NavLink>
+                </StarBorder>
+                <StarBorder as="button" thickness={3} color="red" speed="2s">
+                  <NavLink to={"/signUp"}>Sign Up</NavLink>
+                </StarBorder>
+              </>
+            )}
+          </motion.ul>
+        </AnimatePresence>
+      )}
     </>
   );
 };

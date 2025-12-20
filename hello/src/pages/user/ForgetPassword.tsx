@@ -4,7 +4,7 @@ import VerifyOtp from "./verifyOtp";
 import ForgetNewPassword from "./ForgetNewPassword";
 
 const ForgetPassword= () => {
-    const [page,setPage] = useState(1);
+    const [page,setPage] = useState(3);
     const [email,setEmail] = useState("");
 
     const handlePage = useCallback((page:number)=>{

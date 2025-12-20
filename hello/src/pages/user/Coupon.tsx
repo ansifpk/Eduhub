@@ -33,21 +33,38 @@ const Coupon = () => {
 
   useEffect(()=>{
     err?.map((err)=>toast.error(err.message))
-  },[err])
+  },[err]);
+
+  if(coupons.length <= 0){
+      return (
+       <div>
+        <Header />
+        <div className="w-full">
+          <ProfileNavbar value="Coupons" />
+          <main>
+             <div className="h-[60vh] flex justify-center items-center gap-5">
+              <strong>No coupons available</strong>
+            </div>
+          </main>
+        </div>
+        <Footer />
+      </div>
+      )
+  }
   
   return (
      <div>
       <Header />
       <div className="w-full">
         <ProfileNavbar value="Coupons" />
-        <main className="w-full grid md:grid-cols-4 justify-center items-center md:p-8 p-2 gap-2">
-          {coupons.length > 0 ? (
+        <main className="w-full grid md:grid-cols-4  justify-center items-center md:p-8 p-2 gap-2">
+          {
             coupons
             .filter((valu: ICoupon) => date > new Date(valu.startingDate))
             .map((value: ICoupon, index) => (
               <div
                 key={index}
-                className={` border-1 rounded p-1 sm:m-1 lg:mx-auto md:mx-auto sm:mx-auto mx-auto ${
+                className={`border-1 rounded p-1 sm:m-1 lg:mx-auto md:mx-auto sm:mx-auto mx-auto ${
                   !value.users.includes(userId)
                     ? date > new Date(value.expiryDate)
                       ? "bg-red-100 border-danger"
@@ -123,12 +140,7 @@ const Coupon = () => {
                 </div>
               </div>
             ))
-          ) : (
-            <div className="h-[60vh] flex justify-center items-center gap-5 ">
-              <strong>No coupons available</strong>
-             
-            </div>
-          )}
+          }
         </main>
       </div>
       <Footer />

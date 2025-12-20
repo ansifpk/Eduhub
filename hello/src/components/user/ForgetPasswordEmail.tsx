@@ -10,6 +10,7 @@ import { Loader2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 
 interface Props {
   handlePage: (page: number) => void;
@@ -80,12 +81,12 @@ const ForgetPasswordEmail:React.FC<Props> = ({handlePage,handleEmail}) => {
                       type="text"
                       placeholder="please enter your email"
                       autoComplete="email"
-                      className="border py-1 rounded-full px-2 border-teal-300"
+                      className="border p-2 rounded-full  border-teal-300"
                     />
                   </div>
                   <button
                     type="submit"
-                    className={`w-full bg-teal-400 hover:bg-teal-400 rounded p-2 text-white font-semibold cursor-pointer`}
+                    className={`w-full bg-teal-400 hover:bg-teal-400 rounded p-2 transition-all hover:scale-105 text-white font-semibold cursor-pointer`}
                     disabled={loading ? true : false}
                   >
                     {loading ? (
@@ -96,13 +97,13 @@ const ForgetPasswordEmail:React.FC<Props> = ({handlePage,handleEmail}) => {
                         ) : (
                           "Confirm"
                         )}
-                    
+
                   </button>
+                  <span className="text-center text-sm underline"><Link to={"/signIn"}  >Back to Login</Link></span>
                 </div>
               </form>
             </CardContent>
           </Card>
-          
         </div>
       </div>
     </div>

@@ -33,6 +33,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Footer from "@/components/user/Footer";
 import Header from "@/components/user/Header";
@@ -251,10 +252,10 @@ const PlayCourse = () => {
         <div className="bg-white w-[650px]">
           <div className="flex items-center space-x-2 m-3">
             <button
-              className="bg-teal-500 px-2 py-1 rounded cursor-pointer hover:bg-teal-300 "
+              className="bg-teal-500 px-2 py-1 rounded transition-all hover:scale-110 cursor-pointer hover:bg-teal-300 "
               onClick={() => navigate(-1)}
             >
-              <i className="bi bi-arrow-left"></i>
+              <i className="bi bi-arrow-left text-white"></i>
             </button>
             <div className="flex items-center justify-between bg-white border border-teal-400 rounded w-full ">
               <div className="p-3">
@@ -278,7 +279,7 @@ const PlayCourse = () => {
                   <DialogTrigger asChild>
                     <button
                       onClick={() => setReportAlertOpen(true)}
-                      className="bg-red-500 px-2 py-1 rounded text-white font-semibold cursor-pointer mr-5"
+                      className="bg-red-500 px-2 py-1 transition-all hover:scale-110 rounded text-white font-semibold cursor-pointer mr-5"
                     >
                       Report
                     </button>
@@ -1136,6 +1137,9 @@ const PlayCourse = () => {
               </Tabs>
             </div>
           </div>
+        </div>
+        <div>
+          <Separator orientation="vertical" className="bg-teal-600 " />
         </div>
         <div className="w-[400px] mt-3 ">
           <div className="bg-white border border-teal-500 rounded ">

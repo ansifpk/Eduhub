@@ -173,13 +173,13 @@ const Profile = () => {
                     disabled={imageLoading}
                     className={`${
                       imageLoading ? "" : "cursor-pointer"
-                    } rounded-lg bg-teal-500 text-center text-white md:text-sm text-xs md:px-3 px-2 py-1 rounded-2 `}
+                    } rounded-lg transition-all hover:scale-110 bg-teal-500 text-center text-white md:text-sm text-xs md:px-3 px-2 py-1 rounded-2 `}
                   >
                     change profile
                   </button>
                   <div
                     onClick={() => navigate("/user/changeEmail")}
-                    className="cursor-pointer rounded-lg text-center bg-teal-500 text-white md:text-sm text-xs md:px-3 px-2 py-1 rounded-2 "
+                    className="transition-all hover:scale-110 cursor-pointer rounded-lg text-center bg-teal-500 text-white md:text-sm text-xs md:px-3 px-2 py-1 rounded-2 "
                   >
                     change email
                   </div>
@@ -243,7 +243,7 @@ const Profile = () => {
                 <button
                   onClick={() => setEdit(!edit)}
                   type="button"
-                  className={`m-2 cursor-pointer  py-2 px-4 text-white rounded font-semibold text-xs bg-teal-500 hover:bg-teal-300 ${
+                  className={`m-2 cursor-pointer transition-all hover:scale-110 py-2 px-4 text-white rounded font-semibold text-xs bg-teal-500 hover:bg-teal-300 ${
                     edit ? "hidden" : "block"
                   }`}
                 >
@@ -259,7 +259,7 @@ const Profile = () => {
                         setValue("thumbnail", "");
                       }}
                       type="button"
-                      className={`m-2 cursor-pointer  py-2 px-4 text-white rounded font-semibold text-xs bg-teal-500 hover:bg-teal-300`}
+                      className={`m-2 cursor-pointer transition-all hover:scale-110 py-2 px-4 text-white rounded font-semibold text-xs bg-teal-500 hover:bg-teal-300`}
                     >
                       cancell
                     </button>
@@ -269,7 +269,7 @@ const Profile = () => {
                     <AlertDialogTrigger asChild>
                       <button
                         disabled={loading}
-                        className={`m-2 ${loading?"bg-teal-300":'cursor-pointer hover:bg-teal-300 bg-teal-500'} flex  py-2 px-4 text-white rounded font-semibold text-xs   ${
+                        className={`m-2 ${loading?"bg-teal-300":'cursor-pointer transition-all hover:scale-110 hover:bg-teal-300 bg-teal-500'} flex  py-2 px-4 text-white rounded font-semibold text-xs   ${
                           edit ? "block" : "hidden"
                         }`}
                         type="button"
@@ -295,12 +295,12 @@ const Profile = () => {
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel className="text-white bg-teal-500 hover:bg-teal-300 hover:text-white">
+                        <AlertDialogCancel className="text-white transition-all cursor-pointer hover:scale-110 bg-teal-500 hover:bg-teal-300 hover:text-white">
                           Cancel
                         </AlertDialogCancel>
                         <AlertDialogAction
                           onClick={() => handleSubmit(handleEdit)()}
-                          className="bg-teal-500 hover:bg-teal-300"
+                          className="bg-teal-500 transition-all hover:scale-110 cursor-pointer hover:bg-teal-300"
                         >
                           Continue
                         </AlertDialogAction>

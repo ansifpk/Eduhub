@@ -21,6 +21,10 @@ import React, { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { motion } from "motion/react";
+
+
+
 
 const Courses = () => {
   const [courses, setCurses] = useState<ICourse[]>([]);
@@ -92,7 +96,12 @@ const Courses = () => {
         {courses.length > 0 ? (
           <>
             <div className="relative flex justify-center my-4">
-              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-2 md:gap-4 lg:gap-4 mx-1 md:mx-5 lg:mx-5 mt-4">
+              <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 1.2 }}
+               className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-2 md:gap-4 lg:gap-4 mx-1 md:mx-5 lg:mx-5 mt-4">
                 {courses.map((course) => (
                   <div
                     className="w-full border shadow-lg overflow-hidden"
@@ -121,14 +130,14 @@ const Courses = () => {
                             onClick={() =>
                               navigate(`/user/courseDetailes/${course._id}`)
                             }
-                          className="bg-teal-500 cursor-pointer text-sm w-full text-white hover:bg-teal-300 "
+                          className="bg-teal-500 cursor-pointer text-sm w-full text-white hover:bg-teal-300 transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-100"
                         >
                           View Details
                         </Button>
                         <Button
                           type="button"
                           onClick={()=>course.students.some((student)=>student._id == userId) || plans.some((sub)=>sub.subscriptionId.instructorId._id == course.instructorId._id)? navigate(`/user/playCourse/${course._id}`):cart?.courses.some((cour)=>cour._id == course._id )?navigate('/user/cart'):handleCart(course._id)}
-                          className="bg-teal-500 cursor-pointer  text-sm w-full text-white hover:bg-teal-300"
+                          className="bg-teal-500 cursor-pointer  text-sm w-full text-white hover:bg-teal-300 transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-90"
                           >
                           {course.students.some((student)=>student._id == userId) || plans.some((sub)=>sub.subscriptionId.instructorId._id == course.instructorId._id)?"Go To Class":cart?.courses.some((cour)=>cour._id == course._id )?"Go To Cart":"Add To Cart"}
                         </Button>
@@ -136,11 +145,11 @@ const Courses = () => {
                     </div>
                   </div>
                 ))}
-              </div>
+              </motion.div>
             </div>
           </>
         ) : (
-          <div className=" flex justify-center items-center ">
+          <div className="flex justify-center mt-5 items-center-safe ">
             <Card className="w-4/5 sm:w-1/2 h-[200px] flex justify-center items-center">
               <CardContent>
                 <CardDescription>No courses available</CardDescription>
