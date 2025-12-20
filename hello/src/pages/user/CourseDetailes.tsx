@@ -291,7 +291,7 @@ const CourseDetailes = () => {
           <p>ratings</p>
         </div>
         <div>
-          <Separator orientation="vertical bg-teal-600" />
+          <Separator orientation="vertical" className="bg-teal-600" />
         </div>
         <div className="">
           <div className="text-center text-xs">
