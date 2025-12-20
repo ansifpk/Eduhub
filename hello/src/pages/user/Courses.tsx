@@ -130,14 +130,14 @@ const Courses = () => {
                             onClick={() =>
                               navigate(`/user/courseDetailes/${course._id}`)
                             }
-                          className="bg-teal-500 cursor-pointer text-sm w-full text-white hover:bg-teal-300 transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-100"
+                          className="bg-teal-500 cursor-pointer text-sm w-full text-white hover:bg-teal-300 transition-all hover:scale-105"
                         >
                           View Details
                         </Button>
                         <Button
                           type="button"
                           onClick={()=>course.students.some((student)=>student._id == userId) || plans.some((sub)=>sub.subscriptionId.instructorId._id == course.instructorId._id)? navigate(`/user/playCourse/${course._id}`):cart?.courses.some((cour)=>cour._id == course._id )?navigate('/user/cart'):handleCart(course._id)}
-                          className="bg-teal-500 cursor-pointer  text-sm w-full text-white hover:bg-teal-300 transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-90"
+                          className="bg-teal-500 cursor-pointer  text-sm w-full text-white hover:bg-teal-300 transition-all hover:scale-105"
                           >
                           {course.students.some((student)=>student._id == userId) || plans.some((sub)=>sub.subscriptionId.instructorId._id == course.instructorId._id)?"Go To Class":cart?.courses.some((cour)=>cour._id == course._id )?"Go To Cart":"Add To Cart"}
                         </Button>
