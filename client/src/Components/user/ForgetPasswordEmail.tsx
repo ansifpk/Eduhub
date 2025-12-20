@@ -1,4 +1,3 @@
-import { Card, CardContent } from "@/components/ui/card";
 import useRequest from "@/hooks/useRequest";
 import userRoutes from "@/service/endPoints/userEndPoints";
 import {
@@ -11,6 +10,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
+import { Card, CardContent } from "../ui/card";
 
 interface Props {
   handlePage: (page: number) => void;

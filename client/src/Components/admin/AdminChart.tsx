@@ -2,22 +2,6 @@
 
 import * as React from "react";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
-
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  type ChartConfig,
-  ChartContainer,
-  ChartLegend,
-  ChartLegendContent,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
 import adminRoutes from "@/service/endPoints/adminEndPoints";
 import useRequest from "@/hooks/useRequest";
 import toast from "react-hot-toast";
@@ -27,6 +11,8 @@ import {
 } from "@/util/schemas/dateRangeScheema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import  { Card, CardHeader, CardTitle, CardDescription, CardContent } from "../ui/card";
+import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from "../ui/chart";
 
 export const description = "An interactive area chart";
 
