@@ -65,7 +65,7 @@ const labels: { [index: string]: string } = {
 
 const PlayCourse = () => {
   const [course, setCourse] = useState<ICourse>();
-  const [chapter, setChapter] = useState<string|File>("");
+  const [chapter, setChapter] = useState<string | File>("");
   const [ratingId, setRatingId] = useState("");
   const [editAlertOpen, setEditAlertOpen] = useState(false);
   const [reportAlertOpen, setReportAlertOpen] = useState(false);
@@ -118,7 +118,9 @@ const PlayCourse = () => {
       onSuccess: async (res) => {
         setCourse(res.course);
         setLecture(res.course.sections.sections[0].lectures[0]);
-        setChapter(res.course.sections.sections[0].lectures[0].content.video_url);
+        setChapter(
+          res.course.sections.sections[0].lectures[0].content.video_url
+        );
         doRequest({
           url: `${userRoutes.report}/${userId}/${courseId}`,
           method: "get",
@@ -239,7 +241,6 @@ const PlayCourse = () => {
     });
   };
 
-  
   useEffect(() => {
     setLoading(false);
     err?.map((err) => toast.error(err.message));
@@ -348,47 +349,47 @@ const PlayCourse = () => {
             )}
 
             <div className=" md:hidden block w-full mt-3 ">
-          <div className="bg-white border border-teal-500 rounded ">
-            <div className="m-3 space-y-2">
-              <p className="font-bold">Course contents</p>
+              <div className="bg-white border border-teal-500 rounded ">
+                <div className="m-3 space-y-2">
+                  <p className="font-bold">Course contents</p>
 
-              {course &&
-                course.sections.sections.map((section, index) => (
-                  <Accordion
-                    key={index}
-                    type="multiple"
-                    className="w-full  border-1 border-teal-500 rounded"
-                  >
-                    <AccordionItem value={`Section - ${index + 1}`}>
-                      <AccordionTrigger className="cursor-pointer">
-                        <span className="font-bold px-4">
-                          {section.sectionTitle}
-                        </span>
-                      </AccordionTrigger>
-                      {section.lectures.map((lecture, ind) => (
-                        <AccordionContent
-                          key={ind}
-                          onClick={() => {
-                            setLecture(lecture);
-                            setChapter(lecture.content.video_url);
-                          }}
-                          className="flex justify-between py-2 my-1 border-top bg-white mx-2"
-                        >
-                          <div className="cursor-pointer flex gap-2">
-                            <span>{lecture.title}</span>
-                            {chapter == lecture.content.video_url && (
-                              <i className="bi bi-play-circle"></i>
-                            )}
-                          </div>
-                          <div>{lecture.duration}</div>
-                        </AccordionContent>
-                      ))}
-                    </AccordionItem>
-                  </Accordion>
-                ))}
+                  {course &&
+                    course.sections.sections.map((section, index) => (
+                      <Accordion
+                        key={index}
+                        type="multiple"
+                        className="w-full  border-1 border-teal-500 rounded"
+                      >
+                        <AccordionItem value={`Section - ${index + 1}`}>
+                          <AccordionTrigger className="cursor-pointer">
+                            <span className="font-bold px-4">
+                              {section.sectionTitle}
+                            </span>
+                          </AccordionTrigger>
+                          {section.lectures.map((lecture, ind) => (
+                            <AccordionContent
+                              key={ind}
+                              onClick={() => {
+                                setLecture(lecture);
+                                setChapter(lecture.content.video_url);
+                              }}
+                              className="flex justify-between py-2 my-1 border-top bg-white mx-2"
+                            >
+                              <div className="cursor-pointer flex gap-2">
+                                <span>{lecture.title}</span>
+                                {chapter == lecture.content.video_url && (
+                                  <i className="bi bi-play-circle"></i>
+                                )}
+                              </div>
+                              <div>{lecture.duration}</div>
+                            </AccordionContent>
+                          ))}
+                        </AccordionItem>
+                      </Accordion>
+                    ))}
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
 
             <div className="m-2">
               <Tabs defaultValue="Description" className="w-full ">
@@ -464,12 +465,11 @@ const PlayCourse = () => {
                                       )
                                     }
                                   >
-                                  Go to test
+                                    Go to test
                                   </button>
                                 </div>
                               )
-                            )
-                             : (
+                            ) : (
                               "No Tests Available for this Course."
                             )}
                           </div>
@@ -1144,7 +1144,7 @@ const PlayCourse = () => {
                                 `/user/instructorProfile/${course?.instructorId._id}`
                               )
                             }
-                            className="w-48 h-48 m-2 rounded-full justify-center flex items-center overflow-hidden bg-gray-200"
+                            className="md:w-48 md:h-48 w-20 h-20 m-2 rounded-full justify-center flex items-center overflow-hidden bg-gray-200"
                           >
                             <AvatarImage
                               src={course?.instructorId.avatar.avatar_url}
