@@ -138,7 +138,7 @@ const Header = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 1 }}
-            className={`md:hidden flex flex-col bg-gray-10/50 backdrop-blur-lg backdrop-filter sticky top-0 text-black items-end-safe gap-5 p-2`}
+            className={`md:hidden flex flex-col bg-gray-10/50 backdrop-blur-lg backdrop-filter sticky top-0 z-50 text-black items-end-safe gap-5 p-2`}
           >
             {navbar.map((value) => (
               <li key={value.path}>
