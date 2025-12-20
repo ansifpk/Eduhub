@@ -9,6 +9,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
@@ -44,7 +45,6 @@ const AdminAddCategory = () => {
       topics: [],
     },
   });
-  console.log("errors", errors);
   const handleTopic = async () => {
     const topics = watch("topics");
     if (topicRef.current!.value.length == 0) {
