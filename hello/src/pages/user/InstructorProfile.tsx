@@ -266,7 +266,7 @@ const InstructorProfile = () => {
     <div>
       <Header />
       <div className="p-5">
-        <div className="md:flex space-y-2 gap-2">
+        <div className="md:flex-row flex-col justify-center-safe space-y-2 gap-2">
           <Avatar className=" rounded-full h-48 w-48">
             <AvatarImage src={user?.avatar.avatar_url} />
             <AvatarFallback>CN</AvatarFallback>
@@ -339,7 +339,7 @@ const InstructorProfile = () => {
                                       `/user/courseDetailes/${course._id}`
                                     )
                                   }
-                                  className="bg-teal-500 py-2 rounded w-full font-semibold text-white cursor-pointer hover:bg-teal-300"
+                                  className="bg-teal-500 py-2 rounded w-full font-semibold text-white cursor-pointer hover:bg-teal-300 transition-all hover:105"
                                 >
                                   View Detailes
                                 </button>
@@ -363,7 +363,7 @@ const InstructorProfile = () => {
                                       ? navigate("/user/cart")
                                       : handleCart(course._id)
                                   }
-                                  className="bg-teal-500 py-2 rounded cursor-pointer font-semibold text-sm w-full text-white hover:bg-teal-300"
+                                  className="bg-teal-500 py-2 rounded transition-all hover:105 cursor-pointer font-semibold text-sm w-full text-white hover:bg-teal-300"
                                 >
                                   {course.students.some(
                                     (student) => student._id == userId
