@@ -1137,7 +1137,7 @@ const PlayCourse = () => {
                     <div className="space-y-2">
                       <div>
                         <p className="font-medium text-lg">Instructor info</p>
-                        <div className="flex bg-blue-200 rounded-3">
+                        <div className="flex items-center bg-blue-200 rounded-3">
                           <Avatar
                             onClick={() =>
                               navigate(
