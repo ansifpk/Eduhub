@@ -459,9 +459,9 @@ const InstructorProfile = () => {
                                                 onMouseEnter={() =>
                                                   setValue("star", index + 1)
                                                 }
-                                                className={`bi ${
+                                                className={`bi animate-pulse text-amber-400 ${
                                                   index + 1 <= star
-                                                    ? "bi-star-fill"
+                                                    ? "bi-star-fill "
                                                     : "bi-star"
                                                 }`}
                                               ></i>
