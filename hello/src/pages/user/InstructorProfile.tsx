@@ -741,13 +741,13 @@ const InstructorProfile = () => {
                                                               !seeMoreEditAlertOpen
                                                             )
                                                           }
-                                                          className="bg-teal-500  rounded text-white cursor-pointer transform-fill hover:scale-105 font-semibold hover:bg-teal-300"
+                                                          className="bg-teal-500 px-2 py-2  rounded text-white cursor-pointer transform-fill hover:scale-105 font-semibold hover:bg-teal-300"
                                                         >
                                                           Cancel
                                                         </DialogClose>
                                                         <AlertDialog>
                                                           <AlertDialogTrigger
-                                                            className={`rounded text-white transform-fill hover:scale-105 font-semibold ${
+                                                            className={`rounded text-white px-2 py-2  transform-fill hover:scale-105 font-semibold ${
                                                               loading
                                                                 ? "bg-teal-300"
                                                                 : "bg-teal-500 hover:bg-teal-300 cursor-pointer"
