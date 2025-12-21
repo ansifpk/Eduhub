@@ -665,7 +665,7 @@ const InstructorProfile = () => {
                                                     <DialogTrigger asChild>
                                                       {rating.userId._id ==
                                                         userId && (
-                                                        <i className="bi bi-pencil-square"></i>
+                                                        <i className="bi bi-pencil-square cursor-pointer"></i>
                                                       )}
                                                     </DialogTrigger>
                                                     <DialogContent className="sm:max-w-[425px]">
@@ -692,7 +692,7 @@ const InstructorProfile = () => {
                                                                     index + 1
                                                                   )
                                                                 }
-                                                                className={`bi ${
+                                                                className={`bi text-amber-600  ${
                                                                   index + 1 <=
                                                                   star
                                                                     ? "bi-star-fill animate-pulse"
@@ -741,13 +741,13 @@ const InstructorProfile = () => {
                                                               !seeMoreEditAlertOpen
                                                             )
                                                           }
-                                                          className="bg-teal-500 rounded text-white px-2 py-2 font-semibold hover:bg-teal-300"
+                                                          className="bg-teal-500  rounded text-white cursor-pointer transform-fill hover:scale-105 font-semibold hover:bg-teal-300"
                                                         >
                                                           Cancel
                                                         </DialogClose>
                                                         <AlertDialog>
                                                           <AlertDialogTrigger
-                                                            className={`rounded text-white px-2 py-2 font-semibold ${
+                                                            className={`rounded text-white transform-fill hover:scale-105 font-semibold ${
                                                               loading
                                                                 ? "bg-teal-300"
                                                                 : "bg-teal-500 hover:bg-teal-300 cursor-pointer"
@@ -788,11 +788,11 @@ const InstructorProfile = () => {
                                                               </AlertDialogDescription>
                                                             </AlertDialogHeader>
                                                             <AlertDialogFooter>
-                                                              <AlertDialogCancel className="bg-teal-500 rounded text-white px-2 py-2 font-semibold hover:bg-teal-300 hover:text-white">
+                                                              <AlertDialogCancel className="bg-teal-500 transform-fill hover:scale-105 cursor-pointer rounded text-white px-2 py-2 font-semibold hover:bg-teal-300 hover:text-white">
                                                                 Cancel
                                                               </AlertDialogCancel>
                                                               <AlertDialogAction
-                                                                className="bg-teal-500 rounded text-white px-2 py-2 font-semibold hover:bg-teal-300"
+                                                                className="bg-teal-500  transform-fill hover:scale-105 cursor-pointer rounded text-white px-2 py-2 font-semibold hover:bg-teal-300"
                                                                 onClick={() =>
                                                                   handleSubmit(
                                                                     (data) =>
@@ -835,11 +835,11 @@ const InstructorProfile = () => {
                                                       </AlertDialogDescription>
                                                     </AlertDialogHeader>
                                                     <AlertDialogFooter>
-                                                      <AlertDialogCancel className="bg-teal-500 rounded text-white px-2 py-2 font-semibold hover:bg-teal-300 hover:text-white cursor-pointer">
+                                                      <AlertDialogCancel className="bg-teal-500 rounded text-white px-2 py-2 font-semibold hover:bg-teal-300 hover:text-white  transform-fill hover:scale-105 cursor-pointer">
                                                         Cancel
                                                       </AlertDialogCancel>
                                                       <AlertDialogAction
-                                                        className="bg-teal-500 rounded text-white px-2 py-2 font-semibold hover:bg-teal-300 cursor-pointer"
+                                                        className="bg-teal-500 rounded text-white px-2 py-2 font-semibold hover:bg-teal-300  transform-fill hover:scale-105 cursor-pointer"
                                                         onClick={() =>
                                                           handleDeleteRating(
                                                             rating._id
