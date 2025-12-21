@@ -266,7 +266,7 @@ const InstructorProfile = () => {
     <div>
       <Header />
       <div className="p-5">
-        <div className="md:flex flex flex-col justify-center-safe space-y-2 gap-2">
+        <div className="flex md:flex-row flex-col justify-center-safe space-y-2 gap-2">
           <Avatar className=" rounded-full h-48 w-48">
             <AvatarImage src={user?.avatar.avatar_url} />
             <AvatarFallback>CN</AvatarFallback>
