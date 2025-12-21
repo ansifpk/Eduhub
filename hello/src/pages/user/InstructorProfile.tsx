@@ -558,7 +558,7 @@ const InstructorProfile = () => {
                                         </AlertDialogHeader>
                                         <AlertDialogFooter>
                                           <AlertDialogAction
-                                            className="bg-teal-500 hover:bg-teal-500 transform-fill hover:scale-105"
+                                            className="bg-teal-500 hover:bg-teal-500 cursor-pointer transform-fill hover:scale-105"
                                             type="button"
                                           >
                                             Cancel
@@ -568,7 +568,7 @@ const InstructorProfile = () => {
                                               handleDeleteRating(reviw._id)
                                             }
                                             type="button"
-                                            className="bg-teal-500 hover:bg-teal-500 transform-fill hover:scale-105"
+                                            className="bg-teal-500 hover:bg-teal-500 cursor-pointer transform-fill hover:scale-105"
                                           >
                                             Continue
                                           </AlertDialogAction>
@@ -835,11 +835,11 @@ const InstructorProfile = () => {
                                                       </AlertDialogDescription>
                                                     </AlertDialogHeader>
                                                     <AlertDialogFooter>
-                                                      <AlertDialogCancel className="bg-teal-500 rounded text-white px-2 py-2 font-semibold hover:bg-teal-300 hover:text-white">
+                                                      <AlertDialogCancel className="bg-teal-500 rounded text-white px-2 py-2 font-semibold hover:bg-teal-300 hover:text-white cursor-pointer">
                                                         Cancel
                                                       </AlertDialogCancel>
                                                       <AlertDialogAction
-                                                        className="bg-teal-500 rounded text-white px-2 py-2 font-semibold hover:bg-teal-300"
+                                                        className="bg-teal-500 rounded text-white px-2 py-2 font-semibold hover:bg-teal-300 cursor-pointer"
                                                         onClick={() =>
                                                           handleDeleteRating(
                                                             rating._id
@@ -929,9 +929,9 @@ const InstructorProfile = () => {
                                       onMouseEnter={() =>
                                         setValue("star", index + 1)
                                       }
-                                      className={`bi ${
+                                      className={`bi text-amber-400 ${
                                         index + 1 <= star
-                                          ? "bi-star-fill"
+                                          ? "bi-star-fill animate-pulse"
                                           : "bi-star"
                                       }`}
                                     ></i>
@@ -954,7 +954,7 @@ const InstructorProfile = () => {
                                     <button
                                       disabled={loading}
                                       type="button"
-                                      className="bg-teal-500 hover:bg-teal-300 rounded px-2 py-1 text-white font-semibold cursor-pointer"
+                                      className="bg-teal-500 transform-fill hover:scale-105 hover:bg-teal-300 rounded px-2 py-1 text-white font-semibold cursor-pointer"
                                     >
                                       {loading ? (
                                         <>
@@ -979,11 +979,11 @@ const InstructorProfile = () => {
                                       </AlertDialogDescription>
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
-                                      <AlertDialogCancel className="bg-teal-500 hover:bg-teal-300 text-white hover:text-white cursor-pointer">
+                                      <AlertDialogCancel className="bg-teal-500 transform-fill hover:scale-105 hover:bg-teal-300 text-white hover:text-white cursor-pointer">
                                         Cancel
                                       </AlertDialogCancel>
                                       <AlertDialogAction
-                                        className="bg-teal-500 hover:bg-teal-300 cursor-pointer"
+                                        className="bg-teal-500 transform-fill hover:scale-105 hover:bg-teal-300 cursor-pointer"
                                         onClick={() =>
                                           handleSubmit(handleAddReport)()
                                         }
