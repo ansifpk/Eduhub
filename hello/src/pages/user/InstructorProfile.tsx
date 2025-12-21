@@ -46,6 +46,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loadStripe } from "@stripe/stripe-js";
 import type { IUserProfile } from "@/@types/userProfile";
 import { CheckIcon, Send } from "lucide-react";
+import { Button } from "@/components/ui/button";
 const stripe = await loadStripe(import.meta.env.VITE_PUBLISH_SECRET);
 
 const labels: { [index: string]: string } = {
@@ -459,9 +460,9 @@ const InstructorProfile = () => {
                                                 onMouseEnter={() =>
                                                   setValue("star", index + 1)
                                                 }
-                                                className={`bi animate-pulse text-amber-400 ${
+                                                className={`bi text-amber-400 ${
                                                   index + 1 <= star
-                                                    ? "bi-star-fill "
+                                                    ? "bi-star-fill animate-pulse"
                                                     : "bi-star"
                                                 }`}
                                               ></i>
@@ -486,10 +487,10 @@ const InstructorProfile = () => {
                                         <div className="text-center">
                                           <AlertDialog>
                                             <AlertDialogTrigger asChild>
-                                              <button
+                                              <Button
                                                 disabled={loading}
                                                 type="button"
-                                                className="bg-teal-500 hover:bg-teal-300 rounded px-2 py-1 text-white font-semibold cursor-pointer"
+                                                className="bg-teal-500 hover:bg-teal-300 rounded text-white font-semibold cursor-pointer transform-fill hover:scale-105"
                                               >
                                                 {loading ? (
                                                   <>
@@ -501,7 +502,7 @@ const InstructorProfile = () => {
                                                 ) : (
                                                   <>Save</>
                                                 )}
-                                              </button>
+                                              </Button>
                                             </AlertDialogTrigger>
                                             <AlertDialogContent>
                                               <AlertDialogHeader>
@@ -515,7 +516,7 @@ const InstructorProfile = () => {
                                                 </AlertDialogDescription>
                                               </AlertDialogHeader>
                                               <AlertDialogFooter>
-                                                <AlertDialogCancel className="bg-teal-500 hover:bg-teal-300 text-white hover:text-white cursor-pointer">
+                                                <AlertDialogCancel className="bg-teal-500 hover:bg-teal-300 text-white hover:text-white cursor-pointer transform-fill hover:scale-105">
                                                   Cancel
                                                 </AlertDialogCancel>
                                                 <AlertDialogAction
@@ -527,7 +528,7 @@ const InstructorProfile = () => {
                                                       )
                                                     )()
                                                   }
-                                                  className="bg-teal-500 hover:bg-teal-300 text-white hover:text-white cursor-pointer "
+                                                  className="bg-teal-500 hover:bg-teal-300 text-white hover:text-white cursor-pointer transform-fill hover:scale-105"
                                                 >
                                                   Continue
                                                 </AlertDialogAction>
@@ -557,7 +558,7 @@ const InstructorProfile = () => {
                                         </AlertDialogHeader>
                                         <AlertDialogFooter>
                                           <AlertDialogAction
-                                            className="bg-teal-500 hover:bg-teal-500"
+                                            className="bg-teal-500 hover:bg-teal-500 transform-fill hover:scale-105"
                                             type="button"
                                           >
                                             Cancel
@@ -567,7 +568,7 @@ const InstructorProfile = () => {
                                               handleDeleteRating(reviw._id)
                                             }
                                             type="button"
-                                            className="bg-teal-500 hover:bg-teal-500"
+                                            className="bg-teal-500 hover:bg-teal-500 transform-fill hover:scale-105"
                                           >
                                             Continue
                                           </AlertDialogAction>
@@ -579,7 +580,7 @@ const InstructorProfile = () => {
                                 <div className="text-sm my-2">
                                   <div>
                                     {reviw.stars}
-                                    <i className="bi bi-star-fill text-yellow-600"></i>{" "}
+                                    <i className="bi bi-star-fill text-yellow-600 animate-pulse"></i>{" "}
                                     {labels[`${reviw.stars}`]}
                                   </div>
                                   {reviw.review}
@@ -592,7 +593,7 @@ const InstructorProfile = () => {
                             </div>
                           ))
                         ) : (
-                          <div className=" border">
+                          <div className="border">
                             <div className="m-3">no reviwes</div>
                           </div>
                         )}
@@ -694,7 +695,7 @@ const InstructorProfile = () => {
                                                                 className={`bi ${
                                                                   index + 1 <=
                                                                   star
-                                                                    ? "bi-star-fill"
+                                                                    ? "bi-star-fill animate-pulse"
                                                                     : "bi-star"
                                                                 }`}
                                                               ></i>
