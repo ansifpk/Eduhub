@@ -1,48 +1,21 @@
-import express from 'express';
-import cors from 'cors';
-const app = express()
+
 import {createServer} from 'http'
-import cookieParser from 'cookie-parser';
-import { errorHandler, NotFoundError } from '@eduhublearning/common';
-import { userRouter } from './routers/userRouter';
-import { instructorRouter } from './routers/instructorRouter';
-import { connectDB } from '../infrastructure/db/models/config';
 import { Server, Socket } from 'socket.io';
-import { adminRouter } from './routers/adminRouter';
 import kafkaWrapper from '../infrastructure/kafka/kafkaWrapper';
 import { InstructorAprovedConsumer } from '../infrastructure/kafka/consumer/instructor-approved-consumer';
 import { UserProfileUpdatedConsumer } from '../infrastructure/kafka/consumer/user-profile-updated-consumer';
 import { EmailChangedConsumer } from '../infrastructure/kafka/consumer/email-changed-consumer';
+import { allowedOrgins, app } from './app';
+import { connectDB } from '../infrastructure/db/models/config';
 
 export class ApiServer {
    
 
     public static async run(port:number):Promise<void>{
         try {
-            const httpServer = createServer(app);
-            app.set('trust proxy',true);
-            const allowedOrgins =  JSON.parse(process.env.ORGINS!)
-            
-            app.use(cors({
-                origin: allowedOrgins,
-                credentials:true,
-                }
-            ));
-            app.use(express.json())
-            app.use(express.urlencoded({ extended: true }))
-            app.use(cookieParser())
-            
             await connectDB();
+            const httpServer = createServer(app);
             
-            app.use('/auth/user',userRouter);
-            app.use('/auth/admin',adminRouter);
-            app.use('/auth/instructor',instructorRouter);
-
-            app.use("*",(req,res)=>{
-                 throw new NotFoundError("Path Not Found.") 
-            })
-            app.use(errorHandler as any)
-
             //* socket connection 
 
             let onlineUsers:{userId:string,socketId:string}[] = [];
@@ -87,7 +60,8 @@ export class ApiServer {
             await new InstructorAprovedConsumer(consumer).listen()
             await new UserProfileUpdatedConsumer(consumer2).listen()
             await new EmailChangedConsumer(consumer3).listen()
-            httpServer.listen(port,()=>console.log(`auth service running at ${port}...`))
+            httpServer.listen(port,()=>console.log(`auth service running at ${port}...`));
+            
         } catch (error) {
             console.error(error);
         }
