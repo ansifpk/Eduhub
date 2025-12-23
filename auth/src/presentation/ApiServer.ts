@@ -60,7 +60,7 @@ export class ApiServer {
             await new InstructorAprovedConsumer(consumer).listen()
             await new UserProfileUpdatedConsumer(consumer2).listen()
             await new EmailChangedConsumer(consumer3).listen()
-            httpServer.listen(port,()=>console.log(`auth service running at ${port}.....................`));
+            httpServer.listen(port,()=>console.log(`auth service running at ${port}.........`));
             
         } catch (error) {
             console.error(error);
