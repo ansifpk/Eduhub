@@ -8,6 +8,7 @@ import { instructorRouter } from "./routers/instructorRouter";
 const app = express();
 
 app.set("trust proxy", true);
+
 export const allowedOrgins = JSON.parse(process.env.ORGINS!);
 
 app.use(
