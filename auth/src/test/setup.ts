@@ -4,6 +4,8 @@ import mongoose from 'mongoose';
 let mongo: any;
 
 beforeAll(async () => {
+   process.env.EMAIL = 'pkansif39@gmail.com'
+   process.env.PASSWORD = 'tvtq zgcc skhn rliu'
   mongo = await MongoMemoryServer.create();
   const mongoUri = await mongo.getUri();
   await mongoose.connect(mongoUri);
