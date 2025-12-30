@@ -1,11 +1,10 @@
 
-import {createServer} from 'http'
 import { Server, Socket } from 'socket.io';
 import kafkaWrapper from '../infrastructure/kafka/kafkaWrapper';
 import { InstructorAprovedConsumer } from '../infrastructure/kafka/consumer/instructor-approved-consumer';
 import { UserProfileUpdatedConsumer } from '../infrastructure/kafka/consumer/user-profile-updated-consumer';
 import { EmailChangedConsumer } from '../infrastructure/kafka/consumer/email-changed-consumer';
-import { allowedOrgins, app } from './app';
+import { allowedOrgins,  httpServer } from './app';
 import { connectDB } from '../infrastructure/db/models/config';
 
 export class ApiServer {
@@ -14,7 +13,7 @@ export class ApiServer {
     public static async run(port:number):Promise<void>{
         try {
             await connectDB();
-            const httpServer = createServer(app);
+           
             
             //* socket connection 
 

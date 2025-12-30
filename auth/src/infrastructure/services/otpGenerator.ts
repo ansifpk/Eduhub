@@ -2,7 +2,7 @@ import { IOtpGenerator } from "../../domain/interfaces/serviceInterfaces/IOtpage
 
 export class OtpGenerator implements IOtpGenerator{
     async createOtp(): Promise<string> {
-        console.log("create the otp")
+        // console.log("create the otp")
         const numericChars = '0123456789'
         let otp =''
         for(let i=0;i<6;i++){

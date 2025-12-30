@@ -1,8 +1,8 @@
 import request from 'supertest';
-import { app } from '../../app';
+import { httpServer } from '../../app';
 
 it("reqtuen a success signup",async()=>{
-    return request(app)
+    return request(httpServer)
     .post('/auth/user/register')
     .send({
         email:"testlatest@gmail.com",

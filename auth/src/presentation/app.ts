@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import { errorHandler, NotFoundError } from "@eduhublearning/common";
 import { userRouter } from "./routers/userRouter";
 import { instructorRouter } from "./routers/instructorRouter";
+import { createServer } from "http";
 const app = express();
 
 app.set("trust proxy", true);
@@ -31,5 +32,5 @@ app.use("*", (req, res) => {
   throw new NotFoundError("Path Not Found.");
 });
 app.use(errorHandler as any);
-
-export {app}
+const httpServer = createServer(app);
+export {httpServer}

@@ -43,7 +43,7 @@ export class UserSignUp implements IUseCase<{user:Iuser,next:NextFunction},strin
       input.user.password = hashPassword;
 
       const otp = await this.otpGenerate.createOtp();
-      console.log("reg otp", otp);
+      // console.log("reg otp", otp);
 
       await this.otpRepository.createOtp(email, otp);
       await this.sentEmail.sentEmailVerification(email, otp);
