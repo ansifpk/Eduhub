@@ -1,11 +1,16 @@
-
 import dotenv from 'dotenv';
-import { ApiServer } from './presentation/ApiServer';
+import { app } from './presentation/app';
 dotenv.config();
 
-if (process.env.NODE_ENV !== "test") {
-  async function main():Promise<void>{
-  await ApiServer.run(Number(process.env.PORT)!);
- }
-   main();
-}
+const PORT = process.env.PORT || 3000;
+
+const server = app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  server.close(() => {
+    console.log('Server closed');
+  });
+});

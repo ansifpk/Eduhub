@@ -1,29 +1,29 @@
-import {MongoMemoryServer} from 'mongodb-memory-server';
+import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
-// import 
-let mongo:any ;
-beforeAll(async()=>{
-   process.env.JWT_ACCESSKEY = 'itsjwtaccesskey'
-   process.env.JWT_REFRESHKEY = 'itsjwtRefreshkey'
-   process.env.JWT_VERIFICATIONKEY = 'itsjwtverificationkey'
-   process.env.JWT_FORGOTPASSWORDEY = 'itsjwtForgetkey'
-   process.env.KAFKA_BROCKER = 'kafka-srv:9092'
-   process.env.DOMAIN= 'api.eduhublearning.online'
-   process.env.ORGINS = JSON.stringify(["http://client-srv:5173","http://localhost:5173","https://www.eduhublearning.online","https://api.eduhublearning.online","https://eduhub-s2po.vercel.app"])
-   process.env.SOCKET_PATH='/auth/socket.io'
-   mongo = await MongoMemoryServer.create();
-    const mongoUri =  await mongo.getUri()
 
-    await mongoose.connect(mongoUri);
+let mongo: any;
+
+beforeAll(async () => {
+  mongo = await MongoMemoryServer.create();
+  const mongoUri = await mongo.getUri();
+  await mongoose.connect(mongoUri);
+}, 60000);
+
+beforeEach(async () => {
+  const collections = await mongoose.connection.db!.collections();
+  for (let collection of collections) {
+    await collection.deleteMany({});
+  }
 });
-beforeEach(async()=>{
-   
-})
-afterAll(async()=>{
-   const collections = await mongoose.connection.db!.collections();
-   for (let collection of collections) {
-      await collection.deleteMany()
-   }
-   await mongo.stop()
-   await mongoose.connection.close()
-});
+
+afterAll(async () => {
+  // Close all connections properly
+  await mongoose.connection.close();
+  
+  if (mongo) {
+    await mongo.stop();
+  }
+  
+  // Clear all timers and handles
+  await new Promise(resolve => setTimeout(resolve, 100));
+}, 60000);
