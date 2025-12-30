@@ -6,6 +6,9 @@ let mongo: any;
 beforeAll(async () => {
    process.env.EMAIL = 'pkansif39@gmail.com'
    process.env.PASSWORD = 'tvtq zgcc skhn rliu'
+   process.env.JWT_ACCESSKEY = 'itsjwtaccesskey'
+   process.env.JWT_REFRESHKEY = 'itsjwtRefreshkey'
+   process.env.JWT_VERIFICATIONKEY = 'itsjwtverificationkey'
   mongo = await MongoMemoryServer.create();
   const mongoUri = await mongo.getUri();
   await mongoose.connect(mongoUri);
