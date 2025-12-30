@@ -5,7 +5,7 @@ it("reqtuen a success signup",async()=>{
     return request(httpServer)
     .post('/auth/user/register')
     .send({
-        email:"testlatest@gmail.com",
+        email:"studyansif@gmail.com",
         password:'12345678',
         name:"balan"
     })
