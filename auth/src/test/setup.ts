@@ -16,9 +16,7 @@ beforeAll(async()=>{
 
     await mongoose.connect(mongoUri);
 });
-beforeEach(async()=>{
-   
-})
+
 afterAll(async()=>{
    const collections = await mongoose.connection.db!.collections();
    for (let collection of collections) {
