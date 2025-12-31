@@ -1,10 +1,10 @@
 import express from "express";
-import { adminRouter } from "./routers/adminRouter";
+import { adminRouter } from "./presentation/routers/adminRouter";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { errorHandler, NotFoundError } from "@eduhublearning/common";
-import { userRouter } from "./routers/userRouter";
-import { instructorRouter } from "./routers/instructorRouter";
+import { userRouter } from "./presentation/routers/userRouter";
+import { instructorRouter } from "./presentation/routers/instructorRouter";
 
 const app = express();
 

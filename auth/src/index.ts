@@ -1,16 +1,18 @@
 import dotenv from 'dotenv';
-import { app } from './presentation/app';
+import { app } from './app';
+import { connectDB } from './infrastructure/db/models/config';
 dotenv.config();
 
-const PORT = process.env.PORT || 3000;
+const start = async()=>{
+    console.log("hi This From auth/Index.ys");
+    try {
+        await connectDB();
+        console.log("connected to mongodb");
+    } catch (err) {
+         console.error(err)
+    }
+    
+    app.listen(3000,()=>console.log("3000 running"))
+};
 
-const server = app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
-
-// Graceful shutdown
-process.on('SIGTERM', () => {
-  server.close(() => {
-    console.log('Server closed');
-  });
-});
+start();

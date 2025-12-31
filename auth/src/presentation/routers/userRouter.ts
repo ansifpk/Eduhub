@@ -4,7 +4,7 @@ import { isAuth } from "../middlewares/auth";
 import { creatUserController, loginUserController, googleLoginController, resendOtpController, forgetPasswordController, resetPasswordController, verifyOtpController, changePasswordConstroller, verifyEmailConstroller, changeEmailConstroller, tockenCheckConstroller, logOutController, userSignUpController } from "../../infrastructure/di/DiContainer";
 const router = express.Router();
 
-router.post("/register",(req,res,next)=>userSignUpController.handle(req,res,next));
+router.post("/register",async (req,res,next)=>await userSignUpController.handle(req,res,next));
 router.post("/resentOtp",(req,res,next)=>resendOtpController.handle(req,res,next));
 router.post("/createUser",(req,res,next)=>creatUserController.handle(req,res,next));
 router.post("/login",(req,res,next)=>loginUserController.handle(req,res,next));

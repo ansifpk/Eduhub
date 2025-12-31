@@ -4,7 +4,7 @@ import kafkaWrapper from '../infrastructure/kafka/kafkaWrapper';
 import { InstructorAprovedConsumer } from '../infrastructure/kafka/consumer/instructor-approved-consumer';
 import { UserProfileUpdatedConsumer } from '../infrastructure/kafka/consumer/user-profile-updated-consumer';
 import { EmailChangedConsumer } from '../infrastructure/kafka/consumer/email-changed-consumer';
-import { allowedOrgins,  app } from './app';
+import { allowedOrgins,  app } from '../app';
 import { connectDB } from '../infrastructure/db/models/config';
 
 export class ApiServer {
@@ -55,7 +55,7 @@ export class ApiServer {
             // await new UserProfileUpdatedConsumer(consumer2).listen()
             // await new EmailChangedConsumer(consumer3).listen()
             // httpServer.listen(port,()=>console.log(`auth service running at ${port}..........`));
-            app.listen(port,()=>console.log(`auth service running at ${port}..........`));
+            // app.listen(port,()=>console.log(`auth service running at ${port}..........`));
         } catch (error) {
             console.error(error);
         }
