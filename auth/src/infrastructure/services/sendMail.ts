@@ -8,9 +8,8 @@ export class SentEmail implements ISentEmail {
       auth: {
         user: process.env.EMAIL,
         pass: process.env.PASSWORD,
-      },
-      pool: false,
-    } as any); // TypeScript workaround
+      }
+    }); 
 
     try {
       const mailOptions = {

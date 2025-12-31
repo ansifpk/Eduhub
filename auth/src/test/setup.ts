@@ -7,6 +7,8 @@ beforeAll(async ()=>{
     process.env.JWT_ACCESSKEY = 'test_access_secret';
     process.env.JWT_REFRESHKEY = 'test_refresh_secret';
     process.env.JWT_VERIFICATIONKEY = 'test_verify_secret';
+    process.env.EMAIL = "test@test.com";
+    process.env.PASSWORD = "dummy";
 
     mongo = await MongoMemoryServer.create(); // Use create to start the server
     const mongoUri = mongo.getUri();          // Get the URI after the server is started
@@ -16,6 +18,7 @@ beforeAll(async ()=>{
 
 beforeEach(async () =>{
   const collections =  await mongoose.connection.db?.collections();
+   if (!collections) return;
   if (collections && collections.length > 0){
     for(let collection of collections ){
         await collection.deleteMany({});
@@ -25,8 +28,8 @@ beforeEach(async () =>{
 })
 
 afterAll(async ()=> {
-    await mongo.stop();
-    await mongoose.connection.close();
+  await mongoose.connection.close();
+  if (mongo) await mongo.stop();
 })
 
 
