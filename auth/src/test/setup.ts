@@ -4,9 +4,12 @@ import mongoose from 'mongoose';
 
 let mongo: any;
 beforeAll(async ()=>{
-    process.env.JWT_KEY = 'imAnsif';
+    process.env.JWT_ACCESSKEY = 'test_access_secret';
+    process.env.JWT_REFRESHKEY = 'test_refresh_secret';
+    process.env.JWT_VERIFICATIONKEY = 'test_verify_secret';
+
     mongo = await MongoMemoryServer.create(); // Use create to start the server
-  const mongoUri = mongo.getUri();          // Get the URI after the server is started
+    const mongoUri = mongo.getUri();          // Get the URI after the server is started
 
     await mongoose.connect(mongoUri)
 });
