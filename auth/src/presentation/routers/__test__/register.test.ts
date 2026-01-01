@@ -1,9 +1,9 @@
 import request from 'supertest';
-import { app } from '../../../app';
+import { httpServer } from '../../../app';
 
 
   it('returns 200 and sets cookie', async () => {
-    const res = await request(app)
+    const res = await request(httpServer)
       .post('/auth/user/register')
       .send({
         name: 'test user',
@@ -11,7 +11,4 @@ import { app } from '../../../app';
         password: 'password'
       })
       .expect(200);
-
-    // expect(res.body.succes).toBe(true);
-    // expect(res.headers['set-cookie']).toBeDefined();
   });

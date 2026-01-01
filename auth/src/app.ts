@@ -5,6 +5,8 @@ import cookieParser from "cookie-parser";
 import { errorHandler, NotFoundError } from "@eduhublearning/common";
 import { userRouter } from "./presentation/routers/userRouter";
 import { instructorRouter } from "./presentation/routers/instructorRouter";
+import {createServer} from 'http';
+
 
 const app = express();
 
@@ -30,5 +32,5 @@ app.use("*", (req, res) => {
   throw new NotFoundError("Path Not Found.");
 });
 app.use(errorHandler as any);
-
-export { app };  // Just export the app, don't create server here
+const httpServer = createServer(app);
+export { httpServer };  // Just export the app, don't create server here
