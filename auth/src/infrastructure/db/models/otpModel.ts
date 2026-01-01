@@ -7,7 +7,7 @@ const OtpSchema: Schema<Iotp> = new mongoose.Schema({
     otp: { type: String, required: true },
     createdAt: {
         type: Date,
-        default: Date.now,
+        default: Date.now(),
     }
 },{
     toJSON:{
