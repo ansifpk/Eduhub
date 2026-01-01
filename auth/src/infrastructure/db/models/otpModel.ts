@@ -5,9 +5,9 @@ import { Iotp } from "../../../domain/entities/otp";
 const OtpSchema: Schema<Iotp> = new mongoose.Schema({
     email: { type: String, required: true },
     otp: { type: String, required: true },
-    createAt: {
+    createdAt: {
         type: Date,
-        default: new Date(),
+        default: Date.now,
     }
 },{
     toJSON:{
