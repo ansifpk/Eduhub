@@ -102,6 +102,41 @@ const Header = () => {
         </SelectGroup>
       </SelectContent>
     </Select>
+          <Select>
+      <SelectTrigger className="w-45">
+        <Avatar>
+                    <AvatarImage src={image} />
+                    <AvatarFallback>
+                      <i className="bi bi-person-circle"></i>
+                    </AvatarFallback>
+                  </Avatar>
+      </SelectTrigger>
+      <SelectContent side="bottom">
+        <SelectGroup>
+          <SelectLabel>Fruits</SelectLabel>
+          <SelectItem value="apple">Apple</SelectItem>
+          <SelectItem value="banana">Banana</SelectItem>
+          <SelectItem value="blueberry">Blueberry</SelectItem>
+          <SelectItem value="grapes">Grapes</SelectItem>
+          <SelectItem value="pineapple">Pineapple</SelectItem>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+          <Select>
+      <SelectTrigger className="w-45">
+         <i className="bi bi-person-circle"></i>
+      </SelectTrigger>
+      <SelectContent side="bottom">
+        <SelectGroup>
+          <SelectLabel>Fruits</SelectLabel>
+          <SelectItem value="apple">Apple</SelectItem>
+          <SelectItem value="banana">Banana</SelectItem>
+          <SelectItem value="blueberry">Blueberry</SelectItem>
+          <SelectItem value="grapes">Grapes</SelectItem>
+          <SelectItem value="pineapple">Pineapple</SelectItem>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
           {/* {userId ? ( */}
               <Select
                 onValueChange={(value) => {
