@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { Select, SelectContent, SelectItem, SelectTrigger } from "../ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import userRoutes from "@/service/endPoints/userEndPoints";
 import useRequest from "@/hooks/useRequest";
@@ -139,34 +138,20 @@ const Header = () => {
             </li>
           ))}
           {userId ? (
-            <li>
-              <Select
-                onValueChange={(value) => {
-                  if (value === "Sign Out") {
-                    handleLogout();
-                  } else if (value === "Profile") {
-                    navigate("/user/profile");
-                  }
-                }}
-              >
-                <SelectTrigger className="">
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild >
                   <Avatar>
                     <AvatarImage src={image} />
                     <AvatarFallback>
                       <i className="bi bi-person-circle"></i>
                     </AvatarFallback>
                   </Avatar>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem className="cursor-pointer" value="Profile">
-                    Profile
-                  </SelectItem>
-                  <SelectItem className="cursor-pointer" value="Sign Out">
-                    Sign Out
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </li>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" >
+                  <DropdownMenuItem><Link to={"/user/profile"}>Profile</Link></DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleLogout}>Sign Out</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
           ) : (
             <>
               <StarBorder as="button" thickness={3} color="red" speed="2s">
