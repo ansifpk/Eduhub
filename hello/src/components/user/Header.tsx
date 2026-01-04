@@ -88,7 +88,7 @@ const Header = () => {
             </li>
           ))}
           {userId ? (
-            <li>
+            // <li>
               <Select
                 onValueChange={(value) => {
                   if (value === "Sign Out") {
@@ -119,7 +119,7 @@ const Header = () => {
                   </SelectItem>
                 </SelectContent>
               </Select>
-            </li>
+            // </li>
           ) : (
             <>
               <StarBorder as="button" thickness={3} color="red" speed="2s">
