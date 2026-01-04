@@ -97,7 +97,7 @@ const Header = () => {
                   }
                 }}
               >
-                <SelectTrigger className="">
+                <SelectTrigger >
                   <Avatar>
                     <AvatarImage src={image} />
                     <AvatarFallback>
@@ -105,7 +105,7 @@ const Header = () => {
                     </AvatarFallback>
                   </Avatar>
                 </SelectTrigger>
-                <SelectContent side="bottom">
+                <SelectContent side="bottom" >
                   <SelectItem className="cursor-pointer" value="Profile">
                     Profile
                   </SelectItem>
