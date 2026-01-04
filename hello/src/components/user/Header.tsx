@@ -55,7 +55,7 @@ const Header = () => {
   ];
   return (
     <>
-      <div className="sticky top-0 z-50 px-5 flex h-14 justify-between items-center  bg-gray-10/50 backdrop-filter inset-0 backdrop-blur-lg font-mono text-black text-sm ">
+      <div className=" flex  justify-between items-center  bg-gray-10/50  font-mono text-black text-sm ">
         <span className="font-bold text-2xl flex items-center font-[poppins] text-gray-800">
           EduHub
         </span>
