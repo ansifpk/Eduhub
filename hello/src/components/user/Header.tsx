@@ -89,14 +89,25 @@ const Header = () => {
           ))}
           <Select>
       <SelectTrigger  className="w-[120px]">
-        <Avatar>
-                    <AvatarImage src={image} />
-                    <AvatarFallback>
-                      <i className="bi bi-person-circle"></i>
-                    </AvatarFallback>
-                  </Avatar>
-      </SelectTrigger>
-      <SelectContent side="bottom">
+                   <i className={"bi bi-person-circle"}></i>
+      </SelectTrigger> 
+      <SelectContent>
+        <SelectGroup>
+          <SelectLabel>Fruits</SelectLabel>
+          <SelectItem className="cursor-pointer" value="Profile">
+                    Profile
+                  </SelectItem>
+                  <SelectItem className="cursor-pointer" value="Sign Out">
+                    Sign Out
+                  </SelectItem>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+          <Select>
+      <SelectTrigger  className="w-[120px]">
+          start
+      </SelectTrigger> 
+      <SelectContent>
         <SelectGroup>
           <SelectLabel>Fruits</SelectLabel>
           <SelectItem className="cursor-pointer" value="Profile">
