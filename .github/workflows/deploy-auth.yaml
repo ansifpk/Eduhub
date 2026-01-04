@@ -14,6 +14,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Build image 
+        run: cd auth && docker build -t ${{secrets.DOCKER_USERNAME}}/eduhub-auth:latest .
+     
+      - name: Login Docker Hub 
+        run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
+     
+      - name: Push Docker image 
+        run: docker push ${{secrets.DOCKER_USERNAME}}/eduhub-auth:latest
+
       - name: Authenticate to Google Cloud 
         uses: 'google-github-actions/auth@v2'
         with:
@@ -21,19 +30,7 @@ jobs:
 
       - name: Set up gcloud CLI 
         uses: 'google-github-actions/setup-gcloud@v2'
-
       
-      - name: Configure Docker to use GCP registry 
-        run: gcloud auth configure-docker
-
-      - name: Build image 
-        run: |
-          cd auth
-          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/eduhub-auth:latest .
-
-      - name: Push image
-        run: docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/eduhub-auth:latest
-
       - name: Get credentials for cluster
         run: |
           gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} \
@@ -41,6 +38,5 @@ jobs:
           --project=${{ secrets.GCP_PROJECT_ID }}
 
       - name: Restart deployment
-        run: |
-          kubectl rollout restart deployment auth-depl
+        run: kubectl rollout restart deployment auth-depl
 
