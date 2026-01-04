@@ -1,0 +1,11 @@
+name: Add test for Profile Service 
+on:
+  pull_request:
+    paths:
+      - "profile/**"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cd profile && npm install && npm run test:ci

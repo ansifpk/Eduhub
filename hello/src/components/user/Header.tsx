@@ -88,7 +88,7 @@ const Header = () => {
             </li>
           ))}
           {userId ? (
-            <li>
+            // <li>
               <Select
                 onValueChange={(value) => {
                   if (value === "Sign Out") {
@@ -98,7 +98,7 @@ const Header = () => {
                   }
                 }}
               >
-                <SelectTrigger className="">
+                <SelectTrigger>
                   <Avatar>
                     <AvatarImage src={image} />
                     <AvatarFallback>
@@ -106,7 +106,11 @@ const Header = () => {
                     </AvatarFallback>
                   </Avatar>
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="w-60"
+                  position="popper"
+                  side="bottom"
+                  avoidCollisions={false}
+                  >
                   <SelectItem className="cursor-pointer" value="Profile">
                     Profile
                   </SelectItem>
@@ -115,7 +119,7 @@ const Header = () => {
                   </SelectItem>
                 </SelectContent>
               </Select>
-            </li>
+            // </li>
           ) : (
             <>
               <StarBorder as="button" thickness={3} color="red" speed="2s">

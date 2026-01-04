@@ -1,0 +1,11 @@
+name: Add test for category Service 
+on:
+  pull_request:
+    paths:
+      - "category/**"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cd category && npm install && npm run test:ci
