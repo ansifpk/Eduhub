@@ -9,10 +9,8 @@ beforeAll(async ()=>{
     process.env.JWT_VERIFICATIONKEY = 'test_verify_secret';
     process.env.EMAIL = "test@test.com";
     process.env.PASSWORD = "dummy";
-
-    mongo = await MongoMemoryServer.create(); // Use create to start the server
-    const mongoUri = mongo.getUri();          // Get the URI after the server is started
-
+    mongo = await MongoMemoryServer.create(); 
+    const mongoUri = mongo.getUri();          
     await mongoose.connect(mongoUri)
 });
 

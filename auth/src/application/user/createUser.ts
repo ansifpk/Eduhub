@@ -14,15 +14,13 @@ export class CreateUser implements IUseCase<{token: string, otp: string,next: Ne
         private readonly _userRepository:UserRepository,
         private readonly _jwtToken:JWTtocken,
         private readonly _otpRepository:OtpRepository
-    ) {
-        
-    }
+    ) {}
+
     public async execute(input: {token: string, otp: string,next: NextFunction}): Promise<{ user: Iuser; tokens: IToken } | void> {
         try {
               const decoded = (await this._jwtToken.verifyJwt(input.token)) as Iuser;
               const result = await this._otpRepository.findOtp(decoded.email);
-             
-        
+
               if (!result) {
                 throw new BadRequestError(ErrorMessages.OTP_EXPIRED);
               }
@@ -45,4 +43,5 @@ export class CreateUser implements IUseCase<{token: string, otp: string,next: Ne
               input.next(err);
             }
     }
+    
 }
