@@ -1,25 +1,19 @@
 
-import {createServer} from 'http'
 import { Server, Socket } from 'socket.io';
 import kafkaWrapper from '../infrastructure/kafka/kafkaWrapper';
 import { InstructorAprovedConsumer } from '../infrastructure/kafka/consumer/instructor-approved-consumer';
 import { UserProfileUpdatedConsumer } from '../infrastructure/kafka/consumer/user-profile-updated-consumer';
 import { EmailChangedConsumer } from '../infrastructure/kafka/consumer/email-changed-consumer';
-import { allowedOrgins, app } from './app';
+import { allowedOrgins, httpServer } from '../app';
 import { connectDB } from '../infrastructure/db/models/config';
 
 export class ApiServer {
    
-
-    public static async run(port:number):Promise<void>{
-        try {
+    public static async run(port:number):Promise<void>{  
+        try {  
             await connectDB();
-            const httpServer = createServer(app);
-            
             //* socket connection 
-
             let onlineUsers:{userId:string,socketId:string}[] = [];
-            
             const io = new Server(httpServer,{
                 cors:{
                     origin: allowedOrgins,
@@ -60,8 +54,7 @@ export class ApiServer {
             await new InstructorAprovedConsumer(consumer).listen()
             await new UserProfileUpdatedConsumer(consumer2).listen()
             await new EmailChangedConsumer(consumer3).listen()
-            httpServer.listen(port,()=>console.log(`auth service running at ${port}.....................`));
-            
+            httpServer.listen(port,()=>console.log(`auth service running at ${port}..........`));
         } catch (error) {
             console.error(error);
         }

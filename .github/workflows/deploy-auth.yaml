@@ -1,0 +1,46 @@
+name: Deployment-Auth
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'auth/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud 
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+      - name: Set up gcloud CLI 
+        uses: 'google-github-actions/setup-gcloud@v2'
+
+      
+      - name: Configure Docker to use GCP registry 
+        run: gcloud auth configure-docker
+
+      - name: Build image 
+        run: |
+          cd auth
+          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/eduhub-auth:latest .
+
+      - name: Push image
+        run: docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/eduhub-auth:latest
+
+      - Name: Get credentials for cluster
+        run: |
+          gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} \
+          --region=${{ secrets.GKE_REGION }} \
+          --project=${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Restart deployment
+        run: |
+          kubectl rollout restart deployment auth-depl
+

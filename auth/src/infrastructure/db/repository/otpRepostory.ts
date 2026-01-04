@@ -5,12 +5,7 @@ import otpModel from "../models/otpModel";
 
 export class OtpRepository implements IOtpRepository{
     async createOtp(email: string, otp: string): Promise<Iotp> {
-        const createOtp = await otpModel.create({email:email,otp:otp})
-        setTimeout(async ()=>{
-            if(createOtp.id){
-              await otpModel.findOneAndDelete({_id:createOtp.id})
-            }
-        },120000)
+        const createOtp = await otpModel.create({email:email,otp:otp});
         return createOtp;
 
     }

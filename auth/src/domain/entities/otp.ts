@@ -2,6 +2,6 @@ export interface Iotp {
     _id?: string,
     email: string,
     otp: string,
-    createAt: Date,
+    createdAt: Date,
     expiresAt: Date
 }

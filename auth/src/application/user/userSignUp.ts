@@ -45,7 +45,7 @@ export class UserSignUp implements IUseCase<{user:Iuser,next:NextFunction},strin
       const otp = await this.otpGenerate.createOtp();
       console.log("reg otp", otp);
 
-      await this.otpRepository.createOtp(email, otp);
+      await this.otpRepository.createOtp(email,otp);
       await this.sentEmail.sentEmailVerification(email, otp);
 
       const token = await this.jwtToken.createVerificationJwt({
@@ -53,7 +53,7 @@ export class UserSignUp implements IUseCase<{user:Iuser,next:NextFunction},strin
         email: email,
         password: input.user.password,
       });
-      return token;
+      return token; 
     } catch (err) {
       console.error(err);
       input.next(err);
