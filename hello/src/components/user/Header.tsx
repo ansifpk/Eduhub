@@ -87,8 +87,7 @@ const Header = () => {
               </NavLink>
             </li>
           ))}
-          {userId ? (
-            <li>
+          {/* {userId ? ( */}
               <Select
                 onValueChange={(value) => {
                   if (value === "Sign Out") {
@@ -115,17 +114,16 @@ const Header = () => {
                   </SelectItem>
                 </SelectContent>
               </Select>
-            </li>
-          ) : (
-            <>
-              <StarBorder as="button" thickness={3} color="red" speed="2s">
-                <NavLink to={"/signIn"}>Sign In</NavLink>
-              </StarBorder>
-              <StarBorder as="button" thickness={3} color="red" speed="2s">
-                <NavLink to={"/signUp"}>Sign Up</NavLink>
-              </StarBorder>
-            </>
-          )}
+          {/* // ) : (
+          //   <>
+          //     <StarBorder as="button" thickness={3} color="red" speed="2s">
+          //       <NavLink to={"/signIn"}>Sign In</NavLink>
+          //     </StarBorder>
+          //     <StarBorder as="button" thickness={3} color="red" speed="2s">
+          //       <NavLink to={"/signUp"}>Sign Up</NavLink>
+          //     </StarBorder>
+          //   </>
+          // )} */}
         </ul>
       </div>
       {open && (
