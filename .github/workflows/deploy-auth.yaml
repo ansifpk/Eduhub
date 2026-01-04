@@ -30,7 +30,10 @@ jobs:
 
       - name: Set up gcloud CLI 
         uses: 'google-github-actions/setup-gcloud@v2'
-      
+     
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v4
+    
       - name: Get credentials for cluster
         run: |
           gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} \
