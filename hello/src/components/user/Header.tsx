@@ -88,7 +88,7 @@ const Header = () => {
             </li>
           ))}
           <Select>
-      <SelectTrigger className="w-45">
+      <SelectTrigger asChild className="w-45">
         <Avatar>
                     <AvatarImage src={image} />
                     <AvatarFallback>
