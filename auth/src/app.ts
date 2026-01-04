@@ -27,9 +27,7 @@ app.use(cookieParser());
 app.use("/auth/user", userRouter);
 app.use("/auth/admin", adminRouter);
 app.use("/auth/instructor", instructorRouter);
-app.get("/auth/xyz",(req,res)=>{
-   res.send({success:"true...."})
-})
+
 app.use("*", (req, res) => {
   throw new NotFoundError("Path Not Found.");
 });
