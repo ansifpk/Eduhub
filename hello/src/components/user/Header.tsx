@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger } from "../ui/select";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import userRoutes from "@/service/endPoints/userEndPoints";
 import useRequest from "@/hooks/useRequest";
@@ -88,34 +88,17 @@ const Header = () => {
             </li>
           ))}
           <Select>
-      <SelectTrigger  className="w-[120px]">
-                   <i className={"bi bi-person-circle"}></i>
-      </SelectTrigger> 
-      <SelectContent>
+      <SelectTrigger className="w-45">
+        <SelectValue placeholder="Select a fruit" />
+      </SelectTrigger>
+      <SelectContent side="bottom">
         <SelectGroup>
           <SelectLabel>Fruits</SelectLabel>
-          <SelectItem className="cursor-pointer" value="Profile">
-                    Profile
-                  </SelectItem>
-                  <SelectItem className="cursor-pointer" value="Sign Out">
-                    Sign Out
-                  </SelectItem>
-        </SelectGroup>
-      </SelectContent>
-    </Select>
-          <Select>
-      <SelectTrigger  className="w-[120px]">
-          start
-      </SelectTrigger> 
-      <SelectContent>
-        <SelectGroup>
-          <SelectLabel>Fruits</SelectLabel>
-          <SelectItem className="cursor-pointer" value="Profile">
-                    Profile
-                  </SelectItem>
-                  <SelectItem className="cursor-pointer" value="Sign Out">
-                    Sign Out
-                  </SelectItem>
+          <SelectItem value="apple">Apple</SelectItem>
+          <SelectItem value="banana">Banana</SelectItem>
+          <SelectItem value="blueberry">Blueberry</SelectItem>
+          <SelectItem value="grapes">Grapes</SelectItem>
+          <SelectItem value="pineapple">Pineapple</SelectItem>
         </SelectGroup>
       </SelectContent>
     </Select>
