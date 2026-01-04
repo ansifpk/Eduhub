@@ -34,7 +34,7 @@ jobs:
       - name: Push image
         run: docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/eduhub-auth:latest
 
-      - Name: Get credentials for cluster
+      - name: Get credentials for cluster
         run: |
           gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} \
           --region=${{ secrets.GKE_REGION }} \
