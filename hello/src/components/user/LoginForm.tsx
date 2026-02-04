@@ -13,14 +13,7 @@ import userRoutes from "@/service/endPoints/userEndPoints";
 import toast from "react-hot-toast";
 import { setUser } from "@/redux/authSlice";
 import { useGoogleLogin, type TokenResponse, } from "@react-oauth/google";
-// import {jwtDecode} from 'jwt-decode';
 import axios from "axios";
-// interface GoogleUser {
-//   email: string;
-//   name: string;
-//   picture: string;
-//   // Add any other fields you want from the JWT payload
-// }
 
 const LoginForm = () => {
 
@@ -56,10 +49,19 @@ const handleGoogleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse: TokenResponse) => {
     try {
       const { data: userData } = await axios.get(
-        "https://www.googleapis.com/oauth2/v3/userinfo",
+        import.meta.env.GOOGLE_AUTH_URL,
         { headers: { Authorization: `Bearer ${tokenResponse.access_token}` } }
       );
-      console.log("userData", userData);
+      await doRequest({
+      url:userRoutes.googleLogin,
+      method:"post",
+      body:{ email: userData.email, name: userData.name, password: userData.sub },
+      onSuccess:(res)=>{
+        // setLoading(false)
+        navigate("/")
+        dispatch(setUser(res.user))
+      }
+    })
     } catch (err) {
       console.error("Failed to fetch user info", err);
     }
