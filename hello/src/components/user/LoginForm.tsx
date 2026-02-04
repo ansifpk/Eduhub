@@ -60,7 +60,9 @@ const handleGoogleLogin = useGoogleLogin({
       body:{ email: userData.email, name: userData.name, password: userData.sub },
       onSuccess:(res)=>{
         navigate("/")
-        dispatch(setUser(res.user))
+        console.log("user",res);
+        
+        dispatch(setUser(res.user.user))
       }
     })
     } catch (err) {

@@ -10,9 +10,6 @@ export class GoogleLoginController implements IController {
     public async handle(req: Request, res: Response, next: NextFunction): Promise<void> {
        try {
        const {email,name,password} = req.body;
-       console.log("cjhe",req.body);
-       
-      //  return ;
       const userAndToken = await this._useCase.execute(
        { email,
         name,
