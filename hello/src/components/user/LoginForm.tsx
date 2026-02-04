@@ -52,17 +52,18 @@ const LoginForm = () => {
 
 
 const handleGoogleLogin = useGoogleLogin({
-    // flow:"implicit",
-    onSuccess: (credentialResponse: TokenResponse ) => {
-      console.log("Credential Response:", credentialResponse);
+    // flow: "implicit", // ← important for getting credential (JWT)
+    onSuccess: (tokenResponse: TokenResponse) => {
+      // tokenResponse contains the JWT in 'access_token' for implicit flow
+      console.log("Token Response:", tokenResponse);
 
-      if (credentialResponse) {
-        console.log("credentialResponse:", credentialResponse);
-        const decoded = jwtDecode<GoogleUser>(credentialResponse.access_token);
+      // Some versions of Google OAuth return credential differently
+      // Decode JWT if needed (depends on token type)
+      if (tokenResponse.access_token) {
+        // decode JWT if it's a JWT token
+        // sometimes Google provides it as access_token, sometimes as credential
+        const decoded = jwtDecode<GoogleUser>(tokenResponse.access_token);
         console.log("Decoded JWT:", decoded);
-
-        // Example: send the token to backend for verification
-        // fetch("/api/auth/google-login", { method: "POST", body: JSON.stringify({ token: credentialResponse.credential }) })
       }
     },
     onError: () => {
