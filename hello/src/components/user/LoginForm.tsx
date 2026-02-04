@@ -51,9 +51,7 @@ const LoginForm = () => {
   }
 
 
-const handleGoogleLogin = async ()=>{
-    setLoading(true);
-    useGoogleLogin({
+const handleGoogleLogin = useGoogleLogin({
     flow:"implicit",
     onSuccess: (credentialResponse: TokenResponse ) => {
       console.log("Credential Response:", credentialResponse);
@@ -70,8 +68,7 @@ const handleGoogleLogin = async ()=>{
     onError: () => {
       console.error("Google login failed");
     },
-  })
-}
+  });
 
 
 
