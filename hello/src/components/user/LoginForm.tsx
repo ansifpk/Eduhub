@@ -53,13 +53,16 @@ const LoginForm = () => {
 
 
 const handleGoogleLogin = useGoogleLogin({
-    flow: "implicit", // ← important for getting credential (JWT)
     onSuccess: async (tokenResponse: TokenResponse) => {
-      // tokenResponse contains the JWT in 'access_token' for implicit flow
-      console.log("Token Response:", tokenResponse);
-      const userData = await axios.get("https://www.googleleapis.com/oauth2/v3/userinfo",{headers:{Authorization:`Bearer ${tokenResponse.access_token}`}})
-      .then ((res)=>res.data);
-      console.log("userData",userData);
+    try {
+      const { data: userData } = await axios.get(
+        "https://www.googleapis.com/oauth2/v3/userinfo",
+        { headers: { Authorization: `Bearer ${tokenResponse.access_token}` } }
+      );
+      console.log("userData", userData);
+    } catch (err) {
+      console.error("Failed to fetch user info", err);
+    }
       
     },
     onError: () => {
