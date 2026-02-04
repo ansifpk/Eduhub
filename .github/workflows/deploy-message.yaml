@@ -1,4 +1,4 @@
-name: Deployment-Message
+name: Deployment-message
 
 on:
   push:

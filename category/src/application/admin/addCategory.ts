@@ -16,10 +16,13 @@ export class AddCategory
       const check = await this.categoryRepository.findOne(input.data.title);
       if (check) {
         throw new BadRequestError(ErrorMessages.CATEGORY_CONFLICT);
-      } else {
+      } 
+        if(input.data.topics.length == 0) throw new BadRequestError("Atleast one topic is required");
+        if(!input.data.description) throw new BadRequestError("Description is Required");
+
         const category = await this.categoryRepository.create(input.data);
         return category;
-      }
+      
     } catch (error) {
       console.error(error);
       input.next(error);

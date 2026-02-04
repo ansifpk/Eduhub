@@ -29,7 +29,7 @@ export class EditCategory
       const currentCategory = await this.categoryRepository.findById(input._id);
 
       if (!currentCategory) {
-        throw new NotFoundError(ErrorMessages.CATEGORY_NOT_FOUND);
+        throw new BadRequestError(ErrorMessages.CATEGORY_NOT_FOUND);
       }
       const checkCategory = await this.categoryRepository.findOne(input.title);
 

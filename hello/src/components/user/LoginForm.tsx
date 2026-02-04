@@ -12,6 +12,8 @@ import useRequest from "@/hooks/useRequest";
 import userRoutes from "@/service/endPoints/userEndPoints";
 import toast from "react-hot-toast";
 import { setUser } from "@/redux/authSlice";
+import { GoogleLogin } from "@react-oauth/google";
+import {jwtDecode} from 'jwt-decode';
 
 const LoginForm = () => {
 
@@ -41,6 +43,8 @@ const LoginForm = () => {
       }
     })
   }
+
+
 
 useEffect(()=>{
   setLoading(false);
@@ -124,10 +128,14 @@ useEffect(()=>{
               </div>
             </div>
           <div className="grid grid-cols-1">
-             
-                <Button variant="outline" type="button" className="w-full text-white cursor-pointer bg-teal-500 hover:bg-teal-300">
+                 <GoogleLogin onSuccess={(creadentialResponse)=>{
+                     console.log("Credential",creadentialResponse);
+                     console.log("jwt",jwtDecode(creadentialResponse.credential!));
+                     
+                 }} />
+                {/* <Button variant="outline" onClick={()=>handleGoogleLogin()} type="button" className="w-full text-white cursor-pointer bg-teal-500 hover:bg-teal-300">
                          <i className="bi bi-google  cursor-pointer" ></i> 
-                </Button>
+                </Button> */}
               
               </div>
           </form>

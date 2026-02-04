@@ -1,11 +1,11 @@
-name: Add test for category Service 
+name: Add test for courses Service 
 on:
   pull_request:
     paths:
-      - "category/**"
+      - "courses/**"
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: cd category && npm install && npm run test:ci
+      - run: cd courses && npm install && npm run test:ci
