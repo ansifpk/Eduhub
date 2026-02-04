@@ -12,14 +12,14 @@ import useRequest from "@/hooks/useRequest";
 import userRoutes from "@/service/endPoints/userEndPoints";
 import toast from "react-hot-toast";
 import { setUser } from "@/redux/authSlice";
-import { GoogleLogin, useGoogleLogin,  type TokenResponse } from "@react-oauth/google";
+import { GoogleLogin, } from "@react-oauth/google";
 import {jwtDecode} from 'jwt-decode';
-interface GoogleUser {
-  email: string;
-  name: string;
-  picture: string;
-  // Add any other fields you want from the JWT payload
-}
+// interface GoogleUser {
+//   email: string;
+//   name: string;
+//   picture: string;
+//   // Add any other fields you want from the JWT payload
+// }
 
 const LoginForm = () => {
 
@@ -51,18 +51,18 @@ const LoginForm = () => {
   }
 
 
-const handleGoogleLogin = useGoogleLogin({
-    flow: "implicit", // ← important for getting credential (JWT)
-    onSuccess: (tokenResponse: TokenResponse) => {
-      // tokenResponse contains the JWT in 'access_token' for implicit flow
-      console.log("Token Response:", tokenResponse);
-      const decoded = jwtDecode<GoogleUser>(tokenResponse.access_token);
-      console.log("Decoded JWT:", decoded);
-    },
-    onError: () => {
-      console.error("Google login failed");
-    },
-  });
+// const handleGoogleLogin = useGoogleLogin({
+//     flow: "implicit", // ← important for getting credential (JWT)
+//     onSuccess: (tokenResponse: TokenResponse) => {
+//       // tokenResponse contains the JWT in 'access_token' for implicit flow
+//       console.log("Token Response:", tokenResponse);
+//       const decoded = jwtDecode<GoogleUser>(tokenResponse.access_token);
+//       console.log("Decoded JWT:", decoded);
+//     },
+//     onError: () => {
+//       console.error("Google login failed");
+//     },
+//   });
 
 
 
