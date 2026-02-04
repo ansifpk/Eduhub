@@ -12,14 +12,14 @@ import useRequest from "@/hooks/useRequest";
 import userRoutes from "@/service/endPoints/userEndPoints";
 import toast from "react-hot-toast";
 import { setUser } from "@/redux/authSlice";
-import { useGoogleLogin, type CredentialResponse, type TokenResponse } from "@react-oauth/google";
-import {jwtDecode} from 'jwt-decode';
-interface GoogleUser {
-  email: string;
-  name: string;
-  picture: string;
-  // Add any other fields you want from the JWT payload
-}
+import { useGoogleLogin,  type TokenResponse } from "@react-oauth/google";
+// import {jwtDecode} from 'jwt-decode';
+// interface GoogleUser {
+//   email: string;
+//   name: string;
+//   picture: string;
+//   // Add any other fields you want from the JWT payload
+// }
 
 const LoginForm = () => {
 
