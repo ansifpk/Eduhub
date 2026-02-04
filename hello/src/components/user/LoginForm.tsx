@@ -13,13 +13,13 @@ import userRoutes from "@/service/endPoints/userEndPoints";
 import toast from "react-hot-toast";
 import { setUser } from "@/redux/authSlice";
 import { useGoogleLogin,  type TokenResponse } from "@react-oauth/google";
-// import {jwtDecode} from 'jwt-decode';
-// interface GoogleUser {
-//   email: string;
-//   name: string;
-//   picture: string;
-//   // Add any other fields you want from the JWT payload
-// }
+import {jwtDecode} from 'jwt-decode';
+interface GoogleUser {
+  email: string;
+  name: string;
+  picture: string;
+  // Add any other fields you want from the JWT payload
+}
 
 const LoginForm = () => {
 
@@ -57,8 +57,9 @@ const handleGoogleLogin = useGoogleLogin({
       console.log("Credential Response:", credentialResponse);
 
       if (credentialResponse) {
-        // const decoded = jwtDecode<GoogleUser>(credentialResponse.credential);
-        console.log("Decoded JWT:", credentialResponse);
+        const decoded = jwtDecode<GoogleUser>(credentialResponse.access_token);
+        console.log("Decoded JWT:", decoded);
+        // console.log("Decoded JWT:", credentialResponse);
 
         // Example: send the token to backend for verification
         // fetch("/api/auth/google-login", { method: "POST", body: JSON.stringify({ token: credentialResponse.credential }) })
