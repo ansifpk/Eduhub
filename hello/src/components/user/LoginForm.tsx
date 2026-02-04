@@ -54,15 +54,15 @@ const handleGoogleLogin = useGoogleLogin({
       );
       console.log(userData);
       
-    //   await doRequest({
-    //   url:userRoutes.googleLogin,
-    //   method:"post",
-    //   body:{ email: userData.email, name: userData.name, password: userData.sub },
-    //   onSuccess:(res)=>{
-    //     navigate("/")
-    //     dispatch(setUser(res.user))
-    //   }
-    // })
+      await doRequest({
+      url:userRoutes.googleLogin,
+      method:"post",
+      body:{ email: userData.email, name: userData.name, password: userData.sub },
+      onSuccess:(res)=>{
+        navigate("/")
+        dispatch(setUser(res.user))
+      }
+    })
     } catch (err) {
       console.error("Failed to fetch user info", err);
     }
