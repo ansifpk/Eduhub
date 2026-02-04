@@ -267,7 +267,7 @@ const CourseDetailes = () => {
             className="md:min-h-[50vh] min-h-[30vh] bg-teal-500 "
           />
         </div>
-        <div className="grid mx-2 text-black ">
+        <div style={{color:"red"}} className="grid mx-2 text-black ">
           <strong className="font-bold md:text-3xl text-xl">{course?.title}</strong>
           <strong className="font-bold md:text-1xl text-lg">{course?.thumbnail}</strong>
           <p className="md:font-bold font-semibold">created by {course?.instructorId?.name}</p>

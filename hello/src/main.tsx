@@ -7,6 +7,8 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { persist, store } from "./redux/store.ts";
 import { SocketProvider } from "./context/socketContext.tsx";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+
 const App = lazy(() => import("./App.tsx"));
 
 createRoot(document.getElementById("root")!).render(
@@ -14,9 +16,9 @@ createRoot(document.getElementById("root")!).render(
     <Suspense>
       <BrowserRouter>
         <Toaster position="bottom-right" reverseOrder={false} />
-        {/* 
+        
         <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENTID} >
-        */}
+       
         <Provider store={store}>
           <SocketProvider>
             <PersistGate persistor={persist}>
@@ -24,9 +26,9 @@ createRoot(document.getElementById("root")!).render(
             </PersistGate>
           </SocketProvider>
         </Provider>
-        {/*
+        
         </GoogleOAuthProvider>
-        */}
+       
       </BrowserRouter>
     </Suspense>
   </StrictMode>

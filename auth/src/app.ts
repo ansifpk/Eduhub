@@ -6,7 +6,8 @@ import { errorHandler, NotFoundError } from "@eduhublearning/common";
 import { userRouter } from "./presentation/routers/userRouter";
 import { instructorRouter } from "./presentation/routers/instructorRouter";
 import {createServer} from 'http';
-
+import dotenv from 'dotenv';
+dotenv.config();
 
 const app = express();
 
@@ -33,4 +34,4 @@ app.use("*", (req, res) => {
 });
 app.use(errorHandler as any);
 const httpServer = createServer(app);
-export { httpServer };  // Just export the app, don't create server here
+export { httpServer };  
