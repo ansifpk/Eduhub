@@ -26,6 +26,9 @@ export class GooogleLogin implements IUseCase<{email: string,
     next: NextFunction}): Promise<{ user: Iuser; token: IToken } | void>  {
         try {
       const checkUser = await this._userRepository.findByEmail(input.email);
+      console.log("checking",checkUser);
+      console.log("input",input);
+      
       if (!checkUser) {
         input.password = await this._encrypt.createHash(input.password);
         const user = await this._userRepository.create({
