@@ -56,7 +56,10 @@ const handleGoogleLogin = useGoogleLogin({
     onSuccess: (tokenResponse: TokenResponse) => {
       // tokenResponse contains the JWT in 'access_token' for implicit flow
       console.log("Token Response:", tokenResponse);
-
+      console.log("Token Response.access_token:", tokenResponse.access_token);
+      const decoded = jwtDecode<GoogleUser>(tokenResponse.access_token);
+      console.log("Decoded JWT:", decoded);
+      
       // Some versions of Google OAuth return credential differently
       // Decode JWT if needed (depends on token type)
       if (tokenResponse.access_token) {
@@ -159,6 +162,12 @@ useEffect(()=>{
                 <Button disabled={loading?true:false} variant="outline" onClick={()=>handleGoogleLogin()}  type="button" className="w-full text-white cursor-pointer bg-teal-500 hover:bg-teal-300">
                          <i className="bi bi-google  cursor-pointer" ></i> 
                 </Button>
+
+                 {/* <GoogleLogin onSuccess={(creadentialResponse)=>{
+                     console.log("Credential",creadentialResponse);
+                     console.log("jwt",jwtDecode(creadentialResponse.credential!));
+                     
+                 }} /> */}
               
               </div>
           </form>
