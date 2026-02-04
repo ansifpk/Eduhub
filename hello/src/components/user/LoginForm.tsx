@@ -52,22 +52,12 @@ const LoginForm = () => {
 
 
 const handleGoogleLogin = useGoogleLogin({
-    // flow: "implicit", // ← important for getting credential (JWT)
+    flow: "implicit", // ← important for getting credential (JWT)
     onSuccess: (tokenResponse: TokenResponse) => {
       // tokenResponse contains the JWT in 'access_token' for implicit flow
       console.log("Token Response:", tokenResponse);
-      console.log("Token Response.access_token:", tokenResponse.access_token);
       const decoded = jwtDecode<GoogleUser>(tokenResponse.access_token);
       console.log("Decoded JWT:", decoded);
-      
-      // Some versions of Google OAuth return credential differently
-      // Decode JWT if needed (depends on token type)
-      if (tokenResponse.access_token) {
-        // decode JWT if it's a JWT token
-        // sometimes Google provides it as access_token, sometimes as credential
-        const decoded = jwtDecode<GoogleUser>(tokenResponse.access_token);
-        console.log("Decoded JWT:", decoded);
-      }
     },
     onError: () => {
       console.error("Google login failed");
