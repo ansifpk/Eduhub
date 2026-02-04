@@ -49,7 +49,7 @@ const handleGoogleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse: TokenResponse) => {
     try {
       const { data: userData } = await axios.get(
-        import.meta.env.GOOGLE_AUTH_URL,
+        import.meta.env.VITE_GOOGLE_AUTH_URL,
         { headers: { Authorization: `Bearer ${tokenResponse.access_token}` } }
       );
       console.log(userData);
