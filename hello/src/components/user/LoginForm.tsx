@@ -12,8 +12,14 @@ import useRequest from "@/hooks/useRequest";
 import userRoutes from "@/service/endPoints/userEndPoints";
 import toast from "react-hot-toast";
 import { setUser } from "@/redux/authSlice";
-import { GoogleLogin } from "@react-oauth/google";
+import { useGoogleLogin, type CredentialResponse, type TokenResponse } from "@react-oauth/google";
 import {jwtDecode} from 'jwt-decode';
+interface GoogleUser {
+  email: string;
+  name: string;
+  picture: string;
+  // Add any other fields you want from the JWT payload
+}
 
 const LoginForm = () => {
 
@@ -43,6 +49,25 @@ const LoginForm = () => {
       }
     })
   }
+
+
+const handleGoogleLogin = useGoogleLogin({
+    flow:"implicit",
+    onSuccess: (credentialResponse: TokenResponse ) => {
+      console.log("Credential Response:", credentialResponse);
+
+      if (credentialResponse) {
+        // const decoded = jwtDecode<GoogleUser>(credentialResponse.credential);
+        console.log("Decoded JWT:", credentialResponse);
+
+        // Example: send the token to backend for verification
+        // fetch("/api/auth/google-login", { method: "POST", body: JSON.stringify({ token: credentialResponse.credential }) })
+      }
+    },
+    onError: () => {
+      console.error("Google login failed");
+    },
+  });
 
 
 
@@ -128,14 +153,10 @@ useEffect(()=>{
               </div>
             </div>
           <div className="grid grid-cols-1">
-                 <GoogleLogin onSuccess={(creadentialResponse)=>{
-                     console.log("Credential",creadentialResponse);
-                     console.log("jwt",jwtDecode(creadentialResponse.credential!));
-                     
-                 }} />
-                {/* <Button variant="outline" onClick={()=>handleGoogleLogin()} type="button" className="w-full text-white cursor-pointer bg-teal-500 hover:bg-teal-300">
+                 
+                <Button variant="outline" onClick={()=>handleGoogleLogin()}  type="button" className="w-full text-white cursor-pointer bg-teal-500 hover:bg-teal-300">
                          <i className="bi bi-google  cursor-pointer" ></i> 
-                </Button> */}
+                </Button>
               
               </div>
           </form>
