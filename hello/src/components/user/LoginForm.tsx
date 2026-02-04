@@ -12,8 +12,9 @@ import useRequest from "@/hooks/useRequest";
 import userRoutes from "@/service/endPoints/userEndPoints";
 import toast from "react-hot-toast";
 import { setUser } from "@/redux/authSlice";
-import { GoogleLogin, } from "@react-oauth/google";
-import {jwtDecode} from 'jwt-decode';
+import { useGoogleLogin, type TokenResponse, } from "@react-oauth/google";
+// import {jwtDecode} from 'jwt-decode';
+import axios from "axios";
 // interface GoogleUser {
 //   email: string;
 //   name: string;
@@ -51,18 +52,20 @@ const LoginForm = () => {
   }
 
 
-// const handleGoogleLogin = useGoogleLogin({
-//     flow: "implicit", // ← important for getting credential (JWT)
-//     onSuccess: (tokenResponse: TokenResponse) => {
-//       // tokenResponse contains the JWT in 'access_token' for implicit flow
-//       console.log("Token Response:", tokenResponse);
-//       const decoded = jwtDecode<GoogleUser>(tokenResponse.access_token);
-//       console.log("Decoded JWT:", decoded);
-//     },
-//     onError: () => {
-//       console.error("Google login failed");
-//     },
-//   });
+const handleGoogleLogin = useGoogleLogin({
+    flow: "implicit", // ← important for getting credential (JWT)
+    onSuccess: async (tokenResponse: TokenResponse) => {
+      // tokenResponse contains the JWT in 'access_token' for implicit flow
+      console.log("Token Response:", tokenResponse);
+      const userData = await axios.get("https://www.googleleapis.com/oauth2/v3/userinfo",{headers:{Authorization:`Bearer ${tokenResponse.access_token}`}})
+      .then ((res)=>res.data);
+      console.log("userData",userData);
+      
+    },
+    onError: () => {
+      console.error("Google login failed");
+    },
+  });
 
 
 
@@ -149,14 +152,11 @@ useEffect(()=>{
             </div>
           <div className="grid grid-cols-1 justify-center-safe items-center-safe">
                  
-                {/* <Button disabled={loading?true:false} variant="outline" onClick={()=>handleGoogleLogin()}  type="button" className="w-full text-white cursor-pointer bg-teal-500 hover:bg-teal-300">
+                <Button disabled={loading?true:false} variant="outline" onClick={()=>handleGoogleLogin()}  type="button" className="w-full text-white cursor-pointer bg-teal-500 hover:bg-teal-300">
                          <i className="bi bi-google  cursor-pointer" ></i> 
-                </Button> */}
+                </Button>
 
-                 <GoogleLogin onSuccess={(creadentialResponse)=>{
-                     console.log("Credential",creadentialResponse);
-                     console.log("jwt",jwtDecode(creadentialResponse.credential!));
-                 }} />
+                
               
               </div>
           </form>
