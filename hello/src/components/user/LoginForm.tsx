@@ -51,7 +51,9 @@ const LoginForm = () => {
   }
 
 
-const handleGoogleLogin = useGoogleLogin({
+const handleGoogleLogin = async ()=>{
+    setLoading(true);
+    useGoogleLogin({
     flow:"implicit",
     onSuccess: (credentialResponse: TokenResponse ) => {
       console.log("Credential Response:", credentialResponse);
@@ -68,7 +70,8 @@ const handleGoogleLogin = useGoogleLogin({
     onError: () => {
       console.error("Google login failed");
     },
-  });
+  })
+}
 
 
 
@@ -155,7 +158,7 @@ useEffect(()=>{
             </div>
           <div className="grid grid-cols-1">
                  
-                <Button variant="outline" onClick={()=>handleGoogleLogin()}  type="button" className="w-full text-white cursor-pointer bg-teal-500 hover:bg-teal-300">
+                <Button disabled={loading?true:false} variant="outline" onClick={()=>handleGoogleLogin()}  type="button" className="w-full text-white cursor-pointer bg-teal-500 hover:bg-teal-300">
                          <i className="bi bi-google  cursor-pointer" ></i> 
                 </Button>
               
