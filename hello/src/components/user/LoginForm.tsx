@@ -57,9 +57,9 @@ const handleGoogleLogin = useGoogleLogin({
       console.log("Credential Response:", credentialResponse);
 
       if (credentialResponse) {
+        console.log("credentialResponse:", credentialResponse);
         const decoded = jwtDecode<GoogleUser>(credentialResponse.access_token);
         console.log("Decoded JWT:", decoded);
-        console.log("credentialResponse:", credentialResponse);
 
         // Example: send the token to backend for verification
         // fetch("/api/auth/google-login", { method: "POST", body: JSON.stringify({ token: credentialResponse.credential }) })
