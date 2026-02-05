@@ -18,7 +18,7 @@ spec:
           imagePullPolicy: Always
           env: 
             - name: KAFKA_BROKER
-              value: "kafka-broker:9092"
+              value: "kafka-srv:9092"
             - name: MONGO_URL
               value: "mongodb+srv://pkansif39:ansifpk123@eduhub.y1e7f.mongodb.net/auth?retryWrites=true&w=majority&appName=EduHub"
             - name: JWT_ACCESSKEY
