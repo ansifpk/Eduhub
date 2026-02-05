@@ -36,7 +36,13 @@ jobs:
             --name ${{ secrets.EKS_CLUSTER_NAME }} \
             --region ${{ secrets.AWS_REGION }}
             
-      - name: Restart deployment
-        run: kubectl rollout restart deployment auth-depl
+      - name: Deploy new image to EKS
+        run: |
+          kubectl set image deployment/auth-depl \
+          auth=${{ secrets.DOCKER_USERNAME }}/eduhub-auth:${{ github.sha }}
+
+      - name: Verify rollout
+        run: |
+          kubectl rollout status deployment/auth-depl
 
 
