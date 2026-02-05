@@ -1,46 +1,46 @@
-# name: Deployment-courses
+name: Deployment-courses
 
-# on:
-#   push:
-#     branches:
-#       - master
-#     paths:
-#       - 'courses/**'
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'courses/**'
 
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-#     steps:
-#       - uses: actions/checkout@v4
+    steps:
+      - uses: actions/checkout@v4
+        with:
+         submodules: false
 
-#       - name: Build image 
-#         run: cd courses && docker build -t ${{secrets.DOCKER_USERNAME}}/eduhub-course:latest .
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login Docker Hub 
+        run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
      
-#       - name: Login Docker Hub 
-#         run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
-     
-#       - name: Push Docker image 
-#         run: docker push ${{secrets.DOCKER_USERNAME}}/eduhub-course:latest
+      - name: Build image 
+        run: cd auth && docker build -t ${{secrets.DOCKER_USERNAME}}/eduhub-auth:${{github.sha}} .
 
-#       - name: Authenticate to Google Cloud 
-#         uses: 'google-github-actions/auth@v2'
-#         with:
-#           credentials_json: '${{ secrets.GCP_SA_KEY }}'
-
-#       - name: Set up gcloud CLI 
-#         uses: 'google-github-actions/setup-gcloud@v2'
-     
-#       - name: Install gke-gcloud-auth-plugin
-#         run: 'gcloud components install gke-gcloud-auth-plugin'
-    
-#       - name: Get credentials for cluster
-#         run: |
-#           gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} \
-#           --region=${{ secrets.GKE_REGION }} \
-#           --project=${{ secrets.GCP_PROJECT_ID }}
-
-#       - name: Restart deployment
-#         run: kubectl rollout restart deployment course-depl
+      - name: Push Docker image 
+        run: docker push ${{secrets.DOCKER_USERNAME}}/eduhub-auth:${{github.sha}}
+        
+      - name: Update kubeconfig for EKS
+        run: |
+          aws eks update-kubeconfig \
+            --name ${{ secrets.EKS_CLUSTER_NAME }} \
+            --region ${{ secrets.AWS_REGION }}
+            
+      - name: Update deployment image
+        run: |
+          kubectl set image deployment/auth-depl \
+            auth=${{ secrets.DOCKER_USERNAME }}/eduhub-auth:${{ github.sha }}
 
 
