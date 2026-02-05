@@ -16,9 +16,17 @@ spec:
         - name: auth
           image: pkansif/eduhub-auth:latest
           imagePullPolicy: Always
-          env:
-           - name: "image"
-             value: "ji"
+          env: 
+            - name: KAFKA_BROKER
+              value: "kafka-broker:9092"
+            - name: MONGO_URL
+              value: "mongodb+srv://pkansif39:ansifpk123@eduhub.y1e7f.mongodb.net/auth?retryWrites=true&w=majority&appName=EduHub"
+            - name: JWT_ACCESSKEY
+              value: "itsjwtaccesskey"
+            - name: JWT_REFRESHKEY
+              value: "itsjwtRefreshkey"
+            - name: PORT
+              value: "3000"
 ---
 apiVersion: v1
 kind: Service
