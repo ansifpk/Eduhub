@@ -6,6 +6,8 @@ import { UserProfileUpdatedConsumer } from '../infrastructure/kafka/consumer/use
 import { EmailChangedConsumer } from '../infrastructure/kafka/consumer/email-changed-consumer';
 import { allowedOrgins, httpServer } from '../app';
 import { connectDB } from '../infrastructure/db/models/config';
+import dotenv from 'dotenv';
+dotenv.config();
 
 export class ApiServer {
    
@@ -54,7 +56,7 @@ export class ApiServer {
             await new InstructorAprovedConsumer(consumer).listen()
             await new UserProfileUpdatedConsumer(consumer2).listen()
             await new EmailChangedConsumer(consumer3).listen()
-            httpServer.listen(port,()=>console.log(`auth service running at ${port}.`));
+            httpServer.listen(port,()=>console.log(`auth service running at ${port}`));
         } catch (error) {
             console.error(error);
         }
