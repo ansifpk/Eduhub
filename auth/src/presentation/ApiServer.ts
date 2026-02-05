@@ -6,6 +6,8 @@ import { UserProfileUpdatedConsumer } from '../infrastructure/kafka/consumer/use
 import { EmailChangedConsumer } from '../infrastructure/kafka/consumer/email-changed-consumer';
 import { allowedOrgins, httpServer } from '../app';
 import { connectDB } from '../infrastructure/db/models/config';
+import dotenv from 'dotenv';
+dotenv.config();
 
 export class ApiServer {
    
