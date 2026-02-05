@@ -17,8 +17,11 @@ spec:
           image: pkansif/eduhub-auth:latest
           imagePullPolicy: Always
           env:
-           - name: "image"
-             value: "ji"
+           - name: KAFKA_BROKER
+             value: kafka-srv:9092
+           - name: MONGO_URL
+             value: mongodb+srv://pkansif39:ansifpk123@eduhub.y1e7f.mongodb.net/auth?retryWrites=true&w=majority&appName=EduHub
+             
 ---
 apiVersion: v1
 kind: Service
