@@ -44,7 +44,6 @@ const Courses = () => {
   );
   const handlePage = useCallback(
     (page: number) => {
-      console.log("total page",page)
       setTotalPage(page);
     },
     [setTotalPage, setPage]
@@ -166,7 +165,7 @@ const Courses = () => {
         <PaginationContent>
           <PaginationItem>
             <PaginationPrevious
-              className="cursor-pointer"
+              className={`${page !== 1 ? "cursor-pointer" : ""}`}
               onClick={() => setPage((prev) => (prev !== 1 ? prev - 1 : prev))}
             />
           </PaginationItem>
@@ -181,7 +180,7 @@ const Courses = () => {
           ))}
           <PaginationItem>
             <PaginationNext
-             className="cursor-pointer"
+             className={`${page !== totalPage ? "cursor-pointer" : ""}`}
               onClick={() =>
                 setPage((prev) => (prev !== totalPage ? prev + 1 : prev))
               }
