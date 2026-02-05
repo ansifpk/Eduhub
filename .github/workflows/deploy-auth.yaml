@@ -13,6 +13,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+         submodules: false
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -36,7 +38,9 @@ jobs:
             --name ${{ secrets.EKS_CLUSTER_NAME }} \
             --region ${{ secrets.AWS_REGION }}
             
-      - name: Restart deployment
-        run: kubectl rollout restart deployment auth-depl
+      - name: Update deployment image
+        run: |
+          kubectl set image deployment/auth-depl \
+            auth=${{ secrets.DOCKER_USERNAME }}/eduhub-auth:${{ github.sha }}
 
 
