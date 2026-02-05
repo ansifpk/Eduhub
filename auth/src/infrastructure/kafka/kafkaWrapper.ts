@@ -1,5 +1,6 @@
 import { Consumer, Kafka, Partitioners, Producer } from 'kafkajs'
-
+import dotenv from 'dotenv';
+dotenv.config(); 
 
 class KafkaWrapper {
     private _kafka: Kafka
