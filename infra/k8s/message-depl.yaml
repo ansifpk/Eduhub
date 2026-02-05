@@ -16,6 +16,9 @@ spec:
         - name: message
           image: pkansif/eduhub-message:latest
           imagePullPolicy: Always
+          envFrom:
+            - secretRef:
+                name: message-service-secrets
 ---
 apiVersion: v1
 kind: Service

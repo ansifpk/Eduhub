@@ -16,6 +16,9 @@ spec:
         - name: category
           image: pkansif/eduhub-category:latest
           imagePullPolicy: Always
+          envFrom:
+            - secretRef:
+                name: category-service-secrets
 ---
 apiVersion: v1
 kind: Service

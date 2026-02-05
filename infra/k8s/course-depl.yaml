@@ -16,6 +16,9 @@ spec:
         - name: course
           image: pkansif/eduhub-course:latest
           imagePullPolicy: Always
+          envFrom:
+            - secretRef:
+                name: course-service-secrets
 ---
 apiVersion: v1
 kind: Service
