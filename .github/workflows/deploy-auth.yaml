@@ -1,28 +1,40 @@
-name: Deployment-Auth
+name: Deploy Auth Service
 
 on:
   push:
     branches:
       - master
     paths:
-      - 'auth/**'
+      - "auth/**"
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      # 1️⃣ Checkout code
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-      - name: Build image 
-        run: cd auth && docker build -t ${{secrets.DOCKER_USERNAME}}/eduhub-auth .
-     
-      - name: Login Docker Hub 
-        run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
-     
-      - name: Push Docker image 
-        run: docker push ${{secrets.DOCKER_USERNAME}}/eduhub-auth
-        
+      # 2️⃣ Login to Docker Hub
+      - name: Docker Login
+        run: |
+          docker login \
+            -u ${{ secrets.DOCKER_USERNAME }} \
+            -p ${{ secrets.DOCKER_PASSWORD }}
+
+      # 3️⃣ Build Docker image with Git SHA
+      - name: Build Auth Image
+        run: |
+          cd auth
+          docker build -t pkansif/eduhub-auth:${GITHUB_SHA} .
+
+      # 4️⃣ Push image to Docker Hub
+      - name: Push Auth Image
+        run: |
+          docker push pkansif/eduhub-auth:${GITHUB_SHA}
+
+      # 5️⃣ Configure AWS credentials
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -30,13 +42,20 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Update kubeconfig for EKS
+      # 6️⃣ Update kubeconfig for EKS
+      - name: Update kubeconfig
         run: |
           aws eks update-kubeconfig \
             --name ${{ secrets.EKS_CLUSTER_NAME }} \
             --region ${{ secrets.AWS_REGION }}
-            
-      - name: Restart deployment
-        run: kubectl rollout restart deployment auth-depl
 
+      # 7️⃣ Update deployment image (THIS triggers rollout)
+      - name: Deploy to EKS
+        run: |
+          kubectl set image deployment/auth-depl \
+            auth=pkansif/eduhub-auth:${GITHUB_SHA}
 
+      # 8️⃣ Verify rollout
+      - name: Verify rollout
+        run: |
+          kubectl rollout status deployment/auth-depl
