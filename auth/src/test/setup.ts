@@ -7,8 +7,8 @@ beforeAll(async ()=>{
     process.env.JWT_ACCESSKEY = 'test_access_secret';
     process.env.JWT_REFRESHKEY = 'test_refresh_secret';
     process.env.JWT_VERIFICATIONKEY = 'test_verify_secret';
-    process.env.EMAIL = "test@test.com";
-    process.env.PASSWORD = "dummy";
+    process.env.EMAIL = "pkansif39@gmail.com";
+    process.env.PASSWORD = "tvtq zgcc skhn rliu";
     mongo = await MongoMemoryServer.create(); 
     const mongoUri = mongo.getUri();          
     await mongoose.connect(mongoUri)
