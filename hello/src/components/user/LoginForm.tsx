@@ -52,8 +52,7 @@ const handleGoogleLogin = useGoogleLogin({
         import.meta.env.VITE_GOOGLE_AUTH_URL,
         { headers: { Authorization: `Bearer ${tokenResponse.access_token}` } }
       );
-      console.log(userData);
-      
+     
       await doRequest({
       url:userRoutes.googleLogin,
       method:"post",
@@ -73,7 +72,7 @@ const handleGoogleLogin = useGoogleLogin({
     onError: () => {
       console.error("Google login failed");
     },
-  });
+});
 
 
 
@@ -158,14 +157,10 @@ useEffect(()=>{
                 </span>
               </div>
             </div>
-          <div className="grid grid-cols-1 justify-center-safe items-center-safe">
-                 
+          <div className="grid grid-cols-1 justify-center-safe items-center-safe"> 
                 <Button disabled={loading?true:false} variant="outline" onClick={()=>handleGoogleLogin()}  type="button" className="w-full text-white cursor-pointer bg-teal-500 hover:bg-teal-300">
                          <i className="bi bi-google  cursor-pointer" ></i> 
                 </Button>
-
-                
-              
               </div>
           </form>
         </CardContent>

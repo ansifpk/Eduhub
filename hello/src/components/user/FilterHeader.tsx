@@ -53,6 +53,7 @@ const FilterHeader: React.FC<Props> = ({
       method: "get",
       body: {},
       onSuccess: (data) => {
+        console.log('data.pages',data.pages)
         handleCourse(data.courses);
         handlePage(data.pages);
       },

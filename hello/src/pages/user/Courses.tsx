@@ -44,6 +44,7 @@ const Courses = () => {
   );
   const handlePage = useCallback(
     (page: number) => {
+      console.log("total page",page)
       setTotalPage(page);
     },
     [setTotalPage, setPage]

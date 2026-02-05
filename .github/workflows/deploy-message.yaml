@@ -1,46 +1,46 @@
-name: Deployment-message
+# name: Deployment-message
 
-on:
-  push:
-    branches:
-      - master
-    paths:
-      - 'message/**'
+# on:
+#   push:
+#     branches:
+#       - master
+#     paths:
+#       - 'message/**'
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v4
+#     steps:
+#       - uses: actions/checkout@v4
 
-      - name: Build image 
-        run: cd message && docker build -t ${{secrets.DOCKER_USERNAME}}/eduhub-message:latest .
+#       - name: Build image 
+#         run: cd message && docker build -t ${{secrets.DOCKER_USERNAME}}/eduhub-message:latest .
      
-      - name: Login Docker Hub 
-        run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
+#       - name: Login Docker Hub 
+#         run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
      
-      - name: Push Docker image 
-        run: docker push ${{secrets.DOCKER_USERNAME}}/eduhub-message:latest
+#       - name: Push Docker image 
+#         run: docker push ${{secrets.DOCKER_USERNAME}}/eduhub-message:latest
 
-      - name: Authenticate to Google Cloud 
-        uses: 'google-github-actions/auth@v2'
-        with:
-          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+#       - name: Authenticate to Google Cloud 
+#         uses: 'google-github-actions/auth@v2'
+#         with:
+#           credentials_json: '${{ secrets.GCP_SA_KEY }}'
 
-      - name: Set up gcloud CLI 
-        uses: 'google-github-actions/setup-gcloud@v2'
+#       - name: Set up gcloud CLI 
+#         uses: 'google-github-actions/setup-gcloud@v2'
      
-      - name: Install gke-gcloud-auth-plugin
-        run: 'gcloud components install gke-gcloud-auth-plugin'
+#       - name: Install gke-gcloud-auth-plugin
+#         run: 'gcloud components install gke-gcloud-auth-plugin'
     
-      - name: Get credentials for cluster
-        run: |
-          gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} \
-          --region=${{ secrets.GKE_REGION }} \
-          --project=${{ secrets.GCP_PROJECT_ID }}
+#       - name: Get credentials for cluster
+#         run: |
+#           gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} \
+#           --region=${{ secrets.GKE_REGION }} \
+#           --project=${{ secrets.GCP_PROJECT_ID }}
 
-      - name: Restart deployment
-        run: kubectl rollout restart deployment message-depl
+#       - name: Restart deployment
+#         run: kubectl rollout restart deployment message-depl
 
 

@@ -10,11 +10,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import useRequest from "@/hooks/useRequest";
 import toast from "react-hot-toast";
 import userRoutes from "@/service/endPoints/userEndPoints";
+import { setUser } from "@/redux/authSlice";
+import { useGoogleLogin, type TokenResponse } from "@react-oauth/google";
+import axios from "axios";
+import { useDispatch } from "react-redux";
 
 const RegisterForm = () => {
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);  
   const navigate = useNavigate();
+  const dispatch = useDispatch()
   const {doRequest,err} = useRequest();
     const {
       register,
@@ -24,6 +29,7 @@ const RegisterForm = () => {
       resolver: zodResolver(registerSchema),
     });  
 
+    
   const onSubmit = async(data:RegisterFormInputs) => {
     setLoading(true)
      await doRequest({
@@ -37,6 +43,35 @@ const RegisterForm = () => {
       }
     })
   }
+
+  const handleGoogleLogin = useGoogleLogin({
+      onSuccess: async (tokenResponse: TokenResponse) => {
+      try {
+        const { data: userData } = await axios.get(
+          import.meta.env.VITE_GOOGLE_AUTH_URL,
+          { headers: { Authorization: `Bearer ${tokenResponse.access_token}` } }
+        );
+       
+        await doRequest({
+        url:userRoutes.googleLogin,
+        method:"post",
+        body:{ email: userData.email, name: userData.name, password: userData.sub },
+        onSuccess:(res)=>{
+          navigate("/")
+          console.log("user",res);
+          
+          dispatch(setUser(res.user.user))
+        }
+      })
+      } catch (err) {
+        console.error("Failed to fetch user info", err);
+      }
+        
+      },
+      onError: () => {
+        console.error("Google login failed");
+      },
+  });
 
   useEffect(()=>{
       setLoading(false);
@@ -130,7 +165,7 @@ const RegisterForm = () => {
               </div>
               <div className="grid grid-cols-1">
              
-                <Button variant="outline" type="button" className="w-full text-white cursor-pointer bg-teal-500 hover:bg-teal-300">
+               <Button disabled={loading?true:false} variant="outline" onClick={()=>handleGoogleLogin()}  type="button" className="w-full text-white cursor-pointer bg-teal-500 hover:bg-teal-300">
                          <i className="bi bi-google  cursor-pointer" ></i> 
                 </Button>
               
