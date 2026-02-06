@@ -27,10 +27,10 @@ jobs:
         run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
      
       - name: Build image 
-        run: cd auth && docker build -t ${{secrets.DOCKER_USERNAME}}/eduhub-auth:${{github.sha}} .
+        run: cd profile && docker build -t ${{secrets.DOCKER_USERNAME}}/eduhub-profile:${{github.sha}} .
 
       - name: Push Docker image 
-        run: docker push ${{secrets.DOCKER_USERNAME}}/eduhub-auth:${{github.sha}}
+        run: docker push ${{secrets.DOCKER_USERNAME}}/eduhub-profile:${{github.sha}}
         
       - name: Update kubeconfig for EKS
         run: |
@@ -40,7 +40,7 @@ jobs:
             
       - name: Update deployment image
         run: |
-          kubectl set image deployment/auth-depl \
-            auth=${{ secrets.DOCKER_USERNAME }}/eduhub-auth:${{ github.sha }}
+          kubectl set image deployment/profile-depl \
+            profile=${{ secrets.DOCKER_USERNAME }}/eduhub-profile:${{ github.sha }}
 
 
