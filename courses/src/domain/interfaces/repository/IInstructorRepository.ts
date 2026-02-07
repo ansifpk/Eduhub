@@ -1,7 +1,7 @@
 import { ICourse } from "../../entities/course"
 import { IRating } from "../../entities/ratings"
 import { ISection } from "../../entities/section"
-import { ITest } from "../../entities/test"
+import { ITest } from "../../entities/tests"
 import { Iuser } from "../../entities/user"
 
 

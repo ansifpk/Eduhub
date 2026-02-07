@@ -3,7 +3,7 @@ import { ICoupon } from "../../../domain/entities/coupon";
 import { ICourse } from "../../../domain/entities/course";
 import { IRating } from "../../../domain/entities/ratings";
 import { IReport } from "../../../domain/entities/report";
-import { ITest } from "../../../domain/entities/test";
+import { ITest } from "../../../domain/entities/tests";
 import { IUserRepository } from "../../../domain/interfaces/repository/IUserRepository";
 import { couponModel } from "../models/couponsModel";
 import { Course } from "../models/courseModel";

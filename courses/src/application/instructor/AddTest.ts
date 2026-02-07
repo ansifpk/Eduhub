@@ -1,7 +1,7 @@
 import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
 import { InstructorRepository } from "../../insfrastructure/db/repositories/instructorRepository";
 import { NextFunction } from "express";
-import { ITest } from "../../domain/entities/test";
+import { ITest } from "../../domain/entities/tests";
 
 export class AddTest
   implements

@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { ICourse } from "../../../domain/entities/course";
 import { IRating } from "../../../domain/entities/ratings";
 import { ISection } from "../../../domain/entities/section";
-import { ITest } from "../../../domain/entities/test";
+import { ITest } from "../../../domain/entities/tests";
 import { Iuser } from "../../../domain/entities/user";
 import { IInstructorrepository } from "../../../domain/interfaces/repository/IInstructorRepository";
 import { Course } from "../models/courseModel";

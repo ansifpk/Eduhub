@@ -2,7 +2,7 @@ import { ICoupon } from "../../entities/coupon"
 import { ICourse } from "../../entities/course"
 import { IRating } from "../../entities/ratings"
 import { IReport } from "../../entities/report"
-import { ITest } from "../../entities/test"
+import { ITest } from "../../entities/tests"
 import { IQuery } from "../IQuery"
 
 

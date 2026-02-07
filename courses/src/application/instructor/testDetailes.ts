@@ -1,5 +1,5 @@
 import { IUseCase } from "@eduhublearning/common";
-import { ITest } from "../../domain/entities/test";
+import { ITest } from "../../domain/entities/tests";
 import { InstructorRepository } from "../../insfrastructure/db/repositories/instructorRepository";
 import { NextFunction } from "express";
 

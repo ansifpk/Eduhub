@@ -1,7 +1,7 @@
 import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
 import { UserRepository } from "../../insfrastructure/db/repositories/userRepository";
 import { NextFunction } from "express";
-import { ITest } from "../../domain/entities/test";
+import { ITest } from "../../domain/entities/tests";
 
 export class UserGetTest
   implements IUseCase<{ testId: string; next: NextFunction }, ITest | void>

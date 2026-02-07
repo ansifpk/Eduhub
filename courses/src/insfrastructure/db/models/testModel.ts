@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { ITest } from "../../../domain/entities/test";
+import { ITest } from "../../../domain/entities/tests";
 
 
 const testScheema = new mongoose.Schema({
