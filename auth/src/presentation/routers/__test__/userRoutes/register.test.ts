@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { httpServer } from '../../../../app';
 
-
+  jest.mock("nodemailer");
   it('returns 200 and sets cookie', async () => {
     await request(httpServer)
       .post('/auth/user/register')

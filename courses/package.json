@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
+ "scripts": {
     "start": "ts-node-dev src/index.ts",
+    "test": "jest --watchAll --no-cache",
     "test:ci": "jest"
   },
   "jest": {
