@@ -1,12 +1,4 @@
-import express from 'express';
 import { connectDB } from '../infrastructure/db/config';
-import cors from "cors";
-import cookieParser from 'cookie-parser';
-import { errorHandler, NotFoundError } from '@eduhublearning/common';
-import { userRouter } from './routers/userRouter';
-import { instructorRouter } from './routers/instructorRouter';
-import { adminRouter } from './routers/adminRouter';
-import { webHookRouter } from './routers/webHookRouter';
 import { UserProfileUpdatedConsumer } from '../infrastructure/kafka/consumer/user-profile-updated-consumer';
 import kafkaWrapper from '../infrastructure/kafka/kafkaWrapper';
 import { CourseCreatedConsumer } from '../infrastructure/kafka/consumer/course-created-consumer';
@@ -17,29 +9,11 @@ import { InstructorAprovedConsumer } from '../infrastructure/kafka/consumer/inst
 import { ProfilePictureUpdatedConsumer } from '../infrastructure/kafka/consumer/picture-updated-consumer';
 import { UserBlockedConsumer } from '../infrastructure/kafka/consumer/user-block-consumer';
 import { UserProfileCreatedConsumer } from '../infrastructure/kafka/consumer/user-profile-created-consumer';
+import { app } from '../app';
 
 
 export class ApiServer {
       public static async run(port:number):Promise<void>{
-        const app = express();
-        app.set("trust proxy", true);
-        
-        const allowedOrgins = JSON.parse(process.env.ORGINS!);
-        app.use(cors({ credentials: true, origin: allowedOrgins }));
-        app.use(cookieParser());
-        app.use("/purchase/webHook", webHookRouter);
-        app.use(express.json());
-        app.use(express.urlencoded({ extended: true }));
-        
-        app.use("/purchase/user", userRouter);
-        app.use("/purchase/instructor", instructorRouter);
-        app.use("/purchase/admin", adminRouter);
-        app.use("*", (req, res) => {
-          throw new NotFoundError("Path Not Found.");
-        });
-        app.use(errorHandler as any);
-
-
         await kafkaWrapper.connect()
         const consumerUser = await kafkaWrapper.createConsumer("purchase-user-profile-created-group")
         const consumerCourse = await kafkaWrapper.createConsumer("purchase-course-created-group")
