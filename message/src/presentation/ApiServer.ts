@@ -1,12 +1,4 @@
-import express from "express";
 import { connectDB } from "../infrastructure/db/config";
-import { charRouter } from "./routes/chatRoutes";
-import { messageRouter } from "./routes/messageRoutes";
-import { notificationRouter } from "./routes/notificationRoutes";
-import {createServer} from 'http';
-import { errorHandler, NotFoundError } from "@eduhublearning/common";
-import cors from 'cors';
-import cookieParser from 'cookie-parser';
 import { Socket,Server } from 'socket.io';
 import kafkaWrapper from "../infrastructure/kafka/kafkaWrapper";
 import { InstructorAprovalConsumer } from "../infrastructure/kafka/consumer/instructor-approved-consumer";
@@ -14,8 +6,9 @@ import { ProfilePictureUpdatedConsumer } from "../infrastructure/kafka/consumer/
 import { UserBlockedConsumer } from "../infrastructure/kafka/consumer/user-block-consumer";
 import { UserProfileCreatedConsumer } from "../infrastructure/kafka/consumer/user-profile-created-consumer";
 import { UserProfileUpdatedConsumer } from "../infrastructure/kafka/consumer/user-profile-updated-consumer";
+import { allowedOrgins, httpServer } from "../app";
 
-const app = express();
+
 
 
 
@@ -26,28 +19,7 @@ export class ApiServer {
     public static async run(port:number):Promise<void>{
        try {
          
-         const httpServer = createServer(app);
-         const allowedOrgins =  JSON.parse(process.env.ORGINS!)
-       
-
-         app.set('trust proxy',true);
-         app.use(cookieParser())
-         app.use(cors({credentials:true,
-            origin: allowedOrgins
-         }));
-         app.use(express.json());
-         app.use(express.urlencoded({extended:true}));
-        
-         //* chat
-         app.use("/message/chat",charRouter);
-         //* message
-         app.use("/message/message",messageRouter);
-         //* notification
-         app.use("/message/notification",notificationRouter);
-         app.use("*",(req,res)=>{
-            throw new NotFoundError("Path Not Found.") 
-         })
-         app.use(errorHandler as any);
+         
 
          //! web socket configurations
          let onlineUsers:{userId:string,socketId:string}[] = [];

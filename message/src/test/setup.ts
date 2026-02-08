@@ -9,6 +9,11 @@ beforeAll(async ()=>{
     process.env.JWT_VERIFICATIONKEY = 'test_verify_secret';
     process.env.EMAIL = "test@test.com";
     process.env.PASSWORD = "dummy";
+    process.env.KAFKA_BROKER = "kafka-srv:9092";
+    process.env.DOMAIN= "https://eduhub.fasionstoredress.shop";
+    process.env.ORGINS = '["https://eduhub.fasionstoredress.shop"]';
+    process.env.SOCKET_PATH="/message/socket.io";
+
     mongo = await MongoMemoryServer.create(); 
     const mongoUri = mongo.getUri();          
     await mongoose.connect(mongoUri)
