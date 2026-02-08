@@ -23,6 +23,7 @@ try {
     throw new NotAuthorizedError()
    } 
     const check = jwt.verify(req.cookies.accessToken,process.env.JWT_ACCESSKEY!) as User;
+    
     if(check){
       const user = await userModel.findOne({_id:check.id});
       if(user){

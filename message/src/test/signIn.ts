@@ -1,32 +1,49 @@
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import { userModel } from "../infrastructure/db/modals/userModel";
+
+
 const signIn = async () => {
-    
- const user =  await userModel.create({
-    _id:new mongoose.Types.ObjectId(),
-    name: "Arjun Kumar",
-    email: "example@gmail.com",
-    avatar: {
-      id: "avatar_12345",
-      avatar_url: "https://cdn.example.com/avatars/arjun.png",
-    },
-    isInstructor: true,
-    isAdmin: false,
-    isBlock: false,
-  });
+   // build a jwt paulod {id,email}
+  
+  await userModel.create({_id: "69862dc0a2e2c765ce15357d",
+       name: "ansif",
+       email: "ansifpk@gmail.com",
+       isInstructor: true,
+       isBlock: false,
+       isAdmin: true, 
+       createdAt: new Date(),
+       avatar: { 
+        id: "1",
+        avatar_url: "string"
+       }
+    });
 
-  // build a jwt paulod {id,email}
-  const payload = {
-    id: user._id.toString(),
-    email: "example@gmail.com",
-  };
 
-  // cretae the jwt
-  const accessToken = jwt.sign(payload, process.env.JWT_ACCESSKEY!);
 
-  // return a string thats the cokie with the encoded data
-  return [`accessToken=${accessToken}`];
-};
+   const payload = {
+    id: "69862dc0a2e2c765ce15357d",
+   }
+
+   // cretae the jwt 
+   const accessToken = jwt.sign(
+    payload,
+    process.env.JWT_ACCESSKEY!,
+    { expiresIn: '15m' }
+  );
+
+  const refreshToken = jwt.sign(
+    payload,
+    process.env.JWT_REFRESHKEY!,
+    { expiresIn: '30d' }
+  );
+
+  // return a string thats the cokie with the encoded data 
+    return [
+    `accessToken=${accessToken}`,
+    `refreshToken=${refreshToken}`
+    ];
+}
+
 
 export { signIn };

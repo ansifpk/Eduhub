@@ -10,6 +10,8 @@ export class CreateChatController implements IController {
     public async handle(req:Request,res:Response,next:NextFunction):Promise<void>{
          try {
             const {userId,recipientId,role} = req.body;
+            console.log(req.body);
+            
            const chat = await this._useCase.execute({userId,recipientId,role,next})
             if(chat){
               res.status(StatusCodes.CREATED).send({success:true,chat:chat})
