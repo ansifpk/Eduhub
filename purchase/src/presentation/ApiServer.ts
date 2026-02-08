@@ -51,6 +51,6 @@ export class ApiServer {
         await pictureUpdatedListener.listen()
         await connectDB()
         
-        app.listen(port,()=>console.log(`purchase service running in port ${port}`))
+        app.listen(port,()=>console.log(`purchase service running on port ${port}`))
       }     
 }

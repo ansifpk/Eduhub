@@ -7,7 +7,7 @@ export class ApiServer {
     public static async run(port:number):Promise<void>{
         try {
             await connectDB();
-            app.listen(port,()=>console.log(`category server running on ${process.env.PORT}`))
+            app.listen(port,()=>console.log(`category server running on port ${process.env.PORT}`))
         } catch (error) {
             console.error(error);
         }

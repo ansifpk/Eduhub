@@ -110,7 +110,7 @@ export class ApiServer {
 
      
          httpServer.listen(port,()=>{
-            console.log(`Message server running at ${port}...`)
+            console.log(`Message server running on port ${port}`)
          });
        } catch (error) {
         console.error(error);
