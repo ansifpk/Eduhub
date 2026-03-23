@@ -1,9 +1,9 @@
 import { IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
-import { SubscriptionDetailes } from "../../../application/user/subscriptionDetailes";
+import { ISubscriptionDetailes } from "../../../domain/interfaces/useCases/user/ISubscriptionDetailes";
 
 export class SubscriptionDetailesController implements IController {
-  constructor(private readonly _useCase: SubscriptionDetailes) {}
+  constructor(private readonly _useCase: ISubscriptionDetailes) {}
   public async handle(
     req: Request,
     res: Response,
@@ -11,12 +11,12 @@ export class SubscriptionDetailesController implements IController {
   ): Promise<void> {
     try {
       const { customerId } = req.params;
-      const sessionId = await this._useCase.execute({ customerId, next });
+      const sessionId = await this._useCase.execute({ customerId });
       if (sessionId) {
         res.status(StatusCodes.OK).send({ success: true, url: sessionId });
       }
     } catch (error) {
-      console.error(error);
+      next(error);
     }
   }
 }

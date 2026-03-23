@@ -1,21 +1,19 @@
-import { NextFunction } from "express";
-import { IUseCase } from "../../shared/IUseCase";
-import { OtpRepository } from "../../infrastructure/db/repository/otpRepostory";
-import { SentEmail } from "../../infrastructure/services/sendMail";
-import { OtpGenerator } from "../../infrastructure/services/otpGenerator";
 
-export class SendOtp
-  implements IUseCase<{ email: string; next: NextFunction }, any>
-{
+import { IOtpRepository } from "../../domain/interfaces/IOtpRepository";
+import { IOtpGenerator } from "../../domain/interfaces/serviceInterfaces/IOtpagenerator";
+import { ISentEmail } from "../../domain/interfaces/serviceInterfaces/ISentEmail";
+import { ISendOtp } from "../../domain/interfaces/user/useCases/ISendOtp";
+
+export class SendOtp implements ISendOtp{
   constructor(
-    private readonly _otpRepository: OtpRepository,
-    private readonly _otpGenerate: OtpGenerator,
-    private readonly _sentEmail: SentEmail
+    private readonly _otpRepository: IOtpRepository,
+    private readonly _otpGenerate: IOtpGenerator,
+    private readonly _sentEmail: ISentEmail
   ) {}
   public async execute(input: {
     email: string;
-    next: NextFunction;
-  }): Promise<any> {
+    
+  }): Promise<boolean|void> {
     try {
       const data = await this._otpRepository.deleteOtp(input.email);
       const otp = await this._otpGenerate.createOtp();
@@ -24,7 +22,7 @@ export class SendOtp
       await this._sentEmail.sentEmailVerification(input.email, otp);
       return data;
     } catch (error) {
-      input.next(error);
+      throw error;
     }
   }
 }

@@ -1,14 +1,14 @@
 import { BadRequestError, IController } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
 import Stripe from "stripe";
-import { WebHook } from "../../../application/admin/webHook";
+import { IWebHook } from "../../../domain/interfaces/useCases/admin/IWebHook";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET!, {
   apiVersion: "2025-01-27.acacia",
 });
 
 export class WebhookController implements IController {
-  constructor(private readonly _useCase: WebHook) {}
+  constructor(private readonly _useCase: IWebHook) {}
   public async handle(
     req: Request,
     res: Response,
@@ -28,10 +28,9 @@ export class WebhookController implements IController {
         enpointSeceret
       );
       if (event) {
-        await this._useCase.execute({ event, next });
+        await this._useCase.execute({ event });
       }
     } catch (error) {
-      console.error(error);
       next(error);
     }
   }

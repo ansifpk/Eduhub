@@ -1,15 +1,13 @@
-import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
-import { InstructorRepository } from "../../infrastructure/db/repository/instructorRepository";
+import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
 import { IUserSubcription } from "../../domain/entities/userSubscription";
-import { NextFunction } from "express";
+import { IInstructorSubscriptions } from "../../domain/interfaces/useCases/instructor/IInstructorSubscriptions";
+import { IInstructorRepository } from "../../domain/interfaces/repository/IInstructorRepository";
 
-export class InstructorSubscriptions implements IUseCase<{instructorId: string,
-    next: NextFunction},IUserSubcription[]|void> {
-    constructor(private readonly instructorRepository:InstructorRepository) {
+export class InstructorSubscriptions implements IInstructorSubscriptions {
+    constructor(private readonly instructorRepository:IInstructorRepository) {
         
     }
-    public async execute(input: {instructorId: string,
-        next: NextFunction}): Promise<IUserSubcription[]|void> {
+    public async execute(input: {instructorId: string}): Promise<IUserSubcription[]|void> {
         try {
             const {instructorId} = input;
               const user = await this.instructorRepository.userFindById(instructorId);
@@ -23,7 +21,7 @@ export class InstructorSubscriptions implements IUseCase<{instructorId: string,
               }
             } catch (error) {
               console.error(error);
-              input.next(error);
+              throw error;
             }
     }
 }

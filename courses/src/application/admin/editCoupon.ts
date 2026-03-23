@@ -1,25 +1,11 @@
-import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
 import { ICoupon } from "../../domain/entities/coupon";
-import { AdminRepository } from "../../insfrastructure/db/repositories/adminRepository";
-import { NextFunction } from "express";
+import { IEditCoupon } from "../../domain/interfaces/admin/IEditCoupon";
+import { IAdminRepository } from "../../domain/interfaces/repository/IAdminRepository";
 
 export class EditCoupon
-  implements
-    IUseCase<
-      {
-        couponId: string;
-        title: string;
-        description: string;
-        offer: number;
-        startingDate: string;
-        expiryDate: string;
-        couponCode: string;
-        next: NextFunction;
-      },
-      ICoupon | void
-    >
-{
-  constructor(private readonly couponRepository: AdminRepository) {}
+  implements IEditCoupon{
+  constructor(private readonly couponRepository: IAdminRepository) {}
   public async execute(input: {
     couponId: string;
     title: string;
@@ -28,7 +14,6 @@ export class EditCoupon
     startingDate: string;
     expiryDate: string;
     couponCode: string;
-    next: NextFunction;
   }): Promise<void | ICoupon> {
     try {
       const {
@@ -81,7 +66,7 @@ export class EditCoupon
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

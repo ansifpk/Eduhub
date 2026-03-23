@@ -7,105 +7,112 @@ import { userModel } from "../../infrastructure/db/models/userModel";
 
 dotenv.config();
 
-interface User{
-  id:string,
-  iat:number
+interface User {
+  id: string,
+  iat: number
 }
 
-export const isAuth = async (req:Request,res:Response,next:NextFunction)=>{ 
-   try {
+export const isAuth = async (req: Request, res: Response, next: NextFunction) => {
+  try {
 
-    if(!req.cookies){
+    if (!req.cookies) {
       throw new NotAuthorizedError()
-     
-     } 
-     if(!req.cookies.accessToken){
-      throw new NotAuthorizedError()
-  
-     } 
-     const check = jwt.verify(req.cookies.accessToken,process.env.JWT_ACCESSKEY!) as User;
-     if(!check){
-      throw new NotAuthorizedError()
-     }
 
-      next();
-   } catch (error) {
-    console.error(error)
-     next(error)
-   }
-}
-
-export const isAdmin = async (req:Request,res:Response,next:NextFunction)=>{
-
-    try { 
-      if(!req.cookies){
-        throw new NotAuthorizedError()
-        
-       } 
-      if(!req.cookies.accessAdminToken){
-        throw new NotAuthorizedError()
-   
-       } 
-      const check = jwt.verify(req.cookies.accessAdminToken,process.env.JWT_ACCESSKEY!) as User;
-      if(!check){
-        throw new NotAuthorizedError()
-        
-      }
-      const user = await userModel.findOne({_id:check.id});
-        if(!user){
-          throw new NotAuthorizedError()
-     
-        }
-        if(user.isAdmin){
-           next()
-        }else{
-          throw new NotAuthorizedError();
-        }
-    } catch (error) {
-      console.error(error)
-      next(error)
     }
-      
-      
+    if (!req.cookies.accessToken) {
+      throw new NotAuthorizedError()
+
+    }
+    const check = jwt.verify(req.cookies.accessToken, process.env.JWT_ACCESSKEY!) as User;
+    if (!check) {
+      throw new NotAuthorizedError()
+    }
+    const user = await userModel.findById({ _id: check.id });
+    if (!user) {
+      throw new NotAuthorizedError()
+
+    }
+    if (user.isBlock) {
+      throw new ForbiddenError()
+
+    }
+
+    next();
+  } catch (error) {
+    console.error(error)
+    next(error)
+  }
 }
 
-export const isInstructor = async (req:Request,res:Response,next:NextFunction)=>{
+export const isAdmin = async (req: Request, res: Response, next: NextFunction) => {
 
-        try {
-          if(!req.cookies){
-            throw new NotAuthorizedError()
-      
-           } 
-          if(!req.cookies.accessInstructorToken){
-            throw new NotAuthorizedError()
-          
-           } 
-          const check = jwt.verify(req.cookies.accessInstructorToken,process.env.JWT_ACCESSKEY!) as User;
-          if(!check){
-            throw new NotAuthorizedError()
-            
-          }
-          const user = await userModel.findOne({_id:check.id});
-            if(!user){
-              throw new NotAuthorizedError()
-            
-            }
-            if(user.isBlock){
-              throw new NotAuthorizedError()
-            
-            }
-            if(user.isInstructor){
-               next()
-            }else{
-              throw new NotAuthorizedError()
-            
-            }
-        } catch (error) {
-          console.error(error)
-          next(error)
-        }
-          
-          
+  try {
+    if (!req.cookies) {
+      throw new NotAuthorizedError()
+
+    }
+    if (!req.cookies.accessAdminToken) {
+      throw new NotAuthorizedError()
+
+    }
+    const check = jwt.verify(req.cookies.accessAdminToken, process.env.JWT_ACCESSKEY!) as User;
+    if (!check) {
+      throw new NotAuthorizedError()
+
+    }
+    const user = await userModel.findById({ _id: check.id });
+    if (!user) {
+      throw new NotAuthorizedError()
+
+    }
+    if (user.isAdmin) {
+      next()
+    } else {
+      throw new NotAuthorizedError();
+    }
+  } catch (error) {
+    console.error(error)
+    next(error)
+  }
+}
+
+export const isInstructor = async (req: Request, res: Response, next: NextFunction) => {
+
+  try {
+    if (!req.cookies) {
+      throw new NotAuthorizedError()
+
+    }
+    if (!req.cookies.accessInstructorToken) {
+      throw new NotAuthorizedError()
+
+    }
+    const check = jwt.verify(req.cookies.accessInstructorToken, process.env.JWT_ACCESSKEY!) as User;
+    if (!check) {
+      throw new NotAuthorizedError()
+
+    }
+    const user = await userModel.findById({ _id: check.id });
+    if (!user) {
+      throw new NotAuthorizedError()
+
+    }
+    if (user.isBlock) {
+      throw new ForbiddenError()
+
+    }
+    if (user.isInstructor) {
+      next()
+    } else {
+      throw new NotAuthorizedError()
+
+    }
+  } catch (error) {
+    console.error(error)
+    next(error)
+  }
+
+
 }
 
 

@@ -1,21 +1,14 @@
-import { IUseCase } from "@eduhublearning/common";
-import { NextFunction } from "express";
 import { ICoupon } from "../../domain/entities/coupon";
-import { AdminRepository } from "../../insfrastructure/db/repositories/adminRepository";
+import { IAdminRepository } from "../../domain/interfaces/repository/IAdminRepository";
+import { IGetCoupon } from "../../domain/interfaces/admin/IGetCoupon";
 
 export class GetCoupons
-  implements
-    IUseCase<
-      { search: string; sort: string; page: string; next: NextFunction },
-      ICoupon[] | void
-    >
-{
-  constructor(private readonly couponRepository: AdminRepository) {}
+  implements IGetCoupon {
+  constructor(private readonly couponRepository: IAdminRepository) {}
   public async execute(input: {
     search: string;
     sort: string;
     page: string;
-    next: NextFunction;
   }): Promise<void | ICoupon[]> {
     try {
       const coupon = await this.couponRepository.coupons(
@@ -28,7 +21,7 @@ export class GetCoupons
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

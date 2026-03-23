@@ -11,8 +11,7 @@ export interface IUserRepository{
     getPages(search:string,
         category:string,
         level:string,
-        topic:string,
-        sort:string):Promise<number|void>
+        topic:string):Promise<number|void>
     courses(instructorId:string):Promise<ICourse[]|void>
     findWithCondition(userId:string):Promise<ICourse[]|void>
     findById(courseId:string):Promise<ICourse|void>

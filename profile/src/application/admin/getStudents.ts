@@ -1,21 +1,14 @@
-import { IController, IUseCase } from "@eduhublearning/common";
-import { AdminRepository } from "../../infrastructure/db/repository/adminRepository";
-import { NextFunction } from "express";
 import { Iuser } from "../../domain/entities/user";
+import { IGetStudents } from "../../domain/interfaces/useCases/admin/IGetStudents";
+import { IAdminRepository } from "../../domain/interfaces/repositoryInterfaces/IadminRepository";
 
 export class GetStudents
-  implements
-    IUseCase<
-      { search: string; sort: string; page: number; next: NextFunction },
-      { students: Iuser[]; pages: number } | void
-    >
-{
-  constructor(private readonly adminRepository: AdminRepository) {}
+  implements IGetStudents {
+  constructor(private readonly adminRepository: IAdminRepository) {}
   public async execute(input: {
     search: string;
     sort: string;
     page: number;
-    next: NextFunction;
   }): Promise<{ students: Iuser[]; pages: number } | void> {
     try {
       const { search, page, sort } = input;
@@ -27,7 +20,7 @@ export class GetStudents
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

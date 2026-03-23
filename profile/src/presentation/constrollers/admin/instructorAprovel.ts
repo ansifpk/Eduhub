@@ -4,12 +4,12 @@ import {
   StatusCodes,
 } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
-import { InstructorAprovel } from "../../../application/admin/instructorAprovel";
 import { Producer } from "kafkajs";
 import kafkaWrapper from "../../../infrastructure/kafka/kafkaWrapper";
+import { IInstructorAprovel } from "../../../domain/interfaces/useCases/admin/IInstructorAprovel";
 
 export class InstructorAprovelController implements IController {
-  constructor(private readonly _useCase: InstructorAprovel) {}
+  constructor(private readonly _useCase: IInstructorAprovel) {}
   public async handle(
     req: Request,
     res: Response,
@@ -17,7 +17,7 @@ export class InstructorAprovelController implements IController {
   ): Promise<void> {
     try {
       const { email, status } = req.body;
-      const students = await this._useCase.execute({ email, status, next });
+      const students = await this._useCase.execute({ email, status });
 
       if (students) {
         await new InstructorAprovalPublisher(
@@ -29,7 +29,6 @@ export class InstructorAprovelController implements IController {
         res.status(StatusCodes.OK).send(students);
       }
     } catch (error) {
-      console.error(error);
       next(error);
     }
   }

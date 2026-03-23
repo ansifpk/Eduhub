@@ -41,6 +41,7 @@ import { ResetPasswordController } from "../../presentation/controllers/user/res
 import { TockenCheckController } from "../../presentation/controllers/user/tockenCheckController";
 import { VerifyEmailController } from "../../presentation/controllers/user/verifyEmailController";
 import { VerifyOtpController } from "../../presentation/controllers/user/verifyOtpController";
+import otpModel from "../db/models/otpModel";
 import { userModel } from "../db/models/userModel";
 import { AdminRepository } from "../db/repository/adminRepository";
 import { InstructorRepository } from "../db/repository/instructorRepository";
@@ -52,7 +53,7 @@ import { OtpGenerator } from "../services/otpGenerator";
 import { SentEmail } from "../services/sendMail";
 
 const jwtTocken = new JWTtocken()
-const otpRepository = new OtpRepository()
+const otpRepository = new OtpRepository(otpModel)
 const encrypt = new Encrypt()
 const otpGenerator = new OtpGenerator()
 const sentEmail = new SentEmail()

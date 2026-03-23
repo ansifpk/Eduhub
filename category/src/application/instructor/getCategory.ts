@@ -1,15 +1,10 @@
-import { NextFunction } from "express";
-import { InstructorRepository } from "../../infrastructure/db/repository/instructorRepository";
-import { IUseCase } from "../../shared/IUseCase";
 import { ICategory } from "../../domain/category";
+import { IGetCategory } from "../../domain/insterfaces/instructor/useCases/IGetCategory";
+import { IInstructorRepository } from "../../domain/insterfaces/repositoryInterfaces/IinstructorRepository";
 
-export class GetCategoryUser
-  implements IUseCase<{ next: NextFunction }, ICategory[] | void>
-{
-  constructor(private readonly instructorRepository: InstructorRepository) {}
-  public async execute(input: {
-    next: NextFunction;
-  }): Promise<ICategory[] | void> {
+export class GetCategoryUser implements IGetCategory{
+  constructor(private readonly instructorRepository: IInstructorRepository) {}
+  public async execute(): Promise<ICategory[] | void> {
     try {
       const categories = await this.instructorRepository.find();
       if (categories) {
@@ -17,7 +12,7 @@ export class GetCategoryUser
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

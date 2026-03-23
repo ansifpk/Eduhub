@@ -1,20 +1,16 @@
-import { IUseCase } from "@eduhublearning/common";
-import { NextFunction } from "express";
-import CloudinaryV2 from "../../insfrastructure/service/cloudiner";
 import { Req } from "../../domain/interfaces/IReq";
-import { InstructorRepository } from "../../insfrastructure/db/repositories/instructorRepository";
 import { ICourse } from "../../domain/entities/course";
+import { ICreateCourse } from "../../domain/interfaces/instructor/ICreateCourse";
+import { IInstructorRepository } from "../../domain/interfaces/repository/IInstructorRepository";
+import { ICloudinary } from "../../domain/interfaces/service/Icloudinery";
 
 export class CreateCourse
-  implements IUseCase<{courseData: Req,next:NextFunction
-      }, ICourse | void>
-{
+  implements ICreateCourse{
   constructor(
-    private readonly instructorRepository: InstructorRepository,
-    private readonly cloudinery: CloudinaryV2
+    private readonly instructorRepository: IInstructorRepository,
+    private readonly cloudinery: ICloudinary
   ) {}
-  public async execute(input: {courseData: Req,next:NextFunction
-      }): Promise<ICourse | void> {
+  public async execute(input: {courseData: Req}): Promise<ICourse | void> {
     try {
       const { courseData } = input;
       const files = courseData.fileData as
@@ -46,7 +42,7 @@ export class CreateCourse
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

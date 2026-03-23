@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from "express";
-import { GooogleLogin } from "../../../application/user/googleLogin";
 import { IController } from "../../../shared/IController";
 import { StatusCodes } from "@eduhublearning/common";
+import { IGoogleLogin } from "../../../domain/interfaces/user/useCases/IGoogleLogin";
 
 export class GoogleLoginController implements IController {
-    constructor(private readonly _useCase:GooogleLogin) {
+    constructor(private readonly _useCase:IGoogleLogin) {
         
     }
     public async handle(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -14,7 +14,7 @@ export class GoogleLoginController implements IController {
        { email,
         name,
         password,
-        next}
+        }
       );
       if (userAndToken) {
         res.cookie('accessToken',userAndToken.token.accessToken,{
@@ -33,7 +33,7 @@ export class GoogleLoginController implements IController {
           res.status(StatusCodes.OK).send({ success: true, user: userAndToken });
       }
     } catch (err) {
-      console.error(err);
+     next(err);
     }
     }
 }

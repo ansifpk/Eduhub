@@ -1,20 +1,13 @@
-import { IUseCase } from "@eduhublearning/common";
-import { UserRepository } from "../../insfrastructure/db/repositories/userRepository";
-import { NextFunction } from "express";
 import { IReport } from "../../domain/entities/report";
+import { IGetReports } from "../../domain/interfaces/user/IGetReports";
+import { IUserRepository } from "../../domain/interfaces/repository/IUserRepository";
 
 export class GetReports
-  implements
-    IUseCase<
-      { userId: string; courseId: string; next: NextFunction },
-      IReport[] | void
-    >
-{
-  constructor(private readonly userRepository: UserRepository) {}
+  implements IGetReports{
+  constructor(private readonly userRepository: IUserRepository) {}
   public async execute(input: {
     userId: string;
     courseId: string;
-    next: NextFunction;
   }): Promise<void | IReport[]> {
     try {
       const { userId, courseId } = input;
@@ -24,7 +17,7 @@ export class GetReports
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

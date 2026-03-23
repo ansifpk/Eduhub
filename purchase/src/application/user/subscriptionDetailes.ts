@@ -1,18 +1,13 @@
-import { BadRequestError, IUseCase } from "@eduhublearning/common";
-import { UserRepository } from "../../infrastructure/db/repository/userRepository";
-import { NextFunction } from "express";
 import Stripe from "stripe";
+import { ISubscriptionDetailes } from "../../domain/interfaces/useCases/user/ISubscriptionDetailes";
 const stripe = new Stripe(process.env.STRIPE_SECRET!, {
   apiVersion: "2025-01-27.acacia",
 });
 export class SubscriptionDetailes
-  implements
-    IUseCase<{ customerId: string; next: NextFunction }, string | void>
-{
+  implements ISubscriptionDetailes{
   
   public async execute(input: {
     customerId: string;
-    next: NextFunction;
   }): Promise<string | void> {
     try {
       const { customerId } = input;
@@ -26,7 +21,7 @@ export class SubscriptionDetailes
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

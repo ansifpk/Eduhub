@@ -1,29 +1,16 @@
 import { BadRequestError, ErrorMessages, NotFoundError } from "@eduhublearning/common";
-import { CategoryRepository } from "../../infrastructure/db/repository/categoryRepository";
-import { IUseCase } from "../../shared/IUseCase";
 import { ICategory } from "../../domain/category";
-import { NextFunction } from "express";
+import { IEditCategory } from "../../domain/insterfaces/admin/useCases/IEditCategory";
+import { ICategoryRepository } from "../../domain/insterfaces/repositoryInterfaces/IcategoryRepository";
 
 export class EditCategory
-  implements
-    IUseCase<
-      {
-        _id: string;
-        title: string;
-        description: string;
-        topics: string[];
-        next: NextFunction;
-      },
-      ICategory | void
-    >
-{
-  constructor(private readonly categoryRepository: CategoryRepository) {}
+  implements IEditCategory{
+  constructor(private readonly categoryRepository: ICategoryRepository) {}
   public async execute(input: {
     _id: string;
     title: string;
     description: string;
     topics: string[];
-    next: NextFunction;
   }): Promise<ICategory | void> {
     try {
       const currentCategory = await this.categoryRepository.findById(input._id);
@@ -48,7 +35,7 @@ export class EditCategory
       return updatedCategory;
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

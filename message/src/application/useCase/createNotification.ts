@@ -1,21 +1,14 @@
 import { BadRequestError,ErrorMessages } from "@eduhublearning/common";
-import { UserRepository } from "../../infrastructure/db/repositories/userRepository";
-import { IUseCase } from "../../shared/IUseCase";
 import { INotification } from "../../domain/entities/notifications";
-import { NextFunction } from "express";
+import { ICreateNotification } from "../../domain/interfaces/ICreateNotification";
+import { IUserRepository } from "../../domain/interfaces/IUserRepository";
 
 export class CreateNotification
-  implements
-    IUseCase<
-      { recipientId: string; senderId: string; next: NextFunction },
-      INotification | void
-    >
-{
-  constructor(private readonly _userRepository: UserRepository) {}
+  implements ICreateNotification {
+  constructor(private readonly _userRepository: IUserRepository) {}
   public async execute(input: {
     recipientId: string;
     senderId: string;
-    next: NextFunction;
   }): Promise<INotification | void> {
     try {
       const user = await this._userRepository.findUserById(input.recipientId);
@@ -35,7 +28,7 @@ export class CreateNotification
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

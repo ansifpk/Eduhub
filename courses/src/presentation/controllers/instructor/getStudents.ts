@@ -1,5 +1,5 @@
 import { IController, IUseCase, StatusCodes } from "@eduhublearning/common";
-import { InstructorGetStudents } from "../../../application/instructor/getStudnets";
+import { InstructorGetStudents } from "../../../application/instructor/getStudents";
 import { Request, Response, NextFunction } from "express";
 
 export class InstructorGetStudentsController implements IController {

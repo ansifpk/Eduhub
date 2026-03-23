@@ -5,7 +5,7 @@ import { ITest } from "../../entities/tests"
 import { Iuser } from "../../entities/user"
 
 
-export interface IInstructorrepository{
+export interface IInstructorRepository{
     find(instructorId:string,search : string,sort:string,page:number):Promise<ICourse[]|void>
     findStudents(instructorId:string,search : string,sort:string,page:number):Promise<Iuser[]|void>
     get():Promise<ICourse[]|void>

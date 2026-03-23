@@ -1,6 +1,6 @@
 import { IAdmin } from "../../../domain/entities/admin";
 import { Iuser } from "../../../domain/entities/user";
-import { IAdminRepository } from "../../../domain/interfaces/IAdminRepository";
+import { IAdminRepository } from "../../../domain/interfaces/admin/repositories/IAdminRepository";
 import { userModel } from "../models/userModel";
 
 

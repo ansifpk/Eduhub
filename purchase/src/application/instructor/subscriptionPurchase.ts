@@ -1,22 +1,16 @@
-import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
-import { InstructorRepository } from "../../infrastructure/db/repository/instructorRepository";
-import { NextFunction } from "express";
+import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
 import Stripe from "stripe";
+import { ISubscriptionPurchase } from "../../domain/interfaces/useCases/instructor/ISubscriptionPurchase";
+import { IInstructorRepository } from "../../domain/interfaces/repository/IInstructorRepository";
 const stripe = new Stripe(process.env.STRIPE_SECRET!, {
   apiVersion: "2025-01-27.acacia",
 });
 export class SubscriptionPurchase
-  implements
-    IUseCase<
-      { userId: string; method: string; next: NextFunction },
-      string | void
-    >
-{
-  constructor(private readonly instructorRepository: InstructorRepository) {}
+  implements ISubscriptionPurchase{
+  constructor(private readonly instructorRepository: IInstructorRepository) {}
   public async execute(input: {
     userId: string;
     method: string;
-    next: NextFunction;
   }): Promise<string | void> {
     try {
       const { userId, method } = input;
@@ -83,7 +77,7 @@ export class SubscriptionPurchase
       return session.id;
     } catch (error) {
       console.error(error);
-      input.next(error);
+     throw error;
     }
   }
 }

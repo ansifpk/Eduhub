@@ -1,26 +1,22 @@
-import { NextFunction } from "express";
-import { IUseCase } from "../../shared/IUseCase";
-import { UserRepository } from "../../infrastructure/db/repository/userRepositories";
 import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
-import { Encrypt } from "../../infrastructure/services/hashPassword";
-import { OtpRepository } from "../../infrastructure/db/repository/otpRepostory";
 import { Iuser } from "../../domain/entities/user";
+import { IChangePassword } from "../../domain/interfaces/user/useCases/IChangePassword";
+import { IUserRepository } from "../../domain/interfaces/user/repository/IuserRepository";
+import { IOtpRepository } from "../../domain/interfaces/IOtpRepository";
+import { IHashPassword } from "../../domain/interfaces/serviceInterfaces/IHashPassword";
 
-export class ChangePassword implements IUseCase<{ email:string,
-        password:string,
-        confirmPassword:string,
-        next:NextFunction},Iuser|void> {
+export class ChangePassword implements IChangePassword{
     constructor(
-        private readonly _userRepository:UserRepository,
-        private readonly _otpRepository:OtpRepository,
-        private readonly _encrypt:Encrypt,
+        private readonly _userRepository:IUserRepository,
+        private readonly _otpRepository:IOtpRepository,
+        private readonly _encrypt:IHashPassword,
     ) {
         
     }
     public async execute(input: { email:string,
         password:string,
-        confirmPassword:string,
-        next:NextFunction}): Promise<Iuser|void> {
+        confirmPassword:string}
+      ): Promise<Iuser|void> {
         try {
               const user = await this._userRepository.findByEmail(input.email);
               if (!user) {
@@ -50,8 +46,8 @@ export class ChangePassword implements IUseCase<{ email:string,
               await this._otpRepository.deleteOtp(input.email);
               return user;
             } catch (err) {
-              console.error(err);
-             input. next(err);
+             console.error(err);
+             throw err;
             }
     }
 }

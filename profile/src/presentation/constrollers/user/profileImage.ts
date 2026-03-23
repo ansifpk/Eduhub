@@ -3,13 +3,13 @@ import {
   ProfilePictureUpdatedPublisher,
   StatusCodes,
 } from "@eduhublearning/common";
-import { ProfileImage } from "../../../application/user/profileImage";
 import { Request, Response, NextFunction } from "express";
 import kafkaWrapper from "../../../infrastructure/kafka/kafkaWrapper";
 import { Producer } from "kafkajs";
+import { IProfileImage } from "../../../domain/interfaces/useCases/user/IProfileImage";
 
 export class ProfileImageController implements IController {
-  constructor(private readonly _useCase: ProfileImage) {}
+  constructor(private readonly _useCase: IProfileImage) {}
   public async handle(
     req: Request,
     res: Response,
@@ -21,7 +21,7 @@ export class ProfileImageController implements IController {
         profileImage: Express.Multer.File[];
       };
 
-      const user = await this._useCase.execute({ userId, image: files, next });
+      const user = await this._useCase.execute({ userId, image: files });
       if (user) {
         await new ProfilePictureUpdatedPublisher(
           kafkaWrapper.producer as Producer
@@ -32,7 +32,6 @@ export class ProfileImageController implements IController {
         res.status(StatusCodes.OK).send({ success: true, image: user.avatar.avatar_url });
       }
     } catch (error) {
-      console.error(error);
       next(error);
     }
   }

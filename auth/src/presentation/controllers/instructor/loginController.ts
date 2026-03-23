@@ -1,13 +1,13 @@
 import { Request, Response, NextFunction } from "express";
 import { IController } from "../../../shared/IController";
-import { InstructorLogin } from "../../../application/instructor/instructorLogin";
 import { StatusCodes } from "@eduhublearning/common";
+import { IInstructorLogin } from "../../../domain/interfaces/instructor/useCases/IInstructorLogin";
 
 export class LoginInstructorController implements IController{
-    constructor(private readonly _useCase:InstructorLogin){}
+    constructor(private readonly _useCase:IInstructorLogin){}
     public async handle(req: Request, res: Response, next: NextFunction): Promise<void> {
        try {
-            const instructorAndToken = await this._useCase.execute({email:req.body.email,password:req.body.password,next});
+            const instructorAndToken = await this._useCase.execute({email:req.body.email,password:req.body.password});
             
             if(instructorAndToken){
               res.cookie('accessInstructorToken',instructorAndToken.token.accessToken,{
@@ -28,7 +28,8 @@ export class LoginInstructorController implements IController{
               res.status(StatusCodes.OK).send(instructorAndToken)
             }
            } catch (error) {
-             console.error(error)
+             next(error);
+
            }
     }
     

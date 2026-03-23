@@ -1,16 +1,13 @@
-import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
-import { UserRepository } from "../../infrastructure/db/repository/userRepository";
-import { NextFunction } from "express";
+import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
 import { IUserSubscribe } from "../../domain/entities/userSubscribe";
+import { IPurchasedSubscriptions } from "../../domain/interfaces/useCases/user/IPurchasedSubscriptions";
+import { IUserRepository } from "../../domain/interfaces/repository/IUserRepositoru";
 
 export class PurchasedSubscriptions
-  implements
-    IUseCase<{ userId: string; next: NextFunction }, IUserSubscribe[] | void>
-{
-  constructor(private readonly userRepository: UserRepository) {}
+  implements IPurchasedSubscriptions{
+  constructor(private readonly userRepository: IUserRepository) {}
   public async execute(input: {
     userId: string;
-    next: NextFunction;
   }): Promise<IUserSubscribe[] | void> {
     try {
       const { userId } = input;
@@ -24,7 +21,7 @@ export class PurchasedSubscriptions
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

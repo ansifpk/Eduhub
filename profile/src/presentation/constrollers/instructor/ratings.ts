@@ -1,9 +1,9 @@
 import { IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
-import { Ratings } from "../../../application/instructor/ratings";
+import { IRatings } from "../../../domain/interfaces/useCases/instructor/IRatings";
 
 export class RatingsController implements IController {
-  constructor(private readonly _useCase: Ratings) {}
+  constructor(private readonly _useCase: IRatings) {}
   public async handle(
     req: Request,
     res: Response,
@@ -11,12 +11,11 @@ export class RatingsController implements IController {
   ): Promise<void> {
     try {
       const { userId } = req.params;
-      const ratings = await this._useCase.execute({ userId, next });
+      const ratings = await this._useCase.execute({ userId });
       if (ratings) {
         res.status(StatusCodes.OK).send({ success: true, ratings });
       }
     } catch (error) {
-      console.error(error);
       next(error);
     }
   }

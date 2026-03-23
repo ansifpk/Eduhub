@@ -1,14 +1,14 @@
 import { CourseUpdatedPublisher, IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
-import { EditCourse } from "../../../application/instructor/editCourse";
 import kafkaWrapper from "../../../insfrastructure/kafka/kafkaWrapper";
 import { Producer } from "kafkajs";
 import { EditSection } from "../../../application/instructor/editSection";
+import { IEditCourse } from "../../../domain/interfaces/instructor/IEditCourse";
 
 export class EditCourseController implements IController {
   constructor(
-    private readonly _courseUseCase: EditCourse,
-    private readonly _sectionUuseCase: EditSection,
+    private readonly _courseUseCase: IEditCourse,
+    private readonly _sectionUseCase: EditSection,
 ) {}
   public async handle(
     req: Request,
@@ -21,7 +21,6 @@ export class EditCourseController implements IController {
       const course = await this._courseUseCase.execute({
         courseId,
         courseData: { bodyData: req.body, fileData: files },
-        next,
       });
       if (course) {
         await new CourseUpdatedPublisher(
@@ -37,7 +36,7 @@ export class EditCourseController implements IController {
           price: course.price,
           image: course.image,
         });
-        this._sectionUuseCase.execute({sectionData:{courseId:courseId,bodyData:req.body.sections,fileData:files},next})
+        this._sectionUseCase.execute({sectionData:{courseId:courseId,bodyData:req.body.sections,fileData:files},next})
         res.status(StatusCodes.OK).send({ success: true, course: course });
       }
     } catch (error) {

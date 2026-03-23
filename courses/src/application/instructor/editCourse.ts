@@ -1,25 +1,19 @@
-import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
-import { InstructorRepository } from "../../insfrastructure/db/repositories/instructorRepository";
-import { NextFunction } from "express";
+import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
 import { Req } from "../../domain/interfaces/IReq";
 import { ICourse } from "../../domain/entities/course";
 import CloudinaryV2 from "../../insfrastructure/service/cloudiner";
+import { IEditCourse } from "../../domain/interfaces/instructor/IEditCourse";
+import { IInstructorRepository } from "../../domain/interfaces/repository/IInstructorRepository";
 
 export class EditCourse
-  implements
-    IUseCase<
-      { courseId: string; courseData: Req; next: NextFunction },
-      ICourse | void
-    >
-{
+  implements IEditCourse{
   constructor(
-    private readonly instructorRepository: InstructorRepository,
+    private readonly instructorRepository: IInstructorRepository,
     private readonly cloudinary: CloudinaryV2
   ) {}
   public async execute(input: {
     courseId: string;
     courseData: Req;
-    next: NextFunction;
   }): Promise<ICourse | void> {
     try {
       const { courseId, courseData } = input;
@@ -63,7 +57,7 @@ export class EditCourse
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

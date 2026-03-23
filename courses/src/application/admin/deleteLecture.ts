@@ -1,16 +1,12 @@
-import { IUseCase } from "@eduhublearning/common";
-import { AdminRepository } from "../../insfrastructure/db/repositories/adminRepository";
-import { NextFunction } from "express";
 import { ISection } from "../../domain/entities/section";
+import { IAdminRepository } from "../../domain/interfaces/repository/IAdminRepository";
+import { IDeleteLecture } from "../../domain/interfaces/admin/IDeleteLecture";
 
 export class DeleteLecture
-  implements
-    IUseCase<{ lectureUrl: string; next: NextFunction }, ISection | void>
-{
-  constructor(private readonly adminRepository: AdminRepository) {}
+  implements IDeleteLecture{
+  constructor(private readonly adminRepository: IAdminRepository) {}
   public async execute(input: {
     lectureUrl: string;
-    next: NextFunction;
   }): Promise<ISection | void> {
     try {
       const section = await this.adminRepository.deleteLecture(
@@ -21,7 +17,7 @@ export class DeleteLecture
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

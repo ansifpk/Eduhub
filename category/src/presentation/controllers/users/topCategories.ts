@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import { IController } from "../../../shared/IController";
-import { TopCategories } from "../../../application/instructor/topCategories";
 import { StatusCodes } from "@eduhublearning/common";
+import { ITopCategories } from "../../../domain/insterfaces/instructor/useCases/ITopCatgories";
 
 export class TopCategoriesController implements IController {
-    constructor(private readonly _useCase:TopCategories) {
+    constructor(private readonly _useCase:ITopCategories) {
         
     }
     
@@ -12,7 +12,7 @@ export class TopCategoriesController implements IController {
          try {
        
         
-         const categories = await this._useCase.execute({next});
+         const categories = await this._useCase.execute();
          if(categories){
              res.status(StatusCodes.OK).send(categories);
          }

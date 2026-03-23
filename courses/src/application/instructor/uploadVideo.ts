@@ -1,22 +1,18 @@
-import { IUseCase } from "@eduhublearning/common";
-import { NextFunction } from "express";
 import { ReqUp } from "../../domain/interfaces/IReqUp";
-import { InstructorRepository } from "../../insfrastructure/db/repositories/instructorRepository";
-import CloudinaryV2 from "../../insfrastructure/service/cloudiner";
-import { SentEmail } from "../../insfrastructure/service/sentMail";
+import { IUploadVideo } from "../../domain/interfaces/instructor/IUploadVideo";
+import { IInstructorRepository } from "../../domain/interfaces/repository/IInstructorRepository";
+import { ICloudinary } from "../../domain/interfaces/service/Icloudinery";
+import { ISentEmail } from "../../domain/interfaces/service/ISentMail";
 
 export class UploadVideo
-  implements
-    IUseCase<{ sectionData: ReqUp; next: NextFunction }, boolean | void>
-{
+  implements IUploadVideo{
   constructor(
-    private readonly instructorRepository: InstructorRepository,
-    private readonly cloudinery: CloudinaryV2,
-    private readonly sendMail: SentEmail
+    private readonly instructorRepository: IInstructorRepository,
+    private readonly cloudinery: ICloudinary,
+    private readonly sendMail: ISentEmail
   ) {}
   public async execute(input: {
     sectionData: ReqUp;
-    next: NextFunction;
   }): Promise<boolean | void> {
     try {
       const { sectionData } = input;
@@ -61,7 +57,7 @@ export class UploadVideo
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

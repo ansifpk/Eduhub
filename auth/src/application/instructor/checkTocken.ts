@@ -1,13 +1,11 @@
-import { NextFunction } from "express";
-import { IToken } from "../../domain/interfaces/serviceInterfaces/IJwt";
-import { JWTtocken } from "../../infrastructure/services/jwt";
-import { IUseCase } from "../../shared/IUseCase";
+import { IJwt, IToken } from "../../domain/interfaces/serviceInterfaces/IJwt";
+import { ICheckToken } from "../../domain/interfaces/instructor/useCases/ICheckToken";
 
-export class CheckTocken implements IUseCase<{tocken:string,next: NextFunction},IToken|void> {
-    constructor(private readonly jwt:JWTtocken) {
+export class CheckTocken implements ICheckToken {
+    constructor(private readonly jwt:IJwt) {
         
     }
-    public async execute(input: {tocken:string,next: NextFunction}): Promise<IToken|void> {
+    public async execute(input: {tocken:string}): Promise<IToken|void> {
         try {
           const decoded = await this.jwt.verifyRefreshJwt(input.tocken)
           
@@ -20,6 +18,7 @@ export class CheckTocken implements IUseCase<{tocken:string,next: NextFunction},
           
         } catch (error) {
           console.error(error)
+          throw error;
         }
     }
 }

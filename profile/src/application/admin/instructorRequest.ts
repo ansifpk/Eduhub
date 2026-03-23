@@ -1,21 +1,14 @@
-import { IUseCase } from "@eduhublearning/common";
-import { AdminRepository } from "../../infrastructure/db/repository/adminRepository";
 import { Iuser } from "../../domain/entities/user";
-import { NextFunction } from "express";
+import { IAdminRepository } from "../../domain/interfaces/repositoryInterfaces/IadminRepository";
+import { IInstructorRequest } from "../../domain/interfaces/useCases/admin/IInstructorRequest";
 
 export class InstructorRequest
-  implements
-    IUseCase<
-      { search: string; page: string; sort: string; next: NextFunction },
-      Iuser[] | void
-    >
-{
-  constructor(private readonly adminRepository: AdminRepository) {}
+  implements IInstructorRequest{
+  constructor(private readonly adminRepository: IAdminRepository) {}
   public async execute(input: {
     search: string;
     page: string;
     sort: string;
-    next: NextFunction;
   }): Promise<Iuser[] | void> {
     try {
       const { search, page, sort } = input;
@@ -27,7 +20,7 @@ export class InstructorRequest
       return requests;
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

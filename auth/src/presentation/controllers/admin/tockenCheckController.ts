@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import { IController } from "../../../shared/IController";
-import { AdminTockenCheck } from "../../../application/admin/tockenCheck";
 import { ForbiddenError, StatusCodes } from "@eduhublearning/common";
+import { ITokenCheck } from "../../../domain/interfaces/admin/useCases/ITokenCheck";
 
 export class AdminTockenCheckController implements IController {
-    constructor(private readonly _useCase:AdminTockenCheck) {
+    constructor(private readonly _useCase:ITokenCheck) {
         
     }
     public async handle(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -14,7 +14,7 @@ export class AdminTockenCheckController implements IController {
                   }
                   const tocken = req.cookies.refreshAdminToken;
                   
-                  const tockens  = await this._useCase.execute({tocken,next})
+                  const tockens  = await this._useCase.execute({tocken})
                   if(tockens){
                    
                     res.cookie('accessAdminToken',tockens.accessToken,{
@@ -34,7 +34,6 @@ export class AdminTockenCheckController implements IController {
                     res.status(StatusCodes.OK).send({success:true,tockens});
                   }
                 } catch (error) {
-                  console.error(error);
                   next(error)
                 }
     }

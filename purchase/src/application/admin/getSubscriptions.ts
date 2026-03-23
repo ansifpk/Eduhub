@@ -1,15 +1,11 @@
-import { IController, IUseCase } from "@eduhublearning/common";
-import { Request, Response, NextFunction } from "express";
-import { AdminRepository } from "../../infrastructure/db/repository/adminRepository";
 import { ISubcription } from "../../domain/entities/subscription";
+import { IGetAdminSubscriptions } from "../../domain/interfaces/useCases/admin/IGetAdminSubscriptions";
+import { IAdminRepository } from "../../domain/interfaces/repository/IAdminrepository";
 
 export class GetAdminSubscriptions
-  implements IUseCase<{ next: NextFunction }, ISubcription[] | void>
-{
-  constructor(private readonly adminRepository: AdminRepository) {}
-  public async execute(input: {
-    next: NextFunction;
-  }): Promise<ISubcription[] | void> {
+  implements IGetAdminSubscriptions{
+  constructor(private readonly adminRepository: IAdminRepository) {}
+  public async execute(): Promise<ISubcription[] | void> {
     try {
       const subscriptions = await this.adminRepository.findSubscriptions();
       if (subscriptions) {
@@ -17,7 +13,7 @@ export class GetAdminSubscriptions
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

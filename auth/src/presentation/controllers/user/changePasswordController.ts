@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from "express";
-import { ChangePassword } from "../../../application/user/changePassword";
 import { IController } from "../../../shared/IController";
 import { StatusCodes } from "@eduhublearning/common";
+import { IChangePassword } from "../../../domain/interfaces/user/useCases/IChangePassword";
 
 export class ChangePasswordConstroller implements IController {
-    constructor(private readonly _useCase:ChangePassword) {
+    constructor(private readonly _useCase:IChangePassword) {
         
     }
     public async handle(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -14,13 +14,13 @@ export class ChangePasswordConstroller implements IController {
        { email,
         password,
         confirmPassword,
-        next}
+        }
       );
       if (data) {
          res.status(StatusCodes.NO_CONTENT).send({ sucess: true });
       }
     } catch (error) {
-      console.error(error);
+      next(error)
     }
     }
 }

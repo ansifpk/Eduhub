@@ -1,9 +1,9 @@
 import { IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
-import { InstructorCourseDetailes } from "../../../application/instructor/courseDetailes";
+import { IInstructorCourseDetailes } from "../../../domain/interfaces/instructor/ICourseDetailes";
 
 export class InstructorCourseDetailesController implements IController {
-  constructor(private readonly _useCase: InstructorCourseDetailes) {}
+  constructor(private readonly _useCase: IInstructorCourseDetailes) {}
   public async handle(
     req: Request,
     res: Response,
@@ -11,7 +11,7 @@ export class InstructorCourseDetailesController implements IController {
   ): Promise<void> {
     try {
       const { courseId } = req.params;
-      const course = await this._useCase.execute({ courseId, next });
+      const course = await this._useCase.execute({ courseId });
       if (course) {
         res.status(StatusCodes.OK).send({ success: true, course });
       }

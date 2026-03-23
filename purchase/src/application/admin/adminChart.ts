@@ -1,20 +1,14 @@
-import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
-import { NextFunction } from "express";
+import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
 import { IOrder } from "../../domain/entities/order";
-import { AdminRepository } from "../../infrastructure/db/repository/adminRepository";
+import { IAdminChart } from "../../domain/interfaces/useCases/admin/IAdminChart";
+import { IAdminRepository } from "../../domain/interfaces/repository/IAdminrepository";
 
 export class AdminChart
-  implements
-    IUseCase<
-      { start: string; end: string; next: NextFunction },
-      IOrder[] | void
-    >
-{
-  constructor(private readonly adminRepository: AdminRepository) {}
+  implements IAdminChart {
+  constructor(private readonly adminRepository: IAdminRepository) {}
   public async execute(input: {
     start: string;
     end: string;
-    next: NextFunction;
   }): Promise<IOrder[] | void> {
     try {
       const { start, end } = input;
@@ -27,7 +21,7 @@ export class AdminChart
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import { IController } from "../../../shared/IController";
-import { EditCategory } from "../../../application/admin/editCategory";
 import { StatusCodes } from "@eduhublearning/common";
+import { IEditCategory } from "../../../domain/insterfaces/admin/useCases/IEditCategory";
 
 
 export class EditCategoryController implements IController {
-    constructor(private readonly _useCase:EditCategory) {
+    constructor(private readonly _useCase:IEditCategory) {
         
     }
     public async handle(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -16,14 +16,14 @@ export class EditCategoryController implements IController {
         title,
         description,
         topics,
-        next}
+        }
       );
     
       if (categories) {
          res.status(StatusCodes.OK).send({ success: true, data: categories });
       }
     } catch (error) {
-      console.error(error);
+      next(error);
     }
     }
 }

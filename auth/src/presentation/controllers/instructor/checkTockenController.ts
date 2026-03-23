@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import { IController } from "../../../shared/IController";
-import { CheckTocken } from "../../../application/instructor/checkTocken";
 import { ForbiddenError, StatusCodes } from "@eduhublearning/common";
+import { ICheckToken } from "../../../domain/interfaces/instructor/useCases/ICheckToken";
 
 export class CheckTockenController implements IController {
-  constructor(private readonly _useCase: CheckTocken) {}
+  constructor(private readonly _useCase: ICheckToken) {}
   public async handle(
     req: Request,
     res: Response,
@@ -16,7 +16,7 @@ export class CheckTockenController implements IController {
       }
       const tocken = req.cookies.refreshInstructorToken;
 
-      const tockens = await this._useCase.execute({ tocken, next });
+      const tockens = await this._useCase.execute({ tocken});
       if (tockens) {
         res.cookie("accessInstructorToken", tockens.accessToken, {
           httpOnly: true,
@@ -35,7 +35,6 @@ export class CheckTockenController implements IController {
         res.status(StatusCodes.OK).send({ success: true, tockens });
       }
     } catch (error) {
-      console.error(error);
       next(error);
     }
   }

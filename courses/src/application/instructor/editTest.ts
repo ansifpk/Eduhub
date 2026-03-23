@@ -1,20 +1,14 @@
-import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
 import { ITest } from "../../domain/entities/tests";
-import { NextFunction } from "express";
-import { InstructorRepository } from "../../insfrastructure/db/repositories/instructorRepository";
+import { IEditTest } from "../../domain/interfaces/instructor/IEditTest";
+import { IInstructorRepository } from "../../domain/interfaces/repository/IInstructorRepository";
 
 export class EditTest
-  implements
-    IUseCase<
-      { testId: string; testData: ITest; next: NextFunction },
-      ITest | void
-    >
-{
-  constructor(private instructorRepository: InstructorRepository) {}
+  implements IEditTest{
+  constructor(private instructorRepository: IInstructorRepository) {}
   public async execute(input: {
     testId: string;
     testData: ITest;
-    next: NextFunction;
   }): Promise<ITest | void> {
     try {
       const { testData, testId } = input;
@@ -32,7 +26,7 @@ export class EditTest
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

@@ -1,21 +1,21 @@
 import { IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
-import { TopInstructors } from "../../../application/admin/topInstructors";
+import { ITopInstructors } from "../../../domain/interfaces/useCases/admin/ITopInstructors";
 
 export class TopInstructorsController implements IController {
-  constructor(private readonly _useCase: TopInstructors) {}
+  constructor(private readonly _useCase: ITopInstructors) {}
   public async handle(
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> {
     try {
-      const users = await this._useCase.execute({ next });
+      const users = await this._useCase.execute();
       if (users) {
         res.status(StatusCodes.OK).send(users);
       }
     } catch (error) {
-      console.error(error);
+      next(error);
     }
   }
 }

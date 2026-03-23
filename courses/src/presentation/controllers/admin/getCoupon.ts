@@ -1,9 +1,9 @@
 import { IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
-import { GetCoupons } from "../../../application/admin/getCoupon";
+import { IGetCoupon } from "../../../domain/interfaces/admin/IGetCoupon";
 
 export class GetCouponsController implements IController {
-  constructor(private readonly _useCase: GetCoupons) {}
+  constructor(private readonly _useCase: IGetCoupon) {}
   public async handle(
     req: Request,
     res: Response,
@@ -16,13 +16,13 @@ export class GetCouponsController implements IController {
         search: search as string,
         sort: sort as string,
         page: page as string,
-        next,
       });
       if (coupon) {
         res.status(StatusCodes.OK).send({ success: true, coupon: coupon });
       }
     } catch (error) {
       console.error(error);
+      next(error);
     }
   }
 }

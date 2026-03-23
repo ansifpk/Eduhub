@@ -1,21 +1,14 @@
-import { NextFunction } from "express";
-import { UserRepository } from "../../infrastructure/db/repositories/userRepository";
-import { IUseCase } from "../../shared/IUseCase";
 import { BadRequestError,ErrorMessages } from "@eduhublearning/common";
 import { UpdateWriteOpResult } from "mongoose";
+import { IMarkAsRead } from "../../domain/interfaces/IMarkAsRead";
+import { IUserRepository } from "../../domain/interfaces/IUserRepository";
 
 export class MarkAsRead
-  implements
-    IUseCase<
-      { userId: string; senderId: string; next: NextFunction },
-      UpdateWriteOpResult | void
-    >
-{
-  constructor(private readonly _userRepository: UserRepository) {}
+  implements IMarkAsRead {
+  constructor(private readonly _userRepository: IUserRepository) {}
   public async execute(input: {
     userId: string;
     senderId: string;
-    next: NextFunction;
   }): Promise<UpdateWriteOpResult | void> {
     try {
       const user = await this._userRepository.findUserById(input.senderId);
@@ -32,7 +25,7 @@ export class MarkAsRead
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

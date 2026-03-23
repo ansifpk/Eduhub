@@ -1,13 +1,12 @@
-import { NextFunction } from "express";
-import { IUseCase } from "../../shared/IUseCase";
 import { ICategory } from "../../domain/category";
-import { InstructorRepository } from "../../infrastructure/db/repository/instructorRepository";
+import { ITopCategories } from "../../domain/insterfaces/instructor/useCases/ITopCatgories";
+import { IInstructorRepository } from "../../domain/insterfaces/repositoryInterfaces/IinstructorRepository";
 
-export class TopCategories implements IUseCase<{next:NextFunction},ICategory[]|void> {
-    constructor(private readonly instructorRepository:InstructorRepository) {
+export class TopCategories implements ITopCategories {
+    constructor(private readonly instructorRepository:IInstructorRepository) {
         
     }
-    public async execute(input: { next: NextFunction; }): Promise<void | ICategory[]> {
+    public async execute(): Promise<void | ICategory[]> {
         try {
       
       const categories = await this.instructorRepository.findTop5();
@@ -16,7 +15,7 @@ export class TopCategories implements IUseCase<{next:NextFunction},ICategory[]|v
      }
     } catch (error) {
       console.error(error);
-      input.next(error)
+      throw error;
     }
     }
 }

@@ -1,16 +1,12 @@
-import { NextFunction } from "express";
-import { UserRepository } from "../../infrastructure/db/repositories/userRepository";
-import { IUseCase } from "../../shared/IUseCase";
 import { IMessage } from "../../domain/entities/message";
+import { IGetMessages } from "../../domain/interfaces/IGetMessages";
+import { IUserRepository } from "../../domain/interfaces/IUserRepository";
 
 export class GetMessages
-  implements
-    IUseCase<{ chatId: string; next: NextFunction }, IMessage[] | void>
-{
-  constructor(public readonly _userRepository: UserRepository) {}
+  implements IGetMessages {
+  constructor(public readonly _userRepository: IUserRepository) {}
   public async execute(input: {
     chatId: string;
-    next: NextFunction;
   }): Promise<IMessage[] | void> {
     try {
       const messages = await this._userRepository.findAllMessages(input.chatId);
@@ -19,7 +15,7 @@ export class GetMessages
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

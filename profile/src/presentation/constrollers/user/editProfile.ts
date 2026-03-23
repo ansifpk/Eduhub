@@ -3,13 +3,13 @@ import {
   StatusCodes,
   UserProfileUpdatedPublisher,
 } from "@eduhublearning/common";
-import { EditProfile } from "../../../application/user/editProfile";
 import { Request, Response, NextFunction } from "express";
 import kafkaWrapper from "../../../infrastructure/kafka/kafkaWrapper";
 import { Producer } from "kafkajs";
+import { IEditProfile } from "../../../domain/interfaces/useCases/user/IEditProfile";
 
 export class EditProfileController implements IController {
-  constructor(private readonly _useCase: EditProfile) {}
+  constructor(private readonly _useCase: IEditProfile) {}
   public async handle(
     req: Request,
     res: Response,
@@ -23,7 +23,6 @@ export class EditProfileController implements IController {
         name,
         thumbnail,
         aboutMe,
-        next,
       });
       if (userProfile) {
         await new UserProfileUpdatedPublisher(
@@ -35,7 +34,6 @@ export class EditProfileController implements IController {
         res.status(StatusCodes.OK).send({ success: true, user: userProfile });
       }
     } catch (error) {
-      console.error(error);
       next(error);
     }
   }

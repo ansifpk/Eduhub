@@ -1,9 +1,9 @@
 import { IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
-import { Register } from "../../../application/instructor/register";
+import { IRegister } from "../../../domain/interfaces/useCases/instructor/IRegister";
 
 export class RegisterController implements IController {
-  constructor(private readonly _useCase: Register) {}
+  constructor(private readonly _useCase: IRegister) {}
   public async handle(
     req: Request,
     res: Response,
@@ -18,13 +18,11 @@ export class RegisterController implements IController {
       const updatedUser = await this._useCase.execute({
         userData: req.body,
         fileData: files,
-        next,
       });
       if (updatedUser) {
         res.status(StatusCodes.CREATED).send({ success: true });
       }
     } catch (error) {
-      console.error(error);
       next(error);
     }
   }

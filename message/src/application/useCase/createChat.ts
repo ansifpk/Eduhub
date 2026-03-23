@@ -1,23 +1,16 @@
-import { NextFunction } from "express";
-import { IUseCase } from "../../shared/IUseCase";
-import { UserRepository } from "../../infrastructure/db/repositories/userRepository";
 import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
 import { IChat } from "../../domain/entities/chat";
+import { IUserRepository } from "../../domain/interfaces/IUserRepository";
+import { ICreateChatUseCase } from "../../domain/interfaces/ICreateChatUseCase";
 
 export class CreateChatUseCase
-  implements
-    IUseCase<
-      { userId: string; recipientId: string; role: string; next: NextFunction },
-      IChat | void
-    >
-{
-  constructor(private readonly _userRepository: UserRepository) {}
+  implements ICreateChatUseCase {
+  constructor(private readonly _userRepository: IUserRepository) {}
 
   public async execute(input: {
     userId: string;
     recipientId: string;
     role: string;
-    next: NextFunction;
   }): Promise<IChat | void> {
     try {
       const checkCurrentUser = await this._userRepository.findUserById(
@@ -52,7 +45,7 @@ export class CreateChatUseCase
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

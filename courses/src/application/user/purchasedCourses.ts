@@ -1,15 +1,12 @@
-import { IUseCase } from "@eduhublearning/common";
-import { NextFunction } from "express";
 import { ICourse } from "../../domain/entities/course";
-import { UserRepository } from "../../insfrastructure/db/repositories/userRepository";
+import { IPurchasedCourses } from "../../domain/interfaces/user/IPurchasedCourses";
+import { IUserRepository } from "../../domain/interfaces/repository/IUserRepository";
 
 export class PurchasedCourses
-  implements IUseCase<{ userId: string; next: NextFunction }, ICourse[] | void>
-{
-  constructor(private readonly userRepository: UserRepository) {}
+  implements IPurchasedCourses{
+  constructor(private readonly userRepository: IUserRepository) {}
   public async execute(input: {
     userId: string;
-    next: NextFunction;
   }): Promise<void | ICourse[]> {
     try {
       const { userId } = input;
@@ -19,7 +16,7 @@ export class PurchasedCourses
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

@@ -1,19 +1,18 @@
-import { NextFunction } from "express";
 import { Iuser } from "../../domain/entities/user";
-import { AdminRepository } from "../../infrastructure/db/repository/adminRepository";
-import { IUseCase } from "../../shared/IUseCase";
+import { IGetStudents } from "../../domain/interfaces/admin/useCases/IGetStudents";
+import { IAdminRepository } from "../../domain/interfaces/admin/repositories/IAdminRepository";
 
-export class AdminGetStudents implements IUseCase<{next:NextFunction},Iuser[]| void> {
-    constructor(private readonly adminRepository:AdminRepository) {
+export class AdminGetStudents implements IGetStudents {
+    constructor(private readonly adminRepository:IAdminRepository) {
         
     }
-    public async execute(input: {next:NextFunction}): Promise<void | Iuser[]> {
+    public async execute(): Promise<void | Iuser[]> {
         try {
             const users = await this.adminRepository.find();
             return users;
         } catch (error) {
             console.error(error);
-            input.next(error);
+            throw error;
         }
     }
    

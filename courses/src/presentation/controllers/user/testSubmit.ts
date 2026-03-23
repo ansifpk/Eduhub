@@ -1,9 +1,9 @@
 import { IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
-import { TestSubmit } from "../../../application/user/testSubmit";
+import { ITestSubmit } from "../../../domain/interfaces/user/ITestSubmit";
 
 export class TestSubmitController implements IController {
-  constructor(private readonly _useCase: TestSubmit) {}
+  constructor(private readonly _useCase: ITestSubmit) {}
 
   public async handle(
     req: Request,
@@ -13,12 +13,11 @@ export class TestSubmitController implements IController {
     try {
       const { testId } = req.params;
       const { userId, mark } = req.body;
-      const test = await this._useCase.execute({ userId, testId, mark, next });
+      const test = await this._useCase.execute({ userId, testId, mark });
       if (test) {
         res.status(StatusCodes.CREATED).send({ success: true });
       }
     } catch (error) {
-      console.error(error);
       next(error);
     }
   }

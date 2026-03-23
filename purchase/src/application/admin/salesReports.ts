@@ -1,20 +1,14 @@
-import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
-import { AdminRepository } from "../../infrastructure/db/repository/adminRepository";
-import { NextFunction } from "express";
+import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
 import exceljs from "exceljs";
+import { IAdminSalesRepost } from "../../domain/interfaces/useCases/admin/IAdminSalesRepost";
+import { IAdminRepository } from "../../domain/interfaces/repository/IAdminrepository";
 
 export class AdminSalesRepost
-  implements
-    IUseCase<
-      { start: string; end: string; next: NextFunction },
-      exceljs.Workbook | void
-    >
-{
-  constructor(private readonly adminRepository: AdminRepository) {}
+  implements IAdminSalesRepost{
+  constructor(private readonly adminRepository: IAdminRepository) {}
   public async execute(input: {
     start: string;
     end: string;
-    next: NextFunction;
   }): Promise<exceljs.Workbook | void> {
     try {
       const { start, end } = input;
@@ -62,7 +56,7 @@ export class AdminSalesRepost
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

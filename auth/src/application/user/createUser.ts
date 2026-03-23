@@ -1,22 +1,21 @@
-import { NextFunction } from "express";
-import { IUseCase } from "../../shared/IUseCase";
+
 import { Iuser } from "../../domain/entities/user";
-import { IToken } from "../../domain/interfaces/serviceInterfaces/IJwt";
+import { IJwt, IToken } from "../../domain/interfaces/serviceInterfaces/IJwt";
 import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
-import { JWTtocken } from "../../infrastructure/services/jwt";
-import { UserRepository } from "../../infrastructure/db/repository/userRepositories";
-import { OtpRepository } from "../../infrastructure/db/repository/otpRepostory";
+import { ICreateUser } from "../../domain/interfaces/user/useCases/ICreateUser";
+import { IUserRepository } from "../../domain/interfaces/user/repository/IuserRepository";
+import { IOtpRepository } from "../../domain/interfaces/IOtpRepository";
 
 
 
-export class CreateUser implements IUseCase<{token: string, otp: string,next: NextFunction},{ user: Iuser; tokens: IToken } | void> {
+export class CreateUser implements ICreateUser {
     constructor(
-        private readonly _userRepository:UserRepository,
-        private readonly _jwtToken:JWTtocken,
-        private readonly _otpRepository:OtpRepository
+        private readonly _userRepository:IUserRepository,
+        private readonly _jwtToken:IJwt,
+        private readonly _otpRepository:IOtpRepository
     ) {}
 
-    public async execute(input: {token: string, otp: string,next: NextFunction}): Promise<{ user: Iuser; tokens: IToken } | void> {
+    public async execute(input: {token: string, otp: string}): Promise<{ user: Iuser; tokens: IToken } | void> {
         try {
               const decoded = (await this._jwtToken.verifyJwt(input.token)) as Iuser;
               const result = await this._otpRepository.findOtp(decoded.email);
@@ -40,7 +39,7 @@ export class CreateUser implements IUseCase<{token: string, otp: string,next: Ne
               }
             } catch (err) {
               console.error(err);
-              input.next(err);
+              throw err;
             }
     }
     

@@ -1,13 +1,13 @@
 import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
-import { UserRepository } from "../../insfrastructure/db/repositories/userRepository";
 import { ICoupon } from "../../domain/entities/coupon";
-import { NextFunction } from "express";
+import { IUserRepository } from "../../domain/interfaces/repository/IUserRepository";
+import { ICouponDetailes } from "../../domain/interfaces/user/ICouponDetailes";
 
-export class UserCouponDetailes implements IUseCase<{couponCode:string,userId:string, next:NextFunction},ICoupon|void> {
+export class UserCouponDetailes implements ICouponDetailes {
 
-    constructor(private readonly userRepository:UserRepository) {}
+    constructor(private readonly userRepository:IUserRepository) {}
 
-    public async execute(input: {couponCode:string,userId:string, next:NextFunction}): Promise<void | ICoupon> {
+    public async execute(input: {couponCode:string,userId:string}): Promise<void | ICoupon> {
         try {
               const today = new Date();
               const {couponCode,userId} = input;
@@ -31,8 +31,8 @@ export class UserCouponDetailes implements IUseCase<{couponCode:string,userId:st
                 return coupons;
               }
             } catch (error) {
-              input.next(error);
               console.error(error)
+              throw error;
             }
     }
 }
