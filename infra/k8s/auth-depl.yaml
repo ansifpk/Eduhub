@@ -16,9 +16,6 @@ spec:
         - name: auth
           image: pkansif/eduhub-auth:latest
           imagePullPolicy: Always
-          envFrom:
-            - secretRef:
-                name: auth-service-secrets
 ---
 apiVersion: v1
 kind: Service
