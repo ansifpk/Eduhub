@@ -23,7 +23,7 @@ export const isAuth = async (req: Request, res: Response, next: NextFunction) =>
       throw new NotAuthorizedError()
 
     }
-    const check = jwt.verify(req.cookies.accessToken, process.env.JWT_ACCESSKEY!) as User;
+    const check = jwt.verify(req.cookies.accessToken, process.env.JWT_ACCESS_KEY!) as User;
     if (!check) {
       throw new NotAuthorizedError()
     }
@@ -55,7 +55,7 @@ export const isAdmin = async (req: Request, res: Response, next: NextFunction) =
       throw new NotAuthorizedError()
 
     }
-    const check = jwt.verify(req.cookies.accessAdminToken, process.env.JWT_ACCESSKEY!) as User;
+    const check = jwt.verify(req.cookies.accessAdminToken, process.env.JWT_ACCESS_KEY!) as User;
     if (!check) {
       throw new NotAuthorizedError()
 
@@ -87,7 +87,7 @@ export const isInstructor = async (req: Request, res: Response, next: NextFuncti
       throw new NotAuthorizedError()
 
     }
-    const check = jwt.verify(req.cookies.accessInstructorToken, process.env.JWT_ACCESSKEY!) as User;
+    const check = jwt.verify(req.cookies.accessInstructorToken, process.env.JWT_ACCESS_KEY!) as User;
     if (!check) {
       throw new NotAuthorizedError()
 

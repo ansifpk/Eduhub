@@ -21,12 +21,14 @@ export class TockenCheckController implements IController {
                  httpOnly:true,
                  secure:process.env.NODE_ENV !== 'development',
                  sameSite:process.env.NODE_ENV == 'development'?'strict':"none",
+                 path:"/",
                  maxAge: 15 * 60 * 1000
               });
                res.cookie('refreshToken',tockens.refreshToken,{
                  httpOnly:true,
                  secure:process.env.NODE_ENV !== 'development',
                  sameSite:process.env.NODE_ENV == 'development'?'strict':"none",
+                 path:"/",
                  maxAge:30 * 24 * 60 * 60 * 1000
               });
                res.status(StatusCodes.OK).send({success:true,tockens});

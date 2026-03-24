@@ -57,7 +57,6 @@ const Profile = () => {
       thumbnail: "",
     },
   });
-  console.log("userId",userId)
   useEffect(() => {
     doRequest({
       url: `${userRoutes.profile}?userId=${userId}`,
