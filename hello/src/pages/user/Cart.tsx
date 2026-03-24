@@ -104,7 +104,7 @@ const Cart = () => {
       onSuccess: (response) => {
         console.log("cart",response)
         setCart(response.cart);
-        setCartTotal(0);
+        setCartTotal(response.cartTotal);
       },
     });
   }, [userId]);
