@@ -102,6 +102,7 @@ const Cart = () => {
       method: "get",
       body: {},
       onSuccess: (response) => {
+        console.log("cart",response)
         setCart(response.cart);
         setCartTotal(0);
       },
@@ -159,7 +160,7 @@ const Cart = () => {
       method: "get",
       body: {},
       onSuccess: (response) => {
-        console.log("cart",response)
+       
         setDiscount(Math.floor((cartTotal * response.coupons.offer) / 100));
         toast.success("Coupon applyied sucessfully");
       },
