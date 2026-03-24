@@ -31,7 +31,6 @@ export class CreateCouponController implements IController {
         res.status(StatusCodes.CREATED).send({ success: true, coupon: coupon });
       }
     } catch (error) {
-      console.error(error);
       next(error);
     }
   }

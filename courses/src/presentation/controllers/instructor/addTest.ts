@@ -20,7 +20,6 @@ export class AddTestController implements IController {
         res.status(StatusCodes.CREATED).send({ success: true });
       }
     } catch (error) {
-      console.error(error);
       next(error);
     }
   }

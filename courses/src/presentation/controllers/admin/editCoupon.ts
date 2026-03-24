@@ -34,7 +34,6 @@ export class EditCouponController implements IController {
         res.status(StatusCodes.OK).send({ success: true, coupon: coupon });
       }
     } catch (error) {
-      console.error(error);
       next(error);
     }
   }

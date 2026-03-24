@@ -1,10 +1,10 @@
 import { ITest } from "../../domain/entities/tests";
-import { InstructorRepository } from "../../insfrastructure/db/repositories/instructorRepository";
 import { ITestDetailes } from "../../domain/interfaces/instructor/ITestDetailes";
+import { IInstructorRepository } from "../../domain/interfaces/repository/IInstructorRepository";
 
 export class TestDetailes
   implements ITestDetailes {
-  constructor(private readonly instructorRepository: InstructorRepository) {}
+  constructor(private readonly instructorRepository: IInstructorRepository) {}
   public async execute(input: { testId: string}): Promise<ITest | void> {
     try {
       const { testId } = input;

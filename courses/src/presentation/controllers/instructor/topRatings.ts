@@ -1,11 +1,10 @@
 import { IController, StatusCodes } from "@eduhublearning/common";
-import { InstructorRepository } from "../../../insfrastructure/db/repositories/instructorRepository";
 import { Request, Response } from "express";
 import { NextFunction } from "express-serve-static-core";
-import { TopRatings } from "../../../application/instructor/topRatings";
+import { ITopRatings } from "../../../domain/interfaces/instructor/ITopRatings";
 
 export class TopRatingsController implements IController {
-  constructor(private readonly _useCase: TopRatings) {}
+  constructor(private readonly _useCase: ITopRatings) {}
   public async handle(
     req: Request,
     res: Response,
@@ -13,12 +12,11 @@ export class TopRatingsController implements IController {
   ): Promise<any> {
     try {
       const { userId } = req.params;
-      const ratings = await this._useCase.execute({ userId, next });
+      const ratings = await this._useCase.execute({ userId });
       if (ratings) {
         return res.status(StatusCodes.OK).send({ success: true, ratings });
       }
     } catch (error) {
-      console.error(error);
       next(error);
     }
   }

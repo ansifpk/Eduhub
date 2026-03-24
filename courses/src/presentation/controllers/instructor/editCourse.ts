@@ -2,13 +2,13 @@ import { CourseUpdatedPublisher, IController, StatusCodes } from "@eduhublearnin
 import { Request, Response, NextFunction } from "express";
 import kafkaWrapper from "../../../insfrastructure/kafka/kafkaWrapper";
 import { Producer } from "kafkajs";
-import { EditSection } from "../../../application/instructor/editSection";
 import { IEditCourse } from "../../../domain/interfaces/instructor/IEditCourse";
+import { IEditSection } from "../../../domain/interfaces/instructor/IEditSection";
 
 export class EditCourseController implements IController {
   constructor(
     private readonly _courseUseCase: IEditCourse,
-    private readonly _sectionUseCase: EditSection,
+    private readonly _sectionUseCase: IEditSection,
 ) {}
   public async handle(
     req: Request,
@@ -36,11 +36,10 @@ export class EditCourseController implements IController {
           price: course.price,
           image: course.image,
         });
-        this._sectionUseCase.execute({sectionData:{courseId:courseId,bodyData:req.body.sections,fileData:files},next})
+        this._sectionUseCase.execute({sectionData:{courseId:courseId,bodyData:req.body.sections,fileData:files}})
         res.status(StatusCodes.OK).send({ success: true, course: course });
       }
     } catch (error) {
-      console.error(error);
       next(error);
     }
   }

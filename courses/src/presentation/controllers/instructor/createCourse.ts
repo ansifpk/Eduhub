@@ -2,13 +2,13 @@ import { CourseCreatedPublisher, IController, StatusCodes } from "@eduhublearnin
 import { Request, Response, NextFunction } from "express";
 import { Producer } from "kafkajs";
 import kafkaWrapper from "../../../insfrastructure/kafka/kafkaWrapper";
-import { UploadVideo } from "../../../application/instructor/uploadVideo";
 import { ICreateCourse } from "../../../domain/interfaces/instructor/ICreateCourse";
+import { IUploadVideo } from "../../../domain/interfaces/instructor/IUploadVideo";
 
 export class CreateCourseControll implements IController {
     constructor(
         private readonly _courseUseCase:ICreateCourse,
-        private readonly _uploadVideoUseCase:UploadVideo,
+        private readonly _uploadVideoUseCase:IUploadVideo,
     ) {
         
     }
@@ -36,7 +36,7 @@ export class CreateCourseControll implements IController {
                     subscription: course.subscription
                 })
     
-                this._uploadVideoUseCase.execute({sectionData:{courseId:course._id as string,bodyData:req.body.sectionsVideos,fileData:files},next})
+                this._uploadVideoUseCase.execute({sectionData:{courseId:course._id as string,bodyData:req.body.sectionsVideos,fileData:files}})
                 res.status(StatusCodes.CREATED).send({success:true,course:course}) ;
               
             }

@@ -16,7 +16,6 @@ export class DeleteLectureController implements IController {
         res.status(StatusCodes.NO_CONTENT).send({ success: true });
       }
     } catch (error) {
-      console.error(error);
       next(error);
     }
   }

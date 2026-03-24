@@ -15,7 +15,6 @@ export class ReportController implements IController {
         res.status(StatusCodes.OK).send(reports);
       }
     } catch (error) {
-      console.error(error);
       next(error);
     }
   }

@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from "express";
 import { IController } from "../../../shared/IController";
-import { AdminGetStudents } from "../../../application/admin/getStudents";
 import { StatusCodes } from "@eduhublearning/common";
 import { IGetStudents } from "../../../domain/interfaces/admin/useCases/IGetStudents";
 

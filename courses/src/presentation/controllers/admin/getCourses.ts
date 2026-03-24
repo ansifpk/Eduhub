@@ -14,7 +14,6 @@ export class GetCoursesController implements IController {
               res.status(StatusCodes.OK).send({courses:courses.courses,pages:courses.pages})
             }
         } catch (error) {
-            console.error(error)
             next(error);
         }
     }

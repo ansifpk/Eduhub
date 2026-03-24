@@ -16,7 +16,6 @@ export class GetCategoryUserController implements IController {
         res.status(StatusCodes.OK).send(categories);
       }
     } catch (error) {
-      console.error(error);
       next(error);
     }
   }

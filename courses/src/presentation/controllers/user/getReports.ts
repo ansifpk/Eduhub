@@ -1,6 +1,5 @@
 import { IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
-import { GetReports } from "../../../application/user/getReports";
 import { IGetReports } from "../../../domain/interfaces/user/IGetReports";
 
 export class GetReportsController implements IController {

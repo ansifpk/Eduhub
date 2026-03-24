@@ -19,6 +19,7 @@ export class AdminLogoutController implements IController {
         res.status(StatusCodes.OK).send({ succuss: true, message: "logout success" });
       } catch (error) {
         console.error(error);
+        next(error)
       }
     }
 }

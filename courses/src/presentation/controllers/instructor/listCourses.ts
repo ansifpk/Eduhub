@@ -1,11 +1,11 @@
 import { CourseListedPublisher, IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
-import { ListCourse } from "../../../application/instructor/listCourse";
 import kafkaWrapper from "../../../insfrastructure/kafka/kafkaWrapper";
 import { Producer } from "kafkajs";
+import { IListCourse } from "../../../domain/interfaces/instructor/IIistCourse";
 
 export class ListCourseController implements IController {
-  constructor(private readonly _useCase: ListCourse) {}
+  constructor(private readonly _useCase: IListCourse) {}
 
   public async handle(
     req: Request,
@@ -14,7 +14,7 @@ export class ListCourseController implements IController {
   ): Promise<void> {
     try {
       const { courseId } = req.params;
-      const course = await this._useCase.execute({courseId, next});
+      const course = await this._useCase.execute({courseId});
       if (course) {
         await new CourseListedPublisher(
           kafkaWrapper.producer as Producer
@@ -25,7 +25,6 @@ export class ListCourseController implements IController {
         res.status(StatusCodes.OK).send({ success: true, course: course });
       }
     } catch (error) {
-      console.error(error);
       next(error);
     }
   }

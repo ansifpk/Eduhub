@@ -15,7 +15,6 @@ export class Top5RatedCoursesController implements IController {
         res.status(StatusCodes.OK).send(courses);
       }
     } catch (error) {
-      console.error(error);
       next(error);
     }
   }
