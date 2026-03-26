@@ -1,9 +1,9 @@
-import { Iuser } from "../../../entities/user";
+import { ILoginUserResponseDto } from "../../../../application/dtos/user/LoginUserResponseDto ";
 import { IToken } from "../../serviceInterfaces/IJwt";
 
 export interface IInstructorLogin {
     execute(input: {
     email: string;
     password: string;
-  }):Promise<{ instructor: Iuser; token: IToken; }| void>
+  }):Promise<{ instructor: ILoginUserResponseDto; token: IToken; }| void>
 }

@@ -1,6 +1,6 @@
-import { Iuser } from "../../../entities/user";
-import { IToken } from "../../serviceInterfaces/IJwt";
+import { ILoginUserResponseDto } from "../../../../application/dtos/user/LoginUserResponseDto ";
+
 
 export interface IGetStudents {
-    execute():Promise<Iuser[]| void>
+    execute():Promise<ILoginUserResponseDto[]| void>
 }

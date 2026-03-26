@@ -222,7 +222,7 @@ const AdminListInstructors = () => {
                         <Avatar>
                           <AvatarImage
                             src={instructor.avatar.avatar_url}
-                            alt="@shadcn"
+                            alt="userimage"
                           />
                           <AvatarFallback>
                             <i className="bi bi-person-fill text-3xl"></i>

@@ -3,6 +3,8 @@ import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
 import { IChangeEmail } from "../../domain/interfaces/user/useCases/IChangeEmail";
 import { IUserRepository } from "../../domain/interfaces/user/repository/IuserRepository";
 import { IOtpRepository } from "../../domain/interfaces/IOtpRepository";
+import { mapUserToChangeEmailDto } from "../mapers/user/mapUserToChangeEmailDto";
+import { IChangeEmailResponseDto } from "../dtos/user/ChangeEmailResponseDto";
 
 export class ChangeEmail implements IChangeEmail {
     constructor(
@@ -14,7 +16,7 @@ export class ChangeEmail implements IChangeEmail {
     public async execute(input: { userId: string,
         email: string,
         otp: string,
-        }): Promise<Iuser | void> {
+        }): Promise<IChangeEmailResponseDto | void> {
         try {
               
               const checkUser = await this._userRepository.findById(input.userId);
@@ -33,7 +35,7 @@ export class ChangeEmail implements IChangeEmail {
               const user = await this._userRepository.changeEmail(input.userId, input.email);
               if (user) {
                 await this._otpRepository.deleteOtp(input.email);
-                return user;
+                return mapUserToChangeEmailDto(user);
               }
             } catch (error) {
               console.error(error);

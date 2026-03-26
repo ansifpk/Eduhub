@@ -60,7 +60,6 @@ const handleGoogleLogin = useGoogleLogin({
       onSuccess:(res)=>{
         navigate("/")
         console.log("user",res);
-        
         dispatch(setUser(res.user.user))
       }
     })

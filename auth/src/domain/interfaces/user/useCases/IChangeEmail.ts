@@ -1,3 +1,4 @@
+import { IChangeEmailResponseDto } from "../../../../application/dtos/user/ChangeEmailResponseDto";
 import { Iuser } from "../../../entities/user";
 
 export interface IChangeEmail {
@@ -5,5 +6,5 @@ export interface IChangeEmail {
         userId: string,
         email: string,
         otp: string,
-    }): Promise<Iuser | void>
+    }): Promise<IChangeEmailResponseDto | void>
 }

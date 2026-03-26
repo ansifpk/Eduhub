@@ -1,4 +1,4 @@
-import { Iuser } from "../entities/user"
+import { Iuser } from "../../../entities/user"
 
 export interface IUserRepository{
     create(newUser: Iuser):Promise<Iuser|void>

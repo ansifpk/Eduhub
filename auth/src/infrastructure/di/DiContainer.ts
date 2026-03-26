@@ -1,7 +1,5 @@
 import { AdminLogin } from "../../application/admin/adminLogin";
 import { BlockUser } from "../../application/admin/blockUser";
-import { GetInstructors } from "../../application/admin/getInstructors";
-import { AdminGetStudents } from "../../application/admin/getStudents";
 import { AdminTockenCheck } from "../../application/admin/tockenCheck";
 import { CheckTocken } from "../../application/instructor/checkTocken";
 import { GetStudents } from "../../application/instructor/getStudents";
@@ -20,8 +18,6 @@ import { VerifyEmail } from "../../application/user/verifyEmail";
 import { VerifyOtp } from "../../application/user/verifyOtp";
 import { AdminLoginController } from "../../presentation/controllers/admin/adminLoginController.";
 import { BlockUserController } from "../../presentation/controllers/admin/blockUserController";
-import { GetInstructorsController } from "../../presentation/controllers/admin/getInstructorController";
-import { GetStudentsAdminController } from "../../presentation/controllers/admin/getStudentsController";
 import { AdminLogoutController } from "../../presentation/controllers/admin/logoutController";
 import { AdminTockenCheckController } from "../../presentation/controllers/admin/tockenCheckController";
 import { CheckTockenController } from "../../presentation/controllers/instructor/checkTockenController";
@@ -101,14 +97,10 @@ const logOutInstrcutorController = new LogOutInstrcutorController()
 const adminRepository = new AdminRepository(userModel)
 const adminLoginUseCase = new AdminLogin(adminRepository,jwtTocken,encrypt)
 const blockUserUseCase = new BlockUser(adminRepository)
-const getStudentsAdminUseCase = new AdminGetStudents(adminRepository)
-const getInstructorsUseCase = new GetInstructors(adminRepository)
 const adminTockenCheck = new AdminTockenCheck(jwtTocken)
 
 const adminLoginController = new AdminLoginController(adminLoginUseCase)
 const blockUserController = new BlockUserController(blockUserUseCase)
-const getStudentsAdminController = new GetStudentsAdminController(getStudentsAdminUseCase)
-const getInstructorsController = new GetInstructorsController(getInstructorsUseCase)
 const tockenCheckController = new AdminTockenCheckController(adminTockenCheck)
 const adminLogoutController = new AdminLogoutController()
 
@@ -132,8 +124,6 @@ export {
     logOutInstrcutorController,
     adminLoginController,
     blockUserController,
-    getStudentsAdminController,
-    getInstructorsController,
     tockenCheckController,
     adminLogoutController
 }

@@ -1,4 +1,3 @@
-import { IAdmin } from "../../../domain/entities/admin";
 import { Iuser } from "../../../domain/entities/user";
 import { IAdminRepository } from "../../../domain/interfaces/admin/repositories/IAdminRepository";
 import { userModel } from "../models/userModel";
@@ -39,7 +38,7 @@ export class AdminRepository implements IAdminRepository{
             return admin;
         }
     }
-    async findByEmail(email: string): Promise<IAdmin|void> {
+    async findByEmail(email: string): Promise<Iuser|void> {
         const admin = await this.userModels.findOne({email})
         if(admin){
             return admin;

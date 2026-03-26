@@ -37,8 +37,7 @@ const ForgetNewPassword: React.FC<Props> = ({ email }) => {
   });
 
   const handlePassword = (data: NewPasswordFormInputs) => {
-    console.log("data", data);
-    // setIsLoading(true);
+    setIsLoading(true);
     doRequest({
       url: userRoutes.newPassword,
       body: {

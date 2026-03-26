@@ -1,8 +1,8 @@
-import { Iuser } from "../../../entities/user";
+import { IBlockUserResponseDto } from "../../../../application/dtos/admin/BlockUserResponseDto";
 
 
 export interface IBlockUser {
     execute(input: {
     userId: string
-  }):Promise<Iuser | void>
+  }):Promise<IBlockUserResponseDto | void>
 }

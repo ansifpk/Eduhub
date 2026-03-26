@@ -1,11 +1,12 @@
 import { ForbiddenError, UserCreatedPublisher } from "@eduhublearning/common";
 import { Producer } from "kafkajs";
 import kafkaWrapper from "../../infrastructure/kafka/kafkaWrapper";
-import { Iuser } from "../../domain/entities/user";
 import { IJwt, IToken } from "../../domain/interfaces/serviceInterfaces/IJwt";
 import { IGoogleLogin } from "../../domain/interfaces/user/useCases/IGoogleLogin";
 import { IUserRepository } from "../../domain/interfaces/user/repository/IuserRepository";
 import { IHashPassword } from "../../domain/interfaces/serviceInterfaces/IHashPassword";
+import { mapUserToLoginDto } from "../mapers/user/mapUserToLoginDto";
+import { ILoginUserResponseDto } from "../dtos/user/LoginUserResponseDto ";
 
 export class GooogleLogin implements IGoogleLogin {
     constructor(
@@ -17,7 +18,7 @@ export class GooogleLogin implements IGoogleLogin {
     }
     public async execute(input: {email: string,
     name: string,
-    password: string}): Promise<{ user: Iuser; token: IToken } | void>  {
+    password: string}): Promise<{ user: ILoginUserResponseDto; token: IToken } | void>  {
         try {
       const checkUser = await this._userRepository.findByEmail(input.email);
      
@@ -43,7 +44,8 @@ export class GooogleLogin implements IGoogleLogin {
             user._id as string
           );
           if (token) {
-            return { user, token };
+            const userDTo = mapUserToLoginDto(user);
+            return { user:userDTo, token };
           }
         }
       } else {
@@ -54,7 +56,8 @@ export class GooogleLogin implements IGoogleLogin {
             checkUser._id as string
           );
           if (token) {
-            return { user: checkUser, token };
+            const userDTo = mapUserToLoginDto(checkUser);
+            return { user:userDTo , token };
           }
         }
       }

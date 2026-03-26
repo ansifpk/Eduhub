@@ -112,7 +112,7 @@ const ChangeEmail = () => {
           setOtpOpen(false);
           setLoading(false);
           dispatch(changeEmail(response.user.email))
-          toast.success("Email chnaged successfully")
+          toast.success("Email changed successfully")
           return navigate("/user/profile");
         }
       })

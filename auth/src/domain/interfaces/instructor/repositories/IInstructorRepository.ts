@@ -1,5 +1,6 @@
-import { Iuser } from "../entities/user"
-import { IInstructor } from "./IInstructorInterface"
+import { Iuser } from "../../../entities/user"
+import { IInstructor } from "../../IInstructorInterface"
+
 
 export interface IInstructorRepository{
     find():Promise<Iuser[]|void>

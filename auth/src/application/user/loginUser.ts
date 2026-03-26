@@ -1,10 +1,10 @@
 import { BadRequestError, ErrorMessages, ForbiddenError } from "@eduhublearning/common";
-import { Iuser } from "../../domain/entities/user";
 import { IJwt, IToken } from "../../domain/interfaces/serviceInterfaces/IJwt";
 import { IUserRepository } from "../../domain/interfaces/user/repository/IuserRepository";
 import { IHashPassword } from "../../domain/interfaces/serviceInterfaces/IHashPassword";
 import { ILoginUser } from "../../domain/interfaces/user/useCases/ILoginUser";
-import { mapUserToLoginDto } from "../mapers/MapUserToLoginDto";
+import { mapUserToLoginDto } from "../mapers/user/mapUserToLoginDto";
+import { ILoginUserResponseDto } from "../dtos/user/LoginUserResponseDto ";
 
 
 
@@ -17,10 +17,10 @@ export class LoginUser implements ILoginUser {
         
     }
     public async execute(input: {email:string,
-        password:string}): Promise<{ user: Iuser; token: IToken } | void> {
+        password:string}): Promise<{ user: ILoginUserResponseDto; token: IToken } | void> {
 
         try {
-              let user = await this._userRepository.findByEmail(input.email);
+              const user = await this._userRepository.findByEmail(input.email);
         
               if (!user) {
                 throw new BadRequestError(ErrorMessages.INVALID_CREDENCIALS);
@@ -40,9 +40,12 @@ export class LoginUser implements ILoginUser {
         
               const token: any = await this._jwtToken.createAccessAndRefreashToken(
                 user._id as string
-              );
-              user = mapUserToLoginDto(user)
-              return { token, user };
+              ); 
+
+              // Dto Maping user datas;
+
+              const userDto = mapUserToLoginDto(user)
+              return { token, user:userDto };
             } catch (err) {
               console.error(err);
              throw err;
