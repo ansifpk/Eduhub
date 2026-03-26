@@ -54,6 +54,6 @@ export class ApiServer {
     await new OrderCreatedCreateConsumer(consumer).listen();
     await new EmailChangedConsumer(emailChangeConsumer).listen();
     await connectDB();
-       app.listen(port,()=>console.log(`profile service start running on ${port}...!`))
+       app.listen(port,()=>console.log(`profile service start running on port ${port}`))
     }
 }

@@ -61,6 +61,6 @@ export class ApiServer{
     
         
 
-        app.listen(port,()=>console.log(`course service running at port ${port}`))
+        app.listen(port,()=>console.log(`course service running on port ${port}`))
     }
 }

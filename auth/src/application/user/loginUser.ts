@@ -19,7 +19,7 @@ export class LoginUser implements ILoginUser {
         password:string}): Promise<{ user: Iuser; token: IToken } | void> {
 
         try {
-              const user = await this._userRepository.findByEmail(input.email);
+              let user = await this._userRepository.findByEmail(input.email);
         
               if (!user) {
                 throw new BadRequestError(ErrorMessages.INVALID_CREDENCIALS);
@@ -40,7 +40,6 @@ export class LoginUser implements ILoginUser {
               const token: any = await this._jwtToken.createAccessAndRefreashToken(
                 user._id as string
               );
-        
               return { token, user };
             } catch (err) {
               console.error(err);
