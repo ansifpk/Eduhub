@@ -102,7 +102,6 @@ const Cart = () => {
       method: "get",
       body: {},
       onSuccess: (response) => {
-        console.log("cart",response)
         setCart(response.cart);
         setCartTotal(response.cartTotal);
       },
