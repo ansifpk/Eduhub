@@ -4,7 +4,6 @@ import { IJwt, IToken } from "../../domain/interfaces/serviceInterfaces/IJwt";
 import { IUserRepository } from "../../domain/interfaces/user/repository/IuserRepository";
 import { IHashPassword } from "../../domain/interfaces/serviceInterfaces/IHashPassword";
 import { ILoginUser } from "../../domain/interfaces/user/useCases/ILoginUser";
-import { mapUserToLoginDto } from "../mapers/MapUserToLoginDto";
 
 
 
@@ -41,7 +40,6 @@ export class LoginUser implements ILoginUser {
               const token: any = await this._jwtToken.createAccessAndRefreashToken(
                 user._id as string
               );
-              user = mapUserToLoginDto(user)
               return { token, user };
             } catch (err) {
               console.error(err);
