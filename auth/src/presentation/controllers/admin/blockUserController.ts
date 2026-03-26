@@ -1,12 +1,12 @@
 import { Request, Response, NextFunction } from "express";
-import { IController } from "../../../shared/IController";
-import { BlockUser } from "../../../application/admin/blockUser";
 import { StatusCodes, UserBlcokedPublisher } from "@eduhublearning/common";
 import kafkaWrapper from "../../../infrastructure/kafka/kafkaWrapper";
 import { Producer } from "kafkajs";
+import { IController } from "../../../shared/IController";
+import { IBlockUser } from "../../../domain/interfaces/admin/useCases/IBlockUser";
 
 export class BlockUserController implements IController {
-  constructor(private readonly _useCase: BlockUser) {}
+  constructor(private readonly _useCase: IBlockUser) {}
   public async handle(
     req: Request,
     res: Response,
@@ -14,7 +14,7 @@ export class BlockUserController implements IController {
   ): Promise<void> {
     try {
       const { userId } = req.params;
-      const user = await this._useCase.execute({ userId, next });
+      const user = await this._useCase.execute({ userId });
 
       if (user) {
         await new UserBlcokedPublisher(

@@ -1,16 +1,15 @@
-import { NextFunction } from "express";
-import { IUseCase } from "../../shared/IUseCase";
 import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
-import { UserRepository } from "../../infrastructure/db/repository/userRepositories";
-import { Encrypt } from "../../infrastructure/services/hashPassword";
 import { Iuser } from "../../domain/entities/user";
+import { IResetPassword } from "../../domain/interfaces/user/useCases/IResetPassword";
+import { IUserRepository } from "../../domain/interfaces/user/repository/IuserRepository";
+import { IHashPassword } from "../../domain/interfaces/serviceInterfaces/IHashPassword";
 
-export class ResetPassword implements IUseCase<{userId:string,password:string,newPassword:string,conPassword:string, next:NextFunction},Iuser|void> {
+export class ResetPassword implements IResetPassword {
     constructor(
-        private readonly _userRepository:UserRepository,
-        private readonly _encrypt:Encrypt
+        private readonly _userRepository:IUserRepository,
+        private readonly _encrypt:IHashPassword
     ) {}
-    public async execute(input: {userId:string,password:string,newPassword:string,conPassword:string, next:NextFunction}): Promise<Iuser|void> {
+    public async execute(input: {userId:string,password:string,newPassword:string,conPassword:string}): Promise<Iuser|void> {
         try {
               const user = await this._userRepository.findById(input.userId);
               if (!user) {
@@ -42,7 +41,7 @@ export class ResetPassword implements IUseCase<{userId:string,password:string,ne
               }
             } catch (err) {
               console.error(err);
-              input.next(err);
+              throw err;
             }
     }
 }

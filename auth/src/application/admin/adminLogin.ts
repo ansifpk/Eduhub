@@ -1,28 +1,20 @@
-import { NextFunction } from "express";
-import { AdminRepository } from "../../infrastructure/db/repository/adminRepository";
-import { IUseCase } from "../../shared/IUseCase";
 import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
-import { IToken } from "../../domain/interfaces/serviceInterfaces/IJwt";
-import { JWTtocken } from "../../infrastructure/services/jwt";
-import { Encrypt } from "../../infrastructure/services/hashPassword";
+import { IJwt, IToken } from "../../domain/interfaces/serviceInterfaces/IJwt";
+import { IAdminLogin } from "../../domain/interfaces/admin/useCases/IAdminLogin";
+import { IAdminRepository } from "../../domain/interfaces/admin/repositories/IAdminRepository";
+import { IHashPassword } from "../../domain/interfaces/serviceInterfaces/IHashPassword";
+import { IAdmin } from "../../domain/entities/admin";
 
-export class AdminLogin
-  implements
-    IUseCase<
-      { email: string; password: string; next: NextFunction },
-      any | void
-    >
-{
+export class AdminLogin implements IAdminLogin{
   constructor(
-    private readonly _adminRepository: AdminRepository,
-    private readonly _jwt: JWTtocken,
-    private readonly _encrypt: Encrypt
+    private readonly _adminRepository: IAdminRepository,
+    private readonly _jwt: IJwt,
+    private readonly _encrypt: IHashPassword
   ) {}
   public async execute(input: {
     email: string;
     password: string;
-    next: NextFunction;
-  }): Promise<any> {
+  }): Promise<{ token:IToken, admin:IAdmin }| void> {
     try {
       const admin = await this._adminRepository.findByEmail(input.email);
       if (admin) {
@@ -47,7 +39,7 @@ export class AdminLogin
       }
     } catch (error) {
       console.log(error);
-      input.next(error);
+      throw error;
     }
   }
 }

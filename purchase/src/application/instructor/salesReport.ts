@@ -1,21 +1,15 @@
-import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
-import { InstructorRepository } from "../../infrastructure/db/repository/instructorRepository";
-import { NextFunction } from "express";
+import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
 import exceljs from "exceljs";
+import { ISalesReport } from "../../domain/interfaces/useCases/instructor/ISalesReport";
+import { IInstructorRepository } from "../../domain/interfaces/repository/IInstructorRepository";
 
 export class SalesReport
-  implements
-    IUseCase<
-      { instructorId: string; start: string; end: string; next: NextFunction },
-      exceljs.Workbook | void
-    >
-{
-  constructor(private readonly instructorRepository: InstructorRepository) {}
+  implements ISalesReport{
+  constructor(private readonly instructorRepository: IInstructorRepository) {}
   public async execute(input: {
     instructorId: string;
     start: string;
     end: string;
-    next: NextFunction;
   }): Promise<exceljs.Workbook | void> {
     try {
       const { instructorId, start, end } = input;
@@ -73,7 +67,7 @@ export class SalesReport
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+     throw error;
     }
   }
 }

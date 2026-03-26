@@ -1,32 +1,21 @@
-import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
-import { UserRepository } from "../../infrastructure/db/repository/userRepository";
-import { NextFunction } from "express";
+import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
 import { Iuser } from "../../domain/entities/user";
-import CloudinaryV2 from "../../infrastructure/service/cloudinery";
+import { IProfileImage } from "../../domain/interfaces/useCases/user/IProfileImage";
+import { ICloudinary } from "../../domain/interfaces/serviceInterfaces/ICloudinery";
+import { IUserRepository } from "../../domain/interfaces/repositoryInterfaces/IuserRepository";
 
 export class ProfileImage
   implements
-    IUseCase<
-      {
-        userId: string;
-        image: {
-          profileImage?: Express.Multer.File[];
-        };
-        next: NextFunction;
-      },
-      Iuser | void
-    >
-{
+    IProfileImage {
   constructor(
-    private readonly userRepository: UserRepository,
-    private readonly cloudinary: CloudinaryV2
+    private readonly userRepository: IUserRepository,
+    private readonly cloudinary: ICloudinary
   ) {}
   public async execute(input: {
     userId: string;
     image: {
       profileImage?: Express.Multer.File[];
     };
-    next: NextFunction;
   }): Promise<void | Iuser> {
     try {
       const { userId, image } = input;
@@ -62,7 +51,7 @@ export class ProfileImage
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

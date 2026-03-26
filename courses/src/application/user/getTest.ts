@@ -1,15 +1,13 @@
-import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
-import { UserRepository } from "../../insfrastructure/db/repositories/userRepository";
-import { NextFunction } from "express";
+import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
 import { ITest } from "../../domain/entities/tests";
+import { IUserGetTest } from "../../domain/interfaces/user/IUserGetTest";
+import { IUserRepository } from "../../domain/interfaces/repository/IUserRepository";
 
 export class UserGetTest
-  implements IUseCase<{ testId: string; next: NextFunction }, ITest | void>
-{
-  constructor(private readonly userRepositroy: UserRepository) {}
+  implements IUserGetTest {
+  constructor(private readonly userRepositroy: IUserRepository) {}
   public async execute(input: {
     testId: string;
-    next: NextFunction;
   }): Promise<ITest | void> {
     try {
       const { testId } = input;
@@ -21,7 +19,7 @@ export class UserGetTest
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

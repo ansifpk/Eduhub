@@ -1,21 +1,15 @@
-import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
-import { InstructorRepository } from "../../infrastructure/db/repository/instructorRepository";
+import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
 import { IOrder } from "../../domain/entities/order";
-import { NextFunction } from "express";
+import { IInstructorCourseOrders } from "../../domain/interfaces/useCases/instructor/IInstructorCourseOrders";
+import { IInstructorRepository } from "../../domain/interfaces/repository/IInstructorRepository";
 
 export class InstructorCourseOrders
-  implements
-    IUseCase<
-      { instructorId: string; start: Date; end: Date; next: NextFunction },
-      IOrder[] | void
-    >
-{
-  constructor(private readonly instructorRepository: InstructorRepository) {}
+  implements IInstructorCourseOrders{
+  constructor(private readonly instructorRepository: IInstructorRepository) {}
   public async execute(input: {
     instructorId: string;
     start: Date;
     end: Date;
-    next: NextFunction;
   }): Promise<IOrder[] | void> {
     try {
       const { instructorId, start, end } = input;
@@ -33,7 +27,7 @@ export class InstructorCourseOrders
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

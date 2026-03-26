@@ -1,16 +1,13 @@
-import { NextFunction } from "express";
-import { UserRepository } from "../../infrastructure/db/repositories/userRepository";
-import { IUseCase } from "../../shared/IUseCase";
 import { BadRequestError,ErrorMessages } from "@eduhublearning/common";
 import { IChat } from "../../domain/entities/chat";
+import { IUserRepository } from "../../domain/interfaces/IUserRepository";
+import { IGetPrivetChate } from "../../domain/interfaces/IGetPrivetChate";
 
 export class GetPrivetChate
-  implements IUseCase<{ chatId: string; next: NextFunction }, IChat | void>
-{
-  constructor(private readonly _userRepository: UserRepository) {}
+  implements IGetPrivetChate {
+  constructor(private readonly _userRepository: IUserRepository) {}
   public async execute(input: {
     chatId: string;
-    next: NextFunction;
   }): Promise<IChat | void> {
     try {
       const chat = await this._userRepository.findChatById(input.chatId);
@@ -24,6 +21,7 @@ export class GetPrivetChate
       return chat;
     } catch (error) {
       console.error(error);
+      throw error;
     }
   }
 }

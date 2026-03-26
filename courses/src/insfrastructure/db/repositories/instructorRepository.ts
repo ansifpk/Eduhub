@@ -4,14 +4,14 @@ import { IRating } from "../../../domain/entities/ratings";
 import { ISection } from "../../../domain/entities/section";
 import { ITest } from "../../../domain/entities/tests";
 import { Iuser } from "../../../domain/entities/user";
-import { IInstructorrepository } from "../../../domain/interfaces/repository/IInstructorRepository";
+import { IInstructorRepository, } from "../../../domain/interfaces/repository/IInstructorRepository";
 import { Course } from "../models/courseModel";
 import { ratingModel } from "../models/ratingModel";
 import { SectionModel } from "../models/sectionModel";
 import { testModel } from "../models/testModel";
 
 
-export class InstructorRepository implements IInstructorrepository {
+export class InstructorRepository implements IInstructorRepository {
   constructor(
     private courseModel: typeof Course,
     private sectionModel: typeof SectionModel,

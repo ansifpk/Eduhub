@@ -1,15 +1,13 @@
 import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
-import { AdminRepository } from "../../insfrastructure/db/repositories/adminRepository";
-import { NextFunction } from "express";
 import { ICoupon } from "../../domain/entities/coupon";
+import { IDeleteCoupon } from "../../domain/interfaces/admin/IDeleteCoupon";
+import { IAdminRepository } from "../../domain/interfaces/repository/IAdminRepository";
 
 export class DeleteCoupon
-  implements IUseCase<{ _id: string; next: NextFunction }, ICoupon | void>
-{
-  constructor(private readonly couponRepository: AdminRepository) {}
+  implements IDeleteCoupon{
+  constructor(private readonly couponRepository: IAdminRepository) {}
   public async execute(input: {
     _id: string;
-    next: NextFunction;
   }): Promise<ICoupon | void> {
     try {
       const { _id } = input;
@@ -25,7 +23,7 @@ export class DeleteCoupon
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

@@ -1,20 +1,19 @@
 import { Request, Response, NextFunction } from "express";
-import { LoginUser } from "../../../application/user/loginUser";
 import { IController } from "../../../shared/IController";
 import { StatusCodes } from "@eduhublearning/common";
+import { ILoginUser } from "../../../domain/interfaces/user/useCases/ILoginUser";
 
 
 
 
 export class LoginUserController implements IController{
-    constructor(private readonly _useCase:LoginUser){}
+    constructor(private readonly _useCase:ILoginUser){}
     public async handle(req: Request, res: Response, next: NextFunction): Promise<void> {
        try {
       const {email,password} = req.body;
       const userAndTokens = await this._useCase.execute(
         {email,
-        password,
-        next}
+        password}
       ); 
       if (userAndTokens) { 
         res.cookie('accessToken',userAndTokens.token.accessToken,{
@@ -34,7 +33,7 @@ export class LoginUserController implements IController{
         res.status(StatusCodes.OK).send(userAndTokens);
       }
     } catch (err) {
-      console.error(err);
+      next(err);
     }
     }
     

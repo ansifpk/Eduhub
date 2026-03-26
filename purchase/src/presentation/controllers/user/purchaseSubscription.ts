@@ -1,9 +1,9 @@
 import { IController, StatusCodes } from "@eduhublearning/common";
-import { PurchaseSubscription } from "../../../application/user/purchaseSubscription";
 import { Request, Response, NextFunction } from "express";
+import { IPurchaseSubscription } from "../../../domain/interfaces/useCases/user/IPurchaseSubscription";
 
 export class PurchaseSubscriptionController implements IController {
-  constructor(private readonly _useCase: PurchaseSubscription) {}
+  constructor(private readonly _useCase: IPurchaseSubscription) {}
   public async handle(
     req: Request,
     res: Response,
@@ -15,14 +15,12 @@ export class PurchaseSubscriptionController implements IController {
       const sessionId = await this._useCase.execute({
         userId,
         subscriptionId,
-        next,
       });
       if (sessionId) {
         res.status(StatusCodes.CREATED).send({ success: true, sessionId });
       }
     } catch (error) {
       next(error);
-      console.error(error);
     }
   }
 }

@@ -14,7 +14,7 @@ import { EditCourse } from "../../application/instructor/editCourse";
 import { EditSection } from "../../application/instructor/editSection";
 import { EditTest } from "../../application/instructor/editTest";
 import { InstructorGetCourses } from "../../application/instructor/getCourses";
-import { InstructorGetStudents } from "../../application/instructor/getStudnets";
+import { InstructorGetStudents } from "../../application/instructor/getStudents";
 import { ListCourse } from "../../application/instructor/listCourse";
 import { TestDetailes } from "../../application/instructor/testDetailes";
 import { Top5instructorCourses } from "../../application/instructor/top5Courses";

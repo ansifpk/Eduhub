@@ -1,9 +1,9 @@
 import { IController, StatusCodes } from "@eduhublearning/common";
-import { EditCoupon } from "../../../application/admin/editCoupon";
 import { Request, Response, NextFunction } from "express";
+import { IEditCoupon } from "../../../domain/interfaces/admin/IEditCoupon";
 
 export class EditCouponController implements IController {
-  constructor(private readonly _useCase: EditCoupon) {}
+  constructor(private readonly _useCase: IEditCoupon) {}
   public async handle(
     req: Request,
     res: Response,
@@ -29,13 +29,12 @@ export class EditCouponController implements IController {
         startingDate,
         expiryDate,
         couponCode,
-        next,
       });
       if (coupon) {
         res.status(StatusCodes.OK).send({ success: true, coupon: coupon });
       }
     } catch (error) {
-      console.error(error);
+      next(error);
     }
   }
 }

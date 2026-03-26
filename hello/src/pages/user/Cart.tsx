@@ -103,7 +103,7 @@ const Cart = () => {
       body: {},
       onSuccess: (response) => {
         setCart(response.cart);
-        setCartTotal(0);
+        setCartTotal(response.cartTotal);
       },
     });
   }, [userId]);
@@ -159,6 +159,7 @@ const Cart = () => {
       method: "get",
       body: {},
       onSuccess: (response) => {
+       
         setDiscount(Math.floor((cartTotal * response.coupons.offer) / 100));
         toast.success("Coupon applyied sucessfully");
       },

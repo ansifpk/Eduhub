@@ -1,24 +1,24 @@
-import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
-import { UserRepository } from "../../infrastructure/db/repository/userRepository";
+import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
 import { Iuser } from "../../domain/entities/user";
-import { NextFunction } from "express";
+import { IUserRepository } from "../../domain/interfaces/repositoryInterfaces/IuserRepository";
+import { IGetProfile } from "../../domain/interfaces/useCases/user/IGetProfile";
 
-export class GetProfile implements IUseCase<{userId: string, next: NextFunction},Iuser|void> {
-    constructor(private readonly userRepository:UserRepository) {
-        
+export class GetProfile implements IGetProfile {
+  constructor(private readonly userRepository: IUserRepository) {
+
+  }
+  public async execute(input: { userId: string }): Promise<Iuser | void> {
+    try {
+      const { userId } = input;
+      const user = await this.userRepository.findById(userId);
+      if (!user) {
+        throw new BadRequestError(ErrorMessages.USER_NOT_FOUND)
+      }
+      return user
+
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
-    public async execute(input: {userId: string, next: NextFunction}): Promise<Iuser|void> {
-        try {
-            const {userId} = input;
-              const user = await this.userRepository.findById(userId);
-              if(!user){
-                throw new BadRequestError(ErrorMessages.USER_NOT_FOUND)
-              }
-              return user
-        
-            } catch (error) {
-              console.error(error);
-              input.next(error)
-            }
-    }
+  }
 }

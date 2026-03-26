@@ -1,16 +1,16 @@
 import { Request, Response, NextFunction } from "express";
-import { AdminLogin } from "../../../application/admin/adminLogin";
 import { IController } from "../../../shared/IController";
 import { StatusCodes } from "@eduhublearning/common";
+import { IAdminLogin } from "../../../domain/interfaces/admin/useCases/IAdminLogin";
 
 export class AdminLoginController implements IController {
-    constructor(private readonly _useCase:AdminLogin) {
+    constructor(private readonly _useCase:IAdminLogin) {
         
     }
     public async handle(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
         const {email,password} = req.body;
-        const adminAndToken = await this._useCase.execute({email,password,next});
+        const adminAndToken = await this._useCase.execute({email,password});
         if(adminAndToken){
 
           res.cookie('accessAdminToken',adminAndToken.token.accessToken,{

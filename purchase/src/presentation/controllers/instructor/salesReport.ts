@@ -1,9 +1,9 @@
 import { IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
-import { SalesReport } from "../../../application/instructor/salesReport";
+import { ISalesReport } from "../../../domain/interfaces/useCases/instructor/ISalesReport";
 
 export class SalesReportController implements IController {
-  constructor(private readonly _useCase: SalesReport) {}
+  constructor(private readonly _useCase: ISalesReport) {}
   public async handle(
     req: Request,
     res: Response,
@@ -15,7 +15,6 @@ export class SalesReportController implements IController {
         instructorId: instructorId as string,
         start: start as string,
         end: end as string,
-        next,
       });
       if (orders) {
         orders.xlsx.writeBuffer().then((data) => {
@@ -23,7 +22,6 @@ export class SalesReportController implements IController {
         });
       }
     } catch (error) {
-      console.error(error);
       next(error);
     }
   }

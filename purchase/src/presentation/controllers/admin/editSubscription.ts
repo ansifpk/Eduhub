@@ -1,9 +1,9 @@
 import { IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
-import { AdminEditSubscription } from "../../../application/admin/editSubscription";
+import { IAdminEditSubscriptions } from "../../../domain/interfaces/useCases/admin/IAdminEditSubscription";
 
 export class AdminEditSubscriptionController implements IController {
-  constructor(private readonly _useCase: AdminEditSubscription) {}
+  constructor(private readonly _useCase: IAdminEditSubscriptions) {}
 
   public async handle(
     req: Request,
@@ -16,13 +16,11 @@ export class AdminEditSubscriptionController implements IController {
       const subscription = await this._useCase.execute({
         subscriptionId,
         price: parseInt(price),
-        next,
       });
       if (subscription) {
         res.status(StatusCodes.NO_CONTENT).send({ success: true });
       }
     } catch (error) {
-      console.error(error);
       next(error);
     }
   }

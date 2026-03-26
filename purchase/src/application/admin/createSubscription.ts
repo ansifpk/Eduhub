@@ -1,31 +1,20 @@
-import { BadRequestError, ErrorMessages, IController, IUseCase } from "@eduhublearning/common";
-import { Request, Response, NextFunction } from "express";
-import { AdminRepository } from "../../infrastructure/db/repository/adminRepository";
+import { BadRequestError, ErrorMessages} from "@eduhublearning/common";
 import { ISubcription } from "../../domain/entities/subscription";
 import Stripe from "stripe";
+import { IAdminCreateSubscriptions } from "../../domain/interfaces/useCases/admin/IAdminCreateSubscription";
+import { IAdminRepository } from "../../domain/interfaces/repository/IAdminrepository";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET!, {
   apiVersion: "2025-01-27.acacia",
 });
 
 export class AdminCreateSubscription
-  implements
-    IUseCase<
-      {
-        price: number;
-        plan: string;
-        description: string[];
-        next: NextFunction;
-      },
-      ISubcription | void
-    >
-{
-  constructor(private readonly adminRepository: AdminRepository) {}
+  implements IAdminCreateSubscriptions {
+  constructor(private readonly adminRepository: IAdminRepository) {}
   public async execute(input: {
     price: number;
     plan: string;
     description: string[];
-    next: NextFunction;
   }): Promise<ISubcription | void> {
     try {
       const { price, plan, description } = input;
@@ -60,7 +49,7 @@ export class AdminCreateSubscription
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

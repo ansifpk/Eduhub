@@ -1,30 +1,19 @@
-import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
 import { ICourse } from "../../domain/entities/course";
-import { NextFunction } from "express";
-import { UserRepository } from "../../insfrastructure/db/repositories/userRepository";
-import { Stripe } from "../../insfrastructure/service/stripe";
+import { IPlaceOrder } from "../../domain/interfaces/user/IPlaceOrder";
+import { IUserRepository } from "../../domain/interfaces/repository/IUserRepository";
+import { IStripe } from "../../domain/interfaces/service/stripe";
 
 export class PlaceOrder
-  implements
-    IUseCase<
-      {
-        course: ICourse[];
-        userId: string;
-        couponCode: string;
-        next: NextFunction;
-      },
-      string | void
-    >
-{
+  implements IPlaceOrder{
   constructor(
-    private readonly userRepository: UserRepository,
-    private readonly stripe: Stripe
+    private readonly userRepository: IUserRepository,
+    private readonly stripe: IStripe
   ) {}
   public async execute(input: {
     course: ICourse[];
     userId: string;
     couponCode: string;
-    next: NextFunction;
   }): Promise<string | void> {
     try {
       const { course, userId, couponCode } = input;
@@ -67,7 +56,7 @@ export class PlaceOrder
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw Error;
     }
   }
 }

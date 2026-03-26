@@ -1,21 +1,15 @@
-import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
-import { UserRepository } from "../../insfrastructure/db/repositories/userRepository";
-import { NextFunction } from "express";
+import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
 import { IRating } from "../../domain/entities/ratings";
+import { IUpdateRating } from "../../domain/interfaces/user/IUpdateRating";
+import { IUserRepository } from "../../domain/interfaces/repository/IUserRepository";
 
 export class UpdateRating
-  implements
-    IUseCase<
-      { _id: string; review: string; stars: number; next: NextFunction },
-      IRating | void
-    >
-{
-  constructor(private readonly userRepository: UserRepository) {}
+  implements IUpdateRating{
+  constructor(private readonly userRepository: IUserRepository) {}
   public async execute(input: {
     _id: string;
     review: string;
     stars: number;
-    next: NextFunction;
   }): Promise<IRating | void> {
     try {
       const { _id, review, stars } = input;
@@ -33,8 +27,8 @@ export class UpdateRating
         return updatedRating;
       }
     } catch (error) {
-      input.next(error);
       console.error(error);
+      throw error;
     }
   }
 }

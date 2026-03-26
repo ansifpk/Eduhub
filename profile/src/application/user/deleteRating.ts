@@ -1,15 +1,13 @@
-import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
-import { UserRepository } from "../../infrastructure/db/repository/userRepository";
+import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
 import { IRating } from "../../domain/entities/ratings";
-import { NextFunction } from "express";
+import { IUserRepository } from "../../domain/interfaces/repositoryInterfaces/IuserRepository";
+import { IDeleteRating } from "../../domain/interfaces/useCases/user/IDeleteRating";
 
 export class DeleteRating
-  implements IUseCase<{ ratingId: string; next: NextFunction }, IRating | void>
-{
-  constructor(private readonly userRepository: UserRepository) {}
+  implements IDeleteRating {
+  constructor(private readonly userRepository: IUserRepository) {}
   public async execute(input: {
     ratingId: string;
-    next: NextFunction;
   }): Promise<void | IRating> {
     try {
       const { ratingId } = input;
@@ -23,7 +21,7 @@ export class DeleteRating
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

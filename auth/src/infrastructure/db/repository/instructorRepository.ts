@@ -1,7 +1,7 @@
 
 import { Iuser } from "../../../domain/entities/user";
 import { IInstructor } from "../../../domain/interfaces/IInstructorInterface";
-import { IInstructorRepository } from "../../../domain/interfaces/IInstructorRepository";
+import { IInstructorRepository } from "../../../domain/interfaces/instructor/repositories/IInstructorRepository";
 import { userModel } from "../models/userModel";
 
 

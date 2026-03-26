@@ -1,24 +1,20 @@
-import { NextFunction } from "express";
-import { IUseCase } from "../../shared/IUseCase";
 import { Iuser } from "../../domain/entities/user";
-import { UserRepository } from "../../infrastructure/db/repository/userRepositories";
 import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
-import { OtpRepository } from "../../infrastructure/db/repository/otpRepostory";
+import { IChangeEmail } from "../../domain/interfaces/user/useCases/IChangeEmail";
+import { IUserRepository } from "../../domain/interfaces/user/repository/IuserRepository";
+import { IOtpRepository } from "../../domain/interfaces/IOtpRepository";
 
-export class ChangeEmail implements IUseCase<{ userId: string,
-    email: string,
-    otp: string,
-    next: NextFunction},Iuser | void> {
+export class ChangeEmail implements IChangeEmail {
     constructor(
-        private readonly _userRepository:UserRepository,
-        private readonly _otpRepository:OtpRepository
+        private readonly _userRepository:IUserRepository,
+        private readonly _otpRepository:IOtpRepository
     ) {
         
     }
     public async execute(input: { userId: string,
         email: string,
         otp: string,
-        next: NextFunction}): Promise<Iuser | void> {
+        }): Promise<Iuser | void> {
         try {
               
               const checkUser = await this._userRepository.findById(input.userId);
@@ -41,7 +37,7 @@ export class ChangeEmail implements IUseCase<{ userId: string,
               }
             } catch (error) {
               console.error(error);
-              input.next(error);
+              throw error;
             }
     }
 }

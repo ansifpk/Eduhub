@@ -1,20 +1,14 @@
-import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
-import { AdminRepository } from "../../infrastructure/db/repository/adminRepository";
+import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
 import { Iuser } from "../../domain/entities/user";
-import { NextFunction } from "express";
+import { IInstructorAprovel } from "../../domain/interfaces/useCases/admin/IInstructorAprovel";
+import { IAdminRepository } from "../../domain/interfaces/repositoryInterfaces/IadminRepository";
 
 export class InstructorAprovel
-  implements
-    IUseCase<
-      { email: string; status: string; next: NextFunction },
-      Iuser | void
-    >
-{
-  constructor(private readonly adminRepository: AdminRepository) {}
+  implements IInstructorAprovel {
+  constructor(private readonly adminRepository: IAdminRepository) {}
   public async execute(input: {
     email: string;
     status: string;
-    next: NextFunction;
   }): Promise<Iuser | void> {
     try {
       const { email, status } = input;
@@ -41,7 +35,7 @@ export class InstructorAprovel
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+     throw error;
     }
   }
 }

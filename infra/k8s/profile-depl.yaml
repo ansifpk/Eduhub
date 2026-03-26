@@ -16,9 +16,6 @@ spec:
         - name: profile
           image: pkansif/eduhub-profile:latest
           imagePullPolicy: Always
-          envFrom:
-            - secretRef:
-                name: profile-service-secrets
 ---
 apiVersion: v1
 kind: Service

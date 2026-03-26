@@ -1,14 +1,14 @@
 import { Request, Response, NextFunction } from "express";
 import { NotAuthorizedError, StatusCodes, UserCreatedPublisher } from "@eduhublearning/common";
 import { Producer } from "kafkajs";
-import { CreateUser } from "../../../application/user/createUser";
 import kafkaWrapper from "../../../infrastructure/kafka/kafkaWrapper";
 import { IController } from "../../../shared/IController";
+import { ICreateUser } from "../../../domain/interfaces/user/useCases/ICreateUser";
 
 
 
 export class CreatUserController implements IController {
-    constructor(private readonly _useCase:CreateUser) {
+    constructor(private readonly _useCase:ICreateUser) {
         
     }
     public async handle(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -26,7 +26,7 @@ export class CreatUserController implements IController {
       const user = await this._useCase.execute({
         token:token as string,
         otp:req.body.otp,
-        next
+        
         });
    
       if (user) {
@@ -63,7 +63,7 @@ export class CreatUserController implements IController {
       res.status(StatusCodes.CREATED).send({ succusse: true, user: user });
       }
         } catch (error) {
-            console.error(error);
+            next(error)
         }
     }
 }

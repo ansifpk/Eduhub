@@ -1,14 +1,14 @@
 import { IController } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
-import { UserSignUp } from "../../../application/user/userSignUp";
+import { IUserSignUp } from "../../../domain/interfaces/user/useCases/IUserSignUp";
 
 export class RegisterController implements IController {
-    constructor(private readonly _useCase:UserSignUp) {
+    constructor(private readonly _useCase:IUserSignUp) {
         
     }
     public async  handle(req: Request, res: Response, next: NextFunction): Promise<void> {
        try {
-      const token = await this._useCase.execute({user:req.body, next});
+      const token = await this._useCase.execute({user:req.body});
       if (token) {
         res.cookie('verificationToken',token,{
           httpOnly: true,
@@ -23,7 +23,6 @@ export class RegisterController implements IController {
         });
       }
     } catch (err) {
-      console.error(err);
       next(err);
     }
     }

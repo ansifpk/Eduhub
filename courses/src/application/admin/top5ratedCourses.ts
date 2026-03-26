@@ -1,15 +1,11 @@
-import { IUseCase } from "@eduhublearning/common";
-import { AdminRepository } from "../../insfrastructure/db/repositories/adminRepository";
-import { NextFunction } from "express";
 import { ICourse } from "../../domain/entities/course";
+import { ITop5RatedCourses } from "../../domain/interfaces/admin/ITop5ratedCourses";
+import { IAdminRepository } from "../../domain/interfaces/repository/IAdminRepository";
 
 export class Top5RatedCourses
-  implements IUseCase<{ next: NextFunction }, ICourse[] | void>
-{
-  constructor(private readonly adminRepository: AdminRepository) {}
-  public async execute(input: {
-    next: NextFunction;
-  }): Promise<ICourse[] | void> {
+  implements ITop5RatedCourses{
+  constructor(private readonly adminRepository: IAdminRepository) {}
+  public async execute(): Promise<ICourse[] | void> {
     try {
       const courses = await this.adminRepository.top5Rated();
       const data = courses?.filter((value) => value.courseReviews?.length! > 0);
@@ -21,7 +17,7 @@ export class Top5RatedCourses
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

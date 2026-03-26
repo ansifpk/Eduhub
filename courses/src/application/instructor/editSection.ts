@@ -1,21 +1,18 @@
-import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
+import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
 import { ReqUp } from "../../domain/interfaces/IReqUp";
-import { NextFunction } from "express";
-import { InstructorRepository } from "../../insfrastructure/db/repositories/instructorRepository";
-import CloudinaryV2 from "../../insfrastructure/service/cloudiner";
+import { IInstructorRepository } from "../../domain/interfaces/repository/IInstructorRepository";
+import { ICloudinary } from "../../domain/interfaces/service/Icloudinery";
+import { IEditSection } from "../../domain/interfaces/instructor/IEditSection";
 
 export class EditSection
-  implements
-    IUseCase<{ sectionData: ReqUp; next: NextFunction }, Boolean | void>
-{
+  implements IEditSection{
   constructor(
-    private readonly instructorRepository: InstructorRepository,
-    private readonly cloudinery: CloudinaryV2
+    private readonly instructorRepository: IInstructorRepository,
+    private readonly cloudinery: ICloudinary
   ) {}
   public async execute(input: {
     sectionData: ReqUp;
-    next: NextFunction;
-  }): Promise<void | Boolean> {
+  }): Promise< boolean | void> {
     try {
       const { sectionData } = input;
       const files = sectionData.fileData as
@@ -65,7 +62,7 @@ export class EditSection
       );
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

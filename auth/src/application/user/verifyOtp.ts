@@ -1,18 +1,14 @@
-import { NextFunction } from "express";
 import { Iotp } from "../../domain/entities/otp";
-import { IUseCase } from "../../shared/IUseCase";
 import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
-import { OtpRepository } from "../../infrastructure/db/repository/otpRepostory";
+import { IVerifyOtp } from "../../domain/interfaces/user/useCases/IVerifyOtp";
+import { IOtpRepository } from "../../domain/interfaces/IOtpRepository";
 
-export class VerifyOtp implements IUseCase<{email:string,
-       otp:string,
-        next:NextFunction},Iotp|void> {
-    constructor(private readonly _otpRepository:OtpRepository) {
+export class VerifyOtp implements IVerifyOtp {
+    constructor(private readonly _otpRepository:IOtpRepository) {
         
     }
     public async execute(input: {email:string,
-       otp:string,
-        next:NextFunction}): Promise<void | Iotp> {
+       otp:string}): Promise<void | Iotp> {
        try {
              const user = await this._otpRepository.findOtp(input.email);
              // console.log(user?.otp);
@@ -27,7 +23,7 @@ export class VerifyOtp implements IUseCase<{email:string,
              }
            } catch (err) {
              console.error(err);
-             input.next(err);
+             throw err;
            }
     }
 }

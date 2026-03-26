@@ -2,20 +2,18 @@ import {
   BadRequestError,
   ErrorMessages,
   ForbiddenError,
-  IUseCase,
 } from "@eduhublearning/common";
-import { NextFunction } from "express";
 import { ICart } from "../../domain/entities/cart";
-import { UserRepository } from "../../infrastructure/db/repository/userRepository";
+import { IUserRepository } from "../../domain/interfaces/repositoryInterfaces/IuserRepository";
+import { ICartDetailes } from "../../domain/interfaces/useCases/user/ICartDetailes";
 
 export class CartDetailes
-  implements IUseCase<{ userId: string; next: NextFunction }, ICart | void>
+  implements ICartDetailes
 {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(private readonly userRepository: IUserRepository) {}
 
   public async execute(input: {
     userId: string;
-    next: NextFunction;
   }): Promise<void | ICart> {
     try {
       const { userId } = input;
@@ -32,7 +30,7 @@ export class CartDetailes
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

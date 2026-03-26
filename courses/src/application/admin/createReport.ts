@@ -1,13 +1,11 @@
-import { IUseCase } from "@eduhublearning/common";
 import { IReport } from "../../domain/entities/report";
-import { NextFunction } from "express";
-import { AdminRepository } from "../../insfrastructure/db/repositories/adminRepository";
+import { IAdminRepository } from "../../domain/interfaces/repository/IAdminRepository";
+import { ICreateReport } from "../../domain/interfaces/admin/ICreateReport";
 
 export class CreateReport
-  implements IUseCase<{ next: NextFunction }, IReport[] | void>
-{
-  constructor(private readonly adminRepository: AdminRepository) {}
-  public async execute(input: { next: NextFunction }): Promise<any> {
+  implements ICreateReport{
+  constructor(private readonly adminRepository: IAdminRepository) {}
+  public async execute(): Promise<IReport[] | void> {
     try {
       const reports = await this.adminRepository.findReports();
       if (reports) {
@@ -15,7 +13,7 @@ export class CreateReport
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

@@ -1,16 +1,12 @@
 import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
-import { AdminRepository } from "../../infrastructure/db/repository/adminRepository";
-import { IUseCase } from "../../shared/IUseCase";
 import { Iuser } from "../../domain/entities/user";
-import { NextFunction } from "express";
+import { IBlockUser } from "../../domain/interfaces/admin/useCases/IBlockUser";
+import { IAdminRepository } from "../../domain/interfaces/admin/repositories/IAdminRepository";
 
-export class BlockUser
-  implements IUseCase<{ userId: string; next: NextFunction }, Iuser | void>
-{
-  constructor(private readonly repository: AdminRepository) {}
+export class BlockUser implements IBlockUser{
+  constructor(private readonly repository: IAdminRepository) {}
   public async execute(input: {
     userId: string;
-    next: NextFunction;
   }): Promise<Iuser | void> {
     try {
       const check = await this.repository.findById(input.userId);
@@ -24,7 +20,7 @@ export class BlockUser
       }
     } catch (error) {
       console.log(error);
-      input.next(error);
+      throw error;
     }
   }
 }

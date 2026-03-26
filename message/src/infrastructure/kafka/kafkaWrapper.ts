@@ -1,5 +1,6 @@
 import { Consumer, Kafka, Partitioners, Producer } from 'kafkajs'
-
+import dotenv from 'dotenv';
+dotenv.config();
 
 class KafkaWrapper {
     private _kafka: Kafka
@@ -9,7 +10,7 @@ class KafkaWrapper {
        
         this._kafka = new Kafka({
             clientId: 'message-service',
-            brokers: ["kafka-srv:9092"],
+            brokers: [process.env.KAFKA_BROKER!],
            
         })
     }

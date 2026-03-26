@@ -6,9 +6,7 @@ class KafkaWrapper {
     private _kafka: Kafka
     private _producer?: Producer;
     private _consumer?: Consumer;
-    constructor() {        
-        console.log("process.env.KAFKA_BROKER",process.env.KAFKA_BROKER);
-        
+    constructor() {                
         this._kafka = new Kafka({
             clientId: 'auth-service',
             brokers: [process.env.KAFKA_BROKER!],

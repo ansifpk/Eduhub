@@ -1,9 +1,9 @@
 import { IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
-import { PlaceOrder } from "../../../application/user/placeOrder";
+import { IPlaceOrder } from "../../../domain/interfaces/user/IPlaceOrder";
 
 export class PlaceOrderController implements IController {
-  constructor(private readonly _useCase: PlaceOrder) {}
+  constructor(private readonly _useCase: IPlaceOrder) {}
   public async handle(
     req: Request,
     res: Response,
@@ -15,13 +15,12 @@ export class PlaceOrderController implements IController {
         {course,
         userId,
         couponCode,
-        next}
+        }
       );
       if (sessionId) {
         res.status(StatusCodes.CREATED).send({ id: sessionId });
       }
     } catch (error) {
-      console.error(error);
       next(error);
     }
   }

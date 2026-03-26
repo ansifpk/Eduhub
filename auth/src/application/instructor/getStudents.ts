@@ -1,19 +1,18 @@
-import { NextFunction } from "express";
 import { Iuser } from "../../domain/entities/user";
-import { InstructorRepository } from "../../infrastructure/db/repository/instructorRepository";
-import { IUseCase } from "../../shared/IUseCase";
+import { IGetStudents } from "../../domain/interfaces/instructor/useCases/IGetStudents";
+import { IInstructorRepository } from "../../domain/interfaces/instructor/repositories/IInstructorRepository";
 
-export class GetStudents implements IUseCase<{next:NextFunction},Iuser[]|void> {
+export class GetStudents implements IGetStudents{
     
-    constructor(private readonly instructorRepository:InstructorRepository) {}
+    constructor(private readonly instructorRepository:IInstructorRepository) {}
     
-    public async execute(input: {next:NextFunction}): Promise<Iuser[]|void> {
+    public async execute(): Promise<Iuser[]|void> {
         try {
           const users = await this.instructorRepository.find();
           return users;
         } catch (error) {
             console.error(error);
-            input.next(error);
+            throw error;
         }
     }
 }

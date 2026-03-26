@@ -1,29 +1,23 @@
 import { ForbiddenError, UserCreatedPublisher } from "@eduhublearning/common";
-import { IUseCase } from "../../shared/IUseCase";
 import { Producer } from "kafkajs";
 import kafkaWrapper from "../../infrastructure/kafka/kafkaWrapper";
-import { UserRepository } from "../../infrastructure/db/repository/userRepositories";
-import { Encrypt } from "../../infrastructure/services/hashPassword";
-import { JWTtocken } from "../../infrastructure/services/jwt";
 import { Iuser } from "../../domain/entities/user";
-import { IToken } from "../../domain/interfaces/serviceInterfaces/IJwt";
-import { NextFunction } from "express";
+import { IJwt, IToken } from "../../domain/interfaces/serviceInterfaces/IJwt";
+import { IGoogleLogin } from "../../domain/interfaces/user/useCases/IGoogleLogin";
+import { IUserRepository } from "../../domain/interfaces/user/repository/IuserRepository";
+import { IHashPassword } from "../../domain/interfaces/serviceInterfaces/IHashPassword";
 
-export class GooogleLogin implements IUseCase<{email: string,
-    name: string,
-    password: string,
-    next: NextFunction},{ user: Iuser; token: IToken } | void> {
+export class GooogleLogin implements IGoogleLogin {
     constructor(
-        private readonly _userRepository:UserRepository,
-        private readonly _encrypt:Encrypt,
-        private readonly _jwtToken:JWTtocken,
+        private readonly _userRepository:IUserRepository,
+        private readonly _encrypt:IHashPassword,
+        private readonly _jwtToken:IJwt,
     ) {
         
     }
     public async execute(input: {email: string,
     name: string,
-    password: string,
-    next: NextFunction}): Promise<{ user: Iuser; token: IToken } | void>  {
+    password: string}): Promise<{ user: Iuser; token: IToken } | void>  {
         try {
       const checkUser = await this._userRepository.findByEmail(input.email);
      
@@ -67,7 +61,7 @@ export class GooogleLogin implements IUseCase<{email: string,
     } catch (error) {
       console.error(error);
 
-      input.next(error);
+     throw error
     }
     }
 }

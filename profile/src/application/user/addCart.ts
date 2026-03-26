@@ -1,21 +1,15 @@
-import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
-import { UserRepository } from "../../infrastructure/db/repository/userRepository";
+import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
 import { ICart } from "../../domain/entities/cart";
-import { NextFunction } from "express";
 import { ICourse } from "../../domain/entities/course";
+import { IAddToCart } from "../../domain/interfaces/useCases/user/IAddToCart";
+import { IUserRepository } from "../../domain/interfaces/repositoryInterfaces/IuserRepository";
 
 export class AddToCart
-  implements
-    IUseCase<
-      { courseId: string; userId: string; next: NextFunction },
-      ICart | void
-    >
-{
-  constructor(private readonly userRepository: UserRepository) {}
+  implements IAddToCart {
+  constructor(private readonly userRepository: IUserRepository) {}
   public async execute(input: {
     courseId: string;
     userId: string;
-    next: NextFunction;
   }): Promise<ICart | void> {
     try {
       const { courseId, userId } = input;
@@ -57,7 +51,7 @@ export class AddToCart
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+     throw error;
     }
   }
 }

@@ -1,28 +1,16 @@
-import { BadRequestError, ErrorMessages, IUseCase } from "@eduhublearning/common";
-import { UserRepository } from "../../infrastructure/db/repository/userRepository";
+import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
 import { Iuser } from "../../domain/entities/user";
-import { NextFunction } from "express";
+import { IEditProfile } from "../../domain/interfaces/useCases/user/IEditProfile";
+import { IUserRepository } from "../../domain/interfaces/repositoryInterfaces/IuserRepository";
 
 export class EditProfile
-  implements
-    IUseCase<
-      {
-        userId: string;
-        name: string;
-        thumbnail: string;
-        aboutMe: string;
-        next: NextFunction;
-      },
-      Iuser | void
-    >
-{
-  constructor(private readonly userRepository: UserRepository) {}
+  implements IEditProfile{
+  constructor(private readonly userRepository: IUserRepository) {}
   public async execute(input: {
     userId: string;
     name: string;
     thumbnail: string;
     aboutMe: string;
-    next: NextFunction;
   }): Promise<Iuser | void> {
     try {
       const { userId, name, thumbnail, aboutMe } = input;
@@ -41,7 +29,7 @@ export class EditProfile
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

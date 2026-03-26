@@ -1,9 +1,9 @@
 import { IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
-import { AdminSalesRepost } from "../../../application/admin/salesReports";
+import { IAdminSalesRepost } from "../../../domain/interfaces/useCases/admin/IAdminSalesRepost";
 
 export class AdminSalesRepostController implements IController {
-  constructor(private readonly _useCase: AdminSalesRepost) {}
+  constructor(private readonly _useCase: IAdminSalesRepost) {}
   public async handle(
     req: Request,
     res: Response,
@@ -14,7 +14,6 @@ export class AdminSalesRepostController implements IController {
       const workbook = await this._useCase.execute({
         start: start as string,
         end: end as string,
-        next,
       });
       if (workbook) {
         workbook.xlsx.writeBuffer().then((data) => {
@@ -22,7 +21,6 @@ export class AdminSalesRepostController implements IController {
         });
       }
     } catch (error) {
-      console.error(error);
       next(error);
     }
   }

@@ -1,19 +1,17 @@
 import { BadRequestError, ErrorMessages, ForbiddenError } from "@eduhublearning/common";
-import { InstructorRepository } from "../../infrastructure/db/repository/instructorRepository";
-import { IUseCase } from "../../shared/IUseCase";
-import { IToken } from "../../domain/interfaces/serviceInterfaces/IJwt";
-import { Encrypt } from "../../infrastructure/services/hashPassword";
-import { JWTtocken } from "../../infrastructure/services/jwt";
+import { IJwt, IToken } from "../../domain/interfaces/serviceInterfaces/IJwt";
 import { Iuser } from "../../domain/entities/user";
-import { NextFunction } from "express";
+import { IInstructorLogin } from "../../domain/interfaces/instructor/useCases/IInstructorLogin";
+import { IHashPassword } from "../../domain/interfaces/serviceInterfaces/IHashPassword";
+import { IInstructorRepository } from "../../domain/interfaces/instructor/repositories/IInstructorRepository";
 
-export class InstructorLogin implements IUseCase<{email: string, password: string, next: NextFunction},{ instructor: Iuser; token: IToken; } | void>{
+export class InstructorLogin implements IInstructorLogin{
     constructor(
-        private readonly instructorRepository:InstructorRepository,
-        private readonly encrypt:Encrypt,
-        private readonly jwt:JWTtocken,
+        private readonly instructorRepository:IInstructorRepository,
+        private readonly encrypt:IHashPassword,
+        private readonly jwt:IJwt,
     ){}
-    public async execute(input: {email: string, password: string, next: NextFunction}): Promise<{ instructor: Iuser; token: IToken; } | void> {
+    public async execute(input: {email: string, password: string}): Promise<{ instructor: Iuser; token: IToken; } | void> {
        try {
                const instructor = await this.instructorRepository.findByEmail(input.email);
                if(instructor){
@@ -36,7 +34,7 @@ export class InstructorLogin implements IUseCase<{email: string, password: strin
               }
             } catch (error) {
                console.error(error)
-               input.next(error)
+               throw error;
            }
     }
 

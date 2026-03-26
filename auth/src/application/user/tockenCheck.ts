@@ -1,16 +1,12 @@
 import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
-import { JWTtocken } from "../../infrastructure/services/jwt";
-import { IUseCase } from "../../shared/IUseCase";
-import { IToken } from "../../domain/interfaces/serviceInterfaces/IJwt";
-import { NextFunction } from "express";
+import { IJwt, IToken } from "../../domain/interfaces/serviceInterfaces/IJwt";
+import { ITokenCheck } from "../../domain/interfaces/user/useCases/ITokenCheck";
 
-export class TockenCheck implements IUseCase<{tocken: string,
-    next: NextFunction},IToken | void> {
-    constructor(private readonly _jwtToken:JWTtocken) {
+export class TockenCheck implements ITokenCheck {
+    constructor(private readonly _jwtToken:IJwt) {
         
     }
-    public async execute(input: {tocken: string,
-    next: NextFunction}): Promise<IToken | void> {
+    public async execute(input: {tocken: string}): Promise<IToken | void> {
          try {
               const decoded = await this._jwtToken.verifyRefreshJwt(input.tocken);
            
@@ -26,7 +22,7 @@ export class TockenCheck implements IUseCase<{tocken: string,
               }
             } catch (error) {
               console.error(error);
-              input.next(error);
+              throw error;
             }
           }
 }

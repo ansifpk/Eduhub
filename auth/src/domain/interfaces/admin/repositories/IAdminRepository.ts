@@ -1,5 +1,5 @@
-import { IAdmin } from "../entities/admin"
-import { Iuser } from "../entities/user"
+import { IAdmin } from "../../../entities/admin"
+import { Iuser } from "../../../entities/user"
 
 
 export interface IAdminRepository{

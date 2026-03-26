@@ -24,23 +24,29 @@ export const isAuth = async (
     if (!req.cookies) {
       throw new NotAuthorizedError();
     }
+    
     if (!req.cookies.accessToken) {
       throw new NotAuthorizedError();
     }
+   
     const check = jwt.verify(
       req.cookies.accessToken,
       process.env.JWT_ACCESSKEY!
     ) as User;
+    
     if (!check) {
-      throw new NotAuthorizedError();
+      throw new NotAuthorizedError()
     }
-    const user = await userModel.findById({ _id: check.id });
+    const user = await userModel.findById(check.id);
+   
     if (!user) {
       throw new NotAuthorizedError();
     }
+ 
     if (user.isBlock) {
       throw new ForbiddenError();
     }
+    
     next();
   } catch (error) {
     console.error(error);

@@ -1,9 +1,9 @@
 import { IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
-import { GetProfile } from "../../../application/user/getProfile";
+import { IGetProfile } from "../../../domain/interfaces/useCases/user/IGetProfile";
 
 export class GetProfileController implements IController {
-  constructor(private readonly _useCase: GetProfile) {}
+  constructor(private readonly _useCase: IGetProfile) {}
   public async handle(
     req: Request,
     res: Response,
@@ -13,13 +13,11 @@ export class GetProfileController implements IController {
       const { userId } = req.query;
       const userProfile = await this._useCase.execute({
         userId: userId as string,
-        next,
       });
       if (userProfile) {
         res.status(StatusCodes.OK).send({ success: true, userData: userProfile });
       }
     } catch (error) {
-      console.error(error);
       next(error);
     }
   }

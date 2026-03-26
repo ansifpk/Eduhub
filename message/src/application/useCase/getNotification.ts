@@ -1,20 +1,13 @@
-import { NextFunction } from "express";
-import { UserRepository } from "../../infrastructure/db/repositories/userRepository";
-import { IUseCase } from "../../shared/IUseCase";
 import { BadRequestError,ErrorMessages } from "@eduhublearning/common";
 import { INotification } from "../../domain/entities/notifications";
+import { IGetNotification } from "../../domain/interfaces/IGetNotification";
+import { IUserRepository } from "../../domain/interfaces/IUserRepository";
 
 export class GetNotification
-  implements
-    IUseCase<
-      { recipientId: string; next: NextFunction },
-      INotification[] | void
-    >
-{
-  constructor(private readonly _useRepository: UserRepository) {}
+  implements IGetNotification {
+  constructor(private readonly _useRepository: IUserRepository) {}
   public async execute(input: {
     recipientId: string;
-    next: NextFunction;
   }): Promise<INotification[] | void> {
     try {
       const user = await this._useRepository.findUserById(input.recipientId);
@@ -30,7 +23,7 @@ export class GetNotification
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

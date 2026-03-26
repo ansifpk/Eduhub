@@ -1,15 +1,12 @@
-import { IUseCase } from "@eduhublearning/common";
-import { InstructorRepository } from "../../insfrastructure/db/repositories/instructorRepository";
-import { NextFunction } from "express";
 import { ICourse } from "../../domain/entities/course";
+import { ITop5Courses } from "../../domain/interfaces/instructor/ITop5Courses";
+import { IInstructorRepository } from "../../domain/interfaces/repository/IInstructorRepository";
 
 export class Top5instructorCourses
-  implements IUseCase<{ userId: string; next: NextFunction }, ICourse[] | void>
-{
-  constructor(private readonly instructorRepository: InstructorRepository) {}
+  implements ITop5Courses{
+  constructor(private readonly instructorRepository: IInstructorRepository) {}
   public async execute(input: {
     userId: string;
-    next: NextFunction;
   }): Promise<ICourse[] | void> {
     try {
       const { userId } = input;
@@ -22,7 +19,7 @@ export class Top5instructorCourses
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

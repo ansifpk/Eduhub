@@ -1,22 +1,15 @@
 import { BadRequestError, ForbiddenError,ErrorMessages } from "@eduhublearning/common";
-import { UserRepository } from "../../infrastructure/db/repositories/userRepository";
-import { IUseCase } from "../../shared/IUseCase";
-import { NextFunction } from "express";
 import { IMessage } from "../../domain/entities/message";
+import { ICreateMessage } from "../../domain/interfaces/ICreateMessage";
+import { IUserRepository } from "../../domain/interfaces/IUserRepository";
 
 export class CreateMessage
-  implements
-    IUseCase<
-      { chatId: string; senderId: string; text: string; next: NextFunction },
-      IMessage | void
-    >
-{
-  constructor(private readonly _usrRepository: UserRepository) {}
+  implements ICreateMessage{
+  constructor(private readonly _usrRepository: IUserRepository) {}
   public async execute(input: {
     chatId: string;
     senderId: string;
     text: string;
-    next: NextFunction;
   }): Promise<IMessage | void> {
     try {
       const checkChat = await this._usrRepository.findChatById(input.chatId);
@@ -46,7 +39,7 @@ export class CreateMessage
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

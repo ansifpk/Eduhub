@@ -1,25 +1,25 @@
-import { BadRequestError, IUseCase } from "@eduhublearning/common";
+import { BadRequestError } from "@eduhublearning/common";
 import { Iuser } from "../../domain/entities/user";
-import { UserRepository } from "../../infrastructure/db/repository/userRepositories";
-import { Encrypt } from "../../infrastructure/services/hashPassword";
-import { OtpGenerator } from "../../infrastructure/services/otpGenerator";
-import { OtpRepository } from "../../infrastructure/db/repository/otpRepostory";
-import { NextFunction } from "express";
-import { SentEmail } from "../../infrastructure/services/sendMail";
-import { JWTtocken } from "../../infrastructure/services/jwt";
+import { IUserSignUp } from "../../domain/interfaces/user/useCases/IUserSignUp";
+import { IJwt } from "../../domain/interfaces/serviceInterfaces/IJwt";
+import { IHashPassword } from "../../domain/interfaces/serviceInterfaces/IHashPassword";
+import { IOtpGenerator } from "../../domain/interfaces/serviceInterfaces/IOtpagenerator";
+import { IOtpRepository } from "../../domain/interfaces/IOtpRepository";
+import { ISentEmail } from "../../domain/interfaces/serviceInterfaces/ISentEmail";
+import { IUserRepository } from "../../domain/interfaces/user/repository/IuserRepository";
 
-export class UserSignUp implements IUseCase<{user:Iuser,next:NextFunction},string|void> {
+export class UserSignUp implements IUserSignUp {
     constructor(
-        private readonly userRepository:UserRepository,
-        private readonly encrypt:Encrypt,
-        private readonly otpGenerate:OtpGenerator,
-        private readonly otpRepository:OtpRepository,
-        private readonly sentEmail:SentEmail,
-        private readonly jwtToken:JWTtocken,
+        private readonly userRepository:IUserRepository,
+        private readonly encrypt:IHashPassword,
+        private readonly otpGenerate:IOtpGenerator,
+        private readonly otpRepository:IOtpRepository,
+        private readonly sentEmail:ISentEmail,
+        private readonly jwtToken:IJwt,
     ) {
         
     }
-    public async execute(input: {user:Iuser,next:NextFunction}): Promise<string | void> {
+    public async execute(input: {user:Iuser}): Promise<string | void> {
         try {
       const {email,password,name} = input.user;
       if(!/^[A-Za-z0-9.%+-]+@gmail\.com$/.test(email)){
@@ -56,7 +56,7 @@ export class UserSignUp implements IUseCase<{user:Iuser,next:NextFunction},strin
       return token; 
     } catch (err) {
       console.error(err);
-      input.next(err);
+      throw err;
     }
     }
 }

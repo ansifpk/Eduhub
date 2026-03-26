@@ -1,21 +1,20 @@
-import { NextFunction } from "express";
-import { IUseCase } from "../../shared/IUseCase";
 import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
-import { UserRepository } from "../../infrastructure/db/repository/userRepositories";
-import { OtpGenerator } from "../../infrastructure/services/otpGenerator";
-import { OtpRepository } from "../../infrastructure/db/repository/otpRepostory";
-import { SentEmail } from "../../infrastructure/services/sendMail";
+import { IUserRepository } from "../../domain/interfaces/user/repository/IuserRepository";
+import { IOtpGenerator } from "../../domain/interfaces/serviceInterfaces/IOtpagenerator";
+import { IOtpRepository } from "../../domain/interfaces/IOtpRepository";
+import { ISentEmail } from "../../domain/interfaces/serviceInterfaces/ISentEmail";
+import { IForgetPassword } from "../../domain/interfaces/user/useCases/IForgetPassword";
 
-export class ForgetPassword implements IUseCase<{email:string, next:NextFunction},any> {
+export class ForgetPassword implements IForgetPassword{
     constructor(
-        private readonly _userRepository:UserRepository,
-        private readonly _otpGenerate:OtpGenerator,
-        private readonly _otpRepository:OtpRepository,
-        private readonly _sentEmail:SentEmail
+        private readonly _userRepository:IUserRepository,
+        private readonly _otpGenerate:IOtpGenerator,
+        private readonly _otpRepository:IOtpRepository,
+        private readonly _sentEmail:ISentEmail
     ) {
         
     }
-    public async execute(input: {email:string, next:NextFunction}): Promise<any> {
+    public async execute(input: {email:string}): Promise<any|void> {
         try {
               let checkuser = await this._userRepository.findByEmail(input.email);
               if (!checkuser) {
@@ -27,8 +26,9 @@ export class ForgetPassword implements IUseCase<{email:string, next:NextFunction
               await this._sentEmail.sentEmailVerification(checkuser.email, otp);
               return checkuser;
             } catch (err) {
-              input.next(err);
+              
               console.error(err);
+              throw err;
             }
     }
 }

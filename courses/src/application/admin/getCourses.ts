@@ -1,13 +1,12 @@
-import { IUseCase } from "@eduhublearning/common";
-import { AdminRepository } from "../../insfrastructure/db/repositories/adminRepository";
-import { NextFunction } from "express";
 import { ICourse } from "../../domain/entities/course";
+import { IAdminRepository } from "../../domain/interfaces/repository/IAdminRepository";
+import { IGetCourses } from "../../domain/interfaces/admin/IGetCourses";
 
-export class GetCourses implements IUseCase<{search:string,sort:string,page:number,next:NextFunction},{courses:ICourse[],pages:number}|void> {
-    constructor(private readonly adminRepository:AdminRepository) {
+export class GetCourses implements IGetCourses {
+    constructor(private readonly adminRepository:IAdminRepository) {
         
     }
-    public async execute(input: {search:string,sort:string,page:number,next:NextFunction}): Promise<{courses:ICourse[],pages:number}|void> {
+    public async execute(input: {search:string,sort:string,page:number}): Promise<{courses:ICourse[],pages:number}|void> {
          try {
 
         const count = await this.adminRepository.getPages(input.search,input.sort);
@@ -19,7 +18,7 @@ export class GetCourses implements IUseCase<{search:string,sort:string,page:numb
         }
       } catch (error) {
         console.error(error)
-        input.next(error)
+        throw error;
       }
     }
 }

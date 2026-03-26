@@ -1,27 +1,22 @@
-import { NextFunction } from "express";
-import { IUseCase } from "../../shared/IUseCase";
-import { IUserRepository } from "../../domain/interfaces/IuserRepository";
 import { BadRequestError, ErrorMessages, ForbiddenError } from "@eduhublearning/common";
-import { JWTtocken } from "../../infrastructure/services/jwt";
-import { Encrypt } from "../../infrastructure/services/hashPassword";
 import { Iuser } from "../../domain/entities/user";
-import { IToken } from "../../domain/interfaces/serviceInterfaces/IJwt";
+import { IJwt, IToken } from "../../domain/interfaces/serviceInterfaces/IJwt";
+import { IUserRepository } from "../../domain/interfaces/user/repository/IuserRepository";
+import { IHashPassword } from "../../domain/interfaces/serviceInterfaces/IHashPassword";
+import { ILoginUser } from "../../domain/interfaces/user/useCases/ILoginUser";
 
 
 
-export class LoginUser implements IUseCase<{email:string,
-        password:string,
-        next:NextFunction},{ user: Iuser; token: IToken } | void> {
+export class LoginUser implements ILoginUser {
     constructor(
         public readonly _userRepository:IUserRepository,
-        public readonly _encrypt:Encrypt,
-        public readonly _jwtToken:JWTtocken,
+        public readonly _encrypt:IHashPassword,
+        public readonly _jwtToken:IJwt,
     ) {
         
     }
     public async execute(input: {email:string,
-        password:string,
-        next:NextFunction}): Promise<{ user: Iuser; token: IToken } | void> {
+        password:string}): Promise<{ user: Iuser; token: IToken } | void> {
 
         try {
               const user = await this._userRepository.findByEmail(input.email);
@@ -49,7 +44,7 @@ export class LoginUser implements IUseCase<{email:string,
               return { token, user };
             } catch (err) {
               console.error(err);
-              input.next(err);
+             throw err;
             }
 
     }

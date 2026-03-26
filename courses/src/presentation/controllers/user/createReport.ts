@@ -1,9 +1,9 @@
 import { IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
-import { UserCreateReport } from "../../../application/user/createReport";
+import { IUserCreateReport } from "../../../domain/interfaces/user/IUserCreateReport";
 
 export class UserCreateReportController implements IController {
-  constructor(private readonly _useCase: UserCreateReport) {}
+  constructor(private readonly _useCase: IUserCreateReport) {}
   public async handle(
     req: Request,
     res: Response,
@@ -17,13 +17,11 @@ export class UserCreateReportController implements IController {
         report,
         content,
         courseId,
-        next,
       });
       if (createReport) {
         res.status(StatusCodes.CREATED).send({ success: true, report: createReport });
       }
     } catch (error) {
-      console.error(error);
       next(error);
     }
   }

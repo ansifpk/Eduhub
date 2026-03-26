@@ -1,9 +1,9 @@
 import { IController, StatusCodes } from "@eduhublearning/common";
-import { CreateRating } from "../../../application/user/createRatings";
 import { Request, Response, NextFunction } from "express";
+import { ICreateRating } from "../../../domain/interfaces/user/ICreateRating";
 
 export class CreateRatingController implements IController {
-  constructor(private readonly _useCase: CreateRating) {}
+  constructor(private readonly _useCase: ICreateRating) {}
   public async handle(
     req: Request,
     res: Response,
@@ -16,13 +16,11 @@ export class CreateRatingController implements IController {
         userId,
         review,
         stars,
-        next,
       });
       if (rating) {
         res.status(StatusCodes.CREATED).send({ success: true, rating: rating });
       }
     } catch (error) {
-      console.error(error);
       next(error);
     }
   }

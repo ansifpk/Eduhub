@@ -1,9 +1,9 @@
-import { IController, IUseCase, StatusCodes } from "@eduhublearning/common";
+import { IController, StatusCodes } from "@eduhublearning/common";
 import { NextFunction, Request, Response } from "express";
-import { UserGetCourses } from "../../../application/user/getCourses";
+import { IUserGetCourses } from "../../../domain/interfaces/user/IUserGetCourses";
 
 export class UserGetCoursesController implements IController {
-  constructor(private readonly _useCases: UserGetCourses) {}
+  constructor(private readonly _useCases: IUserGetCourses) {}
 
   public async handle(
     req: Request,
@@ -20,7 +20,6 @@ export class UserGetCoursesController implements IController {
         search: search as string,
         sort: sort as string,
         page: parseInt(page as string),
-        next,
       });
       if (courses) {
         res.status(StatusCodes.OK).send({
@@ -30,7 +29,6 @@ export class UserGetCoursesController implements IController {
         });
       }
     } catch (error) {
-      console.error(error);
       next(error);
     }
   }

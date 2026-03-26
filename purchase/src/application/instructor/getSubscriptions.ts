@@ -1,15 +1,11 @@
-import { IUseCase } from "@eduhublearning/common";
-import { InstructorRepository } from "../../infrastructure/db/repository/instructorRepository";
 import { ISubcription } from "../../domain/entities/subscription";
-import { NextFunction } from "express";
+import { IInstrutcorGetSubscriptions } from "../../domain/interfaces/useCases/instructor/IInstrutcorGetSubscriptions";
+import { IInstructorRepository } from "../../domain/interfaces/repository/IInstructorRepository";
 
 export class InstrutcorGetSubscriptions
-  implements IUseCase<{ next: NextFunction }, ISubcription[] | void>
-{
-  constructor(private readonly instructorRepository: InstructorRepository) {}
-  public async execute(input: {
-    next: NextFunction;
-  }): Promise<ISubcription[] | void> {
+  implements IInstrutcorGetSubscriptions{
+  constructor(private readonly instructorRepository: IInstructorRepository) {}
+  public async execute(): Promise<ISubcription[] | void> {
     try {
       const subscriptions = await this.instructorRepository.findSubscriptions();
       if (subscriptions) {
@@ -17,7 +13,7 @@ export class InstrutcorGetSubscriptions
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+     throw error
     }
   }
 }

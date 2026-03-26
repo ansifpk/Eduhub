@@ -1,16 +1,13 @@
-import { NextFunction } from "express";
 import { ICategory } from "../../domain/category";
-import { CategoryRepository } from "../../infrastructure/db/repository/categoryRepository";
-import { IUseCase } from "../../shared/IUseCase";
 import { BadRequestError, ErrorMessages } from "@eduhublearning/common";
+import { IListCatgory } from "../../domain/insterfaces/admin/useCases/IListCatgory";
+import { ICategoryRepository } from "../../domain/insterfaces/repositoryInterfaces/IcategoryRepository";
 
 export class ListCategory
-  implements IUseCase<{ _id: string; next: NextFunction }, ICategory | void>
-{
-  constructor(private readonly categoryRepository: CategoryRepository) {}
+  implements IListCatgory{
+  constructor(private readonly categoryRepository: ICategoryRepository) {}
   public async execute(input: {
     _id: string;
-    next: NextFunction;
   }): Promise<ICategory | void> {
     try {
       const check = await this.categoryRepository.findById(input._id);
@@ -27,7 +24,7 @@ export class ListCategory
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

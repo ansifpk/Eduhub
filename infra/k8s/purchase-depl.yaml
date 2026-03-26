@@ -16,9 +16,6 @@ spec:
         - name: purchase
           image: pkansif/eduhub-purchase:latest
           imagePullPolicy: Always
-          envFrom:
-            - secretRef:
-                name: purchase-service-secrets
            
 ---
 apiVersion: v1

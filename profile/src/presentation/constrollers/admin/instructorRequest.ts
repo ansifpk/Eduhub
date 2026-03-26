@@ -1,9 +1,9 @@
 import { IController, StatusCodes } from "@eduhublearning/common";
 import { Request, Response, NextFunction } from "express";
-import { InstructorRequest } from "../../../application/admin/instructorRequest";
+import { IInstructorRequest } from "../../../domain/interfaces/useCases/admin/IInstructorRequest";
 
 export class InstructorRequestController implements IController {
-  constructor(private readonly _useCase: InstructorRequest) {}
+  constructor(private readonly _useCase: IInstructorRequest) {}
   public async handle(
     req: Request,
     res: Response,
@@ -15,13 +15,11 @@ export class InstructorRequestController implements IController {
         search: search as string,
         page: page as string,
         sort: sort as string,
-        next,
       });
       if (students) {
         res.status(StatusCodes.OK).send(students);
       }
     } catch (error) {
-      console.error(error);
       next(error);
     }
   }

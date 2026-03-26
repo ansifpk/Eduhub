@@ -1,9 +1,9 @@
 import { IController, StatusCodes } from "@eduhublearning/common";
-import { DeleteRating } from "../../../application/user/deleteRating";
 import { Request, Response, NextFunction } from "express";
+import { IDeleteRating } from "../../../domain/interfaces/useCases/user/IDeleteRating";
 
 export class DeleteRatingController implements IController {
-  constructor(private readonly _usecase: DeleteRating) {}
+  constructor(private readonly _usecase: IDeleteRating) {}
   public async handle(
     req: Request,
     res: Response,
@@ -11,12 +11,11 @@ export class DeleteRatingController implements IController {
   ): Promise<void> {
     try {
       const { ratingId } = req.params;
-      const rating = await this._usecase.execute({ ratingId, next });
+      const rating = await this._usecase.execute({ ratingId });
       if (rating) {
         res.status(StatusCodes.OK).send({ success: true, rating: rating });
       }
     } catch (error) {
-      console.error(error);
       next(error);
     }
   }

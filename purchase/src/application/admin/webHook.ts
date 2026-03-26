@@ -1,27 +1,24 @@
 import {
   CouponUsedPublisher,
-  IUseCase,
   OrderCreatedPublisher,
 } from "@eduhublearning/common";
-import { NextFunction } from "express";
 import Stripe from "stripe";
-import { WebhookRepository } from "../../infrastructure/db/repository/webhookRepository";
 import { ICourse } from "../../domain/entities/course";
 import { Producer } from "kafkajs";
 import kafkaWrapper from "../../infrastructure/kafka/kafkaWrapper";
+import { IWebHook } from "../../domain/interfaces/useCases/admin/IWebHook";
+import { IWebhookRepository } from "../../domain/interfaces/repository/IwebhookRepository";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET!, {
   apiVersion: "2025-01-27.acacia",
 });
 
 export class WebHook
-  implements IUseCase<{ event: Stripe.Event; next: NextFunction }, void>
-{
-  constructor(private readonly webhokkRepository: WebhookRepository) {}
+  implements IWebHook {
+  constructor(private readonly webhokkRepository: IWebhookRepository) {}
 
   public async execute(input: {
     event: Stripe.Event;
-    next: NextFunction;
   }): Promise<void> {
     try {
       const { event } = input;
@@ -134,7 +131,7 @@ export class WebHook
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

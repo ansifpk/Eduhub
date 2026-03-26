@@ -1,13 +1,11 @@
-import { IUseCase } from "@eduhublearning/common";
 import { Iuser } from "../../domain/entities/user";
-import { AdminRepository } from "../../infrastructure/db/repository/adminRepository";
-import { NextFunction } from "express";
+import { ITopInstructors } from "../../domain/interfaces/useCases/admin/ITopInstructors";
+import { IAdminRepository } from "../../domain/interfaces/repositoryInterfaces/IadminRepository";
 
 export class TopInstructors
-  implements IUseCase<{ next: NextFunction }, Iuser[] | void>
-{
-  constructor(private readonly adminRepository: AdminRepository) {}
-  public async execute(input: { next: NextFunction }): Promise<void | Iuser[]> {
+  implements ITopInstructors {
+  constructor(private readonly adminRepository: IAdminRepository) {}
+  public async execute(): Promise<void | Iuser[]> {
     try {
       const instructors = await this.adminRepository.findTop5Instructors();
       if (instructors) {
@@ -23,7 +21,7 @@ export class TopInstructors
       }
     } catch (error) {
       console.error(error);
-      input.next(error);
+      throw error;
     }
   }
 }

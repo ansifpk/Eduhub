@@ -2,17 +2,16 @@ import {
   BadRequestError,
   ErrorMessages,
   ForbiddenError,
-  IUseCase,
 } from "@eduhublearning/common";
-import { InstructorRepository } from "../../infrastructure/db/repository/instructorRepostory";
-import { NextFunction } from "express";
 import { Iuser } from "../../domain/entities/user";
-import CloudinaryV2 from "../../infrastructure/service/cloudinery";
+import { IRegister } from "../../domain/interfaces/useCases/instructor/IRegister";
+import { IInstructorRepository } from "../../domain/interfaces/repositoryInterfaces/IinstructorInterface";
+import { ICloudinary } from "../../domain/interfaces/serviceInterfaces/ICloudinery";
 
-export class Register implements IUseCase<any, Iuser | void> {
+export class Register implements IRegister {
   constructor(
-    private readonly instructorRepository: InstructorRepository,
-    private readonly cloudinary: CloudinaryV2
+    private readonly instructorRepository: IInstructorRepository,
+    private readonly cloudinary: ICloudinary
   ) {}
   public async execute(input: {
     userData: Iuser;
@@ -20,7 +19,6 @@ export class Register implements IUseCase<any, Iuser | void> {
       certificateImage?: Express.Multer.File[];
       cvImage?: Express.Multer.File[];
     };
-    next: NextFunction;
   }): Promise<Iuser | void> {
     try {
       const user = await this.instructorRepository.findByEmail(
@@ -67,7 +65,8 @@ export class Register implements IUseCase<any, Iuser | void> {
         }
       }
     } catch (error) {
-      input.next(error);
+     console.error(error);
+     throw error;
     }
   }
 }
