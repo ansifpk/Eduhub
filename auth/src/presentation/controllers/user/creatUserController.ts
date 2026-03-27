@@ -4,6 +4,7 @@ import { Producer } from "kafkajs";
 import kafkaWrapper from "../../../infrastructure/kafka/kafkaWrapper";
 import { IController } from "../../../shared/IController";
 import { ICreateUser } from "../../../domain/interfaces/user/useCases/ICreateUser";
+import { mapUserToLoginDto } from "../../../application/mapers/user/mapUserToLoginDto";
 
 
 
@@ -59,8 +60,8 @@ export class CreatUserController implements IController {
           path:"/",
           maxAge:30 * 24 * 60 * 60 * 1000,
        });
-      
-      res.status(StatusCodes.CREATED).send({ succusse: true, user: user });
+      const userDto = mapUserToLoginDto(user.user);
+      res.status(StatusCodes.CREATED).send({ succusse: true, user: userDto });
       }
         } catch (error) {
             next(error)

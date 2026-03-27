@@ -10,7 +10,7 @@ export class AdminLogin implements IAdminLogin{
   constructor(
     private readonly _adminRepository: IAdminRepository,
     private readonly _jwt: IJwt,
-    private readonly _encrypt: IHashPassword
+    private readonly _encrypt: IHashPassword,
   ) {}
   public async execute(input: {
     email: string;

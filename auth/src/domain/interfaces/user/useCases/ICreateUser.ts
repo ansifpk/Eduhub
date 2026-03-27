@@ -1,6 +1,6 @@
-import { ILoginUserResponseDto } from "../../../../application/dtos/user/LoginUserResponseDto ";
+import { Iuser } from "../../../entities/user";
 import { IToken } from "../../serviceInterfaces/IJwt";
 
 export interface ICreateUser {
-    execute(input:{token: string, otp: string}): Promise<{ user: ILoginUserResponseDto; tokens: IToken } | void>
+    execute(input:{token: string, otp: string}): Promise<{ user: Iuser; tokens: IToken } | void>
 }
