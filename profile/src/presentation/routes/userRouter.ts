@@ -10,9 +10,9 @@ router.patch("/profile/:userId",isAuth,(req,res,next)=>editProfileController.han
 router.post("/Cart",isAuth,(req,res,next)=>addToCartController.handle(req,res,next));
 router.get("/Cart/:userId",isAuth,(req,res,next)=>cartDetailesController.handle(req,res,next));
 router.route("/rating")
-.all(isAuth)
-.post((req,res,next)=>createRatingController.handle(req,res,next))
-.patch((req,res,next)=>editRatingController.handle(req,res,next))
+    .all(isAuth)
+    .post((req,res,next)=>createRatingController.handle(req,res,next))
+    .patch((req,res,next)=>editRatingController.handle(req,res,next))
 router.delete("/rating/:ratingId", isAuth,(req,res,next)=>deleteRatingController.handle(req,res,next));
 router.get("/rating/:instructorId", isAuth,(req,res,next)=>getInstructorRatingsontroller.handle(req,res,next));
 router.patch("/profileImage/:userId",isAuth,upload, (req,res,next)=>profileImageController.handle(req,res,next));
