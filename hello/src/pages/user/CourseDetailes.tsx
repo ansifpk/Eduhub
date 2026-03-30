@@ -132,6 +132,7 @@ const CourseDetailes = () => {
       method: "get",
       body: {},
       onSuccess: (data) => {
+        console.log("data data ... ",data)
         setRatings(data.rating.ratings);
         setAverageRating(data.averageRating);
       },
