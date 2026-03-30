@@ -132,12 +132,8 @@ const CourseDetailes = () => {
       method: "get",
       body: {},
       onSuccess: (data) => {
-        console.log("data....",data);
-        console.log("response....",data.response);
-        console.log("response....",data.ratings);
-        console.log("averageRating....",data.averageRating);
         setRatings(data.rating.ratings);
-        setAverageRating(data.rating.averageRating);
+        setAverageRating(data.averageRating);
       },
     });
     doRequest({
@@ -176,7 +172,7 @@ const CourseDetailes = () => {
             setValue("rating", "");
             toast.success("Successfully added your review ");
             setRatings(response.rating.ratings);
-            setAverageRating(response.rating.averageRating);
+            setAverageRating(response.averageRating);
           },
         });
       },
@@ -196,7 +192,7 @@ const CourseDetailes = () => {
           onSuccess: (data) => {
             toast.success("Review updated successfully...");
             setRatings(data.rating.ratings);
-            setAverageRating(data.rating.averageRating);
+            setAverageRating(data.averageRating);
             setEditAlert(!editAlert);
           },
         });
@@ -247,7 +243,7 @@ const CourseDetailes = () => {
           body: {},
           onSuccess: (response) => {
             setRatings(response.rating.ratings);
-            setAverageRating(response.rating.averageRating);
+            setAverageRating(response.averageRating);
             toast.success("Review deleted successfully..");
           },
         });
