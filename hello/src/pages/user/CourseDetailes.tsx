@@ -74,6 +74,7 @@ const CourseDetailes = () => {
   const [course, setCourse] = useState<ICourse>();
   const [instructor, setInstructor] = useState<IUserProfile>();
   const [star, setStar] = useState<number>(0);
+  const [avarageRating, setAvarageRating] = useState<number>(0);
   const [editAlert, setEditAlert] = useState(false);
   const [addAlert, setAddAlert] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -132,7 +133,9 @@ const CourseDetailes = () => {
       body: {},
       onSuccess: (data) => {
         console.log("ratings",data)
-        // setRatings(data.rating);
+        setRatings(data.rating);
+        setAvarageRating(data.averageRating)
+        console.log('avarageRating',avarageRating)
       },
     });
     doRequest({
@@ -281,7 +284,7 @@ const CourseDetailes = () => {
 
       <div className="flex justify-center gap-10  my-2">
         <div className="grid items-center justify-center text-center px-2 text-xs">
-          <p>4.7</p>
+          <p>{avarageRating}</p>
           <div className="animate-bounce">
             <i className="bi bi-star-fill text-orange-300"></i>
             <i className="bi bi-star-fill text-orange-300"></i>
