@@ -13,8 +13,8 @@ export class GetratingsController implements IController {
       const { courseId } = req.params;
       const ratings = await this._useCase.execute({ courseId });
       if (ratings) {
-        console.log('ratings ratings',ratings)
-        res.status(StatusCodes.OK).send({ success: true, rating: ratings.ratings,averageRating:ratings.averageRating });
+        console.log('ratings',ratings)
+        res.status(StatusCodes.OK).send({ success: true,response:ratings, rating: ratings.ratings,averageRating:ratings.averageRating });
       }
     } catch (error) {
       next(error);

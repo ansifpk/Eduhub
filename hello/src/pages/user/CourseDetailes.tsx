@@ -132,7 +132,10 @@ const CourseDetailes = () => {
       method: "get",
       body: {},
       onSuccess: (data) => {
-        console.log("debuggingg....",data);
+        console.log("data....",data);
+        console.log("response....",data.response);
+        console.log("response....",data.ratings);
+        console.log("averageRating....",data.averageRating);
         setRatings(data.rating.ratings);
         setAverageRating(data.rating.averageRating);
       },
