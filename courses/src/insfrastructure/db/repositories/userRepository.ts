@@ -1,4 +1,4 @@
-import { Query } from "mongoose";
+import { Query, Types } from "mongoose";
 import { ICoupon } from "../../../domain/entities/coupon";
 import { ICourse } from "../../../domain/entities/course";
 import { IRating } from "../../../domain/entities/ratings";
@@ -26,6 +26,7 @@ export class UserRepository implements IUserRepository{
     ){
 
     }
+     
 
      async  getPages(search: string, category: string, level: string, topic: string): Promise<number | void> {
         try {
@@ -212,6 +213,34 @@ export class UserRepository implements IUserRepository{
         console.error(error)
        }
     }
+
+    async findAvarageRatings(courseId: string): Promise<{ averageRating: number} | void > {
+        try {
+          const ratings = await this.ratingModels.aggregate([
+              {
+                $match: {
+                  courseId: new Types.ObjectId(courseId)
+                }
+              },
+              {
+                $group: {
+                  _id: "$courseId",
+                  averageRating: { $avg: "$stars" },
+                }
+              },
+              {
+                $project:{ _id:0}
+              }
+            ]);
+          
+          if(ratings){
+            return ratings[0];
+          }
+        } catch (error) {
+          console.error(error)
+        }
+    }
+
     async createRating(courseId: string,userId:string,review:string,stars:number): Promise<IRating | void> {
         try {
             const rating = await this.ratingModels.create({

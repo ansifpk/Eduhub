@@ -20,6 +20,7 @@ export interface IUserRepository{
     checkReport(userId:string,content:string,courseId:string):Promise<IReport|void>
      //Rating
     ratings(courseId:string):Promise<IRating[]|void>
+    findAvarageRatings(courseId:string):Promise<{ averageRating: number} | void >
     createRating(courseId:string,userId:string,review:string,stars:number):Promise<IRating|void>
     editRating(ratingId:string,review:string,stars:number):Promise<IRating|void>
     findRating(ratingId:string):Promise<IRating|void>
