@@ -131,7 +131,8 @@ const CourseDetailes = () => {
       method: "get",
       body: {},
       onSuccess: (data) => {
-        setRatings(data.rating);
+        console.log("ratings",data)
+        // setRatings(data.rating);
       },
     });
     doRequest({
