@@ -74,7 +74,6 @@ const CourseDetailes = () => {
   const [course, setCourse] = useState<ICourse>();
   const [instructor, setInstructor] = useState<IUserProfile>();
   const [star, setStar] = useState<number>(0);
-  const [averageRating, setAverageRating] = useState<number>(0);
   const [editAlert, setEditAlert] = useState(false);
   const [addAlert, setAddAlert] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -132,9 +131,7 @@ const CourseDetailes = () => {
       method: "get",
       body: {},
       onSuccess: (data) => {
-        console.log("data data ... ",data)
-        setRatings(data.rating.ratings);
-        setAverageRating(data.averageRating);
+        setRatings(data.rating);
       },
     });
     doRequest({
@@ -172,8 +169,7 @@ const CourseDetailes = () => {
             setValue("star", 1);
             setValue("rating", "");
             toast.success("Successfully added your review ");
-            setRatings(response.rating.ratings);
-            setAverageRating(response.averageRating);
+            setRatings(response.rating);
           },
         });
       },
@@ -192,8 +188,7 @@ const CourseDetailes = () => {
           body: {},
           onSuccess: (data) => {
             toast.success("Review updated successfully...");
-            setRatings(data.rating.ratings);
-            setAverageRating(data.averageRating);
+            setRatings(data.rating);
             setEditAlert(!editAlert);
           },
         });
@@ -243,8 +238,7 @@ const CourseDetailes = () => {
           method: "get",
           body: {},
           onSuccess: (response) => {
-            setRatings(response.rating.ratings);
-            setAverageRating(response.averageRating);
+            setRatings(response.rating);
             toast.success("Review deleted successfully..");
           },
         });
@@ -286,7 +280,7 @@ const CourseDetailes = () => {
 
       <div className="flex justify-center gap-10  my-2">
         <div className="grid items-center justify-center text-center px-2 text-xs">
-          <p>{averageRating}</p>
+          <p>4.7</p>
           <div className="animate-bounce">
             <i className="bi bi-star-fill text-orange-300"></i>
             <i className="bi bi-star-fill text-orange-300"></i>
