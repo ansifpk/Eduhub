@@ -6,10 +6,13 @@ import { errorHandler, NotFoundError } from "@eduhublearning/common";
 import { userRouter } from "./presentation/routers/userRouter";
 import { instructorRouter } from "./presentation/routers/instructorRouter";
 import {createServer} from 'http';
+import client from 'prom-client';
 import dotenv from 'dotenv';
 dotenv.config();
 
 const app = express();
+const collectDefaultMetrics = client.collectDefaultMetrics;
+collectDefaultMetrics();
 
 app.set("trust proxy", true);
 
@@ -25,6 +28,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+app.get("/metrics",async (req,res)=>{
+  res.set("Content-Type", client.register.contentType);
+  res.end(await client.register.metrics())
+})
 app.use("/auth/user", userRouter);
 app.use("/auth/admin", adminRouter);
 app.use("/auth/instructor", instructorRouter);
