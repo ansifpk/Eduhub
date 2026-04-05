@@ -28,7 +28,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.get("/metrics",async (req,res)=>{
+app.get("/auth/metrics",async (req,res)=>{
   res.set("Content-Type", client.register.contentType);
   res.end(await client.register.metrics())
 })
