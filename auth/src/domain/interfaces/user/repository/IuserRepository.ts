@@ -1,10 +1,10 @@
 import { Iuser } from "../../../entities/user"
 
 export interface IUserRepository{
-    create(newUser: Iuser):Promise<Iuser|void>
-    findByEmail(email:string):Promise<Iuser|void>
-    findById(id:string):Promise<Iuser|void>
-    update(id:string,name:string,email:string):Promise<Iuser|void>
-    updatePassword(userId:string,password:string):Promise<Iuser|void>
-    changeEmail(userId:string,email:string):Promise<Iuser|void>
+    create(newUser: Iuser):Promise<Iuser>
+    findByEmail(email:string):Promise<Iuser|null>
+    findById(id:string):Promise<Iuser|null>
+    update(id:string,name:string,email:string):Promise<Iuser|null>
+    updatePassword(userId:string,password:string):Promise<Iuser|null>
+    changeEmail(userId:string,email:string):Promise<Iuser|null>
 }

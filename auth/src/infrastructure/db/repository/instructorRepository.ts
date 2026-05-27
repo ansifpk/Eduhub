@@ -3,83 +3,36 @@ import { Iuser } from "../../../domain/entities/user";
 import { IInstructor } from "../../../domain/interfaces/IInstructorInterface";
 import { IInstructorRepository } from "../../../domain/interfaces/instructor/repositories/IInstructorRepository";
 import { userModel } from "../models/userModel";
+import { BaseRepository } from "./baseRepository";
 
 
-export class InstructorRepository implements IInstructorRepository{
+export class InstructorRepository extends BaseRepository<Iuser> implements IInstructorRepository{
 
-    constructor(
-        private userModels:typeof userModel,
-    ){}
-    async create(instructorData: IInstructor): Promise<Iuser | void> {
-       try {
-        const user = await this.userModels.create(instructorData);
+    constructor(){
+        super(userModel)
+    }
+    async create(instructorData: IInstructor): Promise<Iuser> {
+       const user = await this.model.userModels.create(instructorData);
        user.isInstructor=true;
        await user.save();
-       return user
-       } catch (error) {
-        
-       }
-       
+       return user;
     }
-    async makeInstructor(email: string): Promise<Iuser | void> {
-      try {
-        const user = await this.userModels.findOneAndUpdate({email},{$set:{isInstructor:true}},{new:true});
-        if(user){
-            return user
-        }
-      } catch (error) {
-        console.error(error)
-      }
-       
+    async makeInstructor(email: string): Promise<Iuser | null> {
+        return await this.model.findOneAndUpdate({email},{$set:{isInstructor:true}},{new:true});
     }
-    async find(): Promise<Iuser[] | void> {
-       try {
-        const studnets =  await this.userModels.find({isAdmin:false});
-       return studnets
-       } catch (error) {
-        console.error(error)
-       }
+    async find(): Promise<Iuser[] | null> {
+        return super.find({isAdmin:false},{createdAt:-1})
     }
-    async findById(id: string): Promise<Iuser | void> {
-       try {
-        const user = await this.userModels.findById({_id:id});
-        if(user){
-            return user
-        }
-       } catch (error) {
-        console.error(error)
-       }
+    async findById(id: string): Promise<Iuser | null> {
+        return super.findById(id)
     }
 
-    async findByEmail(email: string): Promise<Iuser | void> {
-       try {
-        const user = await this.userModels.findOne({email});
-        if(user){
-            return user
-        }
-       } catch (error) {
-        console.error(error)
-       }
+    async findByEmail(email: string): Promise<Iuser | null> {
+        return super.findOne({email})
     }
-    async asyncfinById(id: string): Promise<Iuser | void> {
-        try {
-            const user = await this.userModels.findById({_id:id});
-        if(user){
-            return user
-        }
-        } catch (error) {
-            console.error(error)
-        }
-    }
-    async update(id: string, email: string, name: string): Promise<Iuser | void> {
-       try {
-        const user = await this.userModels.findByIdAndUpdate({_id:id},{$set:{name:name,email:email}},{new:true});
-        if(user){
-            return user
-        }
-       } catch (error) {
-        console.error(error)
-       }
+   
+    async update(id: string, email: string, name: string): Promise<Iuser | null> {
+        return super.updateById(id,{name:name,email:email});
     }
     
 }

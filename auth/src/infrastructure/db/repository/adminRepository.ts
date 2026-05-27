@@ -1,48 +1,35 @@
 import { Iuser } from "../../../domain/entities/user";
 import { IAdminRepository } from "../../../domain/interfaces/admin/repositories/IAdminRepository";
 import { userModel } from "../models/userModel";
+import { BaseRepository } from "./baseRepository";
 
 
-export class AdminRepository implements IAdminRepository{
-    constructor(
-       private userModels:typeof userModel,
-    ){}
-    async create(userData: Iuser): Promise<Iuser | void> {
+export class AdminRepository extends BaseRepository<Iuser> implements IAdminRepository{
+     constructor() {
+       super(userModel);
+    }
+    async create(userData: Iuser): Promise<Iuser> {
 
-       const user = await this.userModels.create(userData);
-       user.save();
-       return user;
+       return await super.create(userData);
        
     }
-    async update(adminId: string, name: string, email: string): Promise<Iuser | void> {
-       const user = await this.userModels.findByIdAndUpdate({_id:adminId},{$set:{name:name,email:email}},{new:true});
-       if(user){
-        return user
-       }
+    async update(adminId: string, name: string, email: string): Promise<Iuser | null> {
+       return await super.updateById(adminId,{name:name,email:email});
+    
     }
-    async block(student: Iuser): Promise<Iuser | void> {
-        const newStudnet =  await this.userModels.findByIdAndUpdate({_id:student._id},{$set:{isBlock:!student.isBlock}},{new :true})
-        if(newStudnet){
-            return newStudnet
-        }
+    async block(student: Iuser): Promise<Iuser | null> {
+        return  await super.updateById(student._id!,{isBlock:!student.isBlock})
+     
     }
-    async find(): Promise<Iuser[]|void> {
-        const admin = await this.userModels.find({isAdmin:false}).sort({createdAt:-1})
-        if(admin){
-            return admin;
-        }
+    async find(): Promise<Iuser[]|null> {
+        return await super.find({isAdmin:false},{createdAt:-1})
     }
-    async findById(userId: string): Promise<Iuser|void> {
-        const admin = await this.userModels.findById({_id:userId})
-        if(admin){
-            return admin;
-        }
+    async findById(userId: string): Promise<Iuser|null> {
+        return await super.findById(userId)
+      
     }
-    async findByEmail(email: string): Promise<Iuser|void> {
-        const admin = await this.userModels.findOne({email})
-        if(admin){
-            return admin;
-        }
+    async findByEmail(email: string): Promise<Iuser|null> {
+        return await super.findOne({email})
     }
     
 }
