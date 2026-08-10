@@ -1,0 +1,7 @@
+ORGINS='domain url'
+PORT=poertnuber
+MONGO_URL="mongodburl"
+JWT_ACCESSKEY='secret';
+JWT_REFRESHKEY='secret';
+JWT_VERIFICATIONKEY='secret';
+

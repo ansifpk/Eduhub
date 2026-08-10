@@ -1,0 +1,11 @@
+JWT_VERIFICATIONKEY=secret 
+JWT_REFRESHKEY=secret 
+JWT_ACCESSKEY=secret 
+EMAIL=your email
+PASSWORD=email password for google auth 
+KAFKA_BROKER=kafka url
+DOMAIN=domain url
+ORGINS='origin urls
+SOCKET_PATH="soket paths"
+PORT=port number
+MONGO_URL="mngo url"

@@ -1,0 +1,13 @@
+ORGINS='origin urls'
+PORT=portnumer
+MONGO_URL=mongourl 
+KAFKA_BROKER=kafkaurl
+CLOUD_NAME=cloudname 
+CLOUD_KEY=cloudekey 
+CLOUD_SECRET=cloudsecret 
+STRIPE_SECRET=stripesecret
+success_url=successurl for stripe suceessfull purchase 
+cancel_url=failedurl for stripe failed purchase 
+JWT_VERIFICATIONKEY=secret 
+JWT_ACCESSKEY=secretssssssss 
+JWT_REFRESHKEY=sssssssssecretss

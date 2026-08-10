@@ -1,0 +1,12 @@
+JWT_VERIFICATIONKEY=secret 
+JWT_REFRESHKEY=secret 
+JWT_ACCESSKEY=secret 
+EMAIL=your email
+PASSWORD=your password
+CLOUD_NAME=cloud name 
+CLOUD_KEY=clude key 
+CLOUD_SECRET=cloud secret 
+KAFKA_BROKER=kafka broker
+ORGINS='orign urls'
+PORT=port number
+MONGO_URL="mongodb url"

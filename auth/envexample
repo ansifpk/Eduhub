@@ -1,0 +1,13 @@
+
+
+ORGINS=your origin domains
+PORT= your port number
+MONGO_URL=mongodb url
+KAFKA_BROKER=fka url"
+JWT_FORGOTPASSWORD_KEY=secret key
+JWT_VERIFICATION_KEY="secret key"
+JWT_REFRESH_KEY="secret key"
+JWT_ACCESS_KEY="secret key"
+EMAIL="youremail"
+PASSWORD="youremailpassword"
+SOCKET_PATH="socket path"

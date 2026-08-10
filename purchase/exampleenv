@@ -1,0 +1,15 @@
+JWT_VERIFICATIONKEY=secret
+JWT_REFRESHKEY=secret
+JWT_ACCESSKEY=secret 
+EMAIL=your email
+PASSWORD=yur password from google auth
+KAFKA_BROKER=kafka url 
+STRIPE_SECRET=stripe secret
+STRIPE_WEBHOOK_SECRET=stripe webhook secret
+success_url==success url for stripe purhcase
+failed_url=faileurl for purchase failed 
+subscription_success_user_url=successfull url for use subscription purchase
+subscription_failed_user_url=failed url for use subscription purchase
+ORGINS='orgin urls'
+PORT=port number
+MONGO_URL="mongo db url"
